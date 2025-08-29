@@ -1,0 +1,18 @@
+syntax = "proto3";
+package v1;
+
+option go_package = "./openauth_v1";
+
+import "google/api/annotations.proto";
+import "proto/common/ping.proto";
+
+service OpenAuth {
+    
+    // Ping is a simple GET request for checking if everything is okay
+    rpc Ping (PingRequest) returns (PingResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/ping"
+        };
+    }
+}
+
