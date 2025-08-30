@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/configs"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
 
@@ -22,7 +23,7 @@ type HTTPServer struct {
 }
 
 func (a *HTTPServer) Name() string {
-	return "HTTP_Server"
+	return constants.HTTP_SERVER
 }
 
 func (a *HTTPServer) Shutdown(ctx context.Context) {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofreego/openauth/cmd/grpc_server"
 	"github.com/gofreego/openauth/cmd/http_server"
+	"github.com/gofreego/openauth/cmd/migrator"
 	"github.com/gofreego/openauth/internal/configs"
 	"github.com/gofreego/openauth/internal/constants"
 
@@ -14,6 +15,7 @@ import (
 )
 
 var (
+	app  string
 	env  string
 	path string
 )
@@ -21,6 +23,7 @@ var (
 func main() {
 	flag.StringVar(&env, "env", "dev", "-env=dev")
 	flag.StringVar(&path, "path", ".", "-path=./")
+	flag.StringVar(&app, "app", "", "-app=<app_name>")
 	flag.Parse()
 	ctx := context.Background()
 
@@ -28,6 +31,10 @@ func main() {
 
 	conf.Logger.InitiateLogger()
 	logger.AddMiddleLayers(logger.RequestMiddleLayer)
+
+	if app != "" {
+		conf.AppNames = []string{app}
+	}
 
 	// starting application
 	var apps []apputils.Application
@@ -37,6 +44,8 @@ func main() {
 			apps = append(apps, http_server.NewHTTPServer(conf))
 		case constants.GRPC_SERVER:
 			apps = append(apps, grpc_server.NewGRPCServer(conf))
+		case constants.SQL_MIGRATOR:
+			apps = append(apps, migrator.NewSQLMigrator(conf))
 		default:
 			logger.Panic(ctx, "invalid application name provided `%s`", appName)
 		}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/configs"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
 	"google.golang.org/grpc"
@@ -20,7 +21,7 @@ type GRPCServer struct {
 }
 
 func (a *GRPCServer) Name() string {
-	return "GRPC_Server"
+	return constants.GRPC_SERVER
 }
 
 func (a *GRPCServer) Shutdown(ctx context.Context) {
