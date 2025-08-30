@@ -7,6 +7,7 @@ import (
 	repo "github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
 
+	"github.com/gofreego/goutils/api/debug"
 	"github.com/gofreego/goutils/configutils"
 	"github.com/gofreego/goutils/logger"
 )
@@ -19,6 +20,7 @@ type Configuration struct {
 	Server       Server             `yaml:"Server" `
 	Repository   repo.Config        `yaml:"Repository"`
 	Service      service.Config     `yaml:"Service"`
+	Debug        debug.Config       `yaml:"Debug"`
 }
 
 type Server struct {
