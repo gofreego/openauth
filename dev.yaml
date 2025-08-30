@@ -24,3 +24,6 @@ Server:
 Repository:
   Name : memory
 Service: {}
+Debug:
+  Enabled: true
+  EnablePprof: true
