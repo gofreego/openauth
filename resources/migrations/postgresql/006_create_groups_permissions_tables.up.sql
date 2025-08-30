@@ -1,57 +1,58 @@
 -- Create permissions table
 CREATE TABLE permissions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL, -- e.g., 'users.create', 'posts.delete'
     display_name VARCHAR(255) NOT NULL,
     description TEXT,
     resource VARCHAR(255) NOT NULL, -- e.g., 'users', 'posts', 'system'
     action VARCHAR(255) NOT NULL, -- e.g., 'create', 'read', 'update', 'delete'
     is_system BOOLEAN DEFAULT FALSE, -- System permissions cannot be deleted
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Create groups/roles table
 CREATE TABLE groups (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id SERIAL PRIMARY KEY,
+    uuid UUID UNIQUE DEFAULT gen_random_uuid(),
     name VARCHAR(255) UNIQUE NOT NULL,
     display_name VARCHAR(255) NOT NULL,
     description TEXT,
     is_system BOOLEAN DEFAULT FALSE, -- System groups cannot be deleted
     is_default BOOLEAN DEFAULT FALSE, -- Default group for new users
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Create group permissions junction table
 CREATE TABLE group_permissions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
-    permission_id UUID NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
-    granted_by UUID REFERENCES users(id), -- Who granted this permission
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    id SERIAL PRIMARY KEY,
+    group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    permission_id INTEGER NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    granted_by INTEGER REFERENCES users(id), -- Who granted this permission
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(group_id, permission_id)
 );
 
 -- Create user groups junction table
 CREATE TABLE user_groups (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
-    assigned_by UUID REFERENCES users(id), -- Who assigned this group
-    expires_at TIMESTAMP WITH TIME ZONE, -- Optional expiration date
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    assigned_by INTEGER REFERENCES users(id), -- Who assigned this group
+    expires_at BIGINT, -- Optional expiration date
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(user_id, group_id)
 );
 
 -- Create direct user permissions table (for permissions granted directly to users)
 CREATE TABLE user_permissions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    permission_id UUID NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
-    granted_by UUID REFERENCES users(id), -- Who granted this permission
-    expires_at TIMESTAMP WITH TIME ZONE, -- Optional expiration date
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    permission_id INTEGER NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    granted_by INTEGER REFERENCES users(id), -- Who granted this permission
+    expires_at BIGINT, -- Optional expiration date
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(user_id, permission_id)
 );
 
@@ -61,6 +62,7 @@ CREATE INDEX idx_permissions_resource ON permissions(resource);
 CREATE INDEX idx_permissions_action ON permissions(action);
 CREATE INDEX idx_permissions_system ON permissions(is_system);
 
+CREATE INDEX idx_groups_uuid ON groups(uuid);
 CREATE INDEX idx_groups_name ON groups(name);
 CREATE INDEX idx_groups_system ON groups(is_system);
 CREATE INDEX idx_groups_default ON groups(is_default);

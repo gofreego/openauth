@@ -1,6 +1,7 @@
 -- Create authentication providers table for OAuth and external providers
 CREATE TABLE auth_providers (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id SERIAL PRIMARY KEY,
+    uuid UUID UNIQUE DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL UNIQUE, -- google, facebook, github, etc.
     display_name VARCHAR(255) NOT NULL,
     client_id VARCHAR(500),
@@ -10,30 +11,33 @@ CREATE TABLE auth_providers (
     user_info_url VARCHAR(500),
     scope VARCHAR(500),
     is_enabled BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Create user external accounts table for linking users with external providers
 CREATE TABLE user_external_accounts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    provider_id UUID NOT NULL REFERENCES auth_providers(id) ON DELETE CASCADE,
+    id SERIAL PRIMARY KEY,
+    uuid UUID UNIQUE DEFAULT gen_random_uuid(),
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider_id INTEGER NOT NULL REFERENCES auth_providers(id) ON DELETE CASCADE,
     external_user_id VARCHAR(255) NOT NULL, -- ID from external provider
     external_username VARCHAR(255),
     external_email VARCHAR(255),
     access_token TEXT,
     refresh_token TEXT,
-    token_expires_at TIMESTAMP WITH TIME ZONE,
+    token_expires_at BIGINT,
     external_data JSONB, -- Store additional data from provider
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(provider_id, external_user_id)
 );
 
 -- Create indexes
+CREATE INDEX idx_auth_providers_uuid ON auth_providers(uuid);
 CREATE INDEX idx_auth_providers_name ON auth_providers(name);
 CREATE INDEX idx_auth_providers_enabled ON auth_providers(is_enabled);
+CREATE INDEX idx_user_external_accounts_uuid ON user_external_accounts(uuid);
 CREATE INDEX idx_user_external_accounts_user_id ON user_external_accounts(user_id);
 CREATE INDEX idx_user_external_accounts_provider_id ON user_external_accounts(provider_id);
 CREATE INDEX idx_user_external_accounts_external_user_id ON user_external_accounts(external_user_id);

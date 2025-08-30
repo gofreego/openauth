@@ -1,7 +1,7 @@
 -- Create audit logs table for tracking critical operations
 CREATE TABLE audit_logs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id), -- Who performed the action
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id), -- Who performed the action
     entity_type VARCHAR(100) NOT NULL, -- users, groups, permissions, user_groups, etc.
     entity_id UUID, -- ID of the entity being modified
     action VARCHAR(50) NOT NULL, -- create, update, delete, assign, revoke
@@ -11,16 +11,16 @@ CREATE TABLE audit_logs (
     reason TEXT, -- Optional reason for the change
     ip_address INET,
     user_agent TEXT,
-    session_id UUID REFERENCES user_sessions(id),
+    session_id INTEGER REFERENCES user_sessions(id),
     metadata JSONB, -- Additional context data
     severity VARCHAR(20) DEFAULT 'medium', -- low, medium, high, critical
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Create security events table for tracking security-related events
 CREATE TABLE security_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
     event_type VARCHAR(100) NOT NULL, -- login_success, login_failure, password_change, etc.
     severity VARCHAR(20) DEFAULT 'medium', -- low, medium, high, critical
     description TEXT,
@@ -28,26 +28,26 @@ CREATE TABLE security_events (
     user_agent TEXT,
     location VARCHAR(255),
     device_id VARCHAR(255),
-    session_id UUID REFERENCES user_sessions(id),
+    session_id INTEGER REFERENCES user_sessions(id),
     metadata JSONB,
     resolved BOOLEAN DEFAULT FALSE,
-    resolved_by UUID REFERENCES users(id),
-    resolved_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    resolved_by INTEGER REFERENCES users(id),
+    resolved_at BIGINT,
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Create login attempts table for tracking failed login attempts
 CREATE TABLE login_attempts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id SERIAL PRIMARY KEY,
     identifier VARCHAR(255) NOT NULL, -- username, email, or phone
     identifier_type VARCHAR(20) NOT NULL, -- username, email, phone
     ip_address INET NOT NULL,
     user_agent TEXT,
     success BOOLEAN NOT NULL,
     failure_reason VARCHAR(255), -- invalid_credentials, account_locked, etc.
-    user_id UUID REFERENCES users(id), -- Only set if login was successful
-    session_id UUID REFERENCES user_sessions(id), -- Only set if login was successful
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    user_id INTEGER REFERENCES users(id), -- Only set if login was successful
+    session_id INTEGER REFERENCES user_sessions(id), -- Only set if login was successful
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Create indexes for audit_logs

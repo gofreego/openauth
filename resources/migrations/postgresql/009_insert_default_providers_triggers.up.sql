@@ -1,41 +1,41 @@
 -- Insert default OAuth providers
-INSERT INTO auth_providers (id, name, display_name, auth_url, token_url, user_info_url, scope, is_enabled) VALUES
-    (gen_random_uuid(), 'google', 'Google', 
+INSERT INTO auth_providers (name, display_name, auth_url, token_url, user_info_url, scope, is_enabled) VALUES
+    ('google', 'Google', 
      'https://accounts.google.com/o/oauth2/v2/auth',
      'https://oauth2.googleapis.com/token',
      'https://www.googleapis.com/oauth2/v2/userinfo',
      'openid email profile',
      true),
     
-    (gen_random_uuid(), 'facebook', 'Facebook',
+    ('facebook', 'Facebook',
      'https://www.facebook.com/v18.0/dialog/oauth',
      'https://graph.facebook.com/v18.0/oauth/access_token',
      'https://graph.facebook.com/v18.0/me?fields=id,name,email,picture',
      'email,public_profile',
      true),
     
-    (gen_random_uuid(), 'github', 'GitHub',
+    ('github', 'GitHub',
      'https://github.com/login/oauth/authorize',
      'https://github.com/login/oauth/access_token',
      'https://api.github.com/user',
      'user:email',
      true),
     
-    (gen_random_uuid(), 'microsoft', 'Microsoft',
+    ('microsoft', 'Microsoft',
      'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
      'https://login.microsoftonline.com/common/oauth2/v2.0/token',
      'https://graph.microsoft.com/v1.0/me',
      'openid email profile',
      true),
     
-    (gen_random_uuid(), 'apple', 'Apple',
+    ('apple', 'Apple',
      'https://appleid.apple.com/auth/authorize',
      'https://appleid.apple.com/auth/token',
      'https://appleid.apple.com/auth/userinfo',
      'openid email name',
      false),
     
-    (gen_random_uuid(), 'linkedin', 'LinkedIn',
+    ('linkedin', 'LinkedIn',
      'https://www.linkedin.com/oauth/v2/authorization',
      'https://www.linkedin.com/oauth/v2/accessToken',
      'https://api.linkedin.com/v2/people/~:(id,firstName,lastName,emailAddress,profilePicture)',
@@ -70,14 +70,14 @@ CREATE TRIGGER trigger_add_user_to_default_group
 CREATE OR REPLACE FUNCTION log_permission_changes()
 RETURNS TRIGGER AS $$
 DECLARE
-    current_user_id UUID;
+    current_user_id INTEGER;
     entity_name VARCHAR(100);
     old_data JSONB;
     new_data JSONB;
 BEGIN
     -- Get current user ID from session (you may need to set this in your application)
     -- For now, we'll use a placeholder approach
-    current_user_id := current_setting('app.current_user_id', true)::UUID;
+    current_user_id := current_setting('app.current_user_id', true)::INTEGER;
     
     IF TG_TABLE_NAME = 'group_permissions' THEN
         entity_name := 'group_permissions';
@@ -93,7 +93,7 @@ BEGIN
                     'permission_id', NEW.permission_id,
                     'granted_by', NEW.granted_by
                 ),
-                'high', CURRENT_TIMESTAMP
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
             );
             
         ELSIF TG_OP = 'DELETE' THEN
@@ -107,7 +107,7 @@ BEGIN
                     'permission_id', OLD.permission_id,
                     'granted_by', OLD.granted_by
                 ),
-                'high', CURRENT_TIMESTAMP
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
             );
         END IF;
         
@@ -126,7 +126,7 @@ BEGIN
                     'assigned_by', NEW.assigned_by,
                     'expires_at', NEW.expires_at
                 ),
-                'high', CURRENT_TIMESTAMP
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
             );
             
         ELSIF TG_OP = 'DELETE' THEN
@@ -141,7 +141,7 @@ BEGIN
                     'assigned_by', OLD.assigned_by,
                     'expires_at', OLD.expires_at
                 ),
-                'high', CURRENT_TIMESTAMP
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
             );
         END IF;
         
@@ -160,7 +160,7 @@ BEGIN
                     'granted_by', NEW.granted_by,
                     'expires_at', NEW.expires_at
                 ),
-                'critical', CURRENT_TIMESTAMP
+                'critical', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
             );
             
         ELSIF TG_OP = 'DELETE' THEN
@@ -175,7 +175,7 @@ BEGIN
                     'granted_by', OLD.granted_by,
                     'expires_at', OLD.expires_at
                 ),
-                'critical', CURRENT_TIMESTAMP
+                'critical', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
             );
         END IF;
     END IF;

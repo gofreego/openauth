@@ -1,7 +1,8 @@
 -- Create user profiles table for extended user information
 CREATE TABLE user_profiles (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id SERIAL PRIMARY KEY,
+    uuid UUID UNIQUE DEFAULT gen_random_uuid(),
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     display_name VARCHAR(255),
@@ -16,12 +17,14 @@ CREATE TABLE user_profiles (
     address TEXT,
     postal_code VARCHAR(20),
     website_url VARCHAR(500),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    metadata JSONB, -- Flexible storage for additional user data
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(user_id)
 );
 
 -- Create indexes
+CREATE INDEX idx_user_profiles_uuid ON user_profiles(uuid);
 CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
 CREATE INDEX idx_user_profiles_display_name ON user_profiles(display_name);
 CREATE INDEX idx_user_profiles_country ON user_profiles(country);
