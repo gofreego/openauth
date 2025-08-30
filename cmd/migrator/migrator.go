@@ -44,10 +44,21 @@ func (s *SQLMigrator) Name() string {
 
 // Run implements apputils.Application.
 func (s *SQLMigrator) Run(ctx context.Context) error {
-	panic("unimplemented")
+	// Execute database migrations
+	err := s.migrator.Migrate(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Shutdown implements apputils.Application.
 func (s *SQLMigrator) Shutdown(ctx context.Context) {
-	panic("unimplemented")
+	// Close the migrator connection
+	if err := s.migrator.Close(); err != nil {
+		// Log the error but don't panic during shutdown
+		// Using a simple print since we might not have logger context
+		// In a real scenario, you might want to use proper logging
+		println("Warning: failed to close migrator:", err.Error())
+	}
 }
