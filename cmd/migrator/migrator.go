@@ -17,7 +17,7 @@ import (
 
 type SQLMigrator struct {
 	migrator sql.Migrator
-	cfg      configs.SQLMigrator
+	cfg      sql.Config
 }
 
 func NewSQLMigrator(cfg *configs.Configuration) *SQLMigrator {
@@ -33,11 +33,13 @@ func NewSQLMigrator(cfg *configs.Configuration) *SQLMigrator {
 		panic(fmt.Sprintf("unsupported database for migration: %s, expected: %s", cfg.Repository.Name, databases.Postgres))
 	}
 
-	migrator, err := sql.NewMigrator(db, cfg.SQLMigrator.Path, cfg.Repository.Name)
+	cfg.Migrator.DBType = cfg.Repository.Name
+
+	migrator, err := sql.NewMigrator(db, &cfg.Migrator)
 	if err != nil {
 		panic(fmt.Sprintf("failed to create SQL migrator, err: %s", err.Error()))
 	}
-	return &SQLMigrator{migrator: migrator, cfg: cfg.SQLMigrator}
+	return &SQLMigrator{migrator: migrator, cfg: cfg.Migrator}
 }
 
 // Name implements apputils.Application.
@@ -50,27 +52,20 @@ func (s *SQLMigrator) Run(ctx context.Context) error {
 	defer s.migrator.Close()
 
 	var err error
-	switch s.cfg.Action {
-	case configs.Up:
-		err = s.migrator.Migrate(ctx)
+	if s.cfg.Action == sql.ActionVersion {
+		version, dirty, err := s.migrator.Version()
 		if err != nil {
-			logger.Error(ctx, "Failed to migrate database: %s", err.Error())
+			logger.Error(ctx, "Failed to get database version: %s", err.Error())
 			return err
 		}
-	case configs.Down:
-		err = s.migrator.Rollback(ctx)
-		if err != nil {
-			logger.Error(ctx, "Failed to rollback database: %s", err.Error())
-			return err
-		}
-	case configs.Force:
-		err = s.migrator.Force(s.cfg.ForceVersion)
-		if err != nil {
-			logger.Error(ctx, "Failed to force migrate database: %s", err.Error())
-			return err
-		}
-	default:
-		logger.Error(ctx, "Unknown migration action: %s, Expected: %s | %s", s.cfg.Action, configs.Up, configs.Down)
+		logger.Info(ctx, "Database version: %d, dirty: %t", version, dirty)
+		return nil
+	}
+
+	err = s.migrator.Run(ctx)
+	if err != nil {
+		logger.Error(ctx, "Failed to migrate database: %s", err.Error())
+		return err
 	}
 	version, dirty, err := s.migrator.Version()
 	if err != nil {

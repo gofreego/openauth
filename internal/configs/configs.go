@@ -9,6 +9,7 @@ import (
 	"github.com/gofreego/goutils/api/debug"
 	"github.com/gofreego/goutils/configutils"
 	"github.com/gofreego/goutils/databases/connections/sql"
+	migrator "github.com/gofreego/goutils/databases/migrations/sql"
 	"github.com/gofreego/goutils/logger"
 )
 
@@ -21,26 +22,12 @@ type Configuration struct {
 	Repository   sql.Config         `yaml:"Repository"`
 	Service      service.Config     `yaml:"Service"`
 	Debug        debug.Config       `yaml:"Debug"`
-	SQLMigrator  SQLMigrator        `yaml:"SQLMigrator"`
+	Migrator     migrator.Config    `yaml:"Migrator"`
 }
 
 type Server struct {
 	GRPCPort int `yaml:"GRPCPort"`
 	HTTPPort int `yaml:"HTTPPort"`
-}
-
-type MigrationAction string
-
-const (
-	Up    MigrationAction = "up"
-	Down  MigrationAction = "down"
-	Force MigrationAction = "force"
-)
-
-type SQLMigrator struct {
-	Path         string          `yaml:"Path"`         // Path to the SQL migration files
-	Action       MigrationAction `yaml:"Action"`       // Migration action (up/down/force)
-	ForceVersion int             `yaml:"ForceVersion"` // Force version (optional)
 }
 
 func LoadConfig(ctx context.Context, path string, env string) *Configuration {
