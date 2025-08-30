@@ -53,7 +53,11 @@ func main() {
 
 	for _, app := range apps {
 		logger.Info(ctx, "Starting %s", app.Name())
-		go app.Run(ctx)
+		go func(app apputils.Application) {
+			if err := app.Run(ctx); err != nil {
+				logger.Panic(ctx, "Failed to run %s: %s", app.Name(), err.Error())
+			}
+		}(app)
 	}
 
 	apputils.GracefulShutdown(ctx, apps...)

@@ -38,3 +38,4 @@ Debug:
   EnablePprof: true
 SQLMigrator:
   Path: "./resources/migrations/postgresql"
+  Action: up

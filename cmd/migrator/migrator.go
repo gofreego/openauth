@@ -3,10 +3,12 @@ package migrator
 import (
 	"context"
 	std_sql "database/sql"
+	"fmt"
 
 	"github.com/gofreego/goutils/databases"
 	"github.com/gofreego/goutils/databases/connections/sql/pgsql"
 	"github.com/gofreego/goutils/databases/migrations/sql"
+	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/internal/configs"
 	"github.com/gofreego/openauth/internal/constants"
 )
@@ -15,6 +17,7 @@ import (
 
 type SQLMigrator struct {
 	migrator sql.Migrator
+	action   configs.MigrationAction
 }
 
 func NewSQLMigrator(cfg *configs.Configuration) *SQLMigrator {
@@ -27,14 +30,14 @@ func NewSQLMigrator(cfg *configs.Configuration) *SQLMigrator {
 			panic("failed to get Postgres connection, err:" + err.Error())
 		}
 	default:
-		panic("unsupported database for migration: " + string(cfg.Repository.Name))
+		panic(fmt.Sprintf("unsupported database for migration: %s, expected: %s", cfg.Repository.Name, databases.Postgres))
 	}
 
 	migrator, err := sql.NewMigrator(db, cfg.SQLMigrator.Path, cfg.Repository.Name)
 	if err != nil {
-		panic("failed to create SQL migrator, err:" + err.Error())
+		panic(fmt.Sprintf("failed to create SQL migrator, err: %s", err.Error()))
 	}
-	return &SQLMigrator{migrator: migrator}
+	return &SQLMigrator{migrator: migrator, action: cfg.SQLMigrator.Action}
 }
 
 // Name implements apputils.Application.
@@ -44,11 +47,31 @@ func (s *SQLMigrator) Name() string {
 
 // Run implements apputils.Application.
 func (s *SQLMigrator) Run(ctx context.Context) error {
-	// Execute database migrations
-	err := s.migrator.Migrate(ctx)
+	defer s.migrator.Close()
+
+	var err error
+	switch s.action {
+	case configs.Up:
+		err = s.migrator.Migrate(ctx)
+		if err != nil {
+			logger.Error(ctx, "Failed to migrate database: %s", err.Error())
+			return err
+		}
+	case configs.Down:
+		err = s.migrator.Rollback(ctx)
+		if err != nil {
+			logger.Error(ctx, "Failed to rollback database: %s", err.Error())
+			return err
+		}
+	default:
+		logger.Error(ctx, "Unknown migration action: %s, Expected: %s | %s", s.action, configs.Up, configs.Down)
+	}
+	version, dirty, err := s.migrator.Version()
 	if err != nil {
+		logger.Error(ctx, "Failed to get database version: %s", err.Error())
 		return err
 	}
+	logger.Info(ctx, "Database version: %d, dirty: %t", version, dirty)
 	return nil
 }
 
@@ -57,8 +80,6 @@ func (s *SQLMigrator) Shutdown(ctx context.Context) {
 	// Close the migrator connection
 	if err := s.migrator.Close(); err != nil {
 		// Log the error but don't panic during shutdown
-		// Using a simple print since we might not have logger context
-		// In a real scenario, you might want to use proper logging
-		println("Warning: failed to close migrator:", err.Error())
+		logger.Warn(ctx, "Warning: failed to close migrator: %s", err.Error())
 	}
 }

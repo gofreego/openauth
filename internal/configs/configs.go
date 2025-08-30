@@ -29,8 +29,16 @@ type Server struct {
 	HTTPPort int `yaml:"HTTPPort"`
 }
 
+type MigrationAction string
+
+const (
+	Up   MigrationAction = "up"
+	Down MigrationAction = "down"
+)
+
 type SQLMigrator struct {
-	Path string `yaml:"Path"` // Path to the SQL migration files
+	Path   string          `yaml:"Path"`   // Path to the SQL migration files
+	Action MigrationAction `yaml:"Action"` // Migration action (up/down)
 }
 
 func LoadConfig(ctx context.Context, path string, env string) *Configuration {
