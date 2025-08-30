@@ -18,7 +18,7 @@
   "paths": {
     "/openauth/v1/ping": {
       "get": {
-        "summary": "Ping is a simple GET request that returns a Pong message.",
+        "summary": "Ping is a simple GET request for checking if everything is okay",
         "operationId": "OpenAuth_Ping",
         "responses": {
           "200": {

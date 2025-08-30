@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OpenAuthClient interface {
-	// Ping is a simple GET request that returns a Pong message.
+	// Ping is a simple GET request for checking if everything is okay
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 }
 
@@ -52,7 +52,7 @@ func (c *openAuthClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc
 // All implementations must embed UnimplementedOpenAuthServer
 // for forward compatibility.
 type OpenAuthServer interface {
-	// Ping is a simple GET request that returns a Pong message.
+	// Ping is a simple GET request for checking if everything is okay
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	mustEmbedUnimplementedOpenAuthServer()
 }
