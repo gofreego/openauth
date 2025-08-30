@@ -58,7 +58,7 @@ func (s *SQLMigrator) Run(ctx context.Context) error {
 			logger.Error(ctx, "Failed to get database version: %s", err.Error())
 			return err
 		}
-		logger.Info(ctx, "Database version: %d, dirty: %t", version, dirty)
+		logger.Info(ctx, "Database version: %d, dirty: %t, press ctrl+c to exit", version, dirty)
 		return nil
 	}
 
@@ -73,6 +73,7 @@ func (s *SQLMigrator) Run(ctx context.Context) error {
 		return err
 	}
 	logger.Info(ctx, "Database version: %d, dirty: %t", version, dirty)
+	logger.Info(ctx, "✅ Database migration completed successfully, press ctrl+c to exit")
 	return nil
 }
 
