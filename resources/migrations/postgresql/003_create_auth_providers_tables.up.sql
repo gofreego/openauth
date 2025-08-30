@@ -1,0 +1,48 @@
+-- Create authentication providers table for OAuth and external providers
+CREATE TABLE auth_providers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL UNIQUE, -- google, facebook, github, etc.
+    display_name VARCHAR(255) NOT NULL,
+    client_id VARCHAR(500),
+    client_secret VARCHAR(500),
+    auth_url VARCHAR(500),
+    token_url VARCHAR(500),
+    user_info_url VARCHAR(500),
+    scope VARCHAR(500),
+    is_enabled BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create user external accounts table for linking users with external providers
+CREATE TABLE user_external_accounts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider_id UUID NOT NULL REFERENCES auth_providers(id) ON DELETE CASCADE,
+    external_user_id VARCHAR(255) NOT NULL, -- ID from external provider
+    external_username VARCHAR(255),
+    external_email VARCHAR(255),
+    access_token TEXT,
+    refresh_token TEXT,
+    token_expires_at TIMESTAMP WITH TIME ZONE,
+    external_data JSONB, -- Store additional data from provider
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(provider_id, external_user_id)
+);
+
+-- Create indexes
+CREATE INDEX idx_auth_providers_name ON auth_providers(name);
+CREATE INDEX idx_auth_providers_enabled ON auth_providers(is_enabled);
+CREATE INDEX idx_user_external_accounts_user_id ON user_external_accounts(user_id);
+CREATE INDEX idx_user_external_accounts_provider_id ON user_external_accounts(provider_id);
+CREATE INDEX idx_user_external_accounts_external_user_id ON user_external_accounts(external_user_id);
+
+-- Add triggers
+CREATE TRIGGER update_auth_providers_updated_at 
+    BEFORE UPDATE ON auth_providers 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_user_external_accounts_updated_at 
+    BEFORE UPDATE ON user_external_accounts 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
