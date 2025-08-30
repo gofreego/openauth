@@ -10,20 +10,31 @@ ConfigReader:
     Address: ""
     Token: ""
     Path: ""
-  Zookeeper:
-    Address: ""
-    Path: ""
-    Username: ""
-    Password: ""
 AppNames:
-- HTTP_SERVER
-- GRPC_SERVER
+- SQL_MIGRATOR
+# - HTTP_SERVER
+# - GRPC_SERVER
 Server:
   GRPCPort: 8086
   HTTPPort: 8085
 Repository:
-  Name : memory
+  Name: Postgres
+  Postgres:
+    primary:
+      Host: "localhost"
+      Port: 5432
+      Username: "admin"
+      Password: OSwfiTlc1r5W7Z
+      DBName: openauth
+      SSLMode: "disable"
+      MaxOpenConns: 0
+      MaxIdleConns: 0
+      ConnMaxLifetime: 0s
+      ConnMaxIdleTime: 0s
+    replica: []
 Service: {}
 Debug:
   Enabled: true
   EnablePprof: true
+SQLMigrator:
+  Path: "./resources/migrations/postgresql"

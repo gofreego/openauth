@@ -4,6 +4,8 @@ import (
 	"context"
 	std_sql "database/sql"
 
+	"github.com/gofreego/goutils/databases"
+	"github.com/gofreego/goutils/databases/connections/sql/pgsql"
 	"github.com/gofreego/goutils/databases/migrations/sql"
 	"github.com/gofreego/openauth/internal/configs"
 	"github.com/gofreego/openauth/internal/constants"
@@ -17,6 +19,16 @@ type SQLMigrator struct {
 
 func NewSQLMigrator(cfg *configs.Configuration) *SQLMigrator {
 	var db *std_sql.DB
+	var err error
+	switch cfg.Repository.Name {
+	case databases.Postgres:
+		db, err = pgsql.GetConnection(&cfg.Repository.Postgres.Primary)
+		if err != nil {
+			panic("failed to get Postgres connection, err:" + err.Error())
+		}
+	default:
+		panic("unsupported database for migration: " + string(cfg.Repository.Name))
+	}
 
 	migrator, err := sql.NewMigrator(db, cfg.SQLMigrator.Path, cfg.Repository.Name)
 	if err != nil {
