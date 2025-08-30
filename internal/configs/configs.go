@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	repo "github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
 
 	"github.com/gofreego/goutils/api/debug"
 	"github.com/gofreego/goutils/configutils"
+	"github.com/gofreego/goutils/databases/connections/sql"
 	"github.com/gofreego/goutils/logger"
 )
 
@@ -18,14 +18,19 @@ type Configuration struct {
 	ConfigReader configutils.Config `yaml:"ConfigReader"`
 	AppNames     []string           `yaml:"AppNames"`
 	Server       Server             `yaml:"Server" `
-	Repository   repo.Config        `yaml:"Repository"`
+	Repository   sql.Config         `yaml:"Repository"`
 	Service      service.Config     `yaml:"Service"`
 	Debug        debug.Config       `yaml:"Debug"`
+	SQLMigrator  SQLMigrator        `yaml:"SQLMigrator"`
 }
 
 type Server struct {
 	GRPCPort int `yaml:"GRPCPort"`
 	HTTPPort int `yaml:"HTTPPort"`
+}
+
+type SQLMigrator struct {
+	Path string `yaml:"Path"` // Path to the SQL migration files
 }
 
 func LoadConfig(ctx context.Context, path string, env string) *Configuration {

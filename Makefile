@@ -31,3 +31,6 @@ install:
 setup:
 	sh ./api/protoc.sh
 	go mod tidy
+
+migrate:
+	go run main.go -app=SQL_MIGRATOR
