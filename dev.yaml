@@ -37,5 +37,6 @@ Debug:
   Enabled: true
   EnablePprof: true
 SQLMigrator:
-  Path: "./resources/migrations/postgresql"
-  Action: up
+  Path: "./resources/migrations/postgresql" # Path to the SQL migration files
+  Action: down # Migration action (up/down/force)
+  ForceVersion: 10 # Force version (optional)

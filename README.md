@@ -1,1 +1,3 @@
-# GO-BASE-SERVICE
+# OpenAuth
+
+## How to fix dirty migration?

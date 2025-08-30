@@ -32,13 +32,15 @@ type Server struct {
 type MigrationAction string
 
 const (
-	Up   MigrationAction = "up"
-	Down MigrationAction = "down"
+	Up    MigrationAction = "up"
+	Down  MigrationAction = "down"
+	Force MigrationAction = "force"
 )
 
 type SQLMigrator struct {
-	Path   string          `yaml:"Path"`   // Path to the SQL migration files
-	Action MigrationAction `yaml:"Action"` // Migration action (up/down)
+	Path         string          `yaml:"Path"`         // Path to the SQL migration files
+	Action       MigrationAction `yaml:"Action"`       // Migration action (up/down/force)
+	ForceVersion int             `yaml:"ForceVersion"` // Force version (optional)
 }
 
 func LoadConfig(ctx context.Context, path string, env string) *Configuration {

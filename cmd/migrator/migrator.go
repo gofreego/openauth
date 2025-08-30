@@ -17,7 +17,7 @@ import (
 
 type SQLMigrator struct {
 	migrator sql.Migrator
-	action   configs.MigrationAction
+	cfg      configs.SQLMigrator
 }
 
 func NewSQLMigrator(cfg *configs.Configuration) *SQLMigrator {
@@ -37,7 +37,7 @@ func NewSQLMigrator(cfg *configs.Configuration) *SQLMigrator {
 	if err != nil {
 		panic(fmt.Sprintf("failed to create SQL migrator, err: %s", err.Error()))
 	}
-	return &SQLMigrator{migrator: migrator, action: cfg.SQLMigrator.Action}
+	return &SQLMigrator{migrator: migrator, cfg: cfg.SQLMigrator}
 }
 
 // Name implements apputils.Application.
@@ -50,7 +50,7 @@ func (s *SQLMigrator) Run(ctx context.Context) error {
 	defer s.migrator.Close()
 
 	var err error
-	switch s.action {
+	switch s.cfg.Action {
 	case configs.Up:
 		err = s.migrator.Migrate(ctx)
 		if err != nil {
@@ -63,8 +63,14 @@ func (s *SQLMigrator) Run(ctx context.Context) error {
 			logger.Error(ctx, "Failed to rollback database: %s", err.Error())
 			return err
 		}
+	case configs.Force:
+		err = s.migrator.Force(s.cfg.ForceVersion)
+		if err != nil {
+			logger.Error(ctx, "Failed to force migrate database: %s", err.Error())
+			return err
+		}
 	default:
-		logger.Error(ctx, "Unknown migration action: %s, Expected: %s | %s", s.action, configs.Up, configs.Down)
+		logger.Error(ctx, "Unknown migration action: %s, Expected: %s | %s", s.cfg.Action, configs.Up, configs.Down)
 	}
 	version, dirty, err := s.migrator.Version()
 	if err != nil {
