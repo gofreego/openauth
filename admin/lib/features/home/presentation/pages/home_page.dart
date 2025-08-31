@@ -5,7 +5,7 @@ import '../../../../core/bloc/app_state.dart';
 import '../widgets/admin_sidebar.dart';
 import '../../../dashboard/dashboard.dart';
 import '../../../users/users.dart';
-import 'permissions_page.dart';
+import '../../../permissions/permissions.dart';
 import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
