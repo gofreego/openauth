@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_event.dart';
-import '../../../../features/auth/presentation/widgets/auth_session_info.dart';
+import 'compact_user_profile.dart';
 import '../../../../shared/shared.dart';
 
 enum NavigationSection {
@@ -12,6 +12,7 @@ enum NavigationSection {
   groups,
   sessions,
   settings,
+  profile,
 }
 
 class AdminSidebar extends StatelessWidget {
@@ -52,7 +53,7 @@ class AdminSidebar extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'OpenAuth\nAdmin',
+                    'OpenAuth Admin',
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -149,18 +150,9 @@ class AdminSidebar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                  child: Text(
-                    'LOGIN DETAILS',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
+                CompactUserProfile(
+                  onTap: () => onSectionChanged(NavigationSection.profile),
                 ),
-                const AuthSessionInfo(),
                 const SizedBox(height: 16),
                 
                 // Sign out button

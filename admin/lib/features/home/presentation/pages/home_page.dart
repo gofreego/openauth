@@ -6,6 +6,7 @@ import '../widgets/admin_sidebar.dart';
 import 'dashboard_page.dart';
 import 'users_page.dart';
 import 'permissions_page.dart';
+import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.initialSection});
@@ -39,6 +40,9 @@ class _HomePageState extends State<HomePage> {
           break;
         case 'settings':
           _currentSection = NavigationSection.settings;
+          break;
+        case 'profile':
+          _currentSection = NavigationSection.profile;
           break;
         default:
           _currentSection = NavigationSection.dashboard;
@@ -95,6 +99,8 @@ class _HomePageState extends State<HomePage> {
         return _buildComingSoonPage('Sessions', Icons.access_time);
       case NavigationSection.settings:
         return _buildComingSoonPage('Settings', Icons.settings);
+      case NavigationSection.profile:
+        return const ProfilePage();
     }
   }
 
