@@ -1,6 +1,9 @@
 package dao
 
-import "github.com/google/uuid"
+import (
+	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/google/uuid"
+)
 
 // Permissions table
 type Permission struct {
@@ -13,6 +16,26 @@ type Permission struct {
 	IsSystem    bool    `db:"is_system" json:"isSystem"` // system permissions cannot be deleted
 	CreatedAt   int64   `db:"created_at" json:"createdAt"`
 	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
+}
+
+// ToProto converts a Permission DAO to protobuf Permission
+func (p *Permission) ToProto() *openauth_v1.Permission {
+	proto := &openauth_v1.Permission{
+		Id:          p.ID,
+		Name:        p.Name,
+		DisplayName: p.DisplayName,
+		Resource:    p.Resource,
+		Action:      p.Action,
+		IsSystem:    p.IsSystem,
+		CreatedAt:   p.CreatedAt,
+		UpdatedAt:   p.UpdatedAt,
+	}
+
+	if p.Description != nil {
+		proto.Description = p.Description
+	}
+
+	return proto
 }
 
 // Groups (roles) table

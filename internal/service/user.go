@@ -133,8 +133,8 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	}
 
 	return &openauth_v1.SignUpResponse{
-		User:                      s.convertUserToProto(createdUser),
-		Profile:                   s.convertProfileToProto(createdProfile),
+		User:                      createdUser.ToProto(),
+		Profile:                   createdProfile.ToProto(),
 		Message:                   "User created successfully",
 		EmailVerificationRequired: emailVerificationRequired,
 		PhoneVerificationRequired: phoneVerificationRequired,
@@ -344,14 +344,14 @@ func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) 
 	}
 
 	response := &openauth_v1.GetUserResponse{
-		User: s.convertUserToProto(user),
+		User: user.ToProto(),
 	}
 
 	// Include profile if requested
 	if req.IncludeProfile {
 		profile, err := s.repo.GetUserProfile(ctx, user.ID)
 		if err == nil {
-			response.Profile = s.convertProfileToProto(profile)
+			response.Profile = profile.ToProto()
 		}
 	}
 
@@ -452,8 +452,8 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 	}
 
 	return &openauth_v1.UpdateUserResponse{
-		User:    s.convertUserToProto(updatedUser),
-		Profile: s.convertProfileToProto(updatedProfile),
+		User:    updatedUser.ToProto(),
+		Profile: updatedProfile.ToProto(),
 	}, nil
 }
 
@@ -547,7 +547,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	// Convert to proto
 	protoUsers := make([]*openauth_v1.User, len(users))
 	for i, user := range users {
-		protoUsers[i] = s.convertUserToProto(user)
+		protoUsers[i] = user.ToProto()
 	}
 
 	return &openauth_v1.ListUsersResponse{
@@ -675,54 +675,4 @@ func (s *Service) generateUsernameSuggestions(username string) []string {
 	}
 
 	return suggestions
-}
-
-func (s *Service) convertUserToProto(user *dao.User) *openauth_v1.User {
-	return &openauth_v1.User{
-		Id:                  user.ID,
-		Uuid:                user.UUID.String(),
-		Username:            user.Username,
-		Email:               user.Email,
-		Phone:               user.Phone,
-		EmailVerified:       user.EmailVerified,
-		PhoneVerified:       user.PhoneVerified,
-		IsActive:            user.IsActive,
-		IsLocked:            user.IsLocked,
-		FailedLoginAttempts: int32(user.FailedLoginCount),
-		LastLoginAt:         user.LastLoginAt,
-		PasswordChangedAt:   user.PasswordChangedAt,
-		CreatedAt:           user.CreatedAt,
-		UpdatedAt:           user.UpdatedAt,
-	}
-}
-
-func (s *Service) convertProfileToProto(profile *dao.Profile) *openauth_v1.UserProfile {
-	var dateOfBirth *int64
-	if profile.DateOfBirth != nil {
-		timestamp := profile.DateOfBirth.Unix()
-		dateOfBirth = &timestamp
-	}
-
-	return &openauth_v1.UserProfile{
-		Id:          profile.ID,
-		Uuid:        profile.UUID.String(),
-		UserId:      profile.UserID,
-		FirstName:   profile.FirstName,
-		LastName:    profile.LastName,
-		DisplayName: profile.DisplayName,
-		Bio:         profile.Bio,
-		AvatarUrl:   profile.AvatarURL,
-		DateOfBirth: dateOfBirth,
-		Gender:      profile.Gender,
-		Timezone:    profile.Timezone,
-		Locale:      profile.Locale,
-		Country:     profile.Country,
-		City:        profile.City,
-		Address:     profile.Address,
-		PostalCode:  profile.PostalCode,
-		WebsiteUrl:  profile.WebsiteURL,
-		Metadata:    profile.Metadata,
-		CreatedAt:   profile.CreatedAt,
-		UpdatedAt:   profile.UpdatedAt,
-	}
 }

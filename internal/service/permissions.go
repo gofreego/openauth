@@ -58,7 +58,7 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	}
 
 	// Convert to proto response
-	return daoPermissionToProto(createdPermission), nil
+	return createdPermission.ToProto(), nil
 }
 
 // GetPermission retrieves a permission by ID
@@ -75,7 +75,7 @@ func (s *Service) GetPermission(ctx context.Context, req *openauth_v1.GetPermiss
 		return nil, status.Error(codes.NotFound, "permission not found")
 	}
 
-	return daoPermissionToProto(permission), nil
+	return permission.ToProto(), nil
 }
 
 // ListPermissions retrieves permissions with filtering and pagination
@@ -125,7 +125,7 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 	// Convert to proto response
 	protoPermissions := make([]*openauth_v1.Permission, len(permissions))
 	for i, p := range permissions {
-		protoPermissions[i] = daoPermissionToProto(p)
+		protoPermissions[i] = p.ToProto()
 	}
 
 	hasMore := offset+int32(len(permissions)) < totalCount
@@ -208,7 +208,7 @@ func (s *Service) UpdatePermission(ctx context.Context, req *openauth_v1.UpdateP
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update permission: %v", err))
 	}
 
-	return daoPermissionToProto(updatedPermission), nil
+	return updatedPermission.ToProto(), nil
 }
 
 // DeletePermission deletes a permission
@@ -241,24 +241,4 @@ func (s *Service) DeletePermission(ctx context.Context, req *openauth_v1.DeleteP
 		Success: true,
 		Message: "Permission deleted successfully",
 	}, nil
-}
-
-// Helper function to convert DAO permission to proto permission
-func daoPermissionToProto(permission *dao.Permission) *openauth_v1.Permission {
-	proto := &openauth_v1.Permission{
-		Id:          permission.ID,
-		Name:        permission.Name,
-		DisplayName: permission.DisplayName,
-		Resource:    permission.Resource,
-		Action:      permission.Action,
-		IsSystem:    permission.IsSystem,
-		CreatedAt:   permission.CreatedAt,
-		UpdatedAt:   permission.UpdatedAt,
-	}
-
-	if permission.Description != nil {
-		proto.Description = permission.Description
-	}
-
-	return proto
 }

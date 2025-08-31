@@ -3,6 +3,7 @@ package dao
 import (
 	"time"
 
+	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/google/uuid"
 )
 
@@ -45,4 +46,56 @@ type Profile struct {
 	Metadata    []byte     `db:"metadata" json:"metadata,omitempty"` // JSONB as raw bytes
 	CreatedAt   int64      `db:"created_at" json:"createdAt"`
 	UpdatedAt   int64      `db:"updated_at" json:"updatedAt"`
+}
+
+// ToProto converts a User DAO to protobuf User
+func (u *User) ToProto() *openauth_v1.User {
+	return &openauth_v1.User{
+		Id:                  u.ID,
+		Uuid:                u.UUID.String(),
+		Username:            u.Username,
+		Email:               u.Email,
+		Phone:               u.Phone,
+		EmailVerified:       u.EmailVerified,
+		PhoneVerified:       u.PhoneVerified,
+		IsActive:            u.IsActive,
+		IsLocked:            u.IsLocked,
+		FailedLoginAttempts: int32(u.FailedLoginCount),
+		LastLoginAt:         u.LastLoginAt,
+		PasswordChangedAt:   u.PasswordChangedAt,
+		CreatedAt:           u.CreatedAt,
+		UpdatedAt:           u.UpdatedAt,
+	}
+}
+
+// ToProto converts a Profile DAO to protobuf UserProfile
+func (p *Profile) ToProto() *openauth_v1.UserProfile {
+	var dateOfBirth *int64
+	if p.DateOfBirth != nil {
+		timestamp := p.DateOfBirth.Unix()
+		dateOfBirth = &timestamp
+	}
+
+	return &openauth_v1.UserProfile{
+		Id:          p.ID,
+		Uuid:        p.UUID.String(),
+		UserId:      p.UserID,
+		FirstName:   p.FirstName,
+		LastName:    p.LastName,
+		DisplayName: p.DisplayName,
+		Bio:         p.Bio,
+		AvatarUrl:   p.AvatarURL,
+		DateOfBirth: dateOfBirth,
+		Gender:      p.Gender,
+		Timezone:    p.Timezone,
+		Locale:      p.Locale,
+		Country:     p.Country,
+		City:        p.City,
+		Address:     p.Address,
+		PostalCode:  p.PostalCode,
+		WebsiteUrl:  p.WebsiteURL,
+		Metadata:    p.Metadata,
+		CreatedAt:   p.CreatedAt,
+		UpdatedAt:   p.UpdatedAt,
+	}
 }
