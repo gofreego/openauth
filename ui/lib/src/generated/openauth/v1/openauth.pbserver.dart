@@ -18,6 +18,7 @@ import 'package:protobuf/protobuf.dart' as $pb;
 import '../../common/ping.pb.dart' as $0;
 import 'openauth.pbjson.dart';
 import 'permissions.pb.dart' as $1;
+import 'users.pb.dart' as $2;
 
 export 'openauth.pb.dart';
 
@@ -34,6 +35,28 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.UpdatePermissionRequest request);
   $async.Future<$1.DeletePermissionResponse> deletePermission(
       $pb.ServerContext ctx, $1.DeletePermissionRequest request);
+  $async.Future<$2.SignUpResponse> signUp(
+      $pb.ServerContext ctx, $2.SignUpRequest request);
+  $async.Future<$2.VerificationResponse> verifyEmail(
+      $pb.ServerContext ctx, $2.VerifyEmailRequest request);
+  $async.Future<$2.VerificationResponse> verifyPhone(
+      $pb.ServerContext ctx, $2.VerifyPhoneRequest request);
+  $async.Future<$2.ResendVerificationResponse> resendVerification(
+      $pb.ServerContext ctx, $2.ResendVerificationRequest request);
+  $async.Future<$2.CheckUsernameResponse> checkUsername(
+      $pb.ServerContext ctx, $2.CheckUsernameRequest request);
+  $async.Future<$2.CheckEmailResponse> checkEmail(
+      $pb.ServerContext ctx, $2.CheckEmailRequest request);
+  $async.Future<$2.GetUserResponse> getUser(
+      $pb.ServerContext ctx, $2.GetUserRequest request);
+  $async.Future<$2.UpdateUserResponse> updateUser(
+      $pb.ServerContext ctx, $2.UpdateUserRequest request);
+  $async.Future<$2.ChangePasswordResponse> changePassword(
+      $pb.ServerContext ctx, $2.ChangePasswordRequest request);
+  $async.Future<$2.ListUsersResponse> listUsers(
+      $pb.ServerContext ctx, $2.ListUsersRequest request);
+  $async.Future<$2.DeleteUserResponse> deleteUser(
+      $pb.ServerContext ctx, $2.DeleteUserRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -49,6 +72,28 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
         return $1.UpdatePermissionRequest();
       case 'DeletePermission':
         return $1.DeletePermissionRequest();
+      case 'SignUp':
+        return $2.SignUpRequest();
+      case 'VerifyEmail':
+        return $2.VerifyEmailRequest();
+      case 'VerifyPhone':
+        return $2.VerifyPhoneRequest();
+      case 'ResendVerification':
+        return $2.ResendVerificationRequest();
+      case 'CheckUsername':
+        return $2.CheckUsernameRequest();
+      case 'CheckEmail':
+        return $2.CheckEmailRequest();
+      case 'GetUser':
+        return $2.GetUserRequest();
+      case 'UpdateUser':
+        return $2.UpdateUserRequest();
+      case 'ChangePassword':
+        return $2.ChangePasswordRequest();
+      case 'ListUsers':
+        return $2.ListUsersRequest();
+      case 'DeleteUser':
+        return $2.DeleteUserRequest();
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -69,6 +114,28 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
         return updatePermission(ctx, request as $1.UpdatePermissionRequest);
       case 'DeletePermission':
         return deletePermission(ctx, request as $1.DeletePermissionRequest);
+      case 'SignUp':
+        return signUp(ctx, request as $2.SignUpRequest);
+      case 'VerifyEmail':
+        return verifyEmail(ctx, request as $2.VerifyEmailRequest);
+      case 'VerifyPhone':
+        return verifyPhone(ctx, request as $2.VerifyPhoneRequest);
+      case 'ResendVerification':
+        return resendVerification(ctx, request as $2.ResendVerificationRequest);
+      case 'CheckUsername':
+        return checkUsername(ctx, request as $2.CheckUsernameRequest);
+      case 'CheckEmail':
+        return checkEmail(ctx, request as $2.CheckEmailRequest);
+      case 'GetUser':
+        return getUser(ctx, request as $2.GetUserRequest);
+      case 'UpdateUser':
+        return updateUser(ctx, request as $2.UpdateUserRequest);
+      case 'ChangePassword':
+        return changePassword(ctx, request as $2.ChangePasswordRequest);
+      case 'ListUsers':
+        return listUsers(ctx, request as $2.ListUsersRequest);
+      case 'DeleteUser':
+        return deleteUser(ctx, request as $2.DeleteUserRequest);
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }

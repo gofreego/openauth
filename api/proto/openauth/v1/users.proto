@@ -1,0 +1,217 @@
+syntax = "proto3";
+package v1;
+
+option go_package = "./openauth_v1";
+
+// User represents a user account in the system
+message User {
+    int64 id = 1;
+    string uuid = 2;
+    string username = 3;
+    optional string email = 4;
+    optional string phone = 5;
+    bool email_verified = 6;
+    bool phone_verified = 7;
+    bool is_active = 8;
+    bool is_locked = 9;
+    int32 failed_login_attempts = 10;
+    optional int64 last_login_at = 11;
+    int64 password_changed_at = 12;
+    int64 created_at = 13;
+    int64 updated_at = 14;
+}
+
+// UserProfile represents extended user profile information
+message UserProfile {
+    int64 id = 1;
+    string uuid = 2;
+    int64 user_id = 3;
+    optional string first_name = 4;
+    optional string last_name = 5;
+    optional string display_name = 6;
+    optional string bio = 7;
+    optional string avatar_url = 8;
+    optional int64 date_of_birth = 9;  // Unix timestamp
+    optional string gender = 10;
+    optional string timezone = 11;
+    optional string locale = 12;
+    optional string country = 13;
+    optional string city = 14;
+    optional string address = 15;
+    optional string postal_code = 16;
+    optional string website_url = 17;
+    bytes metadata = 18;  // JSON metadata
+    int64 created_at = 19;
+    int64 updated_at = 20;
+}
+
+// SignUpRequest for user registration
+message SignUpRequest {
+    string username = 1;
+    optional string email = 2;
+    optional string phone = 3;
+    string password = 4;
+    
+    // Optional profile information
+    optional string first_name = 5;
+    optional string last_name = 6;
+    optional string display_name = 7;
+    optional string timezone = 8;
+    optional string locale = 9;
+    optional string country = 10;
+}
+
+// SignUpResponse after successful registration
+message SignUpResponse {
+    User user = 1;
+    UserProfile profile = 2;
+    string message = 3;
+    bool email_verification_required = 4;
+    bool phone_verification_required = 5;
+}
+
+// VerifyEmailRequest for email verification
+message VerifyEmailRequest {
+    string email = 1;
+    string verification_code = 2;
+}
+
+// VerifyPhoneRequest for phone verification
+message VerifyPhoneRequest {
+    string phone = 1;
+    string verification_code = 2;
+}
+
+// VerificationResponse for verification operations
+message VerificationResponse {
+    bool verified = 1;
+    string message = 2;
+}
+
+// ResendVerificationRequest to resend verification codes
+message ResendVerificationRequest {
+    string identifier = 1;  // email or phone
+    string type = 2;         // "email" or "phone"
+}
+
+// ResendVerificationResponse
+message ResendVerificationResponse {
+    bool sent = 1;
+    string message = 2;
+    int64 expires_at = 3;  // When the code expires
+}
+
+// CheckUsernameRequest to check username availability
+message CheckUsernameRequest {
+    string username = 1;
+}
+
+// CheckUsernameResponse
+message CheckUsernameResponse {
+    bool available = 1;
+    string message = 2;
+    repeated string suggestions = 3;  // Alternative username suggestions if not available
+}
+
+// CheckEmailRequest to check email availability
+message CheckEmailRequest {
+    string email = 1;
+}
+
+// CheckEmailResponse
+message CheckEmailResponse {
+    bool available = 1;
+    string message = 2;
+}
+
+// GetUserRequest to get user by ID or username
+message GetUserRequest {
+    oneof identifier {
+        int64 id = 1;
+        string uuid = 2;
+        string username = 3;
+        string email = 4;
+    }
+    bool include_profile = 5;  // Whether to include profile information
+}
+
+// GetUserResponse
+message GetUserResponse {
+    User user = 1;
+    optional UserProfile profile = 2;
+}
+
+// UpdateUserRequest to update user information
+message UpdateUserRequest {
+    string uuid = 1;
+    optional string username = 2;
+    optional string email = 3;
+    optional string phone = 4;
+    optional bool is_active = 5;
+    
+    // Profile updates
+    optional string first_name = 6;
+    optional string last_name = 7;
+    optional string display_name = 8;
+    optional string bio = 9;
+    optional string avatar_url = 10;
+    optional string timezone = 11;
+    optional string locale = 12;
+    optional string country = 13;
+    optional string city = 14;
+    optional string address = 15;
+    optional string postal_code = 16;
+    optional string website_url = 17;
+}
+
+// UpdateUserResponse
+message UpdateUserResponse {
+    User user = 1;
+    UserProfile profile = 2;
+}
+
+// ChangePasswordRequest to change user password
+message ChangePasswordRequest {
+    string uuid = 1;
+    string current_password = 2;
+    string new_password = 3;
+}
+
+// ChangePasswordResponse
+message ChangePasswordResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// ListUsersRequest for listing users with pagination and filtering
+message ListUsersRequest {
+    int32 limit = 1;
+    int32 offset = 2;
+    optional string search = 3;        // Search in username, email, first_name, last_name
+    optional bool is_active = 4;       // Filter by active status
+    optional bool email_verified = 5;  // Filter by email verification status
+    optional bool phone_verified = 6;  // Filter by phone verification status
+    optional string sort_by = 7;       // Sort by field (username, email, created_at, etc.)
+    optional string sort_order = 8;    // asc or desc
+}
+
+// ListUsersResponse
+message ListUsersResponse {
+    repeated User users = 1;
+    int32 total_count = 2;
+    int32 limit = 3;
+    int32 offset = 4;
+    bool has_more = 5;
+}
+
+// DeleteUserRequest to delete/deactivate user
+message DeleteUserRequest {
+    string uuid = 1;
+    bool soft_delete = 2;  // If true, just deactivate; if false, hard delete
+}
+
+// DeleteUserResponse
+message DeleteUserResponse {
+    bool success = 1;
+    string message = 2;
+}

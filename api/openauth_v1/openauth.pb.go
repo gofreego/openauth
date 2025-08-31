@@ -25,45 +25,102 @@ var File_proto_openauth_v1_openauth_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\n" +
-	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17proto/common/ping.proto\x1a#proto/openauth/v1/permissions.proto2\xe7\x04\n" +
+	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17proto/common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto2\xf9\r\n" +
 	"\bOpenAuth\x12D\n" +
 	"\x04Ping\x12\x0f.v1.PingRequest\x1a\x10.v1.PingResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/ping\x12d\n" +
 	"\x10CreatePermission\x12\x1b.v1.CreatePermissionRequest\x1a\x0e.v1.Permission\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/permissions\x12`\n" +
 	"\rGetPermission\x12\x18.v1.GetPermissionRequest\x1a\x0e.v1.Permission\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/openauth/v1/permissions/{id}\x12l\n" +
 	"\x0fListPermissions\x12\x1a.v1.ListPermissionsRequest\x1a\x1b.v1.ListPermissionsResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/openauth/v1/permissions\x12i\n" +
 	"\x10UpdatePermission\x12\x1b.v1.UpdatePermissionRequest\x1a\x0e.v1.Permission\"(\x82\xd3\xe4\x93\x02\":\x01*\x1a\x1d/openauth/v1/permissions/{id}\x12t\n" +
-	"\x10DeletePermission\x12\x1b.v1.DeletePermissionRequest\x1a\x1c.v1.DeletePermissionResponse\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/openauth/v1/permissions/{id}B\x0fZ\r./openauth_v1b\x06proto3"
+	"\x10DeletePermission\x12\x1b.v1.DeletePermissionRequest\x1a\x1c.v1.DeletePermissionResponse\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/openauth/v1/permissions/{id}\x12U\n" +
+	"\x06SignUp\x12\x11.v1.SignUpRequest\x1a\x12.v1.SignUpResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/openauth/v1/users/signup\x12k\n" +
+	"\vVerifyEmail\x12\x16.v1.VerifyEmailRequest\x1a\x18.v1.VerificationResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/openauth/v1/users/verify-email\x12k\n" +
+	"\vVerifyPhone\x12\x16.v1.VerifyPhoneRequest\x1a\x18.v1.VerificationResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/openauth/v1/users/verify-phone\x12\x86\x01\n" +
+	"\x12ResendVerification\x12\x1d.v1.ResendVerificationRequest\x1a\x1e.v1.ResendVerificationResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/openauth/v1/users/resend-verification\x12z\n" +
+	"\rCheckUsername\x12\x18.v1.CheckUsernameRequest\x1a\x19.v1.CheckUsernameResponse\"4\x82\xd3\xe4\x93\x02.\x12,/openauth/v1/users/check-username/{username}\x12k\n" +
+	"\n" +
+	"CheckEmail\x12\x15.v1.CheckEmailRequest\x1a\x16.v1.CheckEmailResponse\".\x82\xd3\xe4\x93\x02(\x12&/openauth/v1/users/check-email/{email}\x12U\n" +
+	"\aGetUser\x12\x12.v1.GetUserRequest\x1a\x13.v1.GetUserResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/openauth/v1/users/{uuid}\x12a\n" +
+	"\n" +
+	"UpdateUser\x12\x15.v1.UpdateUserRequest\x1a\x16.v1.UpdateUserResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/openauth/v1/users/{uuid}\x12}\n" +
+	"\x0eChangePassword\x12\x19.v1.ChangePasswordRequest\x1a\x1a.v1.ChangePasswordResponse\"4\x82\xd3\xe4\x93\x02.:\x01*\")/openauth/v1/users/{uuid}/change-password\x12T\n" +
+	"\tListUsers\x12\x14.v1.ListUsersRequest\x1a\x15.v1.ListUsersResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/openauth/v1/users\x12^\n" +
+	"\n" +
+	"DeleteUser\x12\x15.v1.DeleteUserRequest\x1a\x16.v1.DeleteUserResponse\"!\x82\xd3\xe4\x93\x02\x1b*\x19/openauth/v1/users/{uuid}B\x0fZ\r./openauth_v1b\x06proto3"
 
 var file_proto_openauth_v1_openauth_proto_goTypes = []any{
-	(*PingRequest)(nil),              // 0: v1.PingRequest
-	(*CreatePermissionRequest)(nil),  // 1: v1.CreatePermissionRequest
-	(*GetPermissionRequest)(nil),     // 2: v1.GetPermissionRequest
-	(*ListPermissionsRequest)(nil),   // 3: v1.ListPermissionsRequest
-	(*UpdatePermissionRequest)(nil),  // 4: v1.UpdatePermissionRequest
-	(*DeletePermissionRequest)(nil),  // 5: v1.DeletePermissionRequest
-	(*PingResponse)(nil),             // 6: v1.PingResponse
-	(*Permission)(nil),               // 7: v1.Permission
-	(*ListPermissionsResponse)(nil),  // 8: v1.ListPermissionsResponse
-	(*DeletePermissionResponse)(nil), // 9: v1.DeletePermissionResponse
+	(*PingRequest)(nil),                // 0: v1.PingRequest
+	(*CreatePermissionRequest)(nil),    // 1: v1.CreatePermissionRequest
+	(*GetPermissionRequest)(nil),       // 2: v1.GetPermissionRequest
+	(*ListPermissionsRequest)(nil),     // 3: v1.ListPermissionsRequest
+	(*UpdatePermissionRequest)(nil),    // 4: v1.UpdatePermissionRequest
+	(*DeletePermissionRequest)(nil),    // 5: v1.DeletePermissionRequest
+	(*SignUpRequest)(nil),              // 6: v1.SignUpRequest
+	(*VerifyEmailRequest)(nil),         // 7: v1.VerifyEmailRequest
+	(*VerifyPhoneRequest)(nil),         // 8: v1.VerifyPhoneRequest
+	(*ResendVerificationRequest)(nil),  // 9: v1.ResendVerificationRequest
+	(*CheckUsernameRequest)(nil),       // 10: v1.CheckUsernameRequest
+	(*CheckEmailRequest)(nil),          // 11: v1.CheckEmailRequest
+	(*GetUserRequest)(nil),             // 12: v1.GetUserRequest
+	(*UpdateUserRequest)(nil),          // 13: v1.UpdateUserRequest
+	(*ChangePasswordRequest)(nil),      // 14: v1.ChangePasswordRequest
+	(*ListUsersRequest)(nil),           // 15: v1.ListUsersRequest
+	(*DeleteUserRequest)(nil),          // 16: v1.DeleteUserRequest
+	(*PingResponse)(nil),               // 17: v1.PingResponse
+	(*Permission)(nil),                 // 18: v1.Permission
+	(*ListPermissionsResponse)(nil),    // 19: v1.ListPermissionsResponse
+	(*DeletePermissionResponse)(nil),   // 20: v1.DeletePermissionResponse
+	(*SignUpResponse)(nil),             // 21: v1.SignUpResponse
+	(*VerificationResponse)(nil),       // 22: v1.VerificationResponse
+	(*ResendVerificationResponse)(nil), // 23: v1.ResendVerificationResponse
+	(*CheckUsernameResponse)(nil),      // 24: v1.CheckUsernameResponse
+	(*CheckEmailResponse)(nil),         // 25: v1.CheckEmailResponse
+	(*GetUserResponse)(nil),            // 26: v1.GetUserResponse
+	(*UpdateUserResponse)(nil),         // 27: v1.UpdateUserResponse
+	(*ChangePasswordResponse)(nil),     // 28: v1.ChangePasswordResponse
+	(*ListUsersResponse)(nil),          // 29: v1.ListUsersResponse
+	(*DeleteUserResponse)(nil),         // 30: v1.DeleteUserResponse
 }
 var file_proto_openauth_v1_openauth_proto_depIdxs = []int32{
-	0, // 0: v1.OpenAuth.Ping:input_type -> v1.PingRequest
-	1, // 1: v1.OpenAuth.CreatePermission:input_type -> v1.CreatePermissionRequest
-	2, // 2: v1.OpenAuth.GetPermission:input_type -> v1.GetPermissionRequest
-	3, // 3: v1.OpenAuth.ListPermissions:input_type -> v1.ListPermissionsRequest
-	4, // 4: v1.OpenAuth.UpdatePermission:input_type -> v1.UpdatePermissionRequest
-	5, // 5: v1.OpenAuth.DeletePermission:input_type -> v1.DeletePermissionRequest
-	6, // 6: v1.OpenAuth.Ping:output_type -> v1.PingResponse
-	7, // 7: v1.OpenAuth.CreatePermission:output_type -> v1.Permission
-	7, // 8: v1.OpenAuth.GetPermission:output_type -> v1.Permission
-	8, // 9: v1.OpenAuth.ListPermissions:output_type -> v1.ListPermissionsResponse
-	7, // 10: v1.OpenAuth.UpdatePermission:output_type -> v1.Permission
-	9, // 11: v1.OpenAuth.DeletePermission:output_type -> v1.DeletePermissionResponse
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: v1.OpenAuth.Ping:input_type -> v1.PingRequest
+	1,  // 1: v1.OpenAuth.CreatePermission:input_type -> v1.CreatePermissionRequest
+	2,  // 2: v1.OpenAuth.GetPermission:input_type -> v1.GetPermissionRequest
+	3,  // 3: v1.OpenAuth.ListPermissions:input_type -> v1.ListPermissionsRequest
+	4,  // 4: v1.OpenAuth.UpdatePermission:input_type -> v1.UpdatePermissionRequest
+	5,  // 5: v1.OpenAuth.DeletePermission:input_type -> v1.DeletePermissionRequest
+	6,  // 6: v1.OpenAuth.SignUp:input_type -> v1.SignUpRequest
+	7,  // 7: v1.OpenAuth.VerifyEmail:input_type -> v1.VerifyEmailRequest
+	8,  // 8: v1.OpenAuth.VerifyPhone:input_type -> v1.VerifyPhoneRequest
+	9,  // 9: v1.OpenAuth.ResendVerification:input_type -> v1.ResendVerificationRequest
+	10, // 10: v1.OpenAuth.CheckUsername:input_type -> v1.CheckUsernameRequest
+	11, // 11: v1.OpenAuth.CheckEmail:input_type -> v1.CheckEmailRequest
+	12, // 12: v1.OpenAuth.GetUser:input_type -> v1.GetUserRequest
+	13, // 13: v1.OpenAuth.UpdateUser:input_type -> v1.UpdateUserRequest
+	14, // 14: v1.OpenAuth.ChangePassword:input_type -> v1.ChangePasswordRequest
+	15, // 15: v1.OpenAuth.ListUsers:input_type -> v1.ListUsersRequest
+	16, // 16: v1.OpenAuth.DeleteUser:input_type -> v1.DeleteUserRequest
+	17, // 17: v1.OpenAuth.Ping:output_type -> v1.PingResponse
+	18, // 18: v1.OpenAuth.CreatePermission:output_type -> v1.Permission
+	18, // 19: v1.OpenAuth.GetPermission:output_type -> v1.Permission
+	19, // 20: v1.OpenAuth.ListPermissions:output_type -> v1.ListPermissionsResponse
+	18, // 21: v1.OpenAuth.UpdatePermission:output_type -> v1.Permission
+	20, // 22: v1.OpenAuth.DeletePermission:output_type -> v1.DeletePermissionResponse
+	21, // 23: v1.OpenAuth.SignUp:output_type -> v1.SignUpResponse
+	22, // 24: v1.OpenAuth.VerifyEmail:output_type -> v1.VerificationResponse
+	22, // 25: v1.OpenAuth.VerifyPhone:output_type -> v1.VerificationResponse
+	23, // 26: v1.OpenAuth.ResendVerification:output_type -> v1.ResendVerificationResponse
+	24, // 27: v1.OpenAuth.CheckUsername:output_type -> v1.CheckUsernameResponse
+	25, // 28: v1.OpenAuth.CheckEmail:output_type -> v1.CheckEmailResponse
+	26, // 29: v1.OpenAuth.GetUser:output_type -> v1.GetUserResponse
+	27, // 30: v1.OpenAuth.UpdateUser:output_type -> v1.UpdateUserResponse
+	28, // 31: v1.OpenAuth.ChangePassword:output_type -> v1.ChangePasswordResponse
+	29, // 32: v1.OpenAuth.ListUsers:output_type -> v1.ListUsersResponse
+	30, // 33: v1.OpenAuth.DeleteUser:output_type -> v1.DeleteUserResponse
+	17, // [17:34] is the sub-list for method output_type
+	0,  // [0:17] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_openauth_proto_init() }
@@ -73,6 +130,7 @@ func file_proto_openauth_v1_openauth_proto_init() {
 	}
 	file_proto_common_ping_proto_init()
 	file_proto_openauth_v1_permissions_proto_init()
+	file_proto_openauth_v1_users_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

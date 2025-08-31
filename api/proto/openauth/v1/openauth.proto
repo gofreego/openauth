@@ -6,6 +6,7 @@ option go_package = "./openauth_v1";
 import "google/api/annotations.proto";
 import "proto/common/ping.proto";
 import "proto/openauth/v1/permissions.proto";
+import "proto/openauth/v1/users.proto";
 
 // OpenAuth service provides authentication and authorization functionality
 // including user management, permissions, groups, and session management.
@@ -97,6 +98,140 @@ service OpenAuth {
     rpc DeletePermission (DeletePermissionRequest) returns (DeletePermissionResponse) {
         option (google.api.http) = {
             delete: "/openauth/v1/permissions/{id}"
+        };
+    }
+
+    // User Registration and Management APIs
+    // These endpoints handle user account creation, verification, and profile management.
+
+    // SignUp creates a new user account in the system.
+    // 
+    // Supports multiple registration methods:
+    // - Username + password (required)
+    // - Email + password (optional, triggers email verification)
+    // - Phone + password (optional, triggers SMS verification)
+    // 
+    // Returns the created user and profile information along with
+    // verification requirements if email/phone was provided.
+    rpc SignUp (SignUpRequest) returns (SignUpResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/signup"
+            body: "*"
+        };
+    }
+
+    // VerifyEmail verifies a user's email address using a verification code.
+    // 
+    // The verification code is typically sent via email during registration
+    // or when requesting email verification. Successful verification
+    // enables email-based features and login.
+    rpc VerifyEmail (VerifyEmailRequest) returns (VerificationResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/verify-email"
+            body: "*"
+        };
+    }
+
+    // VerifyPhone verifies a user's phone number using a verification code.
+    // 
+    // The verification code is typically sent via SMS during registration
+    // or when requesting phone verification. Successful verification
+    // enables SMS-based features and login.
+    rpc VerifyPhone (VerifyPhoneRequest) returns (VerificationResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/verify-phone"
+            body: "*"
+        };
+    }
+
+    // ResendVerification resends verification codes for email or phone.
+    // 
+    // Useful when users don't receive the initial verification code
+    // or when the code has expired. Includes rate limiting to prevent abuse.
+    rpc ResendVerification (ResendVerificationRequest) returns (ResendVerificationResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/resend-verification"
+            body: "*"
+        };
+    }
+
+    // CheckUsername checks if a username is available for registration.
+    // 
+    // Returns availability status and suggestions for alternative usernames
+    // if the requested username is already taken. Useful for real-time
+    // username validation during registration.
+    rpc CheckUsername (CheckUsernameRequest) returns (CheckUsernameResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/check-username/{username}"
+        };
+    }
+
+    // CheckEmail checks if an email address is available for registration.
+    // 
+    // Returns availability status for the email address. Used to prevent
+    // duplicate registrations and provide user feedback during signup.
+    rpc CheckEmail (CheckEmailRequest) returns (CheckEmailResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/check-email/{email}"
+        };
+    }
+
+    // GetUser retrieves user information by ID, UUID, username, or email.
+    // 
+    // Supports multiple identifier types and optional profile inclusion.
+    // Access control should be enforced based on the requesting user's
+    // permissions and relationship to the target user.
+    rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/{uuid}"
+        };
+    }
+
+    // UpdateUser modifies user account and profile information.
+    // 
+    // Supports partial updates - only provided fields are modified.
+    // Sensitive operations like email/phone changes may require
+    // additional verification steps.
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+        option (google.api.http) = {
+            put: "/openauth/v1/users/{uuid}"
+            body: "*"
+        };
+    }
+
+    // ChangePassword allows users to change their password.
+    // 
+    // Requires the current password for verification and the new password.
+    // Triggers password change tracking and may invalidate existing sessions.
+    rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/{uuid}/change-password"
+            body: "*"
+        };
+    }
+
+    // ListUsers retrieves users with filtering, sorting, and pagination.
+    // 
+    // Supports filtering by:
+    // - search: Search across username, email, and name fields
+    // - is_active: Filter by account status
+    // - email_verified/phone_verified: Filter by verification status
+    // 
+    // Requires appropriate permissions to access user listings.
+    rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users"
+        };
+    }
+
+    // DeleteUser removes or deactivates a user account.
+    // 
+    // Supports both soft delete (deactivation) and hard delete.
+    // Soft delete preserves data while preventing access.
+    // Hard delete permanently removes the user and all associated data.
+    rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/users/{uuid}"
         };
     }
 }

@@ -19,12 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OpenAuth_Ping_FullMethodName             = "/v1.OpenAuth/Ping"
-	OpenAuth_CreatePermission_FullMethodName = "/v1.OpenAuth/CreatePermission"
-	OpenAuth_GetPermission_FullMethodName    = "/v1.OpenAuth/GetPermission"
-	OpenAuth_ListPermissions_FullMethodName  = "/v1.OpenAuth/ListPermissions"
-	OpenAuth_UpdatePermission_FullMethodName = "/v1.OpenAuth/UpdatePermission"
-	OpenAuth_DeletePermission_FullMethodName = "/v1.OpenAuth/DeletePermission"
+	OpenAuth_Ping_FullMethodName               = "/v1.OpenAuth/Ping"
+	OpenAuth_CreatePermission_FullMethodName   = "/v1.OpenAuth/CreatePermission"
+	OpenAuth_GetPermission_FullMethodName      = "/v1.OpenAuth/GetPermission"
+	OpenAuth_ListPermissions_FullMethodName    = "/v1.OpenAuth/ListPermissions"
+	OpenAuth_UpdatePermission_FullMethodName   = "/v1.OpenAuth/UpdatePermission"
+	OpenAuth_DeletePermission_FullMethodName   = "/v1.OpenAuth/DeletePermission"
+	OpenAuth_SignUp_FullMethodName             = "/v1.OpenAuth/SignUp"
+	OpenAuth_VerifyEmail_FullMethodName        = "/v1.OpenAuth/VerifyEmail"
+	OpenAuth_VerifyPhone_FullMethodName        = "/v1.OpenAuth/VerifyPhone"
+	OpenAuth_ResendVerification_FullMethodName = "/v1.OpenAuth/ResendVerification"
+	OpenAuth_CheckUsername_FullMethodName      = "/v1.OpenAuth/CheckUsername"
+	OpenAuth_CheckEmail_FullMethodName         = "/v1.OpenAuth/CheckEmail"
+	OpenAuth_GetUser_FullMethodName            = "/v1.OpenAuth/GetUser"
+	OpenAuth_UpdateUser_FullMethodName         = "/v1.OpenAuth/UpdateUser"
+	OpenAuth_ChangePassword_FullMethodName     = "/v1.OpenAuth/ChangePassword"
+	OpenAuth_ListUsers_FullMethodName          = "/v1.OpenAuth/ListUsers"
+	OpenAuth_DeleteUser_FullMethodName         = "/v1.OpenAuth/DeleteUser"
 )
 
 // OpenAuthClient is the client API for OpenAuth service.
@@ -87,6 +98,76 @@ type OpenAuthClient interface {
 	// Warning: Deleting a permission will affect all users and groups
 	// that currently have this permission assigned.
 	DeletePermission(ctx context.Context, in *DeletePermissionRequest, opts ...grpc.CallOption) (*DeletePermissionResponse, error)
+	// SignUp creates a new user account in the system.
+	//
+	// Supports multiple registration methods:
+	// - Username + password (required)
+	// - Email + password (optional, triggers email verification)
+	// - Phone + password (optional, triggers SMS verification)
+	//
+	// Returns the created user and profile information along with
+	// verification requirements if email/phone was provided.
+	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
+	// VerifyEmail verifies a user's email address using a verification code.
+	//
+	// The verification code is typically sent via email during registration
+	// or when requesting email verification. Successful verification
+	// enables email-based features and login.
+	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerificationResponse, error)
+	// VerifyPhone verifies a user's phone number using a verification code.
+	//
+	// The verification code is typically sent via SMS during registration
+	// or when requesting phone verification. Successful verification
+	// enables SMS-based features and login.
+	VerifyPhone(ctx context.Context, in *VerifyPhoneRequest, opts ...grpc.CallOption) (*VerificationResponse, error)
+	// ResendVerification resends verification codes for email or phone.
+	//
+	// Useful when users don't receive the initial verification code
+	// or when the code has expired. Includes rate limiting to prevent abuse.
+	ResendVerification(ctx context.Context, in *ResendVerificationRequest, opts ...grpc.CallOption) (*ResendVerificationResponse, error)
+	// CheckUsername checks if a username is available for registration.
+	//
+	// Returns availability status and suggestions for alternative usernames
+	// if the requested username is already taken. Useful for real-time
+	// username validation during registration.
+	CheckUsername(ctx context.Context, in *CheckUsernameRequest, opts ...grpc.CallOption) (*CheckUsernameResponse, error)
+	// CheckEmail checks if an email address is available for registration.
+	//
+	// Returns availability status for the email address. Used to prevent
+	// duplicate registrations and provide user feedback during signup.
+	CheckEmail(ctx context.Context, in *CheckEmailRequest, opts ...grpc.CallOption) (*CheckEmailResponse, error)
+	// GetUser retrieves user information by ID, UUID, username, or email.
+	//
+	// Supports multiple identifier types and optional profile inclusion.
+	// Access control should be enforced based on the requesting user's
+	// permissions and relationship to the target user.
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	// UpdateUser modifies user account and profile information.
+	//
+	// Supports partial updates - only provided fields are modified.
+	// Sensitive operations like email/phone changes may require
+	// additional verification steps.
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	// ChangePassword allows users to change their password.
+	//
+	// Requires the current password for verification and the new password.
+	// Triggers password change tracking and may invalidate existing sessions.
+	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
+	// ListUsers retrieves users with filtering, sorting, and pagination.
+	//
+	// Supports filtering by:
+	// - search: Search across username, email, and name fields
+	// - is_active: Filter by account status
+	// - email_verified/phone_verified: Filter by verification status
+	//
+	// Requires appropriate permissions to access user listings.
+	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
+	// DeleteUser removes or deactivates a user account.
+	//
+	// Supports both soft delete (deactivation) and hard delete.
+	// Soft delete preserves data while preventing access.
+	// Hard delete permanently removes the user and all associated data.
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
 }
 
 type openAuthClient struct {
@@ -157,6 +238,116 @@ func (c *openAuthClient) DeletePermission(ctx context.Context, in *DeletePermiss
 	return out, nil
 }
 
+func (c *openAuthClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignUpResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_SignUp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerificationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerificationResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_VerifyEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) VerifyPhone(ctx context.Context, in *VerifyPhoneRequest, opts ...grpc.CallOption) (*VerificationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerificationResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_VerifyPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ResendVerification(ctx context.Context, in *ResendVerificationRequest, opts ...grpc.CallOption) (*ResendVerificationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResendVerificationResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ResendVerification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) CheckUsername(ctx context.Context, in *CheckUsernameRequest, opts ...grpc.CallOption) (*CheckUsernameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckUsernameResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_CheckUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) CheckEmail(ctx context.Context, in *CheckEmailRequest, opts ...grpc.CallOption) (*CheckEmailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckEmailResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_CheckEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_GetUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_UpdateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangePasswordResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ChangePassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUsersResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ListUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteUserResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_DeleteUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenAuthServer is the server API for OpenAuth service.
 // All implementations must embed UnimplementedOpenAuthServer
 // for forward compatibility.
@@ -217,6 +408,76 @@ type OpenAuthServer interface {
 	// Warning: Deleting a permission will affect all users and groups
 	// that currently have this permission assigned.
 	DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error)
+	// SignUp creates a new user account in the system.
+	//
+	// Supports multiple registration methods:
+	// - Username + password (required)
+	// - Email + password (optional, triggers email verification)
+	// - Phone + password (optional, triggers SMS verification)
+	//
+	// Returns the created user and profile information along with
+	// verification requirements if email/phone was provided.
+	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
+	// VerifyEmail verifies a user's email address using a verification code.
+	//
+	// The verification code is typically sent via email during registration
+	// or when requesting email verification. Successful verification
+	// enables email-based features and login.
+	VerifyEmail(context.Context, *VerifyEmailRequest) (*VerificationResponse, error)
+	// VerifyPhone verifies a user's phone number using a verification code.
+	//
+	// The verification code is typically sent via SMS during registration
+	// or when requesting phone verification. Successful verification
+	// enables SMS-based features and login.
+	VerifyPhone(context.Context, *VerifyPhoneRequest) (*VerificationResponse, error)
+	// ResendVerification resends verification codes for email or phone.
+	//
+	// Useful when users don't receive the initial verification code
+	// or when the code has expired. Includes rate limiting to prevent abuse.
+	ResendVerification(context.Context, *ResendVerificationRequest) (*ResendVerificationResponse, error)
+	// CheckUsername checks if a username is available for registration.
+	//
+	// Returns availability status and suggestions for alternative usernames
+	// if the requested username is already taken. Useful for real-time
+	// username validation during registration.
+	CheckUsername(context.Context, *CheckUsernameRequest) (*CheckUsernameResponse, error)
+	// CheckEmail checks if an email address is available for registration.
+	//
+	// Returns availability status for the email address. Used to prevent
+	// duplicate registrations and provide user feedback during signup.
+	CheckEmail(context.Context, *CheckEmailRequest) (*CheckEmailResponse, error)
+	// GetUser retrieves user information by ID, UUID, username, or email.
+	//
+	// Supports multiple identifier types and optional profile inclusion.
+	// Access control should be enforced based on the requesting user's
+	// permissions and relationship to the target user.
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	// UpdateUser modifies user account and profile information.
+	//
+	// Supports partial updates - only provided fields are modified.
+	// Sensitive operations like email/phone changes may require
+	// additional verification steps.
+	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	// ChangePassword allows users to change their password.
+	//
+	// Requires the current password for verification and the new password.
+	// Triggers password change tracking and may invalidate existing sessions.
+	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
+	// ListUsers retrieves users with filtering, sorting, and pagination.
+	//
+	// Supports filtering by:
+	// - search: Search across username, email, and name fields
+	// - is_active: Filter by account status
+	// - email_verified/phone_verified: Filter by verification status
+	//
+	// Requires appropriate permissions to access user listings.
+	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
+	// DeleteUser removes or deactivates a user account.
+	//
+	// Supports both soft delete (deactivation) and hard delete.
+	// Soft delete preserves data while preventing access.
+	// Hard delete permanently removes the user and all associated data.
+	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
 	mustEmbedUnimplementedOpenAuthServer()
 }
 
@@ -244,6 +505,39 @@ func (UnimplementedOpenAuthServer) UpdatePermission(context.Context, *UpdatePerm
 }
 func (UnimplementedOpenAuthServer) DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePermission not implemented")
+}
+func (UnimplementedOpenAuthServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
+}
+func (UnimplementedOpenAuthServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*VerificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
+}
+func (UnimplementedOpenAuthServer) VerifyPhone(context.Context, *VerifyPhoneRequest) (*VerificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyPhone not implemented")
+}
+func (UnimplementedOpenAuthServer) ResendVerification(context.Context, *ResendVerificationRequest) (*ResendVerificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResendVerification not implemented")
+}
+func (UnimplementedOpenAuthServer) CheckUsername(context.Context, *CheckUsernameRequest) (*CheckUsernameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckUsername not implemented")
+}
+func (UnimplementedOpenAuthServer) CheckEmail(context.Context, *CheckEmailRequest) (*CheckEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckEmail not implemented")
+}
+func (UnimplementedOpenAuthServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedOpenAuthServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedOpenAuthServer) ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedOpenAuthServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
+}
+func (UnimplementedOpenAuthServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedOpenAuthServer) mustEmbedUnimplementedOpenAuthServer() {}
 func (UnimplementedOpenAuthServer) testEmbeddedByValue()                  {}
@@ -374,6 +668,204 @@ func _OpenAuth_DeletePermission_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignUpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).SignUp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_SignUp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).SignUp(ctx, req.(*SignUpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).VerifyEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_VerifyEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).VerifyEmail(ctx, req.(*VerifyEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_VerifyPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyPhoneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).VerifyPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_VerifyPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).VerifyPhone(ctx, req.(*VerifyPhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ResendVerification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResendVerificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ResendVerification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ResendVerification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ResendVerification(ctx, req.(*ResendVerificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_CheckUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckUsernameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).CheckUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_CheckUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).CheckUsername(ctx, req.(*CheckUsernameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_CheckEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).CheckEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_CheckEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).CheckEmail(ctx, req.(*CheckEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_GetUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_UpdateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangePasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ChangePassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ChangePassword(ctx, req.(*ChangePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ListUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ListUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ListUsers(ctx, req.(*ListUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_DeleteUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenAuth_ServiceDesc is the grpc.ServiceDesc for OpenAuth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -404,6 +896,50 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePermission",
 			Handler:    _OpenAuth_DeletePermission_Handler,
+		},
+		{
+			MethodName: "SignUp",
+			Handler:    _OpenAuth_SignUp_Handler,
+		},
+		{
+			MethodName: "VerifyEmail",
+			Handler:    _OpenAuth_VerifyEmail_Handler,
+		},
+		{
+			MethodName: "VerifyPhone",
+			Handler:    _OpenAuth_VerifyPhone_Handler,
+		},
+		{
+			MethodName: "ResendVerification",
+			Handler:    _OpenAuth_ResendVerification_Handler,
+		},
+		{
+			MethodName: "CheckUsername",
+			Handler:    _OpenAuth_CheckUsername_Handler,
+		},
+		{
+			MethodName: "CheckEmail",
+			Handler:    _OpenAuth_CheckEmail_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _OpenAuth_GetUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _OpenAuth_UpdateUser_Handler,
+		},
+		{
+			MethodName: "ChangePassword",
+			Handler:    _OpenAuth_ChangePassword_Handler,
+		},
+		{
+			MethodName: "ListUsers",
+			Handler:    _OpenAuth_ListUsers_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _OpenAuth_DeleteUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

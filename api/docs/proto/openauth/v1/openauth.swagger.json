@@ -254,9 +254,476 @@
           "OpenAuth"
         ]
       }
+    },
+    "/openauth/v1/users": {
+      "get": {
+        "summary": "ListUsers retrieves users with filtering, sorting, and pagination.",
+        "description": "Supports filtering by:\n- search: Search across username, email, and name fields\n- is_active: Filter by account status\n- email_verified/phone_verified: Filter by verification status\n\nRequires appropriate permissions to access user listings.",
+        "operationId": "OpenAuth_ListUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUsersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Search in username, email, first_name, last_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "isActive",
+            "description": "Filter by active status",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "emailVerified",
+            "description": "Filter by email verification status",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "phoneVerified",
+            "description": "Filter by phone verification status",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "sortBy",
+            "description": "Sort by field (username, email, created_at, etc.)",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "description": "asc or desc",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/check-email/{email}": {
+      "get": {
+        "summary": "CheckEmail checks if an email address is available for registration.",
+        "description": "Returns availability status for the email address. Used to prevent\nduplicate registrations and provide user feedback during signup.",
+        "operationId": "OpenAuth_CheckEmail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CheckEmailResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/check-username/{username}": {
+      "get": {
+        "summary": "CheckUsername checks if a username is available for registration.",
+        "description": "Returns availability status and suggestions for alternative usernames\nif the requested username is already taken. Useful for real-time\nusername validation during registration.",
+        "operationId": "OpenAuth_CheckUsername",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CheckUsernameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/resend-verification": {
+      "post": {
+        "summary": "ResendVerification resends verification codes for email or phone.",
+        "description": "Useful when users don't receive the initial verification code\nor when the code has expired. Includes rate limiting to prevent abuse.",
+        "operationId": "OpenAuth_ResendVerification",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ResendVerificationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ResendVerificationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/signup": {
+      "post": {
+        "summary": "SignUp creates a new user account in the system.",
+        "description": "Supports multiple registration methods:\n- Username + password (required)\n- Email + password (optional, triggers email verification)\n- Phone + password (optional, triggers SMS verification)\n\nReturns the created user and profile information along with\nverification requirements if email/phone was provided.",
+        "operationId": "OpenAuth_SignUp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SignUpResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SignUpRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/verify-email": {
+      "post": {
+        "summary": "VerifyEmail verifies a user's email address using a verification code.",
+        "description": "The verification code is typically sent via email during registration\nor when requesting email verification. Successful verification\nenables email-based features and login.",
+        "operationId": "OpenAuth_VerifyEmail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1VerificationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1VerifyEmailRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/verify-phone": {
+      "post": {
+        "summary": "VerifyPhone verifies a user's phone number using a verification code.",
+        "description": "The verification code is typically sent via SMS during registration\nor when requesting phone verification. Successful verification\nenables SMS-based features and login.",
+        "operationId": "OpenAuth_VerifyPhone",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1VerificationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1VerifyPhoneRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/{uuid}": {
+      "get": {
+        "summary": "GetUser retrieves user information by ID, UUID, username, or email.",
+        "description": "Supports multiple identifier types and optional profile inclusion.\nAccess control should be enforced based on the requesting user's\npermissions and relationship to the target user.",
+        "operationId": "OpenAuth_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "includeProfile",
+            "description": "Whether to include profile information",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "delete": {
+        "summary": "DeleteUser removes or deactivates a user account.",
+        "description": "Supports both soft delete (deactivation) and hard delete.\nSoft delete preserves data while preventing access.\nHard delete permanently removes the user and all associated data.",
+        "operationId": "OpenAuth_DeleteUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "softDelete",
+            "description": "If true, just deactivate; if false, hard delete",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "put": {
+        "summary": "UpdateUser modifies user account and profile information.",
+        "description": "Supports partial updates - only provided fields are modified.\nSensitive operations like email/phone changes may require\nadditional verification steps.",
+        "operationId": "OpenAuth_UpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUpdateUserBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/{uuid}/change-password": {
+      "post": {
+        "summary": "ChangePassword allows users to change their password.",
+        "description": "Requires the current password for verification and the new password.\nTriggers password change tracking and may invalidate existing sessions.",
+        "operationId": "OpenAuth_ChangePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthChangePasswordBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
     }
   },
   "definitions": {
+    "OpenAuthChangePasswordBody": {
+      "type": "object",
+      "properties": {
+        "currentPassword": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      },
+      "title": "ChangePasswordRequest to change user password"
+    },
     "OpenAuthUpdatePermissionBody": {
       "type": "object",
       "properties": {
@@ -282,6 +749,61 @@
         }
       },
       "title": "Request to update an existing permission"
+    },
+    "OpenAuthUpdateUserBody": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "firstName": {
+          "type": "string",
+          "title": "Profile updates"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "websiteUrl": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateUserRequest to update user information"
     },
     "protobufAny": {
       "type": "object",
@@ -310,6 +832,49 @@
           }
         }
       }
+    },
+    "v1ChangePasswordResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "ChangePasswordResponse"
+    },
+    "v1CheckEmailResponse": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "CheckEmailResponse"
+    },
+    "v1CheckUsernameResponse": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Alternative username suggestions if not available"
+        }
+      },
+      "title": "CheckUsernameResponse"
     },
     "v1CreatePermissionRequest": {
       "type": "object",
@@ -351,6 +916,30 @@
       },
       "title": "Response confirming permission deletion"
     },
+    "v1DeleteUserResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "DeleteUserResponse"
+    },
+    "v1GetUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile"
+        }
+      },
+      "title": "GetUserResponse"
+    },
     "v1ListPermissionsResponse": {
       "type": "object",
       "properties": {
@@ -383,6 +972,34 @@
         }
       },
       "title": "Response containing a list of permissions with pagination metadata"
+    },
+    "v1ListUsersResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1User"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hasMore": {
+          "type": "boolean"
+        }
+      },
+      "title": "ListUsersResponse"
     },
     "v1Permission": {
       "type": "object",
@@ -437,6 +1054,271 @@
         }
       },
       "description": "PingResponse is the response message for the Ping RPC method."
+    },
+    "v1ResendVerificationRequest": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "title": "email or phone"
+        },
+        "type": {
+          "type": "string",
+          "title": "\"email\" or \"phone\""
+        }
+      },
+      "title": "ResendVerificationRequest to resend verification codes"
+    },
+    "v1ResendVerificationResponse": {
+      "type": "object",
+      "properties": {
+        "sent": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "When the code expires"
+        }
+      },
+      "title": "ResendVerificationResponse"
+    },
+    "v1SignUpRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string",
+          "title": "Optional profile information"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      },
+      "title": "SignUpRequest for user registration"
+    },
+    "v1SignUpResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile"
+        },
+        "message": {
+          "type": "string"
+        },
+        "emailVerificationRequired": {
+          "type": "boolean"
+        },
+        "phoneVerificationRequired": {
+          "type": "boolean"
+        }
+      },
+      "title": "SignUpResponse after successful registration"
+    },
+    "v1UpdateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile"
+        }
+      },
+      "title": "UpdateUserResponse"
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "emailVerified": {
+          "type": "boolean"
+        },
+        "phoneVerified": {
+          "type": "boolean"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "isLocked": {
+          "type": "boolean"
+        },
+        "failedLoginAttempts": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "passwordChangedAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "User represents a user account in the system"
+    },
+    "v1UserProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "websiteUrl": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "string",
+          "format": "byte",
+          "title": "JSON metadata"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "UserProfile represents extended user profile information"
+    },
+    "v1VerificationResponse": {
+      "type": "object",
+      "properties": {
+        "verified": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "VerificationResponse for verification operations"
+    },
+    "v1VerifyEmailRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "verificationCode": {
+          "type": "string"
+        }
+      },
+      "title": "VerifyEmailRequest for email verification"
+    },
+    "v1VerifyPhoneRequest": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "verificationCode": {
+          "type": "string"
+        }
+      },
+      "title": "VerifyPhoneRequest for phone verification"
     }
   }
 }
