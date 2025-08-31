@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
-import '../../../../features/auth/presentation/bloc/auth_event.dart';
 import 'compact_user_profile.dart';
 import '../../../../shared/shared.dart';
 
@@ -147,28 +144,8 @@ class AdminSidebar extends StatelessWidget {
           // Login details section at bottom
           Container(
             margin: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CompactUserProfile(
-                  onTap: () => onSectionChanged(NavigationSection.profile),
-                ),
-                const SizedBox(height: 16),
-                
-                // Sign out button
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _handleSignOut(context),
-                    icon: const Icon(Icons.logout),
-                    label: const Text('Sign Out'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: theme.colorScheme.error,
-                      side: BorderSide(color: theme.colorScheme.error),
-                    ),
-                  ),
-                ),
-              ],
+            child: CompactUserProfile(
+              onTap: () => onSectionChanged(NavigationSection.profile),
             ),
           ),
         ],
@@ -213,29 +190,5 @@ class AdminSidebar extends StatelessWidget {
         onTap: () => onSectionChanged(section),
       ),
     );
-  }
-
-  void _handleSignOut(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Sign Out'),
-          ),
-        ],
-      ),
-    );
-    
-    if (confirmed == true && context.mounted) {
-      context.read<AuthBloc>().add(const AuthSignOutRequested());
-    }
   }
 }
