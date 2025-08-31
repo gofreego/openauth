@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/bloc/app_bloc.dart';
 import '../../../../core/bloc/app_state.dart';
+import '../../../../shared/shared.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.initialSection});
@@ -36,9 +37,168 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return BlocBuilder<AppBloc, AppState>(
       builder: (context, appState) {
-        return const Center(child: Text("Home"));
+        return Scaffold(
+          appBar: AppBar(
+            title: Row(
+              children: [
+                const AppLogo.medium(),
+                const SizedBox(width: 12),
+                Text(
+                  'OpenAuth Admin',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: theme.colorScheme.surface,
+            elevation: 1,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 48),
+                // Large logo display
+                const AppLogo.extraLarge(withBackground: true),
+                const SizedBox(height: 24),
+                Text(
+                  'Welcome to OpenAuth',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Authentication & Authorization Management System',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 48),
+                // Dashboard cards
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    children: [
+                      _buildDashboardCard(
+                        context,
+                        'Users',
+                        Icons.people_outline,
+                        'Manage user accounts',
+                        () => _navigateToUsers(),
+                      ),
+                      _buildDashboardCard(
+                        context,
+                        'Permissions',
+                        Icons.security_outlined,
+                        'Configure permissions',
+                        () => _navigateToPermissions(),
+                      ),
+                      _buildDashboardCard(
+                        context,
+                        'Groups',
+                        Icons.group_outlined,
+                        'Organize user groups',
+                        () => _navigateToGroups(),
+                      ),
+                      _buildDashboardCard(
+                        context,
+                        'Settings',
+                        Icons.settings_outlined,
+                        'System configuration',
+                        () => _navigateToSettings(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
+    );
+  }
+
+  Widget _buildDashboardCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    String description,
+    VoidCallback onTap,
+  ) {
+    final theme = Theme.of(context);
+    
+    return Card(
+      elevation: 2,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 48,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToUsers() {
+    // TODO: Navigate to users page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Users page coming soon')),
+    );
+  }
+
+  void _navigateToPermissions() {
+    // TODO: Navigate to permissions page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Permissions page coming soon')),
+    );
+  }
+
+  void _navigateToGroups() {
+    // TODO: Navigate to groups page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Groups page coming soon')),
+    );
+  }
+
+  void _navigateToSettings() {
+    // TODO: Navigate to settings page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Settings page coming soon')),
     );
   }}

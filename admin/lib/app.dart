@@ -11,6 +11,7 @@ import 'core/bloc/theme_bloc.dart';
 import 'core/bloc/theme_event.dart';
 import 'core/bloc/theme_state.dart';
 import 'features/home/presentation/pages/home_page.dart';
+import 'shared/shared.dart';
 
 class OpenAuthAdmin extends StatefulWidget {
   const OpenAuthAdmin({super.key});
@@ -31,9 +32,23 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
       routes: [
         GoRoute(
           path: AppRoutes.splash,
-          builder: (context, state) => const Scaffold(
+          builder: (context, state) => Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const AppLogo.extraLarge(withBackground: true),
+                  const SizedBox(height: 24),
+                  Text(
+                    'OpenAuth',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const CircularProgressIndicator(),
+                ],
+              ),
             ),
           ),
         ),
@@ -85,7 +100,7 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
               _router.refresh();
             },
             child: MaterialApp.router(
-              title: 'BappaApp',
+              title: 'OpenAuth Admin',
               debugShowCheckedModeBanner: false,
               themeMode: themeState.themeMode,
               theme: AppTheme.getTheme(false), // Light theme
