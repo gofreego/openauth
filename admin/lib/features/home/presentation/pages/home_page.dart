@@ -6,7 +6,10 @@ import '../widgets/admin_sidebar.dart';
 import '../../../dashboard/dashboard.dart';
 import '../../../users/users.dart';
 import '../../../permissions/permissions.dart';
-import 'profile_page.dart';
+import '../../../groups/groups.dart';
+import '../../../sessions/sessions.dart';
+import '../../../settings/settings.dart';
+import '../../../profile/profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.initialSection});
@@ -94,85 +97,31 @@ class _HomePageState extends State<HomePage> {
       case NavigationSection.permissions:
         return const PermissionsPage();
       case NavigationSection.groups:
-        return _buildComingSoonPage('Groups', Icons.group);
+        return GroupsPage(
+          onBackToDashboard: () {
+            setState(() {
+              _currentSection = NavigationSection.dashboard;
+            });
+          },
+        );
       case NavigationSection.sessions:
-        return _buildComingSoonPage('Sessions', Icons.access_time);
+        return SessionsPage(
+          onBackToDashboard: () {
+            setState(() {
+              _currentSection = NavigationSection.dashboard;
+            });
+          },
+        );
       case NavigationSection.settings:
-        return _buildComingSoonPage('Settings', Icons.settings);
+        return SettingsPage(
+          onBackToDashboard: () {
+            setState(() {
+              _currentSection = NavigationSection.dashboard;
+            });
+          },
+        );
       case NavigationSection.profile:
         return const ProfilePage();
     }
-  }
-
-  Widget _buildComingSoonPage(String title, IconData icon) {
-    final theme = Theme.of(context);
-    
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            children: [
-              Icon(
-                icon,
-                size: 32,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                title,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-          
-          // Coming soon content
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    icon,
-                    size: 64,
-                    color: theme.colorScheme.primary.withOpacity(0.5),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    '$title Management',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'This feature is coming soon!',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        _currentSection = NavigationSection.dashboard;
-                      });
-                    },
-                    icon: const Icon(Icons.dashboard),
-                    label: const Text('Back to Dashboard'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
