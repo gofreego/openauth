@@ -3,6 +3,7 @@ CREATE TABLE user_sessions (
     id SERIAL PRIMARY KEY,
     uuid UUID UNIQUE DEFAULT gen_random_uuid(),
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_uuid UUID NOT NULL,
     session_token VARCHAR(255) UNIQUE NOT NULL,
     refresh_token VARCHAR(255) UNIQUE,
     device_id VARCHAR(255),
@@ -33,6 +34,7 @@ CREATE TABLE session_activities (
 -- Create indexes
 CREATE INDEX idx_user_sessions_uuid ON user_sessions(uuid);
 CREATE INDEX idx_user_sessions_user_id ON user_sessions(user_id);
+CREATE INDEX idx_user_sessions_user_uuid ON user_sessions(user_uuid);
 CREATE INDEX idx_user_sessions_session_token ON user_sessions(session_token);
 CREATE INDEX idx_user_sessions_refresh_token ON user_sessions(refresh_token);
 CREATE INDEX idx_user_sessions_device_id ON user_sessions(device_id);

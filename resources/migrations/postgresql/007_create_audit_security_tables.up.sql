@@ -3,7 +3,7 @@ CREATE TABLE audit_logs (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id), -- Who performed the action
     entity_type VARCHAR(100) NOT NULL, -- users, groups, permissions, user_groups, etc.
-    entity_id UUID, -- ID of the entity being modified
+    entity_id INTEGER, -- ID of the entity being modified (integer primary key)
     action VARCHAR(50) NOT NULL, -- create, update, delete, assign, revoke
     old_values JSONB, -- Previous state of the entity
     new_values JSONB, -- New state of the entity

@@ -3,6 +3,7 @@ CREATE TABLE user_profiles (
     id SERIAL PRIMARY KEY,
     uuid UUID UNIQUE DEFAULT gen_random_uuid(),
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    profile_name VARCHAR(255), -- Name/identifier for this profile
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     display_name VARCHAR(255),
@@ -19,8 +20,7 @@ CREATE TABLE user_profiles (
     website_url VARCHAR(500),
     metadata JSONB, -- Flexible storage for additional user data
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
-    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
-    UNIQUE(user_id)
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Create indexes
