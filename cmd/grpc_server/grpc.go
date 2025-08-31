@@ -8,6 +8,7 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/configs"
 	"github.com/gofreego/openauth/internal/constants"
+	"github.com/gofreego/openauth/internal/middleware"
 	"github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
 	"google.golang.org/grpc"
@@ -44,8 +45,14 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 
 	service := service.NewService(ctx, &a.cfg.Service, repository)
 
-	// Create a new gRPC server
-	a.server = grpc.NewServer()
+	// Create authentication middleware
+	authMiddleware := middleware.InitAuthMiddleware(a.cfg)
+
+	// Create a new gRPC server with interceptors
+	a.server = grpc.NewServer(
+		grpc.UnaryInterceptor(authMiddleware.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(authMiddleware.StreamServerInterceptor()),
+	)
 
 	openauth_v1.RegisterOpenAuthServer(a.server, service)
 

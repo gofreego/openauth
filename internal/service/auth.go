@@ -300,7 +300,7 @@ func (s *Service) ValidateToken(ctx context.Context, req *openauth_v1.ValidateTo
 	}
 
 	// Parse and validate JWT token
-	claims, err := s.validateAccessToken(req.AccessToken)
+	claims, err := s.ValidateAccessToken(req.AccessToken)
 	if err != nil {
 		return &openauth_v1.ValidateTokenResponse{
 			Valid:   false,
@@ -444,8 +444,8 @@ func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, dura
 	return token.SignedString(s.getJWTSecret())
 }
 
-// validateAccessToken parses and validates a JWT access token
-func (s *Service) validateAccessToken(tokenString string) (*JWTClaims, error) {
+// ValidateAccessToken parses and validates a JWT access token
+func (s *Service) ValidateAccessToken(tokenString string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

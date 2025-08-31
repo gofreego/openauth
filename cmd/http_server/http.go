@@ -8,6 +8,7 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/configs"
 	"github.com/gofreego/openauth/internal/constants"
+	"github.com/gofreego/openauth/internal/middleware"
 	"github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
 
@@ -46,6 +47,9 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 
 	service := service.NewService(ctx, &a.cfg.Service, repository.GetInstance(ctx, &a.cfg.Repository))
 
+	// Create authentication middleware
+	authMiddleware := middleware.InitAuthMiddleware(a.cfg)
+
 	mux := runtime.NewServeMux()
 
 	api.RegisterSwaggerHandler(ctx, mux, "/openauth/v1/swagger", "./api/docs/proto", "/openauth/v1/openauth.swagger.json")
@@ -61,7 +65,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 
 	a.server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", a.cfg.Server.HTTPPort),
-		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(api.CORSMiddleware(mux))),
+		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(api.CORSMiddleware(authMiddleware.HTTPMiddleware(mux)))),
 	}
 
 	logger.Info(ctx, "Starting HTTP server on port %d", a.cfg.Server.HTTPPort)
