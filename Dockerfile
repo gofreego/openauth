@@ -4,7 +4,7 @@ FROM alpine:latest
 WORKDIR /app
 
 # Install any additional packages (replace with your needs)
-COPY application .
+COPY bin/application .
 COPY dev.yaml .
 COPY api/docs /app/api/docs
 RUN chmod +x application

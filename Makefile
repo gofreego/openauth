@@ -1,17 +1,17 @@
 build: clean
-	go build -o application .
+	go build -o bin/application .
 build-linux: clean
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o application .
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/application .
 run:
 	go run main.go
 test:
 	go test -v ./...
 clean:
-	rm -f application
+	rm -f bin/application
 
 docker: build-linux
 	docker build -t openauth .
-	rm -f application
+	rm -f bin/application
 
 docker-run: docker
 	@echo "Tagging image as latest"
