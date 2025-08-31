@@ -29,6 +29,7 @@ type Profile struct {
 	ID          int64      `db:"id" json:"id"`
 	UUID        uuid.UUID  `db:"uuid" json:"uuid"`
 	UserID      int64      `db:"user_id" json:"userId"`
+	ProfileName *string    `db:"profile_name" json:"profileName,omitempty"` // Name/label for this profile
 	FirstName   *string    `db:"first_name" json:"firstName,omitempty"`
 	LastName    *string    `db:"last_name" json:"lastName,omitempty"`
 	DisplayName *string    `db:"display_name" json:"displayName,omitempty"`
@@ -80,6 +81,7 @@ func (p *Profile) ToProto() *openauth_v1.UserProfile {
 		Id:          p.ID,
 		Uuid:        p.UUID.String(),
 		UserId:      p.UserID,
+		ProfileName: p.ProfileName,
 		FirstName:   p.FirstName,
 		LastName:    p.LastName,
 		DisplayName: p.DisplayName,

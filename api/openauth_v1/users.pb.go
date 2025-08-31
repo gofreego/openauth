@@ -176,23 +176,24 @@ type UserProfile struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Uuid          string                 `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FirstName     *string                `protobuf:"bytes,4,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
-	LastName      *string                `protobuf:"bytes,5,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
-	DisplayName   *string                `protobuf:"bytes,6,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
-	Bio           *string                `protobuf:"bytes,7,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
-	AvatarUrl     *string                `protobuf:"bytes,8,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
-	DateOfBirth   *int64                 `protobuf:"varint,9,opt,name=date_of_birth,json=dateOfBirth,proto3,oneof" json:"date_of_birth,omitempty"` // Unix timestamp
-	Gender        *string                `protobuf:"bytes,10,opt,name=gender,proto3,oneof" json:"gender,omitempty"`
-	Timezone      *string                `protobuf:"bytes,11,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
-	Locale        *string                `protobuf:"bytes,12,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
-	Country       *string                `protobuf:"bytes,13,opt,name=country,proto3,oneof" json:"country,omitempty"`
-	City          *string                `protobuf:"bytes,14,opt,name=city,proto3,oneof" json:"city,omitempty"`
-	Address       *string                `protobuf:"bytes,15,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	PostalCode    *string                `protobuf:"bytes,16,opt,name=postal_code,json=postalCode,proto3,oneof" json:"postal_code,omitempty"`
-	WebsiteUrl    *string                `protobuf:"bytes,17,opt,name=website_url,json=websiteUrl,proto3,oneof" json:"website_url,omitempty"`
-	Metadata      []byte                 `protobuf:"bytes,18,opt,name=metadata,proto3" json:"metadata,omitempty"` // JSON metadata
-	CreatedAt     int64                  `protobuf:"varint,19,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     int64                  `protobuf:"varint,20,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ProfileName   *string                `protobuf:"bytes,4,opt,name=profile_name,json=profileName,proto3,oneof" json:"profile_name,omitempty"` // Name/label for this profile
+	FirstName     *string                `protobuf:"bytes,5,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
+	LastName      *string                `protobuf:"bytes,6,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
+	DisplayName   *string                `protobuf:"bytes,7,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
+	Bio           *string                `protobuf:"bytes,8,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
+	AvatarUrl     *string                `protobuf:"bytes,9,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
+	DateOfBirth   *int64                 `protobuf:"varint,10,opt,name=date_of_birth,json=dateOfBirth,proto3,oneof" json:"date_of_birth,omitempty"` // Unix timestamp
+	Gender        *string                `protobuf:"bytes,11,opt,name=gender,proto3,oneof" json:"gender,omitempty"`
+	Timezone      *string                `protobuf:"bytes,12,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
+	Locale        *string                `protobuf:"bytes,13,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
+	Country       *string                `protobuf:"bytes,14,opt,name=country,proto3,oneof" json:"country,omitempty"`
+	City          *string                `protobuf:"bytes,15,opt,name=city,proto3,oneof" json:"city,omitempty"`
+	Address       *string                `protobuf:"bytes,16,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	PostalCode    *string                `protobuf:"bytes,17,opt,name=postal_code,json=postalCode,proto3,oneof" json:"postal_code,omitempty"`
+	WebsiteUrl    *string                `protobuf:"bytes,18,opt,name=website_url,json=websiteUrl,proto3,oneof" json:"website_url,omitempty"`
+	Metadata      []byte                 `protobuf:"bytes,19,opt,name=metadata,proto3" json:"metadata,omitempty"` // JSON metadata
+	CreatedAt     int64                  `protobuf:"varint,20,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     int64                  `protobuf:"varint,21,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -246,6 +247,13 @@ func (x *UserProfile) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *UserProfile) GetProfileName() string {
+	if x != nil && x.ProfileName != nil {
+		return *x.ProfileName
+	}
+	return ""
 }
 
 func (x *UserProfile) GetFirstName() string {
@@ -367,20 +375,13 @@ func (x *UserProfile) GetUpdatedAt() int64 {
 	return 0
 }
 
-// SignUpRequest for user registration
+// SignUpRequest for user registration - only authentication credentials
 type SignUpRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Username string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Email    *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	Phone    *string                `protobuf:"bytes,3,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
-	Password string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
-	// Optional profile information
-	FirstName     *string `protobuf:"bytes,5,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
-	LastName      *string `protobuf:"bytes,6,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
-	DisplayName   *string `protobuf:"bytes,7,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
-	Timezone      *string `protobuf:"bytes,8,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
-	Locale        *string `protobuf:"bytes,9,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
-	Country       *string `protobuf:"bytes,10,opt,name=country,proto3,oneof" json:"country,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Email         *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	Phone         *string                `protobuf:"bytes,3,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
+	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -443,56 +444,13 @@ func (x *SignUpRequest) GetPassword() string {
 	return ""
 }
 
-func (x *SignUpRequest) GetFirstName() string {
-	if x != nil && x.FirstName != nil {
-		return *x.FirstName
-	}
-	return ""
-}
-
-func (x *SignUpRequest) GetLastName() string {
-	if x != nil && x.LastName != nil {
-		return *x.LastName
-	}
-	return ""
-}
-
-func (x *SignUpRequest) GetDisplayName() string {
-	if x != nil && x.DisplayName != nil {
-		return *x.DisplayName
-	}
-	return ""
-}
-
-func (x *SignUpRequest) GetTimezone() string {
-	if x != nil && x.Timezone != nil {
-		return *x.Timezone
-	}
-	return ""
-}
-
-func (x *SignUpRequest) GetLocale() string {
-	if x != nil && x.Locale != nil {
-		return *x.Locale
-	}
-	return ""
-}
-
-func (x *SignUpRequest) GetCountry() string {
-	if x != nil && x.Country != nil {
-		return *x.Country
-	}
-	return ""
-}
-
-// SignUpResponse after successful registration
+// SignUpResponse after successful registration - only user data
 type SignUpResponse struct {
 	state                     protoimpl.MessageState `protogen:"open.v1"`
 	User                      *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	Profile                   *UserProfile           `protobuf:"bytes,2,opt,name=profile,proto3" json:"profile,omitempty"`
-	Message                   string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
-	EmailVerificationRequired bool                   `protobuf:"varint,4,opt,name=email_verification_required,json=emailVerificationRequired,proto3" json:"email_verification_required,omitempty"`
-	PhoneVerificationRequired bool                   `protobuf:"varint,5,opt,name=phone_verification_required,json=phoneVerificationRequired,proto3" json:"phone_verification_required,omitempty"`
+	Message                   string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	EmailVerificationRequired bool                   `protobuf:"varint,3,opt,name=email_verification_required,json=emailVerificationRequired,proto3" json:"email_verification_required,omitempty"`
+	PhoneVerificationRequired bool                   `protobuf:"varint,4,opt,name=phone_verification_required,json=phoneVerificationRequired,proto3" json:"phone_verification_required,omitempty"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -530,13 +488,6 @@ func (*SignUpResponse) Descriptor() ([]byte, []int) {
 func (x *SignUpResponse) GetUser() *User {
 	if x != nil {
 		return x.User
-	}
-	return nil
-}
-
-func (x *SignUpResponse) GetProfile() *UserProfile {
-	if x != nil {
-		return x.Profile
 	}
 	return nil
 }
@@ -1039,6 +990,694 @@ func (x *CheckEmailResponse) GetMessage() string {
 	return ""
 }
 
+// CreateProfileRequest to create a new profile for a user
+type CreateProfileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserUuid      string                 `protobuf:"bytes,1,opt,name=user_uuid,json=userUuid,proto3" json:"user_uuid,omitempty"`                // UUID of the user this profile belongs to
+	ProfileName   *string                `protobuf:"bytes,2,opt,name=profile_name,json=profileName,proto3,oneof" json:"profile_name,omitempty"` // Name/label for this profile (e.g., "Personal", "Work", "Gaming")
+	FirstName     *string                `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
+	LastName      *string                `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
+	DisplayName   *string                `protobuf:"bytes,5,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
+	Bio           *string                `protobuf:"bytes,6,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
+	AvatarUrl     *string                `protobuf:"bytes,7,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
+	DateOfBirth   *int64                 `protobuf:"varint,8,opt,name=date_of_birth,json=dateOfBirth,proto3,oneof" json:"date_of_birth,omitempty"` // Unix timestamp
+	Gender        *string                `protobuf:"bytes,9,opt,name=gender,proto3,oneof" json:"gender,omitempty"`
+	Timezone      *string                `protobuf:"bytes,10,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
+	Locale        *string                `protobuf:"bytes,11,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
+	Country       *string                `protobuf:"bytes,12,opt,name=country,proto3,oneof" json:"country,omitempty"`
+	City          *string                `protobuf:"bytes,13,opt,name=city,proto3,oneof" json:"city,omitempty"`
+	Address       *string                `protobuf:"bytes,14,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	PostalCode    *string                `protobuf:"bytes,15,opt,name=postal_code,json=postalCode,proto3,oneof" json:"postal_code,omitempty"`
+	WebsiteUrl    *string                `protobuf:"bytes,16,opt,name=website_url,json=websiteUrl,proto3,oneof" json:"website_url,omitempty"`
+	Metadata      []byte                 `protobuf:"bytes,17,opt,name=metadata,proto3" json:"metadata,omitempty"` // JSON metadata
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateProfileRequest) Reset() {
+	*x = CreateProfileRequest{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateProfileRequest) ProtoMessage() {}
+
+func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateProfileRequest.ProtoReflect.Descriptor instead.
+func (*CreateProfileRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CreateProfileRequest) GetUserUuid() string {
+	if x != nil {
+		return x.UserUuid
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetProfileName() string {
+	if x != nil && x.ProfileName != nil {
+		return *x.ProfileName
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetFirstName() string {
+	if x != nil && x.FirstName != nil {
+		return *x.FirstName
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetLastName() string {
+	if x != nil && x.LastName != nil {
+		return *x.LastName
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetDisplayName() string {
+	if x != nil && x.DisplayName != nil {
+		return *x.DisplayName
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetBio() string {
+	if x != nil && x.Bio != nil {
+		return *x.Bio
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetAvatarUrl() string {
+	if x != nil && x.AvatarUrl != nil {
+		return *x.AvatarUrl
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetDateOfBirth() int64 {
+	if x != nil && x.DateOfBirth != nil {
+		return *x.DateOfBirth
+	}
+	return 0
+}
+
+func (x *CreateProfileRequest) GetGender() string {
+	if x != nil && x.Gender != nil {
+		return *x.Gender
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetTimezone() string {
+	if x != nil && x.Timezone != nil {
+		return *x.Timezone
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetLocale() string {
+	if x != nil && x.Locale != nil {
+		return *x.Locale
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetCountry() string {
+	if x != nil && x.Country != nil {
+		return *x.Country
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetCity() string {
+	if x != nil && x.City != nil {
+		return *x.City
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetAddress() string {
+	if x != nil && x.Address != nil {
+		return *x.Address
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetPostalCode() string {
+	if x != nil && x.PostalCode != nil {
+		return *x.PostalCode
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetWebsiteUrl() string {
+	if x != nil && x.WebsiteUrl != nil {
+		return *x.WebsiteUrl
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetMetadata() []byte {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+// CreateProfileResponse
+type CreateProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Profile       *UserProfile           `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateProfileResponse) Reset() {
+	*x = CreateProfileResponse{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateProfileResponse) ProtoMessage() {}
+
+func (x *CreateProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateProfileResponse.ProtoReflect.Descriptor instead.
+func (*CreateProfileResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *CreateProfileResponse) GetProfile() *UserProfile {
+	if x != nil {
+		return x.Profile
+	}
+	return nil
+}
+
+func (x *CreateProfileResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// ListUserProfilesRequest to get all profiles for a user
+type ListUserProfilesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserUuid      string                 `protobuf:"bytes,1,opt,name=user_uuid,json=userUuid,proto3" json:"user_uuid,omitempty"`
+	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserProfilesRequest) Reset() {
+	*x = ListUserProfilesRequest{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserProfilesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserProfilesRequest) ProtoMessage() {}
+
+func (x *ListUserProfilesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserProfilesRequest.ProtoReflect.Descriptor instead.
+func (*ListUserProfilesRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ListUserProfilesRequest) GetUserUuid() string {
+	if x != nil {
+		return x.UserUuid
+	}
+	return ""
+}
+
+func (x *ListUserProfilesRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListUserProfilesRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+// ListUserProfilesResponse
+type ListUserProfilesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Profiles      []*UserProfile         `protobuf:"bytes,1,rep,name=profiles,proto3" json:"profiles,omitempty"`
+	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	HasMore       bool                   `protobuf:"varint,5,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserProfilesResponse) Reset() {
+	*x = ListUserProfilesResponse{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserProfilesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserProfilesResponse) ProtoMessage() {}
+
+func (x *ListUserProfilesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserProfilesResponse.ProtoReflect.Descriptor instead.
+func (*ListUserProfilesResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ListUserProfilesResponse) GetProfiles() []*UserProfile {
+	if x != nil {
+		return x.Profiles
+	}
+	return nil
+}
+
+func (x *ListUserProfilesResponse) GetTotalCount() int32 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
+}
+
+func (x *ListUserProfilesResponse) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListUserProfilesResponse) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListUserProfilesResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
+}
+
+// UpdateProfileRequest to update a specific profile
+type UpdateProfileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProfileUuid   string                 `protobuf:"bytes,1,opt,name=profile_uuid,json=profileUuid,proto3" json:"profile_uuid,omitempty"` // UUID of the profile to update
+	ProfileName   *string                `protobuf:"bytes,2,opt,name=profile_name,json=profileName,proto3,oneof" json:"profile_name,omitempty"`
+	FirstName     *string                `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
+	LastName      *string                `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
+	DisplayName   *string                `protobuf:"bytes,5,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
+	Bio           *string                `protobuf:"bytes,6,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
+	AvatarUrl     *string                `protobuf:"bytes,7,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
+	DateOfBirth   *int64                 `protobuf:"varint,8,opt,name=date_of_birth,json=dateOfBirth,proto3,oneof" json:"date_of_birth,omitempty"`
+	Gender        *string                `protobuf:"bytes,9,opt,name=gender,proto3,oneof" json:"gender,omitempty"`
+	Timezone      *string                `protobuf:"bytes,10,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
+	Locale        *string                `protobuf:"bytes,11,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
+	Country       *string                `protobuf:"bytes,12,opt,name=country,proto3,oneof" json:"country,omitempty"`
+	City          *string                `protobuf:"bytes,13,opt,name=city,proto3,oneof" json:"city,omitempty"`
+	Address       *string                `protobuf:"bytes,14,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	PostalCode    *string                `protobuf:"bytes,15,opt,name=postal_code,json=postalCode,proto3,oneof" json:"postal_code,omitempty"`
+	WebsiteUrl    *string                `protobuf:"bytes,16,opt,name=website_url,json=websiteUrl,proto3,oneof" json:"website_url,omitempty"`
+	Metadata      []byte                 `protobuf:"bytes,17,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProfileRequest) Reset() {
+	*x = UpdateProfileRequest{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProfileRequest) ProtoMessage() {}
+
+func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProfileRequest.ProtoReflect.Descriptor instead.
+func (*UpdateProfileRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *UpdateProfileRequest) GetProfileUuid() string {
+	if x != nil {
+		return x.ProfileUuid
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetProfileName() string {
+	if x != nil && x.ProfileName != nil {
+		return *x.ProfileName
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetFirstName() string {
+	if x != nil && x.FirstName != nil {
+		return *x.FirstName
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetLastName() string {
+	if x != nil && x.LastName != nil {
+		return *x.LastName
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetDisplayName() string {
+	if x != nil && x.DisplayName != nil {
+		return *x.DisplayName
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetBio() string {
+	if x != nil && x.Bio != nil {
+		return *x.Bio
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetAvatarUrl() string {
+	if x != nil && x.AvatarUrl != nil {
+		return *x.AvatarUrl
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetDateOfBirth() int64 {
+	if x != nil && x.DateOfBirth != nil {
+		return *x.DateOfBirth
+	}
+	return 0
+}
+
+func (x *UpdateProfileRequest) GetGender() string {
+	if x != nil && x.Gender != nil {
+		return *x.Gender
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetTimezone() string {
+	if x != nil && x.Timezone != nil {
+		return *x.Timezone
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetLocale() string {
+	if x != nil && x.Locale != nil {
+		return *x.Locale
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetCountry() string {
+	if x != nil && x.Country != nil {
+		return *x.Country
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetCity() string {
+	if x != nil && x.City != nil {
+		return *x.City
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetAddress() string {
+	if x != nil && x.Address != nil {
+		return *x.Address
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetPostalCode() string {
+	if x != nil && x.PostalCode != nil {
+		return *x.PostalCode
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetWebsiteUrl() string {
+	if x != nil && x.WebsiteUrl != nil {
+		return *x.WebsiteUrl
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetMetadata() []byte {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+// UpdateProfileResponse
+type UpdateProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Profile       *UserProfile           `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProfileResponse) Reset() {
+	*x = UpdateProfileResponse{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProfileResponse) ProtoMessage() {}
+
+func (x *UpdateProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProfileResponse.ProtoReflect.Descriptor instead.
+func (*UpdateProfileResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *UpdateProfileResponse) GetProfile() *UserProfile {
+	if x != nil {
+		return x.Profile
+	}
+	return nil
+}
+
+func (x *UpdateProfileResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// DeleteProfileRequest to delete a specific profile
+type DeleteProfileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProfileUuid   string                 `protobuf:"bytes,1,opt,name=profile_uuid,json=profileUuid,proto3" json:"profile_uuid,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteProfileRequest) Reset() {
+	*x = DeleteProfileRequest{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteProfileRequest) ProtoMessage() {}
+
+func (x *DeleteProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteProfileRequest.ProtoReflect.Descriptor instead.
+func (*DeleteProfileRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *DeleteProfileRequest) GetProfileUuid() string {
+	if x != nil {
+		return x.ProfileUuid
+	}
+	return ""
+}
+
+// DeleteProfileResponse
+type DeleteProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteProfileResponse) Reset() {
+	*x = DeleteProfileResponse{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteProfileResponse) ProtoMessage() {}
+
+func (x *DeleteProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteProfileResponse.ProtoReflect.Descriptor instead.
+func (*DeleteProfileResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *DeleteProfileResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteProfileResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 // GetUserRequest to get user by ID or username
 type GetUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1056,7 +1695,7 @@ type GetUserRequest struct {
 
 func (x *GetUserRequest) Reset() {
 	*x = GetUserRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[13]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1068,7 +1707,7 @@ func (x *GetUserRequest) String() string {
 func (*GetUserRequest) ProtoMessage() {}
 
 func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[13]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1081,7 +1720,7 @@ func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
 func (*GetUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{13}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetUserRequest) GetIdentifier() isGetUserRequest_Identifier {
@@ -1173,7 +1812,7 @@ type GetUserResponse struct {
 
 func (x *GetUserResponse) Reset() {
 	*x = GetUserResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[14]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1185,7 +1824,7 @@ func (x *GetUserResponse) String() string {
 func (*GetUserResponse) ProtoMessage() {}
 
 func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[14]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1198,7 +1837,7 @@ func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserResponse.ProtoReflect.Descriptor instead.
 func (*GetUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{14}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetUserResponse) GetUser() *User {
@@ -1242,7 +1881,7 @@ type UpdateUserRequest struct {
 
 func (x *UpdateUserRequest) Reset() {
 	*x = UpdateUserRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[15]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1254,7 +1893,7 @@ func (x *UpdateUserRequest) String() string {
 func (*UpdateUserRequest) ProtoMessage() {}
 
 func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[15]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1267,7 +1906,7 @@ func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{15}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *UpdateUserRequest) GetUuid() string {
@@ -1400,7 +2039,7 @@ type UpdateUserResponse struct {
 
 func (x *UpdateUserResponse) Reset() {
 	*x = UpdateUserResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[16]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1412,7 +2051,7 @@ func (x *UpdateUserResponse) String() string {
 func (*UpdateUserResponse) ProtoMessage() {}
 
 func (x *UpdateUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[16]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1425,7 +2064,7 @@ func (x *UpdateUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserResponse.ProtoReflect.Descriptor instead.
 func (*UpdateUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{16}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *UpdateUserResponse) GetUser() *User {
@@ -1454,7 +2093,7 @@ type ChangePasswordRequest struct {
 
 func (x *ChangePasswordRequest) Reset() {
 	*x = ChangePasswordRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[17]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1466,7 +2105,7 @@ func (x *ChangePasswordRequest) String() string {
 func (*ChangePasswordRequest) ProtoMessage() {}
 
 func (x *ChangePasswordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[17]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1479,7 +2118,7 @@ func (x *ChangePasswordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangePasswordRequest.ProtoReflect.Descriptor instead.
 func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{17}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ChangePasswordRequest) GetUuid() string {
@@ -1514,7 +2153,7 @@ type ChangePasswordResponse struct {
 
 func (x *ChangePasswordResponse) Reset() {
 	*x = ChangePasswordResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[18]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1526,7 +2165,7 @@ func (x *ChangePasswordResponse) String() string {
 func (*ChangePasswordResponse) ProtoMessage() {}
 
 func (x *ChangePasswordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[18]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1539,7 +2178,7 @@ func (x *ChangePasswordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangePasswordResponse.ProtoReflect.Descriptor instead.
 func (*ChangePasswordResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{18}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ChangePasswordResponse) GetSuccess() bool {
@@ -1573,7 +2212,7 @@ type ListUsersRequest struct {
 
 func (x *ListUsersRequest) Reset() {
 	*x = ListUsersRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[19]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1585,7 +2224,7 @@ func (x *ListUsersRequest) String() string {
 func (*ListUsersRequest) ProtoMessage() {}
 
 func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[19]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1598,7 +2237,7 @@ func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
 func (*ListUsersRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{19}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListUsersRequest) GetLimit() int32 {
@@ -1671,7 +2310,7 @@ type ListUsersResponse struct {
 
 func (x *ListUsersResponse) Reset() {
 	*x = ListUsersResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[20]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1683,7 +2322,7 @@ func (x *ListUsersResponse) String() string {
 func (*ListUsersResponse) ProtoMessage() {}
 
 func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[20]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1696,7 +2335,7 @@ func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
 func (*ListUsersResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{20}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListUsersResponse) GetUsers() []*User {
@@ -1745,7 +2384,7 @@ type DeleteUserRequest struct {
 
 func (x *DeleteUserRequest) Reset() {
 	*x = DeleteUserRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[21]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1757,7 +2396,7 @@ func (x *DeleteUserRequest) String() string {
 func (*DeleteUserRequest) ProtoMessage() {}
 
 func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[21]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1770,7 +2409,7 @@ func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{21}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *DeleteUserRequest) GetUuid() string {
@@ -1798,7 +2437,7 @@ type DeleteUserResponse struct {
 
 func (x *DeleteUserResponse) Reset() {
 	*x = DeleteUserResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[22]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1810,7 +2449,7 @@ func (x *DeleteUserResponse) String() string {
 func (*DeleteUserResponse) ProtoMessage() {}
 
 func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[22]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1823,7 +2462,7 @@ func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserResponse.ProtoReflect.Descriptor instead.
 func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{22}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *DeleteUserResponse) GetSuccess() bool {
@@ -1865,36 +2504,38 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"updated_at\x18\x0e \x01(\x03R\tupdatedAtB\b\n" +
 	"\x06_emailB\b\n" +
 	"\x06_phoneB\x10\n" +
-	"\x0e_last_login_at\"\xaf\x06\n" +
+	"\x0e_last_login_at\"\xe8\x06\n" +
 	"\vUserProfile\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\"\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12&\n" +
+	"\fprofile_name\x18\x04 \x01(\tH\x00R\vprofileName\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"first_name\x18\x04 \x01(\tH\x00R\tfirstName\x88\x01\x01\x12 \n" +
-	"\tlast_name\x18\x05 \x01(\tH\x01R\blastName\x88\x01\x01\x12&\n" +
-	"\fdisplay_name\x18\x06 \x01(\tH\x02R\vdisplayName\x88\x01\x01\x12\x15\n" +
-	"\x03bio\x18\a \x01(\tH\x03R\x03bio\x88\x01\x01\x12\"\n" +
+	"first_name\x18\x05 \x01(\tH\x01R\tfirstName\x88\x01\x01\x12 \n" +
+	"\tlast_name\x18\x06 \x01(\tH\x02R\blastName\x88\x01\x01\x12&\n" +
+	"\fdisplay_name\x18\a \x01(\tH\x03R\vdisplayName\x88\x01\x01\x12\x15\n" +
+	"\x03bio\x18\b \x01(\tH\x04R\x03bio\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"avatar_url\x18\b \x01(\tH\x04R\tavatarUrl\x88\x01\x01\x12'\n" +
-	"\rdate_of_birth\x18\t \x01(\x03H\x05R\vdateOfBirth\x88\x01\x01\x12\x1b\n" +
-	"\x06gender\x18\n" +
-	" \x01(\tH\x06R\x06gender\x88\x01\x01\x12\x1f\n" +
-	"\btimezone\x18\v \x01(\tH\aR\btimezone\x88\x01\x01\x12\x1b\n" +
-	"\x06locale\x18\f \x01(\tH\bR\x06locale\x88\x01\x01\x12\x1d\n" +
-	"\acountry\x18\r \x01(\tH\tR\acountry\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\x0e \x01(\tH\n" +
-	"R\x04city\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\x0f \x01(\tH\vR\aaddress\x88\x01\x01\x12$\n" +
-	"\vpostal_code\x18\x10 \x01(\tH\fR\n" +
+	"avatar_url\x18\t \x01(\tH\x05R\tavatarUrl\x88\x01\x01\x12'\n" +
+	"\rdate_of_birth\x18\n" +
+	" \x01(\x03H\x06R\vdateOfBirth\x88\x01\x01\x12\x1b\n" +
+	"\x06gender\x18\v \x01(\tH\aR\x06gender\x88\x01\x01\x12\x1f\n" +
+	"\btimezone\x18\f \x01(\tH\bR\btimezone\x88\x01\x01\x12\x1b\n" +
+	"\x06locale\x18\r \x01(\tH\tR\x06locale\x88\x01\x01\x12\x1d\n" +
+	"\acountry\x18\x0e \x01(\tH\n" +
+	"R\acountry\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\x0f \x01(\tH\vR\x04city\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\x10 \x01(\tH\fR\aaddress\x88\x01\x01\x12$\n" +
+	"\vpostal_code\x18\x11 \x01(\tH\rR\n" +
 	"postalCode\x88\x01\x01\x12$\n" +
-	"\vwebsite_url\x18\x11 \x01(\tH\rR\n" +
+	"\vwebsite_url\x18\x12 \x01(\tH\x0eR\n" +
 	"websiteUrl\x88\x01\x01\x12\x1a\n" +
-	"\bmetadata\x18\x12 \x01(\fR\bmetadata\x12\x1d\n" +
+	"\bmetadata\x18\x13 \x01(\fR\bmetadata\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x13 \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x14 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x14 \x01(\x03R\tupdatedAtB\r\n" +
+	"updated_at\x18\x15 \x01(\x03R\tupdatedAtB\x0f\n" +
+	"\r_profile_nameB\r\n" +
 	"\v_first_nameB\f\n" +
 	"\n" +
 	"_last_nameB\x0f\n" +
@@ -1911,36 +2552,19 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\n" +
 	"\b_addressB\x0e\n" +
 	"\f_postal_codeB\x0e\n" +
-	"\f_website_url\"\xae\x03\n" +
+	"\f_website_url\"\x91\x01\n" +
 	"\rSignUpRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x19\n" +
 	"\x05email\x18\x02 \x01(\tH\x00R\x05email\x88\x01\x01\x12\x19\n" +
 	"\x05phone\x18\x03 \x01(\tH\x01R\x05phone\x88\x01\x01\x12\x1a\n" +
-	"\bpassword\x18\x04 \x01(\tR\bpassword\x12\"\n" +
-	"\n" +
-	"first_name\x18\x05 \x01(\tH\x02R\tfirstName\x88\x01\x01\x12 \n" +
-	"\tlast_name\x18\x06 \x01(\tH\x03R\blastName\x88\x01\x01\x12&\n" +
-	"\fdisplay_name\x18\a \x01(\tH\x04R\vdisplayName\x88\x01\x01\x12\x1f\n" +
-	"\btimezone\x18\b \x01(\tH\x05R\btimezone\x88\x01\x01\x12\x1b\n" +
-	"\x06locale\x18\t \x01(\tH\x06R\x06locale\x88\x01\x01\x12\x1d\n" +
-	"\acountry\x18\n" +
-	" \x01(\tH\aR\acountry\x88\x01\x01B\b\n" +
+	"\bpassword\x18\x04 \x01(\tR\bpasswordB\b\n" +
 	"\x06_emailB\b\n" +
-	"\x06_phoneB\r\n" +
-	"\v_first_nameB\f\n" +
-	"\n" +
-	"_last_nameB\x0f\n" +
-	"\r_display_nameB\v\n" +
-	"\t_timezoneB\t\n" +
-	"\a_localeB\n" +
-	"\n" +
-	"\b_country\"\xf3\x01\n" +
+	"\x06_phone\"\xc8\x01\n" +
 	"\x0eSignUpResponse\x12\x1c\n" +
-	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12)\n" +
-	"\aprofile\x18\x02 \x01(\v2\x0f.v1.UserProfileR\aprofile\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\x12>\n" +
-	"\x1bemail_verification_required\x18\x04 \x01(\bR\x19emailVerificationRequired\x12>\n" +
-	"\x1bphone_verification_required\x18\x05 \x01(\bR\x19phoneVerificationRequired\"W\n" +
+	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12>\n" +
+	"\x1bemail_verification_required\x18\x03 \x01(\bR\x19emailVerificationRequired\x12>\n" +
+	"\x1bphone_verification_required\x18\x04 \x01(\bR\x19phoneVerificationRequired\"W\n" +
 	"\x12VerifyEmailRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12+\n" +
 	"\x11verification_code\x18\x02 \x01(\tR\x10verificationCode\"W\n" +
@@ -1970,6 +2594,112 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tR\x05email\"L\n" +
 	"\x12CheckEmailResponse\x12\x1c\n" +
 	"\tavailable\x18\x01 \x01(\bR\tavailable\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x93\x06\n" +
+	"\x14CreateProfileRequest\x12\x1b\n" +
+	"\tuser_uuid\x18\x01 \x01(\tR\buserUuid\x12&\n" +
+	"\fprofile_name\x18\x02 \x01(\tH\x00R\vprofileName\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tH\x01R\tfirstName\x88\x01\x01\x12 \n" +
+	"\tlast_name\x18\x04 \x01(\tH\x02R\blastName\x88\x01\x01\x12&\n" +
+	"\fdisplay_name\x18\x05 \x01(\tH\x03R\vdisplayName\x88\x01\x01\x12\x15\n" +
+	"\x03bio\x18\x06 \x01(\tH\x04R\x03bio\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"avatar_url\x18\a \x01(\tH\x05R\tavatarUrl\x88\x01\x01\x12'\n" +
+	"\rdate_of_birth\x18\b \x01(\x03H\x06R\vdateOfBirth\x88\x01\x01\x12\x1b\n" +
+	"\x06gender\x18\t \x01(\tH\aR\x06gender\x88\x01\x01\x12\x1f\n" +
+	"\btimezone\x18\n" +
+	" \x01(\tH\bR\btimezone\x88\x01\x01\x12\x1b\n" +
+	"\x06locale\x18\v \x01(\tH\tR\x06locale\x88\x01\x01\x12\x1d\n" +
+	"\acountry\x18\f \x01(\tH\n" +
+	"R\acountry\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\r \x01(\tH\vR\x04city\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\x0e \x01(\tH\fR\aaddress\x88\x01\x01\x12$\n" +
+	"\vpostal_code\x18\x0f \x01(\tH\rR\n" +
+	"postalCode\x88\x01\x01\x12$\n" +
+	"\vwebsite_url\x18\x10 \x01(\tH\x0eR\n" +
+	"websiteUrl\x88\x01\x01\x12\x1a\n" +
+	"\bmetadata\x18\x11 \x01(\fR\bmetadataB\x0f\n" +
+	"\r_profile_nameB\r\n" +
+	"\v_first_nameB\f\n" +
+	"\n" +
+	"_last_nameB\x0f\n" +
+	"\r_display_nameB\x06\n" +
+	"\x04_bioB\r\n" +
+	"\v_avatar_urlB\x10\n" +
+	"\x0e_date_of_birthB\t\n" +
+	"\a_genderB\v\n" +
+	"\t_timezoneB\t\n" +
+	"\a_localeB\n" +
+	"\n" +
+	"\b_countryB\a\n" +
+	"\x05_cityB\n" +
+	"\n" +
+	"\b_addressB\x0e\n" +
+	"\f_postal_codeB\x0e\n" +
+	"\f_website_url\"\\\n" +
+	"\x15CreateProfileResponse\x12)\n" +
+	"\aprofile\x18\x01 \x01(\v2\x0f.v1.UserProfileR\aprofile\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"d\n" +
+	"\x17ListUserProfilesRequest\x12\x1b\n" +
+	"\tuser_uuid\x18\x01 \x01(\tR\buserUuid\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"\xb1\x01\n" +
+	"\x18ListUserProfilesResponse\x12+\n" +
+	"\bprofiles\x18\x01 \x03(\v2\x0f.v1.UserProfileR\bprofiles\x12\x1f\n" +
+	"\vtotal_count\x18\x02 \x01(\x05R\n" +
+	"totalCount\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x19\n" +
+	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\x99\x06\n" +
+	"\x14UpdateProfileRequest\x12!\n" +
+	"\fprofile_uuid\x18\x01 \x01(\tR\vprofileUuid\x12&\n" +
+	"\fprofile_name\x18\x02 \x01(\tH\x00R\vprofileName\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tH\x01R\tfirstName\x88\x01\x01\x12 \n" +
+	"\tlast_name\x18\x04 \x01(\tH\x02R\blastName\x88\x01\x01\x12&\n" +
+	"\fdisplay_name\x18\x05 \x01(\tH\x03R\vdisplayName\x88\x01\x01\x12\x15\n" +
+	"\x03bio\x18\x06 \x01(\tH\x04R\x03bio\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"avatar_url\x18\a \x01(\tH\x05R\tavatarUrl\x88\x01\x01\x12'\n" +
+	"\rdate_of_birth\x18\b \x01(\x03H\x06R\vdateOfBirth\x88\x01\x01\x12\x1b\n" +
+	"\x06gender\x18\t \x01(\tH\aR\x06gender\x88\x01\x01\x12\x1f\n" +
+	"\btimezone\x18\n" +
+	" \x01(\tH\bR\btimezone\x88\x01\x01\x12\x1b\n" +
+	"\x06locale\x18\v \x01(\tH\tR\x06locale\x88\x01\x01\x12\x1d\n" +
+	"\acountry\x18\f \x01(\tH\n" +
+	"R\acountry\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\r \x01(\tH\vR\x04city\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\x0e \x01(\tH\fR\aaddress\x88\x01\x01\x12$\n" +
+	"\vpostal_code\x18\x0f \x01(\tH\rR\n" +
+	"postalCode\x88\x01\x01\x12$\n" +
+	"\vwebsite_url\x18\x10 \x01(\tH\x0eR\n" +
+	"websiteUrl\x88\x01\x01\x12\x1a\n" +
+	"\bmetadata\x18\x11 \x01(\fR\bmetadataB\x0f\n" +
+	"\r_profile_nameB\r\n" +
+	"\v_first_nameB\f\n" +
+	"\n" +
+	"_last_nameB\x0f\n" +
+	"\r_display_nameB\x06\n" +
+	"\x04_bioB\r\n" +
+	"\v_avatar_urlB\x10\n" +
+	"\x0e_date_of_birthB\t\n" +
+	"\a_genderB\v\n" +
+	"\t_timezoneB\t\n" +
+	"\a_localeB\n" +
+	"\n" +
+	"\b_countryB\a\n" +
+	"\x05_cityB\n" +
+	"\n" +
+	"\b_addressB\x0e\n" +
+	"\f_postal_codeB\x0e\n" +
+	"\f_website_url\"\\\n" +
+	"\x15UpdateProfileResponse\x12)\n" +
+	"\aprofile\x18\x01 \x01(\v2\x0f.v1.UserProfileR\aprofile\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"9\n" +
+	"\x14DeleteProfileRequest\x12!\n" +
+	"\fprofile_uuid\x18\x01 \x01(\tR\vprofileUuid\"K\n" +
+	"\x15DeleteProfileResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"\xa5\x01\n" +
 	"\x0eGetUserRequest\x12\x10\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x12\x14\n" +
@@ -2083,7 +2813,7 @@ func file_proto_openauth_v1_users_proto_rawDescGZIP() []byte {
 	return file_proto_openauth_v1_users_proto_rawDescData
 }
 
-var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_proto_openauth_v1_users_proto_goTypes = []any{
 	(*User)(nil),                       // 0: v1.User
 	(*UserProfile)(nil),                // 1: v1.UserProfile
@@ -2098,30 +2828,40 @@ var file_proto_openauth_v1_users_proto_goTypes = []any{
 	(*CheckUsernameResponse)(nil),      // 10: v1.CheckUsernameResponse
 	(*CheckEmailRequest)(nil),          // 11: v1.CheckEmailRequest
 	(*CheckEmailResponse)(nil),         // 12: v1.CheckEmailResponse
-	(*GetUserRequest)(nil),             // 13: v1.GetUserRequest
-	(*GetUserResponse)(nil),            // 14: v1.GetUserResponse
-	(*UpdateUserRequest)(nil),          // 15: v1.UpdateUserRequest
-	(*UpdateUserResponse)(nil),         // 16: v1.UpdateUserResponse
-	(*ChangePasswordRequest)(nil),      // 17: v1.ChangePasswordRequest
-	(*ChangePasswordResponse)(nil),     // 18: v1.ChangePasswordResponse
-	(*ListUsersRequest)(nil),           // 19: v1.ListUsersRequest
-	(*ListUsersResponse)(nil),          // 20: v1.ListUsersResponse
-	(*DeleteUserRequest)(nil),          // 21: v1.DeleteUserRequest
-	(*DeleteUserResponse)(nil),         // 22: v1.DeleteUserResponse
+	(*CreateProfileRequest)(nil),       // 13: v1.CreateProfileRequest
+	(*CreateProfileResponse)(nil),      // 14: v1.CreateProfileResponse
+	(*ListUserProfilesRequest)(nil),    // 15: v1.ListUserProfilesRequest
+	(*ListUserProfilesResponse)(nil),   // 16: v1.ListUserProfilesResponse
+	(*UpdateProfileRequest)(nil),       // 17: v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),      // 18: v1.UpdateProfileResponse
+	(*DeleteProfileRequest)(nil),       // 19: v1.DeleteProfileRequest
+	(*DeleteProfileResponse)(nil),      // 20: v1.DeleteProfileResponse
+	(*GetUserRequest)(nil),             // 21: v1.GetUserRequest
+	(*GetUserResponse)(nil),            // 22: v1.GetUserResponse
+	(*UpdateUserRequest)(nil),          // 23: v1.UpdateUserRequest
+	(*UpdateUserResponse)(nil),         // 24: v1.UpdateUserResponse
+	(*ChangePasswordRequest)(nil),      // 25: v1.ChangePasswordRequest
+	(*ChangePasswordResponse)(nil),     // 26: v1.ChangePasswordResponse
+	(*ListUsersRequest)(nil),           // 27: v1.ListUsersRequest
+	(*ListUsersResponse)(nil),          // 28: v1.ListUsersResponse
+	(*DeleteUserRequest)(nil),          // 29: v1.DeleteUserRequest
+	(*DeleteUserResponse)(nil),         // 30: v1.DeleteUserResponse
 }
 var file_proto_openauth_v1_users_proto_depIdxs = []int32{
 	0, // 0: v1.SignUpResponse.user:type_name -> v1.User
-	1, // 1: v1.SignUpResponse.profile:type_name -> v1.UserProfile
-	0, // 2: v1.GetUserResponse.user:type_name -> v1.User
-	1, // 3: v1.GetUserResponse.profile:type_name -> v1.UserProfile
-	0, // 4: v1.UpdateUserResponse.user:type_name -> v1.User
-	1, // 5: v1.UpdateUserResponse.profile:type_name -> v1.UserProfile
-	0, // 6: v1.ListUsersResponse.users:type_name -> v1.User
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	1, // 1: v1.CreateProfileResponse.profile:type_name -> v1.UserProfile
+	1, // 2: v1.ListUserProfilesResponse.profiles:type_name -> v1.UserProfile
+	1, // 3: v1.UpdateProfileResponse.profile:type_name -> v1.UserProfile
+	0, // 4: v1.GetUserResponse.user:type_name -> v1.User
+	1, // 5: v1.GetUserResponse.profile:type_name -> v1.UserProfile
+	0, // 6: v1.UpdateUserResponse.user:type_name -> v1.User
+	1, // 7: v1.UpdateUserResponse.profile:type_name -> v1.UserProfile
+	0, // 8: v1.ListUsersResponse.users:type_name -> v1.User
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_users_proto_init() }
@@ -2132,22 +2872,24 @@ func file_proto_openauth_v1_users_proto_init() {
 	file_proto_openauth_v1_users_proto_msgTypes[0].OneofWrappers = []any{}
 	file_proto_openauth_v1_users_proto_msgTypes[1].OneofWrappers = []any{}
 	file_proto_openauth_v1_users_proto_msgTypes[2].OneofWrappers = []any{}
-	file_proto_openauth_v1_users_proto_msgTypes[13].OneofWrappers = []any{
+	file_proto_openauth_v1_users_proto_msgTypes[13].OneofWrappers = []any{}
+	file_proto_openauth_v1_users_proto_msgTypes[17].OneofWrappers = []any{}
+	file_proto_openauth_v1_users_proto_msgTypes[21].OneofWrappers = []any{
 		(*GetUserRequest_Id)(nil),
 		(*GetUserRequest_Uuid)(nil),
 		(*GetUserRequest_Username)(nil),
 		(*GetUserRequest_Email)(nil),
 	}
-	file_proto_openauth_v1_users_proto_msgTypes[14].OneofWrappers = []any{}
-	file_proto_openauth_v1_users_proto_msgTypes[15].OneofWrappers = []any{}
-	file_proto_openauth_v1_users_proto_msgTypes[19].OneofWrappers = []any{}
+	file_proto_openauth_v1_users_proto_msgTypes[22].OneofWrappers = []any{}
+	file_proto_openauth_v1_users_proto_msgTypes[23].OneofWrappers = []any{}
+	file_proto_openauth_v1_users_proto_msgTypes[27].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_openauth_v1_users_proto_rawDesc), len(file_proto_openauth_v1_users_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -234,5 +234,53 @@ service OpenAuth {
             delete: "/openauth/v1/users/{uuid}"
         };
     }
+
+    // Profile Management APIs
+    // These endpoints handle user profile creation and management.
+    // Users can have multiple profiles for different contexts (personal, work, etc.).
+
+    // CreateProfile creates a new profile for a user.
+    // 
+    // Allows users to create multiple profiles for different contexts.
+    // Each profile can have different display information, preferences,
+    // and metadata while belonging to the same user account.
+    rpc CreateProfile (CreateProfileRequest) returns (CreateProfileResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/{user_uuid}/profiles"
+            body: "*"
+        };
+    }
+
+    // ListUserProfiles retrieves all profiles for a specific user.
+    // 
+    // Returns paginated list of profiles belonging to a user.
+    // Useful for profile selection interfaces and management.
+    rpc ListUserProfiles (ListUserProfilesRequest) returns (ListUserProfilesResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/{user_uuid}/profiles"
+        };
+    }
+
+    // UpdateProfile modifies an existing profile.
+    // 
+    // Supports partial updates - only provided fields are modified.
+    // Profile updates are independent of user account information.
+    rpc UpdateProfile (UpdateProfileRequest) returns (UpdateProfileResponse) {
+        option (google.api.http) = {
+            put: "/openauth/v1/profiles/{profile_uuid}"
+            body: "*"
+        };
+    }
+
+    // DeleteProfile removes a specific profile.
+    // 
+    // Permanently deletes a profile and all associated data.
+    // Users must have at least one profile, so deletion of the last
+    // profile may be restricted based on business rules.
+    rpc DeleteProfile (DeleteProfileRequest) returns (DeleteProfileResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/profiles/{profile_uuid}"
+        };
+    }
 }
 

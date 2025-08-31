@@ -26,48 +26,40 @@ message UserProfile {
     int64 id = 1;
     string uuid = 2;
     int64 user_id = 3;
-    optional string first_name = 4;
-    optional string last_name = 5;
-    optional string display_name = 6;
-    optional string bio = 7;
-    optional string avatar_url = 8;
-    optional int64 date_of_birth = 9;  // Unix timestamp
-    optional string gender = 10;
-    optional string timezone = 11;
-    optional string locale = 12;
-    optional string country = 13;
-    optional string city = 14;
-    optional string address = 15;
-    optional string postal_code = 16;
-    optional string website_url = 17;
-    bytes metadata = 18;  // JSON metadata
-    int64 created_at = 19;
-    int64 updated_at = 20;
+    optional string profile_name = 4;  // Name/label for this profile
+    optional string first_name = 5;
+    optional string last_name = 6;
+    optional string display_name = 7;
+    optional string bio = 8;
+    optional string avatar_url = 9;
+    optional int64 date_of_birth = 10;  // Unix timestamp
+    optional string gender = 11;
+    optional string timezone = 12;
+    optional string locale = 13;
+    optional string country = 14;
+    optional string city = 15;
+    optional string address = 16;
+    optional string postal_code = 17;
+    optional string website_url = 18;
+    bytes metadata = 19;  // JSON metadata
+    int64 created_at = 20;
+    int64 updated_at = 21;
 }
 
-// SignUpRequest for user registration
+// SignUpRequest for user registration - only authentication credentials
 message SignUpRequest {
     string username = 1;
     optional string email = 2;
     optional string phone = 3;
     string password = 4;
-    
-    // Optional profile information
-    optional string first_name = 5;
-    optional string last_name = 6;
-    optional string display_name = 7;
-    optional string timezone = 8;
-    optional string locale = 9;
-    optional string country = 10;
 }
 
-// SignUpResponse after successful registration
+// SignUpResponse after successful registration - only user data
 message SignUpResponse {
     User user = 1;
-    UserProfile profile = 2;
-    string message = 3;
-    bool email_verification_required = 4;
-    bool phone_verification_required = 5;
+    string message = 2;
+    bool email_verification_required = 3;
+    bool phone_verification_required = 4;
 }
 
 // VerifyEmailRequest for email verification
@@ -121,6 +113,89 @@ message CheckEmailRequest {
 // CheckEmailResponse
 message CheckEmailResponse {
     bool available = 1;
+    string message = 2;
+}
+
+// Profile Management Messages
+
+// CreateProfileRequest to create a new profile for a user
+message CreateProfileRequest {
+    string user_uuid = 1;  // UUID of the user this profile belongs to
+    optional string profile_name = 2;  // Name/label for this profile (e.g., "Personal", "Work", "Gaming")
+    optional string first_name = 3;
+    optional string last_name = 4;
+    optional string display_name = 5;
+    optional string bio = 6;
+    optional string avatar_url = 7;
+    optional int64 date_of_birth = 8;  // Unix timestamp
+    optional string gender = 9;
+    optional string timezone = 10;
+    optional string locale = 11;
+    optional string country = 12;
+    optional string city = 13;
+    optional string address = 14;
+    optional string postal_code = 15;
+    optional string website_url = 16;
+    bytes metadata = 17;  // JSON metadata
+}
+
+// CreateProfileResponse
+message CreateProfileResponse {
+    UserProfile profile = 1;
+    string message = 2;
+}
+
+// ListUserProfilesRequest to get all profiles for a user
+message ListUserProfilesRequest {
+    string user_uuid = 1;
+    int32 limit = 2;
+    int32 offset = 3;
+}
+
+// ListUserProfilesResponse
+message ListUserProfilesResponse {
+    repeated UserProfile profiles = 1;
+    int32 total_count = 2;
+    int32 limit = 3;
+    int32 offset = 4;
+    bool has_more = 5;
+}
+
+// UpdateProfileRequest to update a specific profile
+message UpdateProfileRequest {
+    string profile_uuid = 1;  // UUID of the profile to update
+    optional string profile_name = 2;
+    optional string first_name = 3;
+    optional string last_name = 4;
+    optional string display_name = 5;
+    optional string bio = 6;
+    optional string avatar_url = 7;
+    optional int64 date_of_birth = 8;
+    optional string gender = 9;
+    optional string timezone = 10;
+    optional string locale = 11;
+    optional string country = 12;
+    optional string city = 13;
+    optional string address = 14;
+    optional string postal_code = 15;
+    optional string website_url = 16;
+    bytes metadata = 17;
+}
+
+// UpdateProfileResponse
+message UpdateProfileResponse {
+    UserProfile profile = 1;
+    string message = 2;
+}
+
+// DeleteProfileRequest to delete a specific profile
+message DeleteProfileRequest {
+    string profile_uuid = 1;
+}
+
+// DeleteProfileResponse
+message DeleteProfileResponse {
+    bool success = 1;
     string message = 2;
 }
 

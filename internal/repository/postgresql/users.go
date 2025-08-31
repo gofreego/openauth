@@ -425,3 +425,152 @@ func (r *Repository) scanProfile(row *sql.Row) (*dao.Profile, error) {
 
 	return &profile, nil
 }
+
+// ListUserProfiles retrieves all profiles for a specific user with pagination
+func (r *Repository) ListUserProfiles(ctx context.Context, userUUID string, limit, offset int32) ([]*dao.Profile, int32, error) {
+	// First get the total count
+	countQuery := `
+		SELECT COUNT(*) 
+		FROM user_profiles p 
+		JOIN users u ON p.user_id = u.id 
+		WHERE u.uuid = $1`
+
+	var total int32
+	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, userUUID).Scan(&total)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get the profiles with pagination
+	query := `
+		SELECT p.id, p.uuid, p.user_id, p.first_name, p.last_name, p.display_name, 
+			p.bio, p.avatar_url, p.date_of_birth, p.gender, p.timezone, p.locale, 
+			p.country, p.city, p.address, p.postal_code, p.website_url, p.metadata, 
+			p.created_at, p.updated_at
+		FROM user_profiles p 
+		JOIN users u ON p.user_id = u.id 
+		WHERE u.uuid = $1 
+		ORDER BY p.created_at DESC 
+		LIMIT $2 OFFSET $3`
+
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, userUUID, limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var profiles []*dao.Profile
+	for rows.Next() {
+		profile, err := r.scanProfileFromRows(rows)
+		if err != nil {
+			return nil, 0, err
+		}
+		profiles = append(profiles, profile)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	return profiles, total, nil
+}
+
+// GetProfileByUUID retrieves a profile by its UUID
+func (r *Repository) GetProfileByUUID(ctx context.Context, uuid string) (*dao.Profile, error) {
+	query := `
+		SELECT id, uuid, user_id, first_name, last_name, display_name, bio, avatar_url,
+			date_of_birth, gender, timezone, locale, country, city, address, postal_code,
+			website_url, metadata, created_at, updated_at
+		FROM user_profiles 
+		WHERE uuid = $1`
+
+	row := r.connManager.Primary().QueryRowContext(ctx, query, uuid)
+	return r.scanProfile(row)
+}
+
+// UpdateProfileByUUID updates a profile by its UUID
+func (r *Repository) UpdateProfileByUUID(ctx context.Context, uuid string, updates map[string]interface{}) (*dao.Profile, error) {
+	if len(updates) == 0 {
+		return r.GetProfileByUUID(ctx, uuid)
+	}
+
+	setParts := make([]string, 0, len(updates))
+	args := make([]interface{}, 0, len(updates)+1)
+	argIndex := 1
+
+	for field, value := range updates {
+		setParts = append(setParts, fmt.Sprintf("%s = $%d", field, argIndex))
+		args = append(args, value)
+		argIndex++
+	}
+
+	// Add updated_at timestamp
+	setParts = append(setParts, fmt.Sprintf("updated_at = $%d", argIndex))
+	args = append(args, time.Now())
+	argIndex++
+
+	// Add UUID as the last parameter
+	args = append(args, uuid)
+
+	query := fmt.Sprintf(`
+		UPDATE user_profiles 
+		SET %s 
+		WHERE uuid = $%d
+		RETURNING id, uuid, user_id, first_name, last_name, display_name, bio, avatar_url,
+			date_of_birth, gender, timezone, locale, country, city, address, postal_code,
+			website_url, metadata, created_at, updated_at`,
+		strings.Join(setParts, ", "), argIndex)
+
+	row := r.connManager.Primary().QueryRowContext(ctx, query, args...)
+	return r.scanProfile(row)
+}
+
+// CountUserProfiles returns the total number of profiles for a user
+func (r *Repository) CountUserProfiles(ctx context.Context, userUUID string) (int32, error) {
+	query := `
+		SELECT COUNT(*) 
+		FROM user_profiles p 
+		JOIN users u ON p.user_id = u.id 
+		WHERE u.uuid = $1`
+
+	var count int32
+	err := r.connManager.Primary().QueryRowContext(ctx, query, userUUID).Scan(&count)
+	return count, err
+}
+
+// DeleteProfileByUUID deletes a profile by its UUID
+func (r *Repository) DeleteProfileByUUID(ctx context.Context, uuid string) error {
+	query := `DELETE FROM user_profiles WHERE uuid = $1`
+	result, err := r.connManager.Primary().ExecContext(ctx, query, uuid)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
+
+// scanProfileFromRows scans a profile from sql.Rows
+func (r *Repository) scanProfileFromRows(rows *sql.Rows) (*dao.Profile, error) {
+	var profile dao.Profile
+	err := rows.Scan(
+		&profile.ID, &profile.UUID, &profile.UserID, &profile.FirstName,
+		&profile.LastName, &profile.DisplayName, &profile.Bio, &profile.AvatarURL,
+		&profile.DateOfBirth, &profile.Gender, &profile.Timezone, &profile.Locale,
+		&profile.Country, &profile.City, &profile.Address, &profile.PostalCode,
+		&profile.WebsiteURL, &profile.Metadata, &profile.CreatedAt, &profile.UpdatedAt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &profile, nil
+}

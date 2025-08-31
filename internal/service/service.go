@@ -36,6 +36,13 @@ type Repository interface {
 	CheckUsernameExists(ctx context.Context, username string) (bool, error)
 	CheckEmailExists(ctx context.Context, email string) (bool, error)
 
+	// Profile management methods
+	ListUserProfiles(ctx context.Context, userUUID string, limit, offset int32) ([]*dao.Profile, int32, error)
+	GetProfileByUUID(ctx context.Context, uuid string) (*dao.Profile, error)
+	UpdateProfileByUUID(ctx context.Context, uuid string, updates map[string]interface{}) (*dao.Profile, error)
+	CountUserProfiles(ctx context.Context, userUUID string) (int32, error)
+	DeleteProfileByUUID(ctx context.Context, uuid string) error
+
 	// Verification methods
 	CreateOTPVerification(ctx context.Context, otp *dao.OTPVerification) error
 	GetOTPVerification(ctx context.Context, identifier, code string) (*dao.OTPVerification, error)

@@ -255,6 +255,77 @@
         ]
       }
     },
+    "/openauth/v1/profiles/{profileUuid}": {
+      "delete": {
+        "summary": "DeleteProfile removes a specific profile.",
+        "description": "Permanently deletes a profile and all associated data.\nUsers must have at least one profile, so deletion of the last\nprofile may be restricted based on business rules.",
+        "operationId": "OpenAuth_DeleteProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "profileUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "put": {
+        "summary": "UpdateProfile modifies an existing profile.",
+        "description": "Supports partial updates - only provided fields are modified.\nProfile updates are independent of user account information.",
+        "operationId": "OpenAuth_UpdateProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "profileUuid",
+            "description": "UUID of the profile to update",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUpdateProfileBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/users": {
       "get": {
         "summary": "ListUsers retrieves users with filtering, sorting, and pagination.",
@@ -537,6 +608,91 @@
         ]
       }
     },
+    "/openauth/v1/users/{userUuid}/profiles": {
+      "get": {
+        "summary": "ListUserProfiles retrieves all profiles for a specific user.",
+        "description": "Returns paginated list of profiles belonging to a user.\nUseful for profile selection interfaces and management.",
+        "operationId": "OpenAuth_ListUserProfiles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserProfilesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "post": {
+        "summary": "CreateProfile creates a new profile for a user.",
+        "description": "Allows users to create multiple profiles for different contexts.\nEach profile can have different display information, preferences,\nand metadata while belonging to the same user account.",
+        "operationId": "OpenAuth_CreateProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userUuid",
+            "description": "UUID of the user this profile belongs to",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthCreateProfileBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/users/{uuid}": {
       "get": {
         "summary": "GetUser retrieves user information by ID, UUID, username, or email.",
@@ -724,6 +880,65 @@
       },
       "title": "ChangePasswordRequest to change user password"
     },
+    "OpenAuthCreateProfileBody": {
+      "type": "object",
+      "properties": {
+        "profileName": {
+          "type": "string",
+          "title": "Name/label for this profile (e.g., \"Personal\", \"Work\", \"Gaming\")"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "websiteUrl": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "string",
+          "format": "byte",
+          "title": "JSON metadata"
+        }
+      },
+      "title": "CreateProfileRequest to create a new profile for a user"
+    },
     "OpenAuthUpdatePermissionBody": {
       "type": "object",
       "properties": {
@@ -749,6 +964,62 @@
         }
       },
       "title": "Request to update an existing permission"
+    },
+    "OpenAuthUpdateProfileBody": {
+      "type": "object",
+      "properties": {
+        "profileName": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "int64"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "websiteUrl": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "string",
+          "format": "byte"
+        }
+      },
+      "title": "UpdateProfileRequest to update a specific profile"
     },
     "OpenAuthUpdateUserBody": {
       "type": "object",
@@ -902,6 +1173,18 @@
       },
       "title": "Request to create a new permission"
     },
+    "v1CreateProfileResponse": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "CreateProfileResponse"
+    },
     "v1DeletePermissionResponse": {
       "type": "object",
       "properties": {
@@ -915,6 +1198,18 @@
         }
       },
       "title": "Response confirming permission deletion"
+    },
+    "v1DeleteProfileResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "DeleteProfileResponse"
     },
     "v1DeleteUserResponse": {
       "type": "object",
@@ -972,6 +1267,34 @@
         }
       },
       "title": "Response containing a list of permissions with pagination metadata"
+    },
+    "v1ListUserProfilesResponse": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserProfile"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hasMore": {
+          "type": "boolean"
+        }
+      },
+      "title": "ListUserProfilesResponse"
     },
     "v1ListUsersResponse": {
       "type": "object",
@@ -1100,37 +1423,15 @@
         },
         "password": {
           "type": "string"
-        },
-        "firstName": {
-          "type": "string",
-          "title": "Optional profile information"
-        },
-        "lastName": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "timezone": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        },
-        "country": {
-          "type": "string"
         }
       },
-      "title": "SignUpRequest for user registration"
+      "title": "SignUpRequest for user registration - only authentication credentials"
     },
     "v1SignUpResponse": {
       "type": "object",
       "properties": {
         "user": {
           "$ref": "#/definitions/v1User"
-        },
-        "profile": {
-          "$ref": "#/definitions/v1UserProfile"
         },
         "message": {
           "type": "string"
@@ -1142,7 +1443,19 @@
           "type": "boolean"
         }
       },
-      "title": "SignUpResponse after successful registration"
+      "title": "SignUpResponse after successful registration - only user data"
+    },
+    "v1UpdateProfileResponse": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateProfileResponse"
     },
     "v1UpdateUserResponse": {
       "type": "object",
@@ -1223,6 +1536,10 @@
         "userId": {
           "type": "string",
           "format": "int64"
+        },
+        "profileName": {
+          "type": "string",
+          "title": "Name/label for this profile"
         },
         "firstName": {
           "type": "string"

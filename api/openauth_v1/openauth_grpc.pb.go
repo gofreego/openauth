@@ -36,6 +36,10 @@ const (
 	OpenAuth_ChangePassword_FullMethodName     = "/v1.OpenAuth/ChangePassword"
 	OpenAuth_ListUsers_FullMethodName          = "/v1.OpenAuth/ListUsers"
 	OpenAuth_DeleteUser_FullMethodName         = "/v1.OpenAuth/DeleteUser"
+	OpenAuth_CreateProfile_FullMethodName      = "/v1.OpenAuth/CreateProfile"
+	OpenAuth_ListUserProfiles_FullMethodName   = "/v1.OpenAuth/ListUserProfiles"
+	OpenAuth_UpdateProfile_FullMethodName      = "/v1.OpenAuth/UpdateProfile"
+	OpenAuth_DeleteProfile_FullMethodName      = "/v1.OpenAuth/DeleteProfile"
 )
 
 // OpenAuthClient is the client API for OpenAuth service.
@@ -168,6 +172,28 @@ type OpenAuthClient interface {
 	// Soft delete preserves data while preventing access.
 	// Hard delete permanently removes the user and all associated data.
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
+	// CreateProfile creates a new profile for a user.
+	//
+	// Allows users to create multiple profiles for different contexts.
+	// Each profile can have different display information, preferences,
+	// and metadata while belonging to the same user account.
+	CreateProfile(ctx context.Context, in *CreateProfileRequest, opts ...grpc.CallOption) (*CreateProfileResponse, error)
+	// ListUserProfiles retrieves all profiles for a specific user.
+	//
+	// Returns paginated list of profiles belonging to a user.
+	// Useful for profile selection interfaces and management.
+	ListUserProfiles(ctx context.Context, in *ListUserProfilesRequest, opts ...grpc.CallOption) (*ListUserProfilesResponse, error)
+	// UpdateProfile modifies an existing profile.
+	//
+	// Supports partial updates - only provided fields are modified.
+	// Profile updates are independent of user account information.
+	UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error)
+	// DeleteProfile removes a specific profile.
+	//
+	// Permanently deletes a profile and all associated data.
+	// Users must have at least one profile, so deletion of the last
+	// profile may be restricted based on business rules.
+	DeleteProfile(ctx context.Context, in *DeleteProfileRequest, opts ...grpc.CallOption) (*DeleteProfileResponse, error)
 }
 
 type openAuthClient struct {
@@ -348,6 +374,46 @@ func (c *openAuthClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, 
 	return out, nil
 }
 
+func (c *openAuthClient) CreateProfile(ctx context.Context, in *CreateProfileRequest, opts ...grpc.CallOption) (*CreateProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateProfileResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_CreateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ListUserProfiles(ctx context.Context, in *ListUserProfilesRequest, opts ...grpc.CallOption) (*ListUserProfilesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserProfilesResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ListUserProfiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateProfileResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_UpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) DeleteProfile(ctx context.Context, in *DeleteProfileRequest, opts ...grpc.CallOption) (*DeleteProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteProfileResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_DeleteProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenAuthServer is the server API for OpenAuth service.
 // All implementations must embed UnimplementedOpenAuthServer
 // for forward compatibility.
@@ -478,6 +544,28 @@ type OpenAuthServer interface {
 	// Soft delete preserves data while preventing access.
 	// Hard delete permanently removes the user and all associated data.
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
+	// CreateProfile creates a new profile for a user.
+	//
+	// Allows users to create multiple profiles for different contexts.
+	// Each profile can have different display information, preferences,
+	// and metadata while belonging to the same user account.
+	CreateProfile(context.Context, *CreateProfileRequest) (*CreateProfileResponse, error)
+	// ListUserProfiles retrieves all profiles for a specific user.
+	//
+	// Returns paginated list of profiles belonging to a user.
+	// Useful for profile selection interfaces and management.
+	ListUserProfiles(context.Context, *ListUserProfilesRequest) (*ListUserProfilesResponse, error)
+	// UpdateProfile modifies an existing profile.
+	//
+	// Supports partial updates - only provided fields are modified.
+	// Profile updates are independent of user account information.
+	UpdateProfile(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error)
+	// DeleteProfile removes a specific profile.
+	//
+	// Permanently deletes a profile and all associated data.
+	// Users must have at least one profile, so deletion of the last
+	// profile may be restricted based on business rules.
+	DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error)
 	mustEmbedUnimplementedOpenAuthServer()
 }
 
@@ -538,6 +626,18 @@ func (UnimplementedOpenAuthServer) ListUsers(context.Context, *ListUsersRequest)
 }
 func (UnimplementedOpenAuthServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedOpenAuthServer) CreateProfile(context.Context, *CreateProfileRequest) (*CreateProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProfile not implemented")
+}
+func (UnimplementedOpenAuthServer) ListUserProfiles(context.Context, *ListUserProfilesRequest) (*ListUserProfilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserProfiles not implemented")
+}
+func (UnimplementedOpenAuthServer) UpdateProfile(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedOpenAuthServer) DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteProfile not implemented")
 }
 func (UnimplementedOpenAuthServer) mustEmbedUnimplementedOpenAuthServer() {}
 func (UnimplementedOpenAuthServer) testEmbeddedByValue()                  {}
@@ -866,6 +966,78 @@ func _OpenAuth_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_CreateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).CreateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_CreateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).CreateProfile(ctx, req.(*CreateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ListUserProfiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserProfilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ListUserProfiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ListUserProfiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ListUserProfiles(ctx, req.(*ListUserProfilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_UpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).UpdateProfile(ctx, req.(*UpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_DeleteProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).DeleteProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_DeleteProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).DeleteProfile(ctx, req.(*DeleteProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenAuth_ServiceDesc is the grpc.ServiceDesc for OpenAuth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -940,6 +1112,22 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _OpenAuth_DeleteUser_Handler,
+		},
+		{
+			MethodName: "CreateProfile",
+			Handler:    _OpenAuth_CreateProfile_Handler,
+		},
+		{
+			MethodName: "ListUserProfiles",
+			Handler:    _OpenAuth_ListUserProfiles_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _OpenAuth_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "DeleteProfile",
+			Handler:    _OpenAuth_DeleteProfile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
