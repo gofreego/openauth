@@ -16,98 +16,12 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
-/// Common header fields for authentication and client identification
-class RequestHeaders extends $pb.GeneratedMessage {
-  factory RequestHeaders({
-    $core.String? authorization,
-    $core.String? xClientId,
-    $core.String? xClientVersion,
-  }) {
-    final result = create();
-    if (authorization != null) result.authorization = authorization;
-    if (xClientId != null) result.xClientId = xClientId;
-    if (xClientVersion != null) result.xClientVersion = xClientVersion;
-    return result;
-  }
-
-  RequestHeaders._();
-
-  factory RequestHeaders.fromBuffer($core.List<$core.int> data,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
-  factory RequestHeaders.fromJson($core.String json,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'RequestHeaders',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'v1'),
-      createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'authorization')
-    ..aOS(2, _omitFieldNames ? '' : 'xClientId')
-    ..aOS(3, _omitFieldNames ? '' : 'xClientVersion')
-    ..hasRequiredFields = false;
-
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  RequestHeaders clone() => RequestHeaders()..mergeFromMessage(this);
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  RequestHeaders copyWith(void Function(RequestHeaders) updates) =>
-      super.copyWith((message) => updates(message as RequestHeaders))
-          as RequestHeaders;
-
-  @$core.override
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static RequestHeaders create() => RequestHeaders._();
-  @$core.override
-  RequestHeaders createEmptyInstance() => create();
-  static $pb.PbList<RequestHeaders> createRepeated() =>
-      $pb.PbList<RequestHeaders>();
-  @$core.pragma('dart2js:noInline')
-  static RequestHeaders getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<RequestHeaders>(create);
-  static RequestHeaders? _defaultInstance;
-
-  /// JWT authentication token
-  @$pb.TagNumber(1)
-  $core.String get authorization => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set authorization($core.String value) => $_setString(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasAuthorization() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearAuthorization() => $_clearField(1);
-
-  /// Client identifier for tracking and analytics
-  @$pb.TagNumber(2)
-  $core.String get xClientId => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set xClientId($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(2)
-  $core.bool hasXClientId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearXClientId() => $_clearField(2);
-
-  /// Client version for compatibility and feature tracking
-  @$pb.TagNumber(3)
-  $core.String get xClientVersion => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set xClientVersion($core.String value) => $_setString(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasXClientVersion() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearXClientVersion() => $_clearField(3);
-}
-
 /// PingRequest is the request message for the Ping RPC method.
 class PingRequest extends $pb.GeneratedMessage {
   factory PingRequest({
-    RequestHeaders? headers,
     $core.String? message,
   }) {
     final result = create();
-    if (headers != null) result.headers = headers;
     if (message != null) result.message = message;
     return result;
   }
@@ -125,9 +39,7 @@ class PingRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'PingRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'v1'),
       createEmptyInstance: create)
-    ..aOM<RequestHeaders>(1, _omitFieldNames ? '' : 'headers',
-        subBuilder: RequestHeaders.create)
-    ..aOS(2, _omitFieldNames ? '' : 'message')
+    ..aOS(1, _omitFieldNames ? '' : 'message')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -150,26 +62,14 @@ class PingRequest extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<PingRequest>(create);
   static PingRequest? _defaultInstance;
 
-  /// Common header fields for authentication and client identification
   @$pb.TagNumber(1)
-  RequestHeaders get headers => $_getN(0);
+  $core.String get message => $_getSZ(0);
   @$pb.TagNumber(1)
-  set headers(RequestHeaders value) => $_setField(1, value);
+  set message($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasHeaders() => $_has(0);
+  $core.bool hasMessage() => $_has(0);
   @$pb.TagNumber(1)
-  void clearHeaders() => $_clearField(1);
-  @$pb.TagNumber(1)
-  RequestHeaders ensureHeaders() => $_ensure(0);
-
-  @$pb.TagNumber(2)
-  $core.String get message => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set message($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(2)
-  $core.bool hasMessage() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearMessage() => $_clearField(2);
+  void clearMessage() => $_clearField(1);
 }
 
 /// PingResponse is the response message for the Ping RPC method.

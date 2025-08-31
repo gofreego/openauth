@@ -54,27 +54,19 @@ final $typed_data.Uint8List permissionDescriptor = $convert.base64Decode(
 const CreatePermissionRequest$json = {
   '1': 'CreatePermissionRequest',
   '2': [
-    {
-      '1': 'headers',
-      '3': 1,
-      '4': 1,
-      '5': 11,
-      '6': '.v1.RequestHeaders',
-      '10': 'headers'
-    },
-    {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
-    {'1': 'display_name', '3': 3, '4': 1, '5': 9, '10': 'displayName'},
+    {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'display_name', '3': 2, '4': 1, '5': 9, '10': 'displayName'},
     {
       '1': 'description',
-      '3': 4,
+      '3': 3,
       '4': 1,
       '5': 9,
       '9': 0,
       '10': 'description',
       '17': true
     },
-    {'1': 'resource', '3': 5, '4': 1, '5': 9, '10': 'resource'},
-    {'1': 'action', '3': 6, '4': 1, '5': 9, '10': 'action'},
+    {'1': 'resource', '3': 4, '4': 1, '5': 9, '10': 'resource'},
+    {'1': 'action', '3': 5, '4': 1, '5': 9, '10': 'action'},
   ],
   '8': [
     {'1': '_description'},
@@ -83,61 +75,43 @@ const CreatePermissionRequest$json = {
 
 /// Descriptor for `CreatePermissionRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createPermissionRequestDescriptor = $convert.base64Decode(
-    'ChdDcmVhdGVQZXJtaXNzaW9uUmVxdWVzdBIsCgdoZWFkZXJzGAEgASgLMhIudjEuUmVxdWVzdE'
-    'hlYWRlcnNSB2hlYWRlcnMSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxkaXNwbGF5X25hbWUYAyAB'
-    'KAlSC2Rpc3BsYXlOYW1lEiUKC2Rlc2NyaXB0aW9uGAQgASgJSABSC2Rlc2NyaXB0aW9uiAEBEh'
-    'oKCHJlc291cmNlGAUgASgJUghyZXNvdXJjZRIWCgZhY3Rpb24YBiABKAlSBmFjdGlvbkIOCgxf'
-    'ZGVzY3JpcHRpb24=');
+    'ChdDcmVhdGVQZXJtaXNzaW9uUmVxdWVzdBISCgRuYW1lGAEgASgJUgRuYW1lEiEKDGRpc3BsYX'
+    'lfbmFtZRgCIAEoCVILZGlzcGxheU5hbWUSJQoLZGVzY3JpcHRpb24YAyABKAlIAFILZGVzY3Jp'
+    'cHRpb26IAQESGgoIcmVzb3VyY2UYBCABKAlSCHJlc291cmNlEhYKBmFjdGlvbhgFIAEoCVIGYW'
+    'N0aW9uQg4KDF9kZXNjcmlwdGlvbg==');
 
 @$core.Deprecated('Use getPermissionRequestDescriptor instead')
 const GetPermissionRequest$json = {
   '1': 'GetPermissionRequest',
   '2': [
-    {
-      '1': 'headers',
-      '3': 1,
-      '4': 1,
-      '5': 11,
-      '6': '.v1.RequestHeaders',
-      '10': 'headers'
-    },
-    {'1': 'id', '3': 2, '4': 1, '5': 3, '10': 'id'},
+    {'1': 'id', '3': 1, '4': 1, '5': 3, '10': 'id'},
   ],
 };
 
 /// Descriptor for `GetPermissionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getPermissionRequestDescriptor = $convert.base64Decode(
-    'ChRHZXRQZXJtaXNzaW9uUmVxdWVzdBIsCgdoZWFkZXJzGAEgASgLMhIudjEuUmVxdWVzdEhlYW'
-    'RlcnNSB2hlYWRlcnMSDgoCaWQYAiABKANSAmlk');
+final $typed_data.Uint8List getPermissionRequestDescriptor = $convert
+    .base64Decode('ChRHZXRQZXJtaXNzaW9uUmVxdWVzdBIOCgJpZBgBIAEoA1ICaWQ=');
 
 @$core.Deprecated('Use listPermissionsRequestDescriptor instead')
 const ListPermissionsRequest$json = {
   '1': 'ListPermissionsRequest',
   '2': [
-    {
-      '1': 'headers',
-      '3': 1,
-      '4': 1,
-      '5': 11,
-      '6': '.v1.RequestHeaders',
-      '10': 'headers'
-    },
-    {'1': 'limit', '3': 2, '4': 1, '5': 5, '9': 0, '10': 'limit', '17': true},
-    {'1': 'offset', '3': 3, '4': 1, '5': 5, '9': 1, '10': 'offset', '17': true},
-    {'1': 'search', '3': 4, '4': 1, '5': 9, '9': 2, '10': 'search', '17': true},
+    {'1': 'limit', '3': 1, '4': 1, '5': 5, '9': 0, '10': 'limit', '17': true},
+    {'1': 'offset', '3': 2, '4': 1, '5': 5, '9': 1, '10': 'offset', '17': true},
+    {'1': 'search', '3': 3, '4': 1, '5': 9, '9': 2, '10': 'search', '17': true},
     {
       '1': 'resource',
-      '3': 5,
+      '3': 4,
       '4': 1,
       '5': 9,
       '9': 3,
       '10': 'resource',
       '17': true
     },
-    {'1': 'action', '3': 6, '4': 1, '5': 9, '9': 4, '10': 'action', '17': true},
+    {'1': 'action', '3': 5, '4': 1, '5': 9, '9': 4, '10': 'action', '17': true},
     {
       '1': 'is_system',
-      '3': 7,
+      '3': 6,
       '4': 1,
       '5': 8,
       '9': 5,
@@ -157,12 +131,11 @@ const ListPermissionsRequest$json = {
 
 /// Descriptor for `ListPermissionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listPermissionsRequestDescriptor = $convert.base64Decode(
-    'ChZMaXN0UGVybWlzc2lvbnNSZXF1ZXN0EiwKB2hlYWRlcnMYASABKAsyEi52MS5SZXF1ZXN0SG'
-    'VhZGVyc1IHaGVhZGVycxIZCgVsaW1pdBgCIAEoBUgAUgVsaW1pdIgBARIbCgZvZmZzZXQYAyAB'
-    'KAVIAVIGb2Zmc2V0iAEBEhsKBnNlYXJjaBgEIAEoCUgCUgZzZWFyY2iIAQESHwoIcmVzb3VyY2'
-    'UYBSABKAlIA1IIcmVzb3VyY2WIAQESGwoGYWN0aW9uGAYgASgJSARSBmFjdGlvbogBARIgCglp'
-    'c19zeXN0ZW0YByABKAhIBVIIaXNTeXN0ZW2IAQFCCAoGX2xpbWl0QgkKB19vZmZzZXRCCQoHX3'
-    'NlYXJjaEILCglfcmVzb3VyY2VCCQoHX2FjdGlvbkIMCgpfaXNfc3lzdGVt');
+    'ChZMaXN0UGVybWlzc2lvbnNSZXF1ZXN0EhkKBWxpbWl0GAEgASgFSABSBWxpbWl0iAEBEhsKBm'
+    '9mZnNldBgCIAEoBUgBUgZvZmZzZXSIAQESGwoGc2VhcmNoGAMgASgJSAJSBnNlYXJjaIgBARIf'
+    'CghyZXNvdXJjZRgEIAEoCUgDUghyZXNvdXJjZYgBARIbCgZhY3Rpb24YBSABKAlIBFIGYWN0aW'
+    '9uiAEBEiAKCWlzX3N5c3RlbRgGIAEoCEgFUghpc1N5c3RlbYgBAUIICgZfbGltaXRCCQoHX29m'
+    'ZnNldEIJCgdfc2VhcmNoQgsKCV9yZXNvdXJjZUIJCgdfYWN0aW9uQgwKCl9pc19zeXN0ZW0=');
 
 @$core.Deprecated('Use listPermissionsResponseDescriptor instead')
 const ListPermissionsResponse$json = {
@@ -194,19 +167,11 @@ final $typed_data.Uint8List listPermissionsResponseDescriptor = $convert.base64D
 const UpdatePermissionRequest$json = {
   '1': 'UpdatePermissionRequest',
   '2': [
-    {
-      '1': 'headers',
-      '3': 1,
-      '4': 1,
-      '5': 11,
-      '6': '.v1.RequestHeaders',
-      '10': 'headers'
-    },
-    {'1': 'id', '3': 2, '4': 1, '5': 3, '10': 'id'},
-    {'1': 'name', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'name', '17': true},
+    {'1': 'id', '3': 1, '4': 1, '5': 3, '10': 'id'},
+    {'1': 'name', '3': 2, '4': 1, '5': 9, '9': 0, '10': 'name', '17': true},
     {
       '1': 'display_name',
-      '3': 4,
+      '3': 3,
       '4': 1,
       '5': 9,
       '9': 1,
@@ -215,7 +180,7 @@ const UpdatePermissionRequest$json = {
     },
     {
       '1': 'description',
-      '3': 5,
+      '3': 4,
       '4': 1,
       '5': 9,
       '9': 2,
@@ -224,14 +189,14 @@ const UpdatePermissionRequest$json = {
     },
     {
       '1': 'resource',
-      '3': 6,
+      '3': 5,
       '4': 1,
       '5': 9,
       '9': 3,
       '10': 'resource',
       '17': true
     },
-    {'1': 'action', '3': 7, '4': 1, '5': 9, '9': 4, '10': 'action', '17': true},
+    {'1': 'action', '3': 6, '4': 1, '5': 9, '9': 4, '10': 'action', '17': true},
   ],
   '8': [
     {'1': '_name'},
@@ -244,34 +209,23 @@ const UpdatePermissionRequest$json = {
 
 /// Descriptor for `UpdatePermissionRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List updatePermissionRequestDescriptor = $convert.base64Decode(
-    'ChdVcGRhdGVQZXJtaXNzaW9uUmVxdWVzdBIsCgdoZWFkZXJzGAEgASgLMhIudjEuUmVxdWVzdE'
-    'hlYWRlcnNSB2hlYWRlcnMSDgoCaWQYAiABKANSAmlkEhcKBG5hbWUYAyABKAlIAFIEbmFtZYgB'
-    'ARImCgxkaXNwbGF5X25hbWUYBCABKAlIAVILZGlzcGxheU5hbWWIAQESJQoLZGVzY3JpcHRpb2'
-    '4YBSABKAlIAlILZGVzY3JpcHRpb26IAQESHwoIcmVzb3VyY2UYBiABKAlIA1IIcmVzb3VyY2WI'
-    'AQESGwoGYWN0aW9uGAcgASgJSARSBmFjdGlvbogBAUIHCgVfbmFtZUIPCg1fZGlzcGxheV9uYW'
-    '1lQg4KDF9kZXNjcmlwdGlvbkILCglfcmVzb3VyY2VCCQoHX2FjdGlvbg==');
+    'ChdVcGRhdGVQZXJtaXNzaW9uUmVxdWVzdBIOCgJpZBgBIAEoA1ICaWQSFwoEbmFtZRgCIAEoCU'
+    'gAUgRuYW1liAEBEiYKDGRpc3BsYXlfbmFtZRgDIAEoCUgBUgtkaXNwbGF5TmFtZYgBARIlCgtk'
+    'ZXNjcmlwdGlvbhgEIAEoCUgCUgtkZXNjcmlwdGlvbogBARIfCghyZXNvdXJjZRgFIAEoCUgDUg'
+    'hyZXNvdXJjZYgBARIbCgZhY3Rpb24YBiABKAlIBFIGYWN0aW9uiAEBQgcKBV9uYW1lQg8KDV9k'
+    'aXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9uQgsKCV9yZXNvdXJjZUIJCgdfYWN0aW9u');
 
 @$core.Deprecated('Use deletePermissionRequestDescriptor instead')
 const DeletePermissionRequest$json = {
   '1': 'DeletePermissionRequest',
   '2': [
-    {
-      '1': 'headers',
-      '3': 1,
-      '4': 1,
-      '5': 11,
-      '6': '.v1.RequestHeaders',
-      '10': 'headers'
-    },
-    {'1': 'id', '3': 2, '4': 1, '5': 3, '10': 'id'},
+    {'1': 'id', '3': 1, '4': 1, '5': 3, '10': 'id'},
   ],
 };
 
 /// Descriptor for `DeletePermissionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deletePermissionRequestDescriptor =
-    $convert.base64Decode(
-        'ChdEZWxldGVQZXJtaXNzaW9uUmVxdWVzdBIsCgdoZWFkZXJzGAEgASgLMhIudjEuUmVxdWVzdE'
-        'hlYWRlcnNSB2hlYWRlcnMSDgoCaWQYAiABKANSAmlk');
+final $typed_data.Uint8List deletePermissionRequestDescriptor = $convert
+    .base64Decode('ChdEZWxldGVQZXJtaXNzaW9uUmVxdWVzdBIOCgJpZBgBIAEoA1ICaWQ=');
 
 @$core.Deprecated('Use deletePermissionResponseDescriptor instead')
 const DeletePermissionResponse$json = {

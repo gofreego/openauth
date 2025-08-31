@@ -58,7 +58,6 @@ const $core.Map<$core.String, $core.dynamic> OpenAuthServiceBase$json = {
 const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
     OpenAuthServiceBase$messageJson = {
   '.v1.PingRequest': $0.PingRequest$json,
-  '.v1.RequestHeaders': $0.RequestHeaders$json,
   '.v1.PingResponse': $0.PingResponse$json,
   '.v1.CreatePermissionRequest': $1.CreatePermissionRequest$json,
   '.v1.Permission': $1.Permission$json,
