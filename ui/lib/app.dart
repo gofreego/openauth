@@ -10,6 +10,7 @@ import 'core/bloc/app_state.dart';
 import 'core/bloc/theme_bloc.dart';
 import 'core/bloc/theme_event.dart';
 import 'core/bloc/theme_state.dart';
+import 'features/home/presentation/pages/home_page.dart';
 
 class OpenAuthAdmin extends StatefulWidget {
   const OpenAuthAdmin({super.key});
@@ -28,21 +29,37 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
     _router = GoRouter(
       initialLocation: AppRoutes.splash,
       routes: [
-        
+        GoRoute(
+          path: AppRoutes.splash,
+          builder: (context, state) => const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.home,
+          builder: (context, state) => const HomePage(),
+        ),
       ],
       redirect: (context, state) {
-        final appBloc = context.read<AppBloc>();
-        final appState = appBloc.state;
+        try {
+          final appBloc = context.read<AppBloc>();
+          final appState = appBloc.state;
 
-        // Show splash screen while app is loading
-        if (appState is AppLoading) {
-          return AppRoutes.splash;
-        }
+          // Show splash screen while app is loading
+          if (appState is AppLoading) {
+            return AppRoutes.splash;
+          }
 
           if (appState is AppAuthenticated) {
             return AppRoutes.home;
           }
           return null;
+        } catch (e) {
+          // If we can't read the bloc yet, stay on splash
+          return AppRoutes.splash;
+        }
       },
     );
   }

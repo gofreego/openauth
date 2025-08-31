@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../environment/environment_config.dart';
 import '../../core/network/api_service.dart';
 import '../../core/bloc/theme_bloc.dart';
+import '../../core/bloc/app_bloc.dart';
 import '../../shared/catalog.dart';
 
 final serviceLocator = GetIt.instance;
@@ -25,8 +26,13 @@ Future<void> initializeDependencies({
     () => const HTTPServiceClient(),
   );
 
-  serviceLocator.registerLazySingleton(
-    () => ThemeBloc(sharedPreferences: serviceLocator()),
+  // Register BLoCs
+  serviceLocator.registerLazySingleton<ThemeBloc>(
+    () => ThemeBloc(sharedPreferences: sharedPreferences),
+  );
+  
+  serviceLocator.registerLazySingleton<AppBloc>(
+    () => AppBloc(),
   );
 
 }

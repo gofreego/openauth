@@ -8,7 +8,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppStarted>(_onAppStarted);
   }
 
-  late StreamSubscription _authBlocSubscription;
+  StreamSubscription? _authBlocSubscription;
 
   Future<void> _onAppStarted(
     AppStarted event,
@@ -27,7 +27,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   @override
   Future<void> close() {
-    _authBlocSubscription.cancel();
+    _authBlocSubscription?.cancel();
     return super.close();
   }
 }
