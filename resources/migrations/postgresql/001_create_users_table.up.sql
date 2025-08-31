@@ -5,6 +5,8 @@ CREATE TABLE users (
     username VARCHAR(255) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE,
     phone VARCHAR(20),
+    name VARCHAR(255), -- Display name for the user
+    avatar_url TEXT, -- URL to user's avatar image
     password_hash VARCHAR(255), -- bcrypt hash of password
     email_verified BOOLEAN DEFAULT FALSE,
     phone_verified BOOLEAN DEFAULT FALSE,

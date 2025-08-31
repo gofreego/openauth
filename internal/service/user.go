@@ -62,6 +62,8 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 		Username:          req.Username,
 		Email:             req.Email,
 		Phone:             req.Phone,
+		Name:              req.Name,
+		AvatarURL:         req.AvatarUrl,
 		PasswordHash:      string(hashedPassword),
 		EmailVerified:     false,
 		PhoneVerified:     false,
@@ -352,6 +354,12 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 	}
 	if req.IsActive != nil {
 		userUpdates["is_active"] = *req.IsActive
+	}
+	if req.Name != nil {
+		userUpdates["name"] = *req.Name
+	}
+	if req.AvatarUrl != nil {
+		userUpdates["avatar_url"] = *req.AvatarUrl
 	}
 
 	// Update user if there are changes

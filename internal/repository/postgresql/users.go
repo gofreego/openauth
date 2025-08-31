@@ -13,22 +13,22 @@ import (
 // CreateUser creates a new user in the database
 func (r *Repository) CreateUser(ctx context.Context, user *dao.User) (*dao.User, error) {
 	query := `
-		INSERT INTO users (uuid, username, email, phone, password_hash, email_verified, 
+		INSERT INTO users (uuid, username, email, phone, name, avatar_url, password_hash, email_verified, 
 			phone_verified, is_active, is_locked, failed_login_attempts, password_changed_at, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-		RETURNING id, uuid, username, email, phone, password_hash, email_verified, 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+		RETURNING id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified, 
 			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at, 
 			password_changed_at, created_at, updated_at`
 
 	row := r.connManager.Primary().QueryRowContext(ctx, query,
-		user.UUID, user.Username, user.Email, user.Phone, user.PasswordHash,
+		user.UUID, user.Username, user.Email, user.Phone, user.Name, user.AvatarURL, user.PasswordHash,
 		user.EmailVerified, user.PhoneVerified, user.IsActive, user.IsLocked,
 		user.FailedLoginCount, user.PasswordChangedAt, user.CreatedAt, user.UpdatedAt)
 
 	var createdUser dao.User
 	err := row.Scan(
 		&createdUser.ID, &createdUser.UUID, &createdUser.Username, &createdUser.Email,
-		&createdUser.Phone, &createdUser.PasswordHash, &createdUser.EmailVerified,
+		&createdUser.Phone, &createdUser.Name, &createdUser.AvatarURL, &createdUser.PasswordHash, &createdUser.EmailVerified,
 		&createdUser.PhoneVerified, &createdUser.IsActive, &createdUser.IsLocked,
 		&createdUser.FailedLoginCount, &createdUser.LastLoginAt, &createdUser.PasswordChangedAt,
 		&createdUser.CreatedAt, &createdUser.UpdatedAt)
@@ -78,7 +78,7 @@ func (r *Repository) CreateUserProfile(ctx context.Context, profile *dao.Profile
 // GetUserByID retrieves a user by ID
 func (r *Repository) GetUserByID(ctx context.Context, id int64) (*dao.User, error) {
 	query := `
-		SELECT id, uuid, username, email, phone, password_hash, email_verified,
+		SELECT id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
 			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at,
 			password_changed_at, created_at, updated_at
 		FROM users WHERE id = $1`
@@ -90,7 +90,7 @@ func (r *Repository) GetUserByID(ctx context.Context, id int64) (*dao.User, erro
 // GetUserByUUID retrieves a user by UUID
 func (r *Repository) GetUserByUUID(ctx context.Context, userUUID string) (*dao.User, error) {
 	query := `
-		SELECT id, uuid, username, email, phone, password_hash, email_verified,
+		SELECT id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
 			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at,
 			password_changed_at, created_at, updated_at
 		FROM users WHERE uuid = $1`
@@ -102,7 +102,7 @@ func (r *Repository) GetUserByUUID(ctx context.Context, userUUID string) (*dao.U
 // GetUserByUsername retrieves a user by username
 func (r *Repository) GetUserByUsername(ctx context.Context, username string) (*dao.User, error) {
 	query := `
-		SELECT id, uuid, username, email, phone, password_hash, email_verified,
+		SELECT id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
 			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at,
 			password_changed_at, created_at, updated_at
 		FROM users WHERE username = $1`
@@ -114,7 +114,7 @@ func (r *Repository) GetUserByUsername(ctx context.Context, username string) (*d
 // GetUserByEmail retrieves a user by email
 func (r *Repository) GetUserByEmail(ctx context.Context, email string) (*dao.User, error) {
 	query := `
-		SELECT id, uuid, username, email, phone, password_hash, email_verified,
+		SELECT id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
 			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at,
 			password_changed_at, created_at, updated_at
 		FROM users WHERE email = $1`
@@ -153,7 +153,7 @@ func (r *Repository) UpdateUser(ctx context.Context, id int64, updates map[strin
 
 	query := fmt.Sprintf(`
 		UPDATE users SET %s WHERE id = $%d
-		RETURNING id, uuid, username, email, phone, password_hash, email_verified,
+		RETURNING id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
 			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at,
 			password_changed_at, created_at, updated_at`,
 		strings.Join(setParts, ", "), argIndex)
@@ -282,7 +282,7 @@ func (r *Repository) ListUsers(ctx context.Context, limit, offset int32, filters
 
 	// Get paginated results
 	query := fmt.Sprintf(`
-		SELECT id, uuid, username, email, phone, password_hash, email_verified,
+		SELECT id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
 			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at,
 			password_changed_at, created_at, updated_at
 		FROM users %s %s LIMIT $%d OFFSET $%d`,
@@ -384,7 +384,7 @@ func (r *Repository) scanUser(row *sql.Row) (*dao.User, error) {
 	var user dao.User
 	err := row.Scan(
 		&user.ID, &user.UUID, &user.Username, &user.Email, &user.Phone,
-		&user.PasswordHash, &user.EmailVerified, &user.PhoneVerified,
+		&user.Name, &user.AvatarURL, &user.PasswordHash, &user.EmailVerified, &user.PhoneVerified,
 		&user.IsActive, &user.IsLocked, &user.FailedLoginCount,
 		&user.LastLoginAt, &user.PasswordChangedAt, &user.CreatedAt, &user.UpdatedAt)
 
@@ -399,7 +399,7 @@ func (r *Repository) scanUserFromRows(rows *sql.Rows) (*dao.User, error) {
 	var user dao.User
 	err := rows.Scan(
 		&user.ID, &user.UUID, &user.Username, &user.Email, &user.Phone,
-		&user.PasswordHash, &user.EmailVerified, &user.PhoneVerified,
+		&user.Name, &user.AvatarURL, &user.PasswordHash, &user.EmailVerified, &user.PhoneVerified,
 		&user.IsActive, &user.IsLocked, &user.FailedLoginCount,
 		&user.LastLoginAt, &user.PasswordChangedAt, &user.CreatedAt, &user.UpdatedAt)
 

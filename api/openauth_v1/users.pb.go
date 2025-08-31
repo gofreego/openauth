@@ -29,15 +29,17 @@ type User struct {
 	Username            string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
 	Email               *string                `protobuf:"bytes,4,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	Phone               *string                `protobuf:"bytes,5,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
-	EmailVerified       bool                   `protobuf:"varint,6,opt,name=email_verified,json=emailVerified,proto3" json:"email_verified,omitempty"`
-	PhoneVerified       bool                   `protobuf:"varint,7,opt,name=phone_verified,json=phoneVerified,proto3" json:"phone_verified,omitempty"`
-	IsActive            bool                   `protobuf:"varint,8,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	IsLocked            bool                   `protobuf:"varint,9,opt,name=is_locked,json=isLocked,proto3" json:"is_locked,omitempty"`
-	FailedLoginAttempts int32                  `protobuf:"varint,10,opt,name=failed_login_attempts,json=failedLoginAttempts,proto3" json:"failed_login_attempts,omitempty"`
-	LastLoginAt         *int64                 `protobuf:"varint,11,opt,name=last_login_at,json=lastLoginAt,proto3,oneof" json:"last_login_at,omitempty"`
-	PasswordChangedAt   int64                  `protobuf:"varint,12,opt,name=password_changed_at,json=passwordChangedAt,proto3" json:"password_changed_at,omitempty"`
-	CreatedAt           int64                  `protobuf:"varint,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt           int64                  `protobuf:"varint,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Name                *string                `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name,omitempty"`                            // Display name for the user
+	AvatarUrl           *string                `protobuf:"bytes,7,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"` // URL to user's avatar image
+	EmailVerified       bool                   `protobuf:"varint,8,opt,name=email_verified,json=emailVerified,proto3" json:"email_verified,omitempty"`
+	PhoneVerified       bool                   `protobuf:"varint,9,opt,name=phone_verified,json=phoneVerified,proto3" json:"phone_verified,omitempty"`
+	IsActive            bool                   `protobuf:"varint,10,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	IsLocked            bool                   `protobuf:"varint,11,opt,name=is_locked,json=isLocked,proto3" json:"is_locked,omitempty"`
+	FailedLoginAttempts int32                  `protobuf:"varint,12,opt,name=failed_login_attempts,json=failedLoginAttempts,proto3" json:"failed_login_attempts,omitempty"`
+	LastLoginAt         *int64                 `protobuf:"varint,13,opt,name=last_login_at,json=lastLoginAt,proto3,oneof" json:"last_login_at,omitempty"`
+	PasswordChangedAt   int64                  `protobuf:"varint,14,opt,name=password_changed_at,json=passwordChangedAt,proto3" json:"password_changed_at,omitempty"`
+	CreatedAt           int64                  `protobuf:"varint,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt           int64                  `protobuf:"varint,16,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -103,6 +105,20 @@ func (x *User) GetEmail() string {
 func (x *User) GetPhone() string {
 	if x != nil && x.Phone != nil {
 		return *x.Phone
+	}
+	return ""
+}
+
+func (x *User) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *User) GetAvatarUrl() string {
+	if x != nil && x.AvatarUrl != nil {
+		return *x.AvatarUrl
 	}
 	return ""
 }
@@ -382,6 +398,8 @@ type SignUpRequest struct {
 	Email         *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	Phone         *string                `protobuf:"bytes,3,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
 	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
+	Name          *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name,omitempty"`                            // Display name for the user
+	AvatarUrl     *string                `protobuf:"bytes,6,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"` // URL to user's avatar image
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -440,6 +458,20 @@ func (x *SignUpRequest) GetPhone() string {
 func (x *SignUpRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
+	}
+	return ""
+}
+
+func (x *SignUpRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *SignUpRequest) GetAvatarUrl() string {
+	if x != nil && x.AvatarUrl != nil {
+		return *x.AvatarUrl
 	}
 	return ""
 }
@@ -1854,19 +1886,20 @@ type UpdateUserRequest struct {
 	Email    *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	Phone    *string                `protobuf:"bytes,4,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
 	IsActive *bool                  `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
+	Name     *string                `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name,omitempty"` // Display name for the user
 	// Profile updates
-	FirstName     *string `protobuf:"bytes,6,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
-	LastName      *string `protobuf:"bytes,7,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
-	DisplayName   *string `protobuf:"bytes,8,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
-	Bio           *string `protobuf:"bytes,9,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
-	AvatarUrl     *string `protobuf:"bytes,10,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
-	Timezone      *string `protobuf:"bytes,11,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
-	Locale        *string `protobuf:"bytes,12,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
-	Country       *string `protobuf:"bytes,13,opt,name=country,proto3,oneof" json:"country,omitempty"`
-	City          *string `protobuf:"bytes,14,opt,name=city,proto3,oneof" json:"city,omitempty"`
-	Address       *string `protobuf:"bytes,15,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	PostalCode    *string `protobuf:"bytes,16,opt,name=postal_code,json=postalCode,proto3,oneof" json:"postal_code,omitempty"`
-	WebsiteUrl    *string `protobuf:"bytes,17,opt,name=website_url,json=websiteUrl,proto3,oneof" json:"website_url,omitempty"`
+	FirstName     *string `protobuf:"bytes,7,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
+	LastName      *string `protobuf:"bytes,8,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
+	DisplayName   *string `protobuf:"bytes,9,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
+	Bio           *string `protobuf:"bytes,10,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
+	AvatarUrl     *string `protobuf:"bytes,11,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
+	Timezone      *string `protobuf:"bytes,12,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
+	Locale        *string `protobuf:"bytes,13,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
+	Country       *string `protobuf:"bytes,14,opt,name=country,proto3,oneof" json:"country,omitempty"`
+	City          *string `protobuf:"bytes,15,opt,name=city,proto3,oneof" json:"city,omitempty"`
+	Address       *string `protobuf:"bytes,16,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	PostalCode    *string `protobuf:"bytes,17,opt,name=postal_code,json=postalCode,proto3,oneof" json:"postal_code,omitempty"`
+	WebsiteUrl    *string `protobuf:"bytes,18,opt,name=website_url,json=websiteUrl,proto3,oneof" json:"website_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1934,6 +1967,13 @@ func (x *UpdateUserRequest) GetIsActive() bool {
 		return *x.IsActive
 	}
 	return false
+}
+
+func (x *UpdateUserRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
 }
 
 func (x *UpdateUserRequest) GetFirstName() string {
@@ -3388,27 +3428,32 @@ var File_proto_openauth_v1_users_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\n" +
-	"\x1dproto/openauth/v1/users.proto\x12\x02v1\"\xf5\x03\n" +
+	"\x1dproto/openauth/v1/users.proto\x12\x02v1\"\xca\x04\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x19\n" +
 	"\x05email\x18\x04 \x01(\tH\x00R\x05email\x88\x01\x01\x12\x19\n" +
-	"\x05phone\x18\x05 \x01(\tH\x01R\x05phone\x88\x01\x01\x12%\n" +
-	"\x0eemail_verified\x18\x06 \x01(\bR\remailVerified\x12%\n" +
-	"\x0ephone_verified\x18\a \x01(\bR\rphoneVerified\x12\x1b\n" +
-	"\tis_active\x18\b \x01(\bR\bisActive\x12\x1b\n" +
-	"\tis_locked\x18\t \x01(\bR\bisLocked\x122\n" +
-	"\x15failed_login_attempts\x18\n" +
-	" \x01(\x05R\x13failedLoginAttempts\x12'\n" +
-	"\rlast_login_at\x18\v \x01(\x03H\x02R\vlastLoginAt\x88\x01\x01\x12.\n" +
-	"\x13password_changed_at\x18\f \x01(\x03R\x11passwordChangedAt\x12\x1d\n" +
+	"\x05phone\x18\x05 \x01(\tH\x01R\x05phone\x88\x01\x01\x12\x17\n" +
+	"\x04name\x18\x06 \x01(\tH\x02R\x04name\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"created_at\x18\r \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"avatar_url\x18\a \x01(\tH\x03R\tavatarUrl\x88\x01\x01\x12%\n" +
+	"\x0eemail_verified\x18\b \x01(\bR\remailVerified\x12%\n" +
+	"\x0ephone_verified\x18\t \x01(\bR\rphoneVerified\x12\x1b\n" +
+	"\tis_active\x18\n" +
+	" \x01(\bR\bisActive\x12\x1b\n" +
+	"\tis_locked\x18\v \x01(\bR\bisLocked\x122\n" +
+	"\x15failed_login_attempts\x18\f \x01(\x05R\x13failedLoginAttempts\x12'\n" +
+	"\rlast_login_at\x18\r \x01(\x03H\x04R\vlastLoginAt\x88\x01\x01\x12.\n" +
+	"\x13password_changed_at\x18\x0e \x01(\x03R\x11passwordChangedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\x03R\tupdatedAtB\b\n" +
+	"created_at\x18\x0f \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x10 \x01(\x03R\tupdatedAtB\b\n" +
 	"\x06_emailB\b\n" +
-	"\x06_phoneB\x10\n" +
+	"\x06_phoneB\a\n" +
+	"\x05_nameB\r\n" +
+	"\v_avatar_urlB\x10\n" +
 	"\x0e_last_login_at\"\xe8\x06\n" +
 	"\vUserProfile\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
@@ -3457,14 +3502,19 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\n" +
 	"\b_addressB\x0e\n" +
 	"\f_postal_codeB\x0e\n" +
-	"\f_website_url\"\x91\x01\n" +
+	"\f_website_url\"\xe6\x01\n" +
 	"\rSignUpRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x19\n" +
 	"\x05email\x18\x02 \x01(\tH\x00R\x05email\x88\x01\x01\x12\x19\n" +
 	"\x05phone\x18\x03 \x01(\tH\x01R\x05phone\x88\x01\x01\x12\x1a\n" +
-	"\bpassword\x18\x04 \x01(\tR\bpasswordB\b\n" +
+	"\bpassword\x18\x04 \x01(\tR\bpassword\x12\x17\n" +
+	"\x04name\x18\x05 \x01(\tH\x02R\x04name\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"avatar_url\x18\x06 \x01(\tH\x03R\tavatarUrl\x88\x01\x01B\b\n" +
 	"\x06_emailB\b\n" +
-	"\x06_phone\"\xc8\x01\n" +
+	"\x06_phoneB\a\n" +
+	"\x05_nameB\r\n" +
+	"\v_avatar_url\"\xc8\x01\n" +
 	"\x0eSignUpResponse\x12\x1c\n" +
 	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12>\n" +
@@ -3617,36 +3667,38 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12.\n" +
 	"\aprofile\x18\x02 \x01(\v2\x0f.v1.UserProfileH\x00R\aprofile\x88\x01\x01B\n" +
 	"\n" +
-	"\b_profile\"\xf7\x05\n" +
+	"\b_profile\"\x99\x06\n" +
 	"\x11UpdateUserRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1f\n" +
 	"\busername\x18\x02 \x01(\tH\x00R\busername\x88\x01\x01\x12\x19\n" +
 	"\x05email\x18\x03 \x01(\tH\x01R\x05email\x88\x01\x01\x12\x19\n" +
 	"\x05phone\x18\x04 \x01(\tH\x02R\x05phone\x88\x01\x01\x12 \n" +
-	"\tis_active\x18\x05 \x01(\bH\x03R\bisActive\x88\x01\x01\x12\"\n" +
+	"\tis_active\x18\x05 \x01(\bH\x03R\bisActive\x88\x01\x01\x12\x17\n" +
+	"\x04name\x18\x06 \x01(\tH\x04R\x04name\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"first_name\x18\x06 \x01(\tH\x04R\tfirstName\x88\x01\x01\x12 \n" +
-	"\tlast_name\x18\a \x01(\tH\x05R\blastName\x88\x01\x01\x12&\n" +
-	"\fdisplay_name\x18\b \x01(\tH\x06R\vdisplayName\x88\x01\x01\x12\x15\n" +
-	"\x03bio\x18\t \x01(\tH\aR\x03bio\x88\x01\x01\x12\"\n" +
+	"first_name\x18\a \x01(\tH\x05R\tfirstName\x88\x01\x01\x12 \n" +
+	"\tlast_name\x18\b \x01(\tH\x06R\blastName\x88\x01\x01\x12&\n" +
+	"\fdisplay_name\x18\t \x01(\tH\aR\vdisplayName\x88\x01\x01\x12\x15\n" +
+	"\x03bio\x18\n" +
+	" \x01(\tH\bR\x03bio\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"avatar_url\x18\n" +
-	" \x01(\tH\bR\tavatarUrl\x88\x01\x01\x12\x1f\n" +
-	"\btimezone\x18\v \x01(\tH\tR\btimezone\x88\x01\x01\x12\x1b\n" +
-	"\x06locale\x18\f \x01(\tH\n" +
-	"R\x06locale\x88\x01\x01\x12\x1d\n" +
-	"\acountry\x18\r \x01(\tH\vR\acountry\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\x0e \x01(\tH\fR\x04city\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\x0f \x01(\tH\rR\aaddress\x88\x01\x01\x12$\n" +
-	"\vpostal_code\x18\x10 \x01(\tH\x0eR\n" +
+	"avatar_url\x18\v \x01(\tH\tR\tavatarUrl\x88\x01\x01\x12\x1f\n" +
+	"\btimezone\x18\f \x01(\tH\n" +
+	"R\btimezone\x88\x01\x01\x12\x1b\n" +
+	"\x06locale\x18\r \x01(\tH\vR\x06locale\x88\x01\x01\x12\x1d\n" +
+	"\acountry\x18\x0e \x01(\tH\fR\acountry\x88\x01\x01\x12\x17\n" +
+	"\x04city\x18\x0f \x01(\tH\rR\x04city\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\x10 \x01(\tH\x0eR\aaddress\x88\x01\x01\x12$\n" +
+	"\vpostal_code\x18\x11 \x01(\tH\x0fR\n" +
 	"postalCode\x88\x01\x01\x12$\n" +
-	"\vwebsite_url\x18\x11 \x01(\tH\x0fR\n" +
+	"\vwebsite_url\x18\x12 \x01(\tH\x10R\n" +
 	"websiteUrl\x88\x01\x01B\v\n" +
 	"\t_usernameB\b\n" +
 	"\x06_emailB\b\n" +
 	"\x06_phoneB\f\n" +
 	"\n" +
-	"_is_activeB\r\n" +
+	"_is_activeB\a\n" +
+	"\x05_nameB\r\n" +
 	"\v_first_nameB\f\n" +
 	"\n" +
 	"_last_nameB\x0f\n" +

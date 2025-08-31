@@ -10,15 +10,17 @@ message User {
     string username = 3;
     optional string email = 4;
     optional string phone = 5;
-    bool email_verified = 6;
-    bool phone_verified = 7;
-    bool is_active = 8;
-    bool is_locked = 9;
-    int32 failed_login_attempts = 10;
-    optional int64 last_login_at = 11;
-    int64 password_changed_at = 12;
-    int64 created_at = 13;
-    int64 updated_at = 14;
+    optional string name = 6;  // Display name for the user
+    optional string avatar_url = 7;  // URL to user's avatar image
+    bool email_verified = 8;
+    bool phone_verified = 9;
+    bool is_active = 10;
+    bool is_locked = 11;
+    int32 failed_login_attempts = 12;
+    optional int64 last_login_at = 13;
+    int64 password_changed_at = 14;
+    int64 created_at = 15;
+    int64 updated_at = 16;
 }
 
 // UserProfile represents extended user profile information
@@ -52,6 +54,8 @@ message SignUpRequest {
     optional string email = 2;
     optional string phone = 3;
     string password = 4;
+    optional string name = 5;  // Display name for the user
+    optional string avatar_url = 6;  // URL to user's avatar image
 }
 
 // SignUpResponse after successful registration - only user data
@@ -222,20 +226,21 @@ message UpdateUserRequest {
     optional string email = 3;
     optional string phone = 4;
     optional bool is_active = 5;
+    optional string name = 6;  // Display name for the user
     
     // Profile updates
-    optional string first_name = 6;
-    optional string last_name = 7;
-    optional string display_name = 8;
-    optional string bio = 9;
-    optional string avatar_url = 10;
-    optional string timezone = 11;
-    optional string locale = 12;
-    optional string country = 13;
-    optional string city = 14;
-    optional string address = 15;
-    optional string postal_code = 16;
-    optional string website_url = 17;
+    optional string first_name = 7;
+    optional string last_name = 8;
+    optional string display_name = 9;
+    optional string bio = 10;
+    optional string avatar_url = 11;
+    optional string timezone = 12;
+    optional string locale = 13;
+    optional string country = 14;
+    optional string city = 15;
+    optional string address = 16;
+    optional string postal_code = 17;
+    optional string website_url = 18;
 }
 
 // UpdateUserResponse

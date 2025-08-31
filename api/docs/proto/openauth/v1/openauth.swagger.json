@@ -1256,6 +1256,10 @@
         "isActive": {
           "type": "boolean"
         },
+        "name": {
+          "type": "string",
+          "title": "Display name for the user"
+        },
         "firstName": {
           "type": "string",
           "title": "Profile updates"
@@ -1843,6 +1847,14 @@
         },
         "password": {
           "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "title": "Display name for the user"
+        },
+        "avatarUrl": {
+          "type": "string",
+          "title": "URL to user's avatar image"
         }
       },
       "title": "SignUpRequest for user registration - only authentication credentials"
@@ -1919,6 +1931,14 @@
         },
         "phone": {
           "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "title": "Display name for the user"
+        },
+        "avatarUrl": {
+          "type": "string",
+          "title": "URL to user's avatar image"
         },
         "emailVerified": {
           "type": "boolean"

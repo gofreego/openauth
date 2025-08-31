@@ -13,6 +13,8 @@ type User struct {
 	Username          string    `db:"username" json:"username"`
 	Email             *string   `db:"email" json:"email,omitempty"`
 	Phone             *string   `db:"phone" json:"phone,omitempty"`
+	Name              *string   `db:"name" json:"name,omitempty"`
+	AvatarURL         *string   `db:"avatar_url" json:"avatarUrl,omitempty"`
 	PasswordHash      string    `db:"password_hash" json:"passwordHash"`
 	EmailVerified     bool      `db:"email_verified" json:"emailVerified"`
 	PhoneVerified     bool      `db:"phone_verified" json:"phoneVerified"`
@@ -57,6 +59,8 @@ func (u *User) ToProto() *openauth_v1.User {
 		Username:            u.Username,
 		Email:               u.Email,
 		Phone:               u.Phone,
+		Name:                u.Name,
+		AvatarUrl:           u.AvatarURL,
 		EmailVerified:       u.EmailVerified,
 		PhoneVerified:       u.PhoneVerified,
 		IsActive:            u.IsActive,
