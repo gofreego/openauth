@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/bloc/app_bloc.dart';
 import '../../../../core/bloc/app_state.dart';
 import '../widgets/admin_sidebar.dart';
-import 'dashboard_page.dart';
+import '../../../dashboard/dashboard.dart';
 import 'users_page.dart';
 import 'permissions_page.dart';
 import 'profile_page.dart';
