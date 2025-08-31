@@ -151,12 +151,11 @@ const ResendVerificationRequest$json = const {
   '1': 'ResendVerificationRequest',
   '2': const [
     const {'1': 'identifier', '3': 1, '4': 1, '5': 9, '10': 'identifier'},
-    const {'1': 'type', '3': 2, '4': 1, '5': 9, '10': 'type'},
   ],
 };
 
 /// Descriptor for `ResendVerificationRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List resendVerificationRequestDescriptor = $convert.base64Decode('ChlSZXNlbmRWZXJpZmljYXRpb25SZXF1ZXN0Eh4KCmlkZW50aWZpZXIYASABKAlSCmlkZW50aWZpZXISEgoEdHlwZRgCIAEoCVIEdHlwZQ==');
+final $typed_data.Uint8List resendVerificationRequestDescriptor = $convert.base64Decode('ChlSZXNlbmRWZXJpZmljYXRpb25SZXF1ZXN0Eh4KCmlkZW50aWZpZXIYASABKAlSCmlkZW50aWZpZXI=');
 @$core.Deprecated('Use resendVerificationResponseDescriptor instead')
 const ResendVerificationResponse$json = const {
   '1': 'ResendVerificationResponse',
@@ -541,7 +540,7 @@ final $typed_data.Uint8List deleteUserResponseDescriptor = $convert.base64Decode
 const SignInRequest$json = const {
   '1': 'SignInRequest',
   '2': const [
-    const {'1': 'identifier', '3': 1, '4': 1, '5': 9, '10': 'identifier'},
+    const {'1': 'username', '3': 1, '4': 1, '5': 9, '10': 'username'},
     const {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
     const {'1': 'device_id', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'deviceId', '17': true},
     const {'1': 'device_name', '3': 4, '4': 1, '5': 9, '9': 1, '10': 'deviceName', '17': true},
@@ -557,7 +556,7 @@ const SignInRequest$json = const {
 };
 
 /// Descriptor for `SignInRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signInRequestDescriptor = $convert.base64Decode('Cg1TaWduSW5SZXF1ZXN0Eh4KCmlkZW50aWZpZXIYASABKAlSCmlkZW50aWZpZXISGgoIcGFzc3dvcmQYAiABKAlSCHBhc3N3b3JkEiAKCWRldmljZV9pZBgDIAEoCUgAUghkZXZpY2VJZIgBARIkCgtkZXZpY2VfbmFtZRgEIAEoCUgBUgpkZXZpY2VOYW1liAEBEiQKC2RldmljZV90eXBlGAUgASgJSAJSCmRldmljZVR5cGWIAQESJAoLcmVtZW1iZXJfbWUYBiABKAhIA1IKcmVtZW1iZXJNZYgBAUIMCgpfZGV2aWNlX2lkQg4KDF9kZXZpY2VfbmFtZUIOCgxfZGV2aWNlX3R5cGVCDgoMX3JlbWVtYmVyX21l');
+final $typed_data.Uint8List signInRequestDescriptor = $convert.base64Decode('Cg1TaWduSW5SZXF1ZXN0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIaCghwYXNzd29yZBgCIAEoCVIIcGFzc3dvcmQSIAoJZGV2aWNlX2lkGAMgASgJSABSCGRldmljZUlkiAEBEiQKC2RldmljZV9uYW1lGAQgASgJSAFSCmRldmljZU5hbWWIAQESJAoLZGV2aWNlX3R5cGUYBSABKAlIAlIKZGV2aWNlVHlwZYgBARIkCgtyZW1lbWJlcl9tZRgGIAEoCEgDUgpyZW1lbWJlck1liAEBQgwKCl9kZXZpY2VfaWRCDgoMX2RldmljZV9uYW1lQg4KDF9kZXZpY2VfdHlwZUIOCgxfcmVtZW1iZXJfbWU=');
 @$core.Deprecated('Use signInResponseDescriptor instead')
 const SignInResponse$json = const {
   '1': 'SignInResponse',

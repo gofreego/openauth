@@ -4,7 +4,7 @@ import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 abstract class AuthRepository {
   /// Sign in an existing user
   Future<pb.SignInResponse> signIn({
-    required String identifier, // username, email, or phone
+    required String username, // username, email, or phone
     required String password,
     String? deviceId,
     String? deviceName,

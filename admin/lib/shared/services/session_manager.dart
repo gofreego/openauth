@@ -96,7 +96,7 @@ class SessionManager {
       final userData = _prefs.getString(_userDataKey);
       if (userData != null) {
         final jsonData = jsonDecode(userData) as Map<String, dynamic>;
-        return pb.User.fromJson(jsonEncode(jsonData));
+        return pb.User()..mergeFromProto3Json(jsonData);
       }
       return null;
     } catch (e) {

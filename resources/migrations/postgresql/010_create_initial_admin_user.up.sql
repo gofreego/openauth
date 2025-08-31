@@ -18,7 +18,7 @@ INSERT INTO users (
     gen_random_uuid(),
     'admin',
     'admin@openauth.local',
-    '$2a$10$rQJ7ZeUgS8KY9X2Y7V.YeOqKQJX8qZzY8YqJ7KQ5Z8Y7X2Y7V.YeO', -- bcrypt hash of 'admin123'
+    '$2a$12$bMavjNGg74RQJdNa.n1VpeZgcTjtEcuGi7Pkg1JLP2MFg0qL0PmFi', -- bcrypt hash of 'admin123'
     true,
     false,
     true,

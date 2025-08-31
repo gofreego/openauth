@@ -15,7 +15,7 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
-  final _identifierController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
   bool _obscurePassword = true;
@@ -24,19 +24,19 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    _identifierController.addListener(_onIdentifierChanged);
+    _usernameController.addListener(_onUsernameChanged);
   }
 
   @override
   void dispose() {
-    _identifierController.removeListener(_onIdentifierChanged);
-    _identifierController.dispose();
+    _usernameController.removeListener(_onUsernameChanged);
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _onIdentifierChanged() {
-    final type = LoginValidators.getIdentifierType(_identifierController.text);
+  void _onUsernameChanged() {
+    final type = LoginValidators.getIdentifierType(_usernameController.text);
     if (type != _identifierType) {
       setState(() {
         _identifierType = type;
@@ -137,7 +137,7 @@ class _SignInPageState extends State<SignInPage> {
 
                         // Username/Email/Phone field with dynamic labeling
                         AuthTextField(
-                          controller: _identifierController,
+                          controller: _usernameController,
                           label: _getIdentifierLabel(),
                           hint: LoginValidators.getHintText(),
                           prefixIcon: _getIdentifierIcon(),
@@ -262,7 +262,7 @@ class _SignInPageState extends State<SignInPage> {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
         AuthSignInRequested(
-          identifier: _identifierController.text.trim(),
+          username: _usernameController.text.trim(),
           password: _passwordController.text,
           rememberMe: _rememberMe,
         ),

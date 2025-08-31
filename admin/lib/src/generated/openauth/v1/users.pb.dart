@@ -932,21 +932,16 @@ class VerificationResponse extends $pb.GeneratedMessage {
 class ResendVerificationRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ResendVerificationRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'identifier')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type')
     ..hasRequiredFields = false
   ;
 
   ResendVerificationRequest._() : super();
   factory ResendVerificationRequest({
     $core.String? identifier,
-    $core.String? type,
   }) {
     final _result = create();
     if (identifier != null) {
       _result.identifier = identifier;
-    }
-    if (type != null) {
-      _result.type = type;
     }
     return _result;
   }
@@ -979,15 +974,6 @@ class ResendVerificationRequest extends $pb.GeneratedMessage {
   $core.bool hasIdentifier() => $_has(0);
   @$pb.TagNumber(1)
   void clearIdentifier() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get type => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set type($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasType() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearType() => clearField(2);
 }
 
 class ResendVerificationResponse extends $pb.GeneratedMessage {
@@ -3262,7 +3248,7 @@ class DeleteUserResponse extends $pb.GeneratedMessage {
 
 class SignInRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignInRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'identifier')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deviceId')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deviceName')
@@ -3273,7 +3259,7 @@ class SignInRequest extends $pb.GeneratedMessage {
 
   SignInRequest._() : super();
   factory SignInRequest({
-    $core.String? identifier,
+    $core.String? username,
     $core.String? password,
     $core.String? deviceId,
     $core.String? deviceName,
@@ -3281,8 +3267,8 @@ class SignInRequest extends $pb.GeneratedMessage {
     $core.bool? rememberMe,
   }) {
     final _result = create();
-    if (identifier != null) {
-      _result.identifier = identifier;
+    if (username != null) {
+      _result.username = username;
     }
     if (password != null) {
       _result.password = password;
@@ -3323,13 +3309,13 @@ class SignInRequest extends $pb.GeneratedMessage {
   static SignInRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get identifier => $_getSZ(0);
+  $core.String get username => $_getSZ(0);
   @$pb.TagNumber(1)
-  set identifier($core.String v) { $_setString(0, v); }
+  set username($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasIdentifier() => $_has(0);
+  $core.bool hasUsername() => $_has(0);
   @$pb.TagNumber(1)
-  void clearIdentifier() => clearField(1);
+  void clearUsername() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get password => $_getSZ(1);

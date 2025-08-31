@@ -10,7 +10,7 @@ class SignInUseCase {
   SignInUseCase(this._authRepository);
 
   Future<pb.SignInResponse> call({
-    required String identifier,
+    required String username,
     required String password,
     String? deviceId,
     String? deviceName,
@@ -18,9 +18,9 @@ class SignInUseCase {
     bool rememberMe = false,
   }) async {
     // Validate input using enhanced validators
-    final identifierValidation = LoginValidators.validateIdentifier(identifier);
-    if (!identifierValidation.isValid) {
-      throw ArgumentError(identifierValidation.message);
+    final usernameValidation = LoginValidators.validateIdentifier(username);
+    if (!usernameValidation.isValid) {
+      throw ArgumentError(usernameValidation.message);
     }
     
     if (password.isEmpty) {
@@ -36,7 +36,7 @@ class SignInUseCase {
     }
 
     return await _authRepository.signIn(
-      identifier: identifier.trim(),
+      username: username.trim(),
       password: password,
       deviceId: deviceId,
       deviceName: deviceName,

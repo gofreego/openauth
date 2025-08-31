@@ -1,5 +1,4 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -21,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<pb.SignInResponse> signIn({
-    required String identifier,
+    required String username,
     required String password,
     String? deviceId,
     String? deviceName,
@@ -33,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final deviceSession = await DeviceUtils.createDeviceSession();
       
       final request = pb.SignInRequest(
-        identifier: identifier,
+        username: username,
         password: password,
         deviceId: deviceId ?? deviceSession['deviceId'],
         deviceName: deviceName ?? deviceSession['deviceName'],
@@ -43,10 +42,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final response = await _httpClient.post<Map<String, dynamic>>(
         '/openauth/v1/auth/signin',
-        data: request.writeToJson(),
+        data: request.toProto3Json(),
       );
 
-      final signInResponse = pb.SignInResponse.fromJson(jsonEncode(response));
+      final signInResponse = pb.SignInResponse()..mergeFromProto3Json(response);
       
       if (signInResponse.hasAccessToken()) {
         // Store tokens using legacy method for backward compatibility
@@ -55,7 +54,7 @@ class AuthRepositoryImpl implements AuthRepository {
         // Create enhanced session with device tracking
         await _sessionManager.createSession(
           signInResponse: signInResponse,
-          identifier: identifier,
+          identifier: username,
           rememberMe: rememberMe,
         );
         
@@ -75,10 +74,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final response = await _httpClient.post<Map<String, dynamic>>(
         '/openauth/v1/auth/refresh',
-        data: request.writeToJson(),
+        data: request.toProto3Json(),
       );
 
-      final refreshResponse = pb.RefreshTokenResponse.fromJson(jsonEncode(response));
+      final refreshResponse = pb.RefreshTokenResponse()..mergeFromProto3Json(response);
       
       if (refreshResponse.hasAccessToken()) {
         // Update stored tokens
@@ -104,7 +103,7 @@ class AuthRepositoryImpl implements AuthRepository {
         
         await _httpClient.post<Map<String, dynamic>>(
           '/openauth/v1/auth/logout',
-          data: request.writeToJson(),
+          data: request.toProto3Json(),
           options: Options(
             headers: {'Authorization': 'Bearer ${tokens['accessToken']}'},
           ),
@@ -125,10 +124,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final response = await _httpClient.post<Map<String, dynamic>>(
         '/openauth/v1/auth/validate',
-        data: request.writeToJson(),
+        data: request.toProto3Json(),
       );
 
-      return pb.ValidateTokenResponse.fromJson(jsonEncode(response));
+      final validateResponse = pb.ValidateTokenResponse()..mergeFromProto3Json(response);
+      return validateResponse;
     } catch (e) {
       return null;
     }
