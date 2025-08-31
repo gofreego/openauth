@@ -54,12 +54,14 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
       }
 
       // For now, return mock data until backend is ready
-      await _apiService.get(
+      var response = await _apiService.get(
         '/openauth/v1/users',
         queryParameters: queryParams,
       );
-      
-      return _createMockListUsersResponse();
+      // just declare variable
+      var listUsersResponse = pb.ListUsersResponse();
+      listUsersResponse.mergeFromProto3Json(response.data);
+      return listUsersResponse;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to fetch users',

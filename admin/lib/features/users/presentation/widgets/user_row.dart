@@ -105,7 +105,7 @@ class UserRow extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 120,
+            width: 80,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -114,30 +114,10 @@ class UserRow extends StatelessWidget {
                   onPressed: () => onUserAction('edit', user, context),
                   tooltip: 'Edit user',
                 ),
-                IconButton(
-                  icon: const Icon(Icons.security_outlined, size: 20),
-                  onPressed: () => onUserAction('permissions', user, context),
-                  tooltip: 'Manage permissions',
-                ),
-                IconButton(
-                  icon: const Icon(Icons.schedule_outlined, size: 20),
-                  onPressed: () => onUserAction('sessions', user, context),
-                  tooltip: 'View sessions',
-                ),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert, size: 20),
                   onSelected: (action) => onUserAction(action, user, context),
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, size: 16),
-                          SizedBox(width: 8),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
                     const PopupMenuItem(
                       value: 'permissions',
                       child: Row(
