@@ -73,14 +73,23 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
             return AppRoutes.splash;
           }
 
+          // If we're authenticated, go to home (unless already there)
           if (appState is AppAuthenticated) {
-            return AppRoutes.home;
+            if (state.uri.path == AppRoutes.signIn || state.uri.path == AppRoutes.splash) {
+              return AppRoutes.home;
+            }
+            return null; // Stay on current route
           }
           
+          // If we're unauthenticated, go to sign in (unless already there)
           if (appState is AppUnauthenticated) {
-            return AppRoutes.signIn;
+            if (state.uri.path != AppRoutes.signIn) {
+              return AppRoutes.signIn;
+            }
+            return null; // Stay on sign in page
           }
           
+          // For any other state, stay on current route
           return null;
         } catch (e) {
           // If we can't read the bloc yet, stay on splash

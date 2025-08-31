@@ -41,10 +41,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       // Check authentication status
       _authBloc.add(const AuthCheckRequested());
       
-      // Wait a bit for auth check to complete
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Wait for auth check to complete with a timeout
+      await Future.delayed(const Duration(milliseconds: 1000));
       
-      // State will be updated by auth bloc listener
+      // If no state change occurred, default to unauthenticated
+      if (state is AppLoading) {
+        emit(const AppUnauthenticated());
+      }
     } catch (e) {
       emit(const AppUnauthenticated());
     }
