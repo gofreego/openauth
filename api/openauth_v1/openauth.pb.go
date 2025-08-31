@@ -25,19 +25,42 @@ var File_proto_openauth_v1_openauth_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\n" +
-	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17proto/common/ping.proto2P\n" +
+	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17proto/common/ping.proto\x1a#proto/openauth/v1/permissions.proto2\xe7\x04\n" +
 	"\bOpenAuth\x12D\n" +
-	"\x04Ping\x12\x0f.v1.PingRequest\x1a\x10.v1.PingResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/pingB\x0fZ\r./openauth_v1b\x06proto3"
+	"\x04Ping\x12\x0f.v1.PingRequest\x1a\x10.v1.PingResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/ping\x12d\n" +
+	"\x10CreatePermission\x12\x1b.v1.CreatePermissionRequest\x1a\x0e.v1.Permission\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/permissions\x12`\n" +
+	"\rGetPermission\x12\x18.v1.GetPermissionRequest\x1a\x0e.v1.Permission\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/openauth/v1/permissions/{id}\x12l\n" +
+	"\x0fListPermissions\x12\x1a.v1.ListPermissionsRequest\x1a\x1b.v1.ListPermissionsResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/openauth/v1/permissions\x12i\n" +
+	"\x10UpdatePermission\x12\x1b.v1.UpdatePermissionRequest\x1a\x0e.v1.Permission\"(\x82\xd3\xe4\x93\x02\":\x01*\x1a\x1d/openauth/v1/permissions/{id}\x12t\n" +
+	"\x10DeletePermission\x12\x1b.v1.DeletePermissionRequest\x1a\x1c.v1.DeletePermissionResponse\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/openauth/v1/permissions/{id}B\x0fZ\r./openauth_v1b\x06proto3"
 
 var file_proto_openauth_v1_openauth_proto_goTypes = []any{
-	(*PingRequest)(nil),  // 0: v1.PingRequest
-	(*PingResponse)(nil), // 1: v1.PingResponse
+	(*PingRequest)(nil),              // 0: v1.PingRequest
+	(*CreatePermissionRequest)(nil),  // 1: v1.CreatePermissionRequest
+	(*GetPermissionRequest)(nil),     // 2: v1.GetPermissionRequest
+	(*ListPermissionsRequest)(nil),   // 3: v1.ListPermissionsRequest
+	(*UpdatePermissionRequest)(nil),  // 4: v1.UpdatePermissionRequest
+	(*DeletePermissionRequest)(nil),  // 5: v1.DeletePermissionRequest
+	(*PingResponse)(nil),             // 6: v1.PingResponse
+	(*Permission)(nil),               // 7: v1.Permission
+	(*ListPermissionsResponse)(nil),  // 8: v1.ListPermissionsResponse
+	(*DeletePermissionResponse)(nil), // 9: v1.DeletePermissionResponse
 }
 var file_proto_openauth_v1_openauth_proto_depIdxs = []int32{
 	0, // 0: v1.OpenAuth.Ping:input_type -> v1.PingRequest
-	1, // 1: v1.OpenAuth.Ping:output_type -> v1.PingResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	1, // 1: v1.OpenAuth.CreatePermission:input_type -> v1.CreatePermissionRequest
+	2, // 2: v1.OpenAuth.GetPermission:input_type -> v1.GetPermissionRequest
+	3, // 3: v1.OpenAuth.ListPermissions:input_type -> v1.ListPermissionsRequest
+	4, // 4: v1.OpenAuth.UpdatePermission:input_type -> v1.UpdatePermissionRequest
+	5, // 5: v1.OpenAuth.DeletePermission:input_type -> v1.DeletePermissionRequest
+	6, // 6: v1.OpenAuth.Ping:output_type -> v1.PingResponse
+	7, // 7: v1.OpenAuth.CreatePermission:output_type -> v1.Permission
+	7, // 8: v1.OpenAuth.GetPermission:output_type -> v1.Permission
+	8, // 9: v1.OpenAuth.ListPermissions:output_type -> v1.ListPermissionsResponse
+	7, // 10: v1.OpenAuth.UpdatePermission:output_type -> v1.Permission
+	9, // 11: v1.OpenAuth.DeletePermission:output_type -> v1.DeletePermissionResponse
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -49,6 +72,7 @@ func file_proto_openauth_v1_openauth_proto_init() {
 		return
 	}
 	file_proto_common_ping_proto_init()
+	file_proto_openauth_v1_permissions_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

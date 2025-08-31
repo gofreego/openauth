@@ -16,9 +16,217 @@
     "application/json"
   ],
   "paths": {
+    "/openauth/v1/permissions": {
+      "get": {
+        "summary": "ListPermissions retrieves permissions with optional filtering and pagination.",
+        "description": "Supports filtering by:\n- search: Searches across name, display_name, and description fields\n- resource: Filter by specific resource type (e.g., \"users\", \"groups\")\n- action: Filter by specific action type (e.g., \"create\", \"read\")\n- is_system: Filter by system vs user-created permissions\n\nPagination is handled via limit/offset parameters:\n- limit: Maximum number of results (default: 10, max: 100)\n- offset: Number of results to skip (default: 0)\n\nExample queries:\n- GET /openauth/v1/permissions?resource=users - All user-related permissions\n- GET /openauth/v1/permissions?action=create - All creation permissions\n- GET /openauth/v1/permissions?search=user\u0026limit=20 - Search for \"user\" with 20 results",
+        "operationId": "OpenAuth_ListPermissions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListPermissionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Maximum number of permissions to return (default: 10, max: 100)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Number of permissions to skip for pagination (default: 0)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Search term to filter permissions by name, display_name, or description\nUses case-insensitive partial matching",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "resource",
+            "description": "Filter permissions by specific resource\nExamples: \"users\", \"groups\", \"permissions\"",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "action",
+            "description": "Filter permissions by specific action\nExamples: \"create\", \"read\", \"update\", \"delete\"",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "isSystem",
+            "description": "Filter by system vs user-created permissions\ntrue: only system permissions, false: only user-created permissions",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "post": {
+        "summary": "CreatePermission creates a new permission in the system.",
+        "description": "Permissions follow the pattern: resource.action (e.g., \"users.create\")\n- resource: The entity being accessed (users, groups, permissions, etc.)\n- action: The operation being performed (create, read, update, delete, etc.)\n\nExample: Creating a permission for user management would have:\n- name: \"users.create\"\n- resource: \"users\" \n- action: \"create\"\n- display_name: \"Create Users\"",
+        "operationId": "OpenAuth_CreatePermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Permission"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreatePermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/permissions/{id}": {
+      "get": {
+        "summary": "GetPermission retrieves a specific permission by its unique ID.",
+        "description": "Returns the complete permission details including resource, action,\nsystem status, and metadata.",
+        "operationId": "OpenAuth_GetPermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Permission"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the permission to retrieve",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "delete": {
+        "summary": "DeletePermission removes a permission from the system.",
+        "description": "System permissions (is_system=true) cannot be deleted as they are\ncritical for application functionality. Attempting to delete a system\npermission will return a PermissionDenied error.\n\nWarning: Deleting a permission will affect all users and groups\nthat currently have this permission assigned.",
+        "operationId": "OpenAuth_DeletePermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeletePermissionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the permission to delete\nNote: System permissions cannot be deleted",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "put": {
+        "summary": "UpdatePermission modifies an existing permission.",
+        "description": "All fields in the request are optional - only provided fields will be updated.\nSystem permissions (is_system=true) cannot be modified to prevent\nbreaking core application functionality.\n\nNote: Changing the name requires ensuring uniqueness across all permissions.",
+        "operationId": "OpenAuth_UpdatePermission",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Permission"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the permission to update",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUpdatePermissionBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/ping": {
       "get": {
-        "summary": "Ping is a simple GET request for checking if everything is okay",
+        "summary": "Ping is a simple health check endpoint to verify service availability",
         "operationId": "OpenAuth_Ping",
         "responses": {
           "200": {
@@ -49,6 +257,32 @@
     }
   },
   "definitions": {
+    "OpenAuthUpdatePermissionBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "New name for the permission (optional)\nMust be unique if provided"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "New display name for the permission (optional)"
+        },
+        "description": {
+          "type": "string",
+          "title": "New description for the permission (optional)\nSet to empty string to clear existing description"
+        },
+        "resource": {
+          "type": "string",
+          "title": "New resource for the permission (optional)"
+        },
+        "action": {
+          "type": "string",
+          "title": "New action for the permission (optional)"
+        }
+      },
+      "title": "Request to update an existing permission"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -76,6 +310,124 @@
           }
         }
       }
+    },
+    "v1CreatePermissionRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Unique name for the permission, typically in format \"resource.action\"\nMust be unique across all permissions\nExamples: \"users.create\", \"orders.approve\", \"reports.export\""
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name\nExamples: \"Create Users\", \"Approve Orders\", \"Export Reports\""
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional detailed description explaining what this permission allows"
+        },
+        "resource": {
+          "type": "string",
+          "title": "The resource this permission applies to\nShould be a noun representing an entity in your system\nExamples: \"users\", \"groups\", \"permissions\", \"posts\", \"orders\""
+        },
+        "action": {
+          "type": "string",
+          "title": "The action that can be performed on the resource\nShould be a verb representing an operation\nExamples: \"create\", \"read\", \"update\", \"delete\", \"list\", \"publish\", \"approve\""
+        }
+      },
+      "title": "Request to create a new permission"
+    },
+    "v1DeletePermissionResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "Whether the deletion was successful"
+        },
+        "message": {
+          "type": "string",
+          "title": "Human-readable message about the deletion result"
+        }
+      },
+      "title": "Response confirming permission deletion"
+    },
+    "v1ListPermissionsResponse": {
+      "type": "object",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Permission"
+          },
+          "title": "Array of permissions matching the request criteria"
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Total number of permissions that match the filter criteria\n(not just the current page)"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The limit value used for this request"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The offset value used for this request"
+        },
+        "hasMore": {
+          "type": "boolean",
+          "title": "Whether there are more permissions available beyond the current result set"
+        }
+      },
+      "title": "Response containing a list of permissions with pagination metadata"
+    },
+    "v1Permission": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unique identifier for the permission"
+        },
+        "name": {
+          "type": "string",
+          "title": "Unique name for the permission, typically in format \"resource.action\"\nExamples: \"users.create\", \"permissions.delete\", \"groups.read\""
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name for the permission\nExamples: \"Create Users\", \"Delete Permissions\", \"View Groups\""
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional detailed description of what this permission allows"
+        },
+        "resource": {
+          "type": "string",
+          "title": "The resource this permission applies to (what entity/domain object)\nExamples: \"users\", \"groups\", \"permissions\", \"sessions\", \"posts\", \"orders\""
+        },
+        "action": {
+          "type": "string",
+          "title": "The action that can be performed on the resource\nCommon actions: \"create\", \"read\", \"update\", \"delete\", \"list\"\nCustom actions: \"publish\", \"approve\", \"archive\", \"export\""
+        },
+        "isSystem": {
+          "type": "boolean",
+          "title": "Whether this is a system permission (cannot be modified/deleted)\nSystem permissions are critical for application functionality"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the permission was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the permission was last updated"
+        }
+      },
+      "description": "Permission represents a specific authorization rule in the system.\nIt follows a Resource-Based Access Control (RBAC) pattern where permissions\nare defined by combining a resource (what) with an action (how).\n\nExample: A permission with resource=\"users\" and action=\"create\" allows\ncreating new user accounts."
     },
     "v1PingResponse": {
       "type": "object",

@@ -3,15 +3,15 @@ package postgresql
 import (
 	"context"
 
-	"github.com/gofreego/goutils/databases/connections/sql"
+	sqlutils "github.com/gofreego/goutils/databases/connections/sql"
 )
 
 type Repository struct {
-	connManager sql.DBManager
+	connManager sqlutils.DBManager
 }
 
-func NewRepository(ctx context.Context, cfg *sql.Config) (*Repository, error) {
-	connManager, err := sql.NewDBManager(cfg)
+func NewRepository(ctx context.Context, cfg *sqlutils.Config) (*Repository, error) {
+	connManager, err := sqlutils.NewDBManager(cfg)
 	if err != nil {
 		return nil, err
 	}

@@ -19,15 +19,74 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OpenAuth_Ping_FullMethodName = "/v1.OpenAuth/Ping"
+	OpenAuth_Ping_FullMethodName             = "/v1.OpenAuth/Ping"
+	OpenAuth_CreatePermission_FullMethodName = "/v1.OpenAuth/CreatePermission"
+	OpenAuth_GetPermission_FullMethodName    = "/v1.OpenAuth/GetPermission"
+	OpenAuth_ListPermissions_FullMethodName  = "/v1.OpenAuth/ListPermissions"
+	OpenAuth_UpdatePermission_FullMethodName = "/v1.OpenAuth/UpdatePermission"
+	OpenAuth_DeletePermission_FullMethodName = "/v1.OpenAuth/DeletePermission"
 )
 
 // OpenAuthClient is the client API for OpenAuth service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// OpenAuth service provides authentication and authorization functionality
+// including user management, permissions, groups, and session management.
 type OpenAuthClient interface {
-	// Ping is a simple GET request for checking if everything is okay
+	// Ping is a simple health check endpoint to verify service availability
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	// CreatePermission creates a new permission in the system.
+	//
+	// Permissions follow the pattern: resource.action (e.g., "users.create")
+	// - resource: The entity being accessed (users, groups, permissions, etc.)
+	// - action: The operation being performed (create, read, update, delete, etc.)
+	//
+	// Example: Creating a permission for user management would have:
+	// - name: "users.create"
+	// - resource: "users"
+	// - action: "create"
+	// - display_name: "Create Users"
+	CreatePermission(ctx context.Context, in *CreatePermissionRequest, opts ...grpc.CallOption) (*Permission, error)
+	// GetPermission retrieves a specific permission by its unique ID.
+	//
+	// Returns the complete permission details including resource, action,
+	// system status, and metadata.
+	GetPermission(ctx context.Context, in *GetPermissionRequest, opts ...grpc.CallOption) (*Permission, error)
+	// ListPermissions retrieves permissions with optional filtering and pagination.
+	//
+	// Supports filtering by:
+	// - search: Searches across name, display_name, and description fields
+	// - resource: Filter by specific resource type (e.g., "users", "groups")
+	// - action: Filter by specific action type (e.g., "create", "read")
+	// - is_system: Filter by system vs user-created permissions
+	//
+	// Pagination is handled via limit/offset parameters:
+	// - limit: Maximum number of results (default: 10, max: 100)
+	// - offset: Number of results to skip (default: 0)
+	//
+	// Example queries:
+	// - GET /openauth/v1/permissions?resource=users - All user-related permissions
+	// - GET /openauth/v1/permissions?action=create - All creation permissions
+	// - GET /openauth/v1/permissions?search=user&limit=20 - Search for "user" with 20 results
+	ListPermissions(ctx context.Context, in *ListPermissionsRequest, opts ...grpc.CallOption) (*ListPermissionsResponse, error)
+	// UpdatePermission modifies an existing permission.
+	//
+	// All fields in the request are optional - only provided fields will be updated.
+	// System permissions (is_system=true) cannot be modified to prevent
+	// breaking core application functionality.
+	//
+	// Note: Changing the name requires ensuring uniqueness across all permissions.
+	UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error)
+	// DeletePermission removes a permission from the system.
+	//
+	// System permissions (is_system=true) cannot be deleted as they are
+	// critical for application functionality. Attempting to delete a system
+	// permission will return a PermissionDenied error.
+	//
+	// Warning: Deleting a permission will affect all users and groups
+	// that currently have this permission assigned.
+	DeletePermission(ctx context.Context, in *DeletePermissionRequest, opts ...grpc.CallOption) (*DeletePermissionResponse, error)
 }
 
 type openAuthClient struct {
@@ -48,12 +107,116 @@ func (c *openAuthClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc
 	return out, nil
 }
 
+func (c *openAuthClient) CreatePermission(ctx context.Context, in *CreatePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Permission)
+	err := c.cc.Invoke(ctx, OpenAuth_CreatePermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) GetPermission(ctx context.Context, in *GetPermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Permission)
+	err := c.cc.Invoke(ctx, OpenAuth_GetPermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ListPermissions(ctx context.Context, in *ListPermissionsRequest, opts ...grpc.CallOption) (*ListPermissionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPermissionsResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ListPermissions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Permission)
+	err := c.cc.Invoke(ctx, OpenAuth_UpdatePermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) DeletePermission(ctx context.Context, in *DeletePermissionRequest, opts ...grpc.CallOption) (*DeletePermissionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeletePermissionResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_DeletePermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenAuthServer is the server API for OpenAuth service.
 // All implementations must embed UnimplementedOpenAuthServer
 // for forward compatibility.
+//
+// OpenAuth service provides authentication and authorization functionality
+// including user management, permissions, groups, and session management.
 type OpenAuthServer interface {
-	// Ping is a simple GET request for checking if everything is okay
+	// Ping is a simple health check endpoint to verify service availability
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	// CreatePermission creates a new permission in the system.
+	//
+	// Permissions follow the pattern: resource.action (e.g., "users.create")
+	// - resource: The entity being accessed (users, groups, permissions, etc.)
+	// - action: The operation being performed (create, read, update, delete, etc.)
+	//
+	// Example: Creating a permission for user management would have:
+	// - name: "users.create"
+	// - resource: "users"
+	// - action: "create"
+	// - display_name: "Create Users"
+	CreatePermission(context.Context, *CreatePermissionRequest) (*Permission, error)
+	// GetPermission retrieves a specific permission by its unique ID.
+	//
+	// Returns the complete permission details including resource, action,
+	// system status, and metadata.
+	GetPermission(context.Context, *GetPermissionRequest) (*Permission, error)
+	// ListPermissions retrieves permissions with optional filtering and pagination.
+	//
+	// Supports filtering by:
+	// - search: Searches across name, display_name, and description fields
+	// - resource: Filter by specific resource type (e.g., "users", "groups")
+	// - action: Filter by specific action type (e.g., "create", "read")
+	// - is_system: Filter by system vs user-created permissions
+	//
+	// Pagination is handled via limit/offset parameters:
+	// - limit: Maximum number of results (default: 10, max: 100)
+	// - offset: Number of results to skip (default: 0)
+	//
+	// Example queries:
+	// - GET /openauth/v1/permissions?resource=users - All user-related permissions
+	// - GET /openauth/v1/permissions?action=create - All creation permissions
+	// - GET /openauth/v1/permissions?search=user&limit=20 - Search for "user" with 20 results
+	ListPermissions(context.Context, *ListPermissionsRequest) (*ListPermissionsResponse, error)
+	// UpdatePermission modifies an existing permission.
+	//
+	// All fields in the request are optional - only provided fields will be updated.
+	// System permissions (is_system=true) cannot be modified to prevent
+	// breaking core application functionality.
+	//
+	// Note: Changing the name requires ensuring uniqueness across all permissions.
+	UpdatePermission(context.Context, *UpdatePermissionRequest) (*Permission, error)
+	// DeletePermission removes a permission from the system.
+	//
+	// System permissions (is_system=true) cannot be deleted as they are
+	// critical for application functionality. Attempting to delete a system
+	// permission will return a PermissionDenied error.
+	//
+	// Warning: Deleting a permission will affect all users and groups
+	// that currently have this permission assigned.
+	DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error)
 	mustEmbedUnimplementedOpenAuthServer()
 }
 
@@ -66,6 +229,21 @@ type UnimplementedOpenAuthServer struct{}
 
 func (UnimplementedOpenAuthServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedOpenAuthServer) CreatePermission(context.Context, *CreatePermissionRequest) (*Permission, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePermission not implemented")
+}
+func (UnimplementedOpenAuthServer) GetPermission(context.Context, *GetPermissionRequest) (*Permission, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPermission not implemented")
+}
+func (UnimplementedOpenAuthServer) ListPermissions(context.Context, *ListPermissionsRequest) (*ListPermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPermissions not implemented")
+}
+func (UnimplementedOpenAuthServer) UpdatePermission(context.Context, *UpdatePermissionRequest) (*Permission, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePermission not implemented")
+}
+func (UnimplementedOpenAuthServer) DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePermission not implemented")
 }
 func (UnimplementedOpenAuthServer) mustEmbedUnimplementedOpenAuthServer() {}
 func (UnimplementedOpenAuthServer) testEmbeddedByValue()                  {}
@@ -106,6 +284,96 @@ func _OpenAuth_Ping_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_CreatePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).CreatePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_CreatePermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).CreatePermission(ctx, req.(*CreatePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_GetPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).GetPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_GetPermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).GetPermission(ctx, req.(*GetPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ListPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPermissionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ListPermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ListPermissions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ListPermissions(ctx, req.(*ListPermissionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_UpdatePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).UpdatePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_UpdatePermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).UpdatePermission(ctx, req.(*UpdatePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_DeletePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).DeletePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_DeletePermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).DeletePermission(ctx, req.(*DeletePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenAuth_ServiceDesc is the grpc.ServiceDesc for OpenAuth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +384,26 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _OpenAuth_Ping_Handler,
+		},
+		{
+			MethodName: "CreatePermission",
+			Handler:    _OpenAuth_CreatePermission_Handler,
+		},
+		{
+			MethodName: "GetPermission",
+			Handler:    _OpenAuth_GetPermission_Handler,
+		},
+		{
+			MethodName: "ListPermissions",
+			Handler:    _OpenAuth_ListPermissions_Handler,
+		},
+		{
+			MethodName: "UpdatePermission",
+			Handler:    _OpenAuth_UpdatePermission_Handler,
+		},
+		{
+			MethodName: "DeletePermission",
+			Handler:    _OpenAuth_DeletePermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

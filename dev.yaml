@@ -11,8 +11,8 @@ ConfigReader:
     Token: ""
     Path: ""
 AppNames:
-- SQL_MIGRATOR
-# - HTTP_SERVER
+# - SQL_MIGRATOR
+- HTTP_SERVER
 # - GRPC_SERVER
 Server:
   GRPCPort: 8086

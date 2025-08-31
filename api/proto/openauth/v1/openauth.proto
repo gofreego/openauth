@@ -5,13 +5,98 @@ option go_package = "./openauth_v1";
 
 import "google/api/annotations.proto";
 import "proto/common/ping.proto";
+import "proto/openauth/v1/permissions.proto";
 
+// OpenAuth service provides authentication and authorization functionality
+// including user management, permissions, groups, and session management.
 service OpenAuth {
     
-    // Ping is a simple GET request for checking if everything is okay
+    // Ping is a simple health check endpoint to verify service availability
     rpc Ping (PingRequest) returns (PingResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/ping"
+        };
+    }
+
+    // Permission Management APIs
+    // These endpoints manage permissions in a Resource-Based Access Control (RBAC) system
+    // where permissions are defined by combining resources (what) with actions (how).
+
+    // CreatePermission creates a new permission in the system.
+    // 
+    // Permissions follow the pattern: resource.action (e.g., "users.create")
+    // - resource: The entity being accessed (users, groups, permissions, etc.)
+    // - action: The operation being performed (create, read, update, delete, etc.)
+    // 
+    // Example: Creating a permission for user management would have:
+    // - name: "users.create"
+    // - resource: "users" 
+    // - action: "create"
+    // - display_name: "Create Users"
+    rpc CreatePermission (CreatePermissionRequest) returns (Permission) {
+        option (google.api.http) = {
+            post: "/openauth/v1/permissions"
+            body: "*"
+        };
+    }
+
+    // GetPermission retrieves a specific permission by its unique ID.
+    // 
+    // Returns the complete permission details including resource, action,
+    // system status, and metadata.
+    rpc GetPermission (GetPermissionRequest) returns (Permission) {
+        option (google.api.http) = {
+            get: "/openauth/v1/permissions/{id}"
+        };
+    }
+
+    // ListPermissions retrieves permissions with optional filtering and pagination.
+    // 
+    // Supports filtering by:
+    // - search: Searches across name, display_name, and description fields
+    // - resource: Filter by specific resource type (e.g., "users", "groups")
+    // - action: Filter by specific action type (e.g., "create", "read")
+    // - is_system: Filter by system vs user-created permissions
+    // 
+    // Pagination is handled via limit/offset parameters:
+    // - limit: Maximum number of results (default: 10, max: 100)
+    // - offset: Number of results to skip (default: 0)
+    // 
+    // Example queries:
+    // - GET /openauth/v1/permissions?resource=users - All user-related permissions
+    // - GET /openauth/v1/permissions?action=create - All creation permissions
+    // - GET /openauth/v1/permissions?search=user&limit=20 - Search for "user" with 20 results
+    rpc ListPermissions (ListPermissionsRequest) returns (ListPermissionsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/permissions"
+        };
+    }
+
+    // UpdatePermission modifies an existing permission.
+    // 
+    // All fields in the request are optional - only provided fields will be updated.
+    // System permissions (is_system=true) cannot be modified to prevent
+    // breaking core application functionality.
+    // 
+    // Note: Changing the name requires ensuring uniqueness across all permissions.
+    rpc UpdatePermission (UpdatePermissionRequest) returns (Permission) {
+        option (google.api.http) = {
+            put: "/openauth/v1/permissions/{id}"
+            body: "*"
+        };
+    }
+
+    // DeletePermission removes a permission from the system.
+    // 
+    // System permissions (is_system=true) cannot be deleted as they are
+    // critical for application functionality. Attempting to delete a system
+    // permission will return a PermissionDenied error.
+    // 
+    // Warning: Deleting a permission will affect all users and groups
+    // that currently have this permission assigned.
+    rpc DeletePermission (DeletePermissionRequest) returns (DeletePermissionResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/permissions/{id}"
         };
     }
 }
