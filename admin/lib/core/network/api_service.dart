@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'dart:async';
 import '../../config/environment/environment_config.dart';
+import '../../shared/services/session_manager.dart';
 
 class ApiService {
   late final Dio _dio;
+  final SessionManager? _sessionManager;
 
-  ApiService() {
+  ApiService([this._sessionManager]) {
     final environment = EnvironmentConfig.current;
     _dio = Dio(BaseOptions(
       baseUrl: environment.apiBaseUrl,
@@ -23,12 +25,14 @@ class ApiService {
   void _setupInterceptors() {
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
+        onRequest: (options, handler) async {
           // Add auth token if available
-          // final token = AuthService.instance.getToken();
-          // if (token != null) {
-          //   options.headers['Authorization'] = 'Bearer $token';
-          // }
+          if (_sessionManager != null) {
+            final token = await _sessionManager.getAccessToken();
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+          }
           handler.next(options);
         },
         onError: (error, handler) {
@@ -110,5 +114,15 @@ class ApiService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  /// Manually set authorization header for testing or special cases
+  void setAuthorizationHeader(String token) {
+    _dio.options.headers['Authorization'] = 'Bearer $token';
+  }
+
+  /// Remove authorization header
+  void removeAuthorizationHeader() {
+    _dio.options.headers.remove('Authorization');
   }
 }

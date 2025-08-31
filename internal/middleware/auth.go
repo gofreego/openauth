@@ -140,14 +140,14 @@ func (a *AuthMiddleware) skipAuth(method string) bool {
 func (a *AuthMiddleware) skipHTTPAuth(path string) bool {
 	skipPaths := []string{
 		"/v1/ping",
-		"/v1/signup",
-		"/v1/signin",
-		"/v1/refresh",
-		"/v1/validate",
+		"/v1/users/signup",
+		"/v1/auth/signin",
+		"/v1/auth/refresh",
+		"/v1/auth/validate",
 	}
 
 	for _, skipPath := range skipPaths {
-		if strings.HasPrefix(path, skipPath) {
+		if strings.HasSuffix(path, skipPath) {
 			return true
 		}
 	}

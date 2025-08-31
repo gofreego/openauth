@@ -34,16 +34,20 @@ Future<void> initializeDependencies({
   final sharedPreferences = await SharedPreferences.getInstance();
 
   serviceLocator.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  serviceLocator.registerLazySingleton<ApiService>(() => ApiService());
+  
+  // Session Manager
+  serviceLocator.registerLazySingleton<SessionManager>(
+    () => SessionManager(serviceLocator<SharedPreferences>()),
+  );
+
+  // API Service with SessionManager for authorization
+  serviceLocator.registerLazySingleton<ApiService>(
+    () => ApiService(serviceLocator<SessionManager>()),
+  );
 
   // Shared Catalog Service
   serviceLocator.registerLazySingleton<HTTPServiceClient>(
     () => const HTTPServiceClient(),
-  );
-
-  // Session Manager
-  serviceLocator.registerLazySingleton<SessionManager>(
-    () => SessionManager(serviceLocator<SharedPreferences>()),
   );
 
   // Auth Repository

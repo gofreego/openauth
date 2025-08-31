@@ -73,6 +73,15 @@ class SessionManager {
     }
   }
 
+  /// Get current access token
+  Future<String?> getAccessToken() async {
+    try {
+      return _prefs.getString(_accessTokenKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Update authentication tokens
   Future<void> updateAuthTokens(pb.RefreshTokenResponse refreshResponse) async {
     await _prefs.setString(_accessTokenKey, refreshResponse.accessToken);
