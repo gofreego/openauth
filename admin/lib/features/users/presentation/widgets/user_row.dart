@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../data/models/user_model.dart';
+import '../../domain/entities/user.dart';
 
 class UserRow extends StatelessWidget {
-  final UserModel user;
+  final UserEntity user;
   final int index;
-  final Function(String action, UserModel user, BuildContext context) onUserAction;
+  final Function(String action, UserEntity user, BuildContext context) onUserAction;
 
   const UserRow({
     super.key,
@@ -32,31 +32,43 @@ class UserRow extends StatelessWidget {
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: theme.colorScheme.primary,
-                  child: Text(
-                    user.name[0].toUpperCase(),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  backgroundImage: user.avatarUrl.isNotEmpty 
+                      ? NetworkImage(user.avatarUrl) 
+                      : null,
+                  child: user.avatarUrl.isEmpty 
+                      ? Text(
+                          user.displayName.isNotEmpty 
+                              ? user.displayName[0].toUpperCase()
+                              : user.username[0].toUpperCase(),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
                 ),
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.name,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        user.displayName,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Text(
-                      user.username,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                      Text(
+                        '@${user.username}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -65,66 +77,115 @@ class UserRow extends StatelessWidget {
             child: Text(
               user.email,
               style: theme.textTheme.bodyMedium,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           Expanded(
-            child: Chip(
-              label: Text(user.status),
-              backgroundColor: user.isActive 
-                ? Colors.green.withOpacity(0.1)
-                : Colors.orange.withOpacity(0.1),
-              labelStyle: TextStyle(
-                color: user.isActive 
-                  ? Colors.green.shade700
-                  : Colors.orange.shade700,
-                fontSize: 12,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: user.isActive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                user.isActive ? 'Active' : 'Inactive',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: user.isActive ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
           Expanded(
             child: Text(
-              user.lastLogin,
+              user.formattedCreatedAt,
               style: theme.textTheme.bodyMedium,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) => onUserAction(value, user, context),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'edit',
-                child: ListTile(
-                  leading: Icon(Icons.edit),
-                  title: Text('Edit'),
-                  contentPadding: EdgeInsets.zero,
+          SizedBox(
+            width: 120,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined, size: 20),
+                  onPressed: () => onUserAction('edit', user, context),
+                  tooltip: 'Edit user',
                 ),
-              ),
-              const PopupMenuItem(
-                value: 'permissions',
-                child: ListTile(
-                  leading: Icon(Icons.security),
-                  title: Text('Permissions'),
-                  contentPadding: EdgeInsets.zero,
+                IconButton(
+                  icon: const Icon(Icons.security_outlined, size: 20),
+                  onPressed: () => onUserAction('permissions', user, context),
+                  tooltip: 'Manage permissions',
                 ),
-              ),
-              const PopupMenuItem(
-                value: 'sessions',
-                child: ListTile(
-                  leading: Icon(Icons.access_time),
-                  title: Text('Sessions'),
-                  contentPadding: EdgeInsets.zero,
+                IconButton(
+                  icon: const Icon(Icons.schedule_outlined, size: 20),
+                  onPressed: () => onUserAction('sessions', user, context),
+                  tooltip: 'View sessions',
                 ),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(
-                value: 'delete',
-                child: ListTile(
-                  leading: Icon(Icons.delete, color: Colors.red),
-                  title: Text('Delete', style: TextStyle(color: Colors.red)),
-                  contentPadding: EdgeInsets.zero,
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, size: 20),
+                  onSelected: (action) => onUserAction(action, user, context),
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit_outlined, size: 16),
+                          SizedBox(width: 8),
+                          Text('Edit'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'permissions',
+                      child: Row(
+                        children: [
+                          Icon(Icons.security_outlined, size: 16),
+                          SizedBox(width: 8),
+                          Text('Permissions'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'sessions',
+                      child: Row(
+                        children: [
+                          Icon(Icons.schedule_outlined, size: 16),
+                          SizedBox(width: 8),
+                          Text('Sessions'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: user.isActive ? 'deactivate' : 'activate',
+                      child: Row(
+                        children: [
+                          Icon(
+                            user.isActive ? Icons.block_outlined : Icons.check_circle_outline,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(user.isActive ? 'Deactivate' : 'Activate'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuDivider(),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_outline, color: Colors.red, size: 16),
+                          SizedBox(width: 8),
+                          Text('Delete', style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

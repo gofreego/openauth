@@ -13,6 +13,7 @@ import 'core/bloc/theme_state.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/auth/presentation/pages/sign_in_page.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/users/presentation/bloc/users_bloc.dart';
 import 'shared/shared.dart';
 
 class OpenAuthAdmin extends StatefulWidget {
@@ -113,6 +114,9 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
         BlocProvider<ThemeBloc>(
           create: (context) =>
               serviceLocator<ThemeBloc>()..add(const ThemeInitialized()),
+        ),
+        BlocProvider<UsersBloc>(
+          create: (context) => serviceLocator<UsersBloc>(),
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(

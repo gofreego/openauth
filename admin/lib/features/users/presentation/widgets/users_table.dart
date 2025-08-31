@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import '../widgets/user_row.dart';
-import '../../data/models/user_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/user.dart';
+import '../bloc/users_bloc.dart';
+import '../bloc/users_state.dart';
+import '../bloc/users_event.dart';
+import 'user_row.dart';
 
 class UsersTable extends StatelessWidget {
   final String searchQuery;
@@ -17,7 +21,6 @@ class UsersTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final filteredUsers = _getFilteredUsers();
     
     return Card(
       child: Column(
@@ -74,15 +77,89 @@ class UsersTable extends StatelessWidget {
           
           // Table content
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredUsers.length,
-              itemBuilder: (context, index) {
-                final user = filteredUsers[index];
-                return UserRow(
-                  user: user,
-                  index: index,
-                  onUserAction: _handleUserAction,
-                );
+            child: BlocBuilder<UsersBloc, UsersState>(
+              builder: (context, state) {
+                if (state is UsersLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is UsersError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: theme.colorScheme.error,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Error loading users',
+                          style: theme.textTheme.headlineSmall,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          state.message,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        FilledButton(
+                          onPressed: () {
+                            context.read<UsersBloc>().add(const RefreshUsersEvent());
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                } else if (state is UsersLoaded) {
+                  final filteredUsers = _getFilteredUsers(state.users);
+                  
+                  if (filteredUsers.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.people_outline,
+                            size: 64,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No users found',
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Try adjusting your search or filters',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  
+                  return ListView.builder(
+                    itemCount: filteredUsers.length,
+                    itemBuilder: (context, index) {
+                      final user = filteredUsers[index];
+                      return UserRow(
+                        user: user,
+                        index: index,
+                        onUserAction: _handleUserAction,
+                      );
+                    },
+                  );
+                }
+                
+                return const SizedBox.shrink();
               },
             ),
           ),
@@ -91,13 +168,13 @@ class UsersTable extends StatelessWidget {
     );
   }
 
-  List<UserModel> _getFilteredUsers() {
-    List<UserModel> users = UserModel.mockUsers;
+  List<UserEntity> _getFilteredUsers(List<UserEntity> users) {
+    List<UserEntity> filtered = users;
     
     // Apply search filter
     if (searchQuery.isNotEmpty) {
-      users = users.where((user) {
-        return user.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+      filtered = filtered.where((user) {
+        return user.displayName.toLowerCase().contains(searchQuery.toLowerCase()) ||
                user.username.toLowerCase().contains(searchQuery.toLowerCase()) ||
                user.email.toLowerCase().contains(searchQuery.toLowerCase());
       }).toList();
@@ -105,29 +182,29 @@ class UsersTable extends StatelessWidget {
     
     // Apply status filters
     if (showActiveOnly && !showInactiveOnly) {
-      users = users.where((user) => user.isActive).toList();
+      filtered = filtered.where((user) => user.isActive).toList();
     } else if (showInactiveOnly && !showActiveOnly) {
-      users = users.where((user) => !user.isActive).toList();
+      filtered = filtered.where((user) => !user.isActive).toList();
     }
     
-    return users;
+    return filtered;
   }
 
-  void _handleUserAction(String action, UserModel user, BuildContext context) {
+  void _handleUserAction(String action, UserEntity user, BuildContext context) {
     switch (action) {
       case 'edit':
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Edit ${user.name}')),
+          SnackBar(content: Text('Edit ${user.displayName}')),
         );
         break;
       case 'permissions':
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Manage permissions for ${user.name}')),
+          SnackBar(content: Text('Manage permissions for ${user.displayName}')),
         );
         break;
       case 'sessions':
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('View sessions for ${user.name}')),
+          SnackBar(content: Text('View sessions for ${user.displayName}')),
         );
         break;
       case 'delete':
@@ -136,12 +213,12 @@ class UsersTable extends StatelessWidget {
     }
   }
 
-  void _showDeleteUserDialog(UserModel user, BuildContext context) {
+  void _showDeleteUserDialog(UserEntity user, BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete User'),
-        content: Text('Are you sure you want to delete ${user.name}? This action cannot be undone.'),
+        content: Text('Are you sure you want to delete ${user.displayName}? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -150,8 +227,9 @@ class UsersTable extends StatelessWidget {
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
+              context.read<UsersBloc>().add(DeleteUserEvent(user.uuid));
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${user.name} deleted successfully')),
+                SnackBar(content: Text('${user.displayName} deleted successfully')),
               );
             },
             style: FilledButton.styleFrom(
