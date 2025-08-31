@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                       _buildDashboardCard(
                         context: context,
                         theme: theme,
-                        icon: Icons.access_time_outlined,
+                        icon: Icons.session_timeout_outlined,
                         title: 'Sessions',
                         description: 'Monitor active user sessions',
                         onTap: _navigateToSessions,

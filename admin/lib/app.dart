@@ -11,6 +11,8 @@ import 'core/bloc/theme_bloc.dart';
 import 'core/bloc/theme_event.dart';
 import 'core/bloc/theme_state.dart';
 import 'features/home/presentation/pages/home_page.dart';
+import 'features/auth/presentation/pages/sign_in_page.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'shared/shared.dart';
 
 class OpenAuthAdmin extends StatefulWidget {
@@ -53,6 +55,10 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
           ),
         ),
         GoRoute(
+          path: AppRoutes.signIn,
+          builder: (context, state) => const SignInPage(),
+        ),
+        GoRoute(
           path: AppRoutes.home,
           builder: (context, state) => const HomePage(),
         ),
@@ -70,6 +76,11 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
           if (appState is AppAuthenticated) {
             return AppRoutes.home;
           }
+          
+          if (appState is AppUnauthenticated) {
+            return AppRoutes.signIn;
+          }
+          
           return null;
         } catch (e) {
           // If we can't read the bloc yet, stay on splash
@@ -83,6 +94,9 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => serviceLocator<AuthBloc>(),
+        ),
         BlocProvider<AppBloc>(
           create: (context) =>
               serviceLocator<AppBloc>()..add(const AppStarted()),

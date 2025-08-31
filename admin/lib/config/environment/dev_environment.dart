@@ -7,7 +7,7 @@ class DevEnvironment implements Environment {
   String get environmentName => 'development';
 
   @override
-  String get apiBaseUrl => 'http://localhost:8081';
+  String get apiBaseUrl => 'http://localhost:8085';
 
   @override
   bool get isDebug => true;

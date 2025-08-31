@@ -6,6 +6,11 @@ import '../../core/network/api_service.dart';
 import '../../core/bloc/theme_bloc.dart';
 import '../../core/bloc/app_bloc.dart';
 import '../../shared/catalog.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/domain/usecases/sign_in_usecase.dart';
+import '../../features/auth/domain/usecases/sign_out_usecase.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -22,17 +27,42 @@ Future<void> initializeDependencies({
   serviceLocator.registerLazySingleton<ApiService>(() => ApiService());
 
   // Shared Catalog Service
-    serviceLocator.registerLazySingleton<HTTPServiceClient>(
+  serviceLocator.registerLazySingleton<HTTPServiceClient>(
     () => const HTTPServiceClient(),
   );
 
+  // Auth Repository
+  serviceLocator.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      serviceLocator<HTTPServiceClient>(),
+      serviceLocator<SharedPreferences>(),
+    ),
+  );
+
+  // Auth Use Cases
+  serviceLocator.registerLazySingleton<SignInUseCase>(
+    () => SignInUseCase(serviceLocator<AuthRepository>()),
+  );
+  
+  serviceLocator.registerLazySingleton<SignOutUseCase>(
+    () => SignOutUseCase(serviceLocator<AuthRepository>()),
+  );
+
   // Register BLoCs
+  serviceLocator.registerLazySingleton<AuthBloc>(
+    () => AuthBloc(
+      signInUseCase: serviceLocator<SignInUseCase>(),
+      signOutUseCase: serviceLocator<SignOutUseCase>(),
+      authRepository: serviceLocator<AuthRepository>(),
+    ),
+  );
+
   serviceLocator.registerLazySingleton<ThemeBloc>(
     () => ThemeBloc(sharedPreferences: sharedPreferences),
   );
   
   serviceLocator.registerLazySingleton<AppBloc>(
-    () => AppBloc(),
+    () => AppBloc(authBloc: serviceLocator<AuthBloc>()),
   );
 
 }
