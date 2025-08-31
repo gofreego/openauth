@@ -265,8 +265,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _handleSignOut() {
-    showDialog<bool>(
+  void _handleSignOut() async {
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Sign Out'),
@@ -282,10 +282,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-    ).then((confirmed) {
-      if (confirmed == true) {
-        context.read<AuthBloc>().add(const AuthSignOutRequested());
-      }
-    });
+    );
+    
+    if (confirmed == true && mounted) {
+      context.read<AuthBloc>().add(const AuthSignOutRequested());
+    }
   }
 }

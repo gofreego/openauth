@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../shared/shared.dart';
@@ -98,7 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
       }
     } catch (e) {
       // Continue with local cleanup even if server logout fails
-      print('Server logout failed: $e');
+      debugPrint('Server logout failed: $e');
     } finally {
       await clearAuthData();
     }
