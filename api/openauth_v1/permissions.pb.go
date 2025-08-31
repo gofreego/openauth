@@ -153,25 +153,23 @@ func (x *Permission) GetUpdatedAt() int64 {
 // Request to create a new permission
 type CreatePermissionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Common header fields for authentication and client identification
-	Headers *RequestHeaders `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
 	// Unique name for the permission, typically in format "resource.action"
 	// Must be unique across all permissions
 	// Examples: "users.create", "orders.approve", "reports.export"
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Human-readable display name
 	// Examples: "Create Users", "Approve Orders", "Export Reports"
-	DisplayName string `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	DisplayName string `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	// Optional detailed description explaining what this permission allows
-	Description *string `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	// The resource this permission applies to
 	// Should be a noun representing an entity in your system
 	// Examples: "users", "groups", "permissions", "posts", "orders"
-	Resource string `protobuf:"bytes,5,opt,name=resource,proto3" json:"resource,omitempty"`
+	Resource string `protobuf:"bytes,4,opt,name=resource,proto3" json:"resource,omitempty"`
 	// The action that can be performed on the resource
 	// Should be a verb representing an operation
 	// Examples: "create", "read", "update", "delete", "list", "publish", "approve"
-	Action        string `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
+	Action        string `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -204,13 +202,6 @@ func (x *CreatePermissionRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreatePermissionRequest.ProtoReflect.Descriptor instead.
 func (*CreatePermissionRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *CreatePermissionRequest) GetHeaders() *RequestHeaders {
-	if x != nil {
-		return x.Headers
-	}
-	return nil
 }
 
 func (x *CreatePermissionRequest) GetName() string {
@@ -251,10 +242,8 @@ func (x *CreatePermissionRequest) GetAction() string {
 // Request to retrieve a specific permission by ID
 type GetPermissionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Common header fields for authentication and client identification
-	Headers *RequestHeaders `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
 	// The unique identifier of the permission to retrieve
-	Id            int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -289,13 +278,6 @@ func (*GetPermissionRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetPermissionRequest) GetHeaders() *RequestHeaders {
-	if x != nil {
-		return x.Headers
-	}
-	return nil
-}
-
 func (x *GetPermissionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -306,24 +288,22 @@ func (x *GetPermissionRequest) GetId() int64 {
 // Request to list permissions with optional filtering and pagination
 type ListPermissionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Common header fields for authentication and client identification
-	Headers *RequestHeaders `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
 	// Maximum number of permissions to return (default: 10, max: 100)
-	Limit *int32 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
+	Limit *int32 `protobuf:"varint,1,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
 	// Number of permissions to skip for pagination (default: 0)
-	Offset *int32 `protobuf:"varint,3,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
+	Offset *int32 `protobuf:"varint,2,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
 	// Search term to filter permissions by name, display_name, or description
 	// Uses case-insensitive partial matching
-	Search *string `protobuf:"bytes,4,opt,name=search,proto3,oneof" json:"search,omitempty"`
+	Search *string `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	// Filter permissions by specific resource
 	// Examples: "users", "groups", "permissions"
-	Resource *string `protobuf:"bytes,5,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
+	Resource *string `protobuf:"bytes,4,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
 	// Filter permissions by specific action
 	// Examples: "create", "read", "update", "delete"
-	Action *string `protobuf:"bytes,6,opt,name=action,proto3,oneof" json:"action,omitempty"`
+	Action *string `protobuf:"bytes,5,opt,name=action,proto3,oneof" json:"action,omitempty"`
 	// Filter by system vs user-created permissions
 	// true: only system permissions, false: only user-created permissions
-	IsSystem      *bool `protobuf:"varint,7,opt,name=is_system,json=isSystem,proto3,oneof" json:"is_system,omitempty"`
+	IsSystem      *bool `protobuf:"varint,6,opt,name=is_system,json=isSystem,proto3,oneof" json:"is_system,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -356,13 +336,6 @@ func (x *ListPermissionsRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListPermissionsRequest.ProtoReflect.Descriptor instead.
 func (*ListPermissionsRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *ListPermissionsRequest) GetHeaders() *RequestHeaders {
-	if x != nil {
-		return x.Headers
-	}
-	return nil
 }
 
 func (x *ListPermissionsRequest) GetLimit() int32 {
@@ -493,22 +466,20 @@ func (x *ListPermissionsResponse) GetHasMore() bool {
 // Request to update an existing permission
 type UpdatePermissionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Common header fields for authentication and client identification
-	Headers *RequestHeaders `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
 	// The unique identifier of the permission to update
-	Id int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	// New name for the permission (optional)
 	// Must be unique if provided
-	Name *string `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Name *string `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	// New display name for the permission (optional)
-	DisplayName *string `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
+	DisplayName *string `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
 	// New description for the permission (optional)
 	// Set to empty string to clear existing description
-	Description *string `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Description *string `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	// New resource for the permission (optional)
-	Resource *string `protobuf:"bytes,6,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
+	Resource *string `protobuf:"bytes,5,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
 	// New action for the permission (optional)
-	Action        *string `protobuf:"bytes,7,opt,name=action,proto3,oneof" json:"action,omitempty"`
+	Action        *string `protobuf:"bytes,6,opt,name=action,proto3,oneof" json:"action,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -541,13 +512,6 @@ func (x *UpdatePermissionRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UpdatePermissionRequest.ProtoReflect.Descriptor instead.
 func (*UpdatePermissionRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *UpdatePermissionRequest) GetHeaders() *RequestHeaders {
-	if x != nil {
-		return x.Headers
-	}
-	return nil
 }
 
 func (x *UpdatePermissionRequest) GetId() int64 {
@@ -595,11 +559,9 @@ func (x *UpdatePermissionRequest) GetAction() string {
 // Request to delete a permission
 type DeletePermissionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Common header fields for authentication and client identification
-	Headers *RequestHeaders `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
 	// The unique identifier of the permission to delete
 	// Note: System permissions cannot be deleted
-	Id            int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -632,13 +594,6 @@ func (x *DeletePermissionRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeletePermissionRequest.ProtoReflect.Descriptor instead.
 func (*DeletePermissionRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *DeletePermissionRequest) GetHeaders() *RequestHeaders {
-	if x != nil {
-		return x.Headers
-	}
-	return nil
 }
 
 func (x *DeletePermissionRequest) GetId() int64 {
@@ -707,7 +662,7 @@ var File_proto_openauth_v1_permissions_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_permissions_proto_rawDesc = "" +
 	"\n" +
-	"#proto/openauth/v1/permissions.proto\x12\x02v1\x1a\x1aproto/common/headers.proto\"\x99\x02\n" +
+	"#proto/openauth/v1/permissions.proto\x12\x02v1\"\x99\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
@@ -721,26 +676,23 @@ const file_proto_openauth_v1_permissions_proto_rawDesc = "" +
 	"created_at\x18\b \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\t \x01(\x03R\tupdatedAtB\x0e\n" +
-	"\f_description\"\xe9\x01\n" +
-	"\x17CreatePermissionRequest\x12,\n" +
-	"\aheaders\x18\x01 \x01(\v2\x12.v1.RequestHeadersR\aheaders\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
-	"\fdisplay_name\x18\x03 \x01(\tR\vdisplayName\x12%\n" +
-	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1a\n" +
-	"\bresource\x18\x05 \x01(\tR\bresource\x12\x16\n" +
-	"\x06action\x18\x06 \x01(\tR\x06actionB\x0e\n" +
-	"\f_description\"T\n" +
-	"\x14GetPermissionRequest\x12,\n" +
-	"\aheaders\x18\x01 \x01(\v2\x12.v1.RequestHeadersR\aheaders\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xc1\x02\n" +
-	"\x16ListPermissionsRequest\x12,\n" +
-	"\aheaders\x18\x01 \x01(\v2\x12.v1.RequestHeadersR\aheaders\x12\x19\n" +
-	"\x05limit\x18\x02 \x01(\x05H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
-	"\x06offset\x18\x03 \x01(\x05H\x01R\x06offset\x88\x01\x01\x12\x1b\n" +
-	"\x06search\x18\x04 \x01(\tH\x02R\x06search\x88\x01\x01\x12\x1f\n" +
-	"\bresource\x18\x05 \x01(\tH\x03R\bresource\x88\x01\x01\x12\x1b\n" +
-	"\x06action\x18\x06 \x01(\tH\x04R\x06action\x88\x01\x01\x12 \n" +
-	"\tis_system\x18\a \x01(\bH\x05R\bisSystem\x88\x01\x01B\b\n" +
+	"\f_description\"\xbb\x01\n" +
+	"\x17CreatePermissionRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1a\n" +
+	"\bresource\x18\x04 \x01(\tR\bresource\x12\x16\n" +
+	"\x06action\x18\x05 \x01(\tR\x06actionB\x0e\n" +
+	"\f_description\"&\n" +
+	"\x14GetPermissionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x93\x02\n" +
+	"\x16ListPermissionsRequest\x12\x19\n" +
+	"\x05limit\x18\x01 \x01(\x05H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
+	"\x06offset\x18\x02 \x01(\x05H\x01R\x06offset\x88\x01\x01\x12\x1b\n" +
+	"\x06search\x18\x03 \x01(\tH\x02R\x06search\x88\x01\x01\x12\x1f\n" +
+	"\bresource\x18\x04 \x01(\tH\x03R\bresource\x88\x01\x01\x12\x1b\n" +
+	"\x06action\x18\x05 \x01(\tH\x04R\x06action\x88\x01\x01\x12 \n" +
+	"\tis_system\x18\x06 \x01(\bH\x05R\bisSystem\x88\x01\x01B\b\n" +
 	"\x06_limitB\t\n" +
 	"\a_offsetB\t\n" +
 	"\a_searchB\v\n" +
@@ -754,23 +706,21 @@ const file_proto_openauth_v1_permissions_proto_rawDesc = "" +
 	"totalCount\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x19\n" +
-	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\xbf\x02\n" +
-	"\x17UpdatePermissionRequest\x12,\n" +
-	"\aheaders\x18\x01 \x01(\v2\x12.v1.RequestHeadersR\aheaders\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
-	"\x04name\x18\x03 \x01(\tH\x00R\x04name\x88\x01\x01\x12&\n" +
-	"\fdisplay_name\x18\x04 \x01(\tH\x01R\vdisplayName\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x05 \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x1f\n" +
-	"\bresource\x18\x06 \x01(\tH\x03R\bresource\x88\x01\x01\x12\x1b\n" +
-	"\x06action\x18\a \x01(\tH\x04R\x06action\x88\x01\x01B\a\n" +
+	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\x91\x02\n" +
+	"\x17UpdatePermissionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12&\n" +
+	"\fdisplay_name\x18\x03 \x01(\tH\x01R\vdisplayName\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x1f\n" +
+	"\bresource\x18\x05 \x01(\tH\x03R\bresource\x88\x01\x01\x12\x1b\n" +
+	"\x06action\x18\x06 \x01(\tH\x04R\x06action\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0f\n" +
 	"\r_display_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_resourceB\t\n" +
-	"\a_action\"W\n" +
-	"\x17DeletePermissionRequest\x12,\n" +
-	"\aheaders\x18\x01 \x01(\v2\x12.v1.RequestHeadersR\aheaders\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"N\n" +
+	"\a_action\")\n" +
+	"\x17DeletePermissionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"N\n" +
 	"\x18DeletePermissionResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessageB\x0fZ\r./openauth_v1b\x06proto3"
@@ -797,20 +747,14 @@ var file_proto_openauth_v1_permissions_proto_goTypes = []any{
 	(*UpdatePermissionRequest)(nil),  // 5: v1.UpdatePermissionRequest
 	(*DeletePermissionRequest)(nil),  // 6: v1.DeletePermissionRequest
 	(*DeletePermissionResponse)(nil), // 7: v1.DeletePermissionResponse
-	(*RequestHeaders)(nil),           // 8: v1.RequestHeaders
 }
 var file_proto_openauth_v1_permissions_proto_depIdxs = []int32{
-	8, // 0: v1.CreatePermissionRequest.headers:type_name -> v1.RequestHeaders
-	8, // 1: v1.GetPermissionRequest.headers:type_name -> v1.RequestHeaders
-	8, // 2: v1.ListPermissionsRequest.headers:type_name -> v1.RequestHeaders
-	0, // 3: v1.ListPermissionsResponse.permissions:type_name -> v1.Permission
-	8, // 4: v1.UpdatePermissionRequest.headers:type_name -> v1.RequestHeaders
-	8, // 5: v1.DeletePermissionRequest.headers:type_name -> v1.RequestHeaders
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	0, // 0: v1.ListPermissionsResponse.permissions:type_name -> v1.Permission
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_permissions_proto_init() }
@@ -818,7 +762,6 @@ func file_proto_openauth_v1_permissions_proto_init() {
 	if File_proto_openauth_v1_permissions_proto != nil {
 		return
 	}
-	file_proto_common_headers_proto_init()
 	file_proto_openauth_v1_permissions_proto_msgTypes[0].OneofWrappers = []any{}
 	file_proto_openauth_v1_permissions_proto_msgTypes[1].OneofWrappers = []any{}
 	file_proto_openauth_v1_permissions_proto_msgTypes[3].OneofWrappers = []any{}
