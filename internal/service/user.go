@@ -5,10 +5,12 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -202,29 +204,30 @@ func (s *Service) ResendVerification(ctx context.Context, req *openauth_v1.Resen
 	if req.Identifier == "" {
 		return nil, status.Error(codes.InvalidArgument, "identifier is required")
 	}
-	if req.Type == "" {
-		return nil, status.Error(codes.InvalidArgument, "type is required")
-	}
 
 	var err error
 	var expiresAt int64
 
-	switch req.Type {
-	case "email":
+	// Detect identifier type using utility function
+	identifier := strings.TrimSpace(req.Identifier)
+	identifierType := utils.DetectIdentifierType(identifier)
+
+	switch identifierType {
+	case utils.IdentifierTypeEmail:
 		// Find user by email
-		user, getUserErr := s.repo.GetUserByEmail(ctx, req.Identifier)
+		user, getUserErr := s.repo.GetUserByEmail(ctx, identifier)
 		if getUserErr != nil {
 			return nil, status.Error(codes.NotFound, "user not found")
 		}
-		err = s.sendEmailVerification(ctx, user.ID, req.Identifier)
+		err = s.sendEmailVerification(ctx, user.ID, identifier)
 		expiresAt = time.Now().Add(15 * time.Minute).Unix() // 15 minutes expiry
-	case "phone":
+	case utils.IdentifierTypePhone:
 		// Find user by phone (assuming you add this method)
 		// For now, we'll implement a basic version
-		err = s.sendPhoneVerification(ctx, 0, req.Identifier) // 0 for unknown user ID
-		expiresAt = time.Now().Add(15 * time.Minute).Unix()   // 15 minutes expiry
+		err = s.sendPhoneVerification(ctx, 0, identifier)   // 0 for unknown user ID
+		expiresAt = time.Now().Add(15 * time.Minute).Unix() // 15 minutes expiry
 	default:
-		return nil, status.Error(codes.InvalidArgument, "invalid verification type")
+		return nil, status.Error(codes.InvalidArgument, "identifier must be email or phone number")
 	}
 
 	if err != nil {

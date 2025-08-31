@@ -1,4 +1,6 @@
 import '../repositories/auth_repository.dart';
+import '../../../../shared/utils/login_validators.dart';
+import '../../../../shared/utils/device_utils.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 
 /// Use case for user sign in
@@ -15,17 +17,26 @@ class SignInUseCase {
     String? deviceType,
     bool rememberMe = false,
   }) async {
-    // Validate input
-    if (identifier.isEmpty) {
-      throw ArgumentError('Username/email/phone cannot be empty');
+    // Validate input using enhanced validators
+    final identifierValidation = LoginValidators.validateIdentifier(identifier);
+    if (!identifierValidation.isValid) {
+      throw ArgumentError(identifierValidation.message);
     }
     
     if (password.isEmpty) {
       throw ArgumentError('Password cannot be empty');
     }
 
+    // Get device information if not provided
+    if (deviceId == null || deviceName == null || deviceType == null) {
+      final deviceSession = await DeviceUtils.createDeviceSession();
+      deviceId ??= deviceSession['deviceId'];
+      deviceName ??= deviceSession['deviceName']; 
+      deviceType ??= deviceSession['deviceType'];
+    }
+
     return await _authRepository.signIn(
-      identifier: identifier,
+      identifier: identifier.trim(),
       password: password,
       deviceId: deviceId,
       deviceName: deviceName,

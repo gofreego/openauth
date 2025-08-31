@@ -1695,11 +1695,7 @@
       "properties": {
         "identifier": {
           "type": "string",
-          "title": "email or phone"
-        },
-        "type": {
-          "type": "string",
-          "title": "\"email\" or \"phone\""
+          "title": "email or phone - determined by backend"
         }
       },
       "title": "ResendVerificationRequest to resend verification codes"
@@ -1771,9 +1767,9 @@
     "v1SignInRequest": {
       "type": "object",
       "properties": {
-        "identifier": {
+        "username": {
           "type": "string",
-          "title": "username, email, or phone"
+          "title": "Can be username, email, or phone - determined by backend"
         },
         "password": {
           "type": "string"

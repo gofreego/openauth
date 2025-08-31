@@ -11,12 +11,13 @@ import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 class AuthRepositoryImpl implements AuthRepository {
   final HTTPServiceClient _httpClient;
   final SharedPreferences _prefs;
+  final SessionManager _sessionManager;
 
   static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
   static const String _sessionIdKey = 'session_id';
 
-  AuthRepositoryImpl(this._httpClient, this._prefs);
+  AuthRepositoryImpl(this._httpClient, this._prefs, this._sessionManager);
 
   @override
   Future<pb.SignInResponse> signIn({
@@ -28,12 +29,15 @@ class AuthRepositoryImpl implements AuthRepository {
     bool rememberMe = false,
   }) async {
     try {
+      // Get device information if not provided
+      final deviceSession = await DeviceUtils.createDeviceSession();
+      
       final request = pb.SignInRequest(
         identifier: identifier,
         password: password,
-        deviceId: deviceId,
-        deviceName: deviceName,
-        deviceType: deviceType,
+        deviceId: deviceId ?? deviceSession['deviceId'],
+        deviceName: deviceName ?? deviceSession['deviceName'],
+        deviceType: deviceType ?? deviceSession['deviceType'],
         rememberMe: rememberMe,
       );
 
@@ -45,7 +49,16 @@ class AuthRepositoryImpl implements AuthRepository {
       final signInResponse = pb.SignInResponse.fromJson(jsonEncode(response));
       
       if (signInResponse.hasAccessToken()) {
+        // Store tokens using legacy method for backward compatibility
         await _storeTokens(signInResponse);
+        
+        // Create enhanced session with device tracking
+        await _sessionManager.createSession(
+          signInResponse: signInResponse,
+          identifier: identifier,
+          rememberMe: rememberMe,
+        );
+        
         return signInResponse;
       }
       
@@ -124,6 +137,13 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Map<String, String>?> getStoredTokens() async {
     try {
+      // Try to get tokens from session manager first
+      final sessionTokens = await _sessionManager.getAuthTokens();
+      if (sessionTokens != null) {
+        return sessionTokens;
+      }
+      
+      // Fallback to legacy storage
       final accessToken = _prefs.getString(_tokenKey);
       final refreshToken = _prefs.getString(_refreshTokenKey);
       final sessionId = _prefs.getString(_sessionIdKey);
@@ -143,12 +163,25 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> isAuthenticated() async {
+    // Check using session manager first
+    final sessionAuth = await _sessionManager.isAuthenticated();
+    if (sessionAuth) {
+      // Validate session security
+      final securityStatus = await _sessionManager.validateSessionSecurity();
+      return securityStatus == SessionSecurityStatus.valid;
+    }
+    
+    // Fallback to legacy check
     final tokens = await getStoredTokens();
     return tokens != null && tokens['accessToken']?.isNotEmpty == true;
   }
 
   @override
   Future<void> clearAuthData() async {
+    // Clear session manager data
+    await _sessionManager.clearSession();
+    
+    // Clear legacy storage
     await _prefs.remove(_tokenKey);
     await _prefs.remove(_refreshTokenKey);
     await _prefs.remove(_sessionIdKey);

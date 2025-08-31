@@ -4,6 +4,7 @@ import '../../../../core/bloc/app_bloc.dart';
 import '../../../../core/bloc/app_state.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_event.dart';
+import '../../../../features/auth/presentation/widgets/auth_session_info.dart';
 import '../../../../shared/shared.dart';
 
 class HomePage extends StatefulWidget {
@@ -129,6 +130,11 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
+
+                // Session Security Information
+                const AuthSessionInfo(),
+                const SizedBox(height: 24),
+
                 // Dashboard cards
                 Expanded(
                   child: GridView.count(

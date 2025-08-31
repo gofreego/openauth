@@ -82,8 +82,7 @@ message VerificationResponse {
 
 // ResendVerificationRequest to resend verification codes
 message ResendVerificationRequest {
-    string identifier = 1;  // email or phone
-    string type = 2;         // "email" or "phone"
+    string identifier = 1;  // email or phone - determined by backend
 }
 
 // ResendVerificationResponse
@@ -295,7 +294,7 @@ message DeleteUserResponse {
 
 // SignInRequest for user authentication
 message SignInRequest {
-    string identifier = 1;      // username, email, or phone
+    string username = 1;                // Can be username, email, or phone - determined by backend
     string password = 2;
     optional string device_id = 3;     // Unique device identifier
     optional string device_name = 4;   // Human-readable device name

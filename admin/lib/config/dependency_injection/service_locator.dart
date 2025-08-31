@@ -31,11 +31,17 @@ Future<void> initializeDependencies({
     () => const HTTPServiceClient(),
   );
 
+  // Session Manager
+  serviceLocator.registerLazySingleton<SessionManager>(
+    () => SessionManager(serviceLocator<SharedPreferences>()),
+  );
+
   // Auth Repository
   serviceLocator.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       serviceLocator<HTTPServiceClient>(),
       serviceLocator<SharedPreferences>(),
+      serviceLocator<SessionManager>(),
     ),
   );
 

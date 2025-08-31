@@ -675,8 +675,7 @@ func (x *VerificationResponse) GetMessage() string {
 // ResendVerificationRequest to resend verification codes
 type ResendVerificationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"` // email or phone
-	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`             // "email" or "phone"
+	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"` // email or phone - determined by backend
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -714,13 +713,6 @@ func (*ResendVerificationRequest) Descriptor() ([]byte, []int) {
 func (x *ResendVerificationRequest) GetIdentifier() string {
 	if x != nil {
 		return x.Identifier
-	}
-	return ""
-}
-
-func (x *ResendVerificationRequest) GetType() string {
-	if x != nil {
-		return x.Type
 	}
 	return ""
 }
@@ -2482,7 +2474,7 @@ func (x *DeleteUserResponse) GetMessage() string {
 // SignInRequest for user authentication
 type SignInRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"` // username, email, or phone
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"` // Can be username, email, or phone - determined by backend
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	DeviceId      *string                `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3,oneof" json:"device_id,omitempty"`        // Unique device identifier
 	DeviceName    *string                `protobuf:"bytes,4,opt,name=device_name,json=deviceName,proto3,oneof" json:"device_name,omitempty"`  // Human-readable device name
@@ -2522,9 +2514,9 @@ func (*SignInRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *SignInRequest) GetIdentifier() string {
+func (x *SignInRequest) GetUsername() string {
 	if x != nil {
-		return x.Identifier
+		return x.Username
 	}
 	return ""
 }
@@ -3486,12 +3478,11 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x11verification_code\x18\x02 \x01(\tR\x10verificationCode\"L\n" +
 	"\x14VerificationResponse\x12\x1a\n" +
 	"\bverified\x18\x01 \x01(\bR\bverified\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"O\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\";\n" +
 	"\x19ResendVerificationRequest\x12\x1e\n" +
 	"\n" +
 	"identifier\x18\x01 \x01(\tR\n" +
-	"identifier\x12\x12\n" +
-	"\x04type\x18\x02 \x01(\tR\x04type\"i\n" +
+	"identifier\"i\n" +
 	"\x1aResendVerificationResponse\x12\x12\n" +
 	"\x04sent\x18\x01 \x01(\bR\x04sent\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12\x1d\n" +
@@ -3712,11 +3703,9 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"softDelete\"H\n" +
 	"\x12DeleteUserResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x9d\x02\n" +
-	"\rSignInRequest\x12\x1e\n" +
-	"\n" +
-	"identifier\x18\x01 \x01(\tR\n" +
-	"identifier\x12\x1a\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x99\x02\n" +
+	"\rSignInRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12 \n" +
 	"\tdevice_id\x18\x03 \x01(\tH\x00R\bdeviceId\x88\x01\x01\x12$\n" +
 	"\vdevice_name\x18\x04 \x01(\tH\x01R\n" +

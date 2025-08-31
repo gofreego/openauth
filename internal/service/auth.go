@@ -15,6 +15,7 @@ import (
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
@@ -66,23 +67,31 @@ func (s *Service) getBcryptCost() int {
 // SignIn authenticates a user and creates a new session
 func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
 	// Validate input
-	if req.Identifier == "" || req.Password == "" {
-		return nil, status.Error(codes.InvalidArgument, "identifier and password are required")
+	if req.Username == "" || req.Password == "" {
+		return nil, status.Error(codes.InvalidArgument, "username and password are required")
 	}
 
-	// Find user by identifier (username, email, or phone)
+	// Detect the type of identifier and find user accordingly
 	var user *dao.User
 	var err error
 
-	identifier := strings.TrimSpace(req.Identifier)
+	username := strings.TrimSpace(req.Username)
+	identifierType := utils.DetectIdentifierType(username)
 
-	// Try to find user by username first
-	if user, err = s.repo.GetUserByUsername(ctx, identifier); err != nil {
-		// Try email
-		if user, err = s.repo.GetUserByEmail(ctx, identifier); err != nil {
-			// Try phone (you may need to implement GetUserByPhone)
-			return nil, status.Error(codes.NotFound, "user not found")
-		}
+	switch identifierType {
+	case utils.IdentifierTypeUsername:
+		user, err = s.repo.GetUserByUsername(ctx, username)
+	case utils.IdentifierTypeEmail:
+		user, err = s.repo.GetUserByEmail(ctx, username)
+	case utils.IdentifierTypePhone:
+		// Try phone - you may need to implement GetUserByPhone
+		return nil, status.Error(codes.Unimplemented, "phone login not yet implemented")
+	default:
+		return nil, status.Error(codes.InvalidArgument, "invalid identifier format")
+	}
+
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "user not found")
 	}
 
 	// Check if user is active and not locked
@@ -116,13 +125,6 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		"last_login_at":         time.Now().Unix(),
 	}
 	s.repo.UpdateUser(ctx, user.ID, updates)
-
-	// Get user's primary profile
-	profile, err := s.repo.GetUserProfile(ctx, user.ID)
-	if err != nil {
-		// If no profile exists, create a basic one or continue without profile
-		profile = nil
-	}
 
 	// Create session
 	sessionUUID := uuid.New()
@@ -194,10 +196,6 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		User:             user.ToProto(),
 		SessionId:        sessionUUID.String(),
 		Message:          "Sign in successful",
-	}
-
-	if profile != nil {
-		response.Profile = profile.ToProto()
 	}
 
 	return response, nil

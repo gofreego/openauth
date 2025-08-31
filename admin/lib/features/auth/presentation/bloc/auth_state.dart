@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../../shared/services/session_manager.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 
 abstract class AuthState extends Equatable {
@@ -45,4 +46,19 @@ class AuthSignInError extends AuthState {
 
   @override
   List<Object> get props => [message];
+}
+
+class AuthSessionSecurityWarning extends AuthState {
+  final pb.SignInResponse session;
+  final SessionSecurityStatus securityStatus;
+  final String message;
+
+  const AuthSessionSecurityWarning({
+    required this.session,
+    required this.securityStatus,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [session, securityStatus, message];
 }

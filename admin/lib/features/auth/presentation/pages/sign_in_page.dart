@@ -19,12 +19,29 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
   bool _obscurePassword = true;
+  IdentifierType _identifierType = IdentifierType.unknown;
+
+  @override
+  void initState() {
+    super.initState();
+    _identifierController.addListener(_onIdentifierChanged);
+  }
 
   @override
   void dispose() {
+    _identifierController.removeListener(_onIdentifierChanged);
     _identifierController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _onIdentifierChanged() {
+    final type = LoginValidators.getIdentifierType(_identifierController.text);
+    if (type != _identifierType) {
+      setState(() {
+        _identifierType = type;
+      });
+    }
   }
 
   @override
@@ -79,18 +96,56 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         const SizedBox(height: 32),
 
-                        // Username/Email field
+                        // Login methods info
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: theme.colorScheme.outline.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 16,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Supported Login Methods',
+                                    style: theme.textTheme.labelMedium?.copyWith(
+                                      color: theme.colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              _buildLoginMethodInfo(Icons.person_outline, 'Username', 'Use your registered username'),
+                              _buildLoginMethodInfo(Icons.email_outlined, 'Email Address', 'Use your registered email'),
+                              _buildLoginMethodInfo(Icons.phone_outlined, 'Phone Number', 'Use your registered phone number'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Username/Email/Phone field with dynamic labeling
                         AuthTextField(
                           controller: _identifierController,
-                          label: 'Username or Email',
-                          hint: 'Enter your username or email',
-                          prefixIcon: Icons.person_outline,
+                          label: _getIdentifierLabel(),
+                          hint: LoginValidators.getHintText(),
+                          prefixIcon: _getIdentifierIcon(),
                           textInputAction: TextInputAction.next,
+                          keyboardType: _getKeyboardType(),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Please enter your username or email';
-                            }
-                            return null;
+                            final validation = LoginValidators.validateIdentifier(value ?? '');
+                            return validation.isValid ? null : validation.message;
                           },
                         ),
                         const SizedBox(height: 16),
@@ -213,5 +268,82 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
     }
+  }
+
+  String _getIdentifierLabel() {
+    switch (_identifierType) {
+      case IdentifierType.email:
+        return 'Email Address';
+      case IdentifierType.phone:
+        return 'Phone Number';
+      case IdentifierType.username:
+        return 'Username';
+      case IdentifierType.unknown:
+        return 'Username, Email, or Phone';
+    }
+  }
+
+  IconData _getIdentifierIcon() {
+    switch (_identifierType) {
+      case IdentifierType.email:
+        return Icons.email_outlined;
+      case IdentifierType.phone:
+        return Icons.phone_outlined;
+      case IdentifierType.username:
+        return Icons.person_outline;
+      case IdentifierType.unknown:
+        return Icons.login_outlined;
+    }
+  }
+
+  TextInputType _getKeyboardType() {
+    switch (_identifierType) {
+      case IdentifierType.email:
+        return TextInputType.emailAddress;
+      case IdentifierType.phone:
+        return TextInputType.phone;
+      case IdentifierType.username:
+        return TextInputType.text;
+      case IdentifierType.unknown:
+        return TextInputType.text;
+    }
+  }
+
+  Widget _buildLoginMethodInfo(IconData icon, String title, String description) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 14,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '$title: ',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  TextSpan(
+                    text: description,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
