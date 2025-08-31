@@ -1,11 +1,15 @@
 package dao
 
-import "github.com/google/uuid"
+import (
+	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/google/uuid"
+)
 
 type Session struct {
 	ID               int64     `db:"id" json:"id"`
 	UUID             uuid.UUID `db:"uuid" json:"uuid"`
 	UserID           int64     `db:"user_id" json:"userId"`
+	UserUUID         uuid.UUID `db:"user_uuid" json:"userUuid"` // For easier lookups
 	SessionToken     string    `db:"session_token" json:"sessionToken"`
 	RefreshToken     *string   `db:"refresh_token" json:"refreshToken,omitempty"`
 	DeviceID         *string   `db:"device_id" json:"deviceId,omitempty"`
@@ -19,6 +23,39 @@ type Session struct {
 	RefreshExpiresAt *int64    `db:"refresh_expires_at" json:"refreshExpiresAt,omitempty"`
 	LastActivityAt   int64     `db:"last_activity_at" json:"lastActivityAt"`
 	CreatedAt        int64     `db:"created_at" json:"createdAt"`
+}
+
+// ToProto converts Session DAO to protobuf Session
+func (s *Session) ToProto() *openauth_v1.Session {
+	session := &openauth_v1.Session{
+		Id:             s.UUID.String(),
+		UserId:         s.UserUUID.String(),
+		IsActive:       s.IsActive,
+		ExpiresAt:      s.ExpiresAt,
+		LastActivityAt: s.LastActivityAt,
+		CreatedAt:      s.CreatedAt,
+	}
+
+	if s.DeviceID != nil {
+		session.DeviceId = *s.DeviceID
+	}
+	if s.DeviceName != nil {
+		session.DeviceName = *s.DeviceName
+	}
+	if s.DeviceType != nil {
+		session.DeviceType = *s.DeviceType
+	}
+	if s.UserAgent != nil {
+		session.UserAgent = *s.UserAgent
+	}
+	if s.IPAddress != nil {
+		session.IpAddress = *s.IPAddress
+	}
+	if s.Location != nil {
+		session.Location = *s.Location
+	}
+
+	return session
 }
 
 type SessionActivity struct {

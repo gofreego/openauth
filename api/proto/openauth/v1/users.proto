@@ -290,3 +290,111 @@ message DeleteUserResponse {
     bool success = 1;
     string message = 2;
 }
+
+// ===== AUTHENTICATION & SESSION MANAGEMENT =====
+
+// SignInRequest for user authentication
+message SignInRequest {
+    string identifier = 1;      // username, email, or phone
+    string password = 2;
+    optional string device_id = 3;     // Unique device identifier
+    optional string device_name = 4;   // Human-readable device name
+    optional string device_type = 5;   // web, mobile, desktop, tablet
+    optional bool remember_me = 6;     // Extend session duration
+}
+
+// SignInResponse with authentication tokens and user data
+message SignInResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+    int64 expires_at = 3;              // Access token expiration (Unix timestamp)
+    int64 refresh_expires_at = 4;      // Refresh token expiration (Unix timestamp)
+    User user = 5;
+    UserProfile profile = 6;           // Primary profile
+    string session_id = 7;             // Session UUID for tracking
+    string message = 8;
+}
+
+// RefreshTokenRequest to refresh access token
+message RefreshTokenRequest {
+    string refresh_token = 1;
+    optional string device_id = 2;
+}
+
+// RefreshTokenResponse with new tokens
+message RefreshTokenResponse {
+    string access_token = 1;
+    string refresh_token = 2;          // New refresh token (rotation)
+    int64 expires_at = 3;
+    int64 refresh_expires_at = 4;
+    string message = 5;
+}
+
+// LogoutRequest to end user session
+message LogoutRequest {
+    optional string session_id = 1;    // Specific session to logout
+    optional bool all_sessions = 2;    // Logout from all devices
+}
+
+// LogoutResponse
+message LogoutResponse {
+    bool success = 1;
+    string message = 2;
+    int32 sessions_terminated = 3;     // Number of sessions ended
+}
+
+// ValidateTokenRequest to check token validity
+message ValidateTokenRequest {
+    string access_token = 1;
+}
+
+// ValidateTokenResponse
+message ValidateTokenResponse {
+    bool valid = 1;
+    string message = 2;
+    optional User user = 3;            // User info if token is valid
+    optional int64 expires_at = 4;     // Token expiration
+}
+
+// Session information
+message Session {
+    string id = 1;                     // Session UUID
+    string user_id = 2;                // User UUID
+    string device_id = 3;
+    string device_name = 4;
+    string device_type = 5;
+    string user_agent = 6;
+    string ip_address = 7;
+    string location = 8;
+    bool is_active = 9;
+    int64 expires_at = 10;
+    int64 last_activity_at = 11;
+    int64 created_at = 12;
+}
+
+// ListUserSessionsRequest to get active sessions
+message ListUserSessionsRequest {
+    string user_uuid = 1;
+    int32 limit = 2;
+    int32 offset = 3;
+    optional bool active_only = 4;
+}
+
+// ListUserSessionsResponse
+message ListUserSessionsResponse {
+    repeated Session sessions = 1;
+    int32 total_count = 2;
+    int32 limit = 3;
+    int32 offset = 4;
+}
+
+// TerminateSessionRequest to end specific session
+message TerminateSessionRequest {
+    string session_id = 1;
+}
+
+// TerminateSessionResponse
+message TerminateSessionResponse {
+    bool success = 1;
+    string message = 2;
+}

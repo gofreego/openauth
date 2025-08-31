@@ -218,4 +218,101 @@ class OpenAuthApi {
           $pb.ClientContext? ctx, $2.DeleteUserRequest request) =>
       _client.invoke<$2.DeleteUserResponse>(
           ctx, 'OpenAuth', 'DeleteUser', request, $2.DeleteUserResponse());
+
+  /// CreateProfile creates a new profile for a user.
+  ///
+  /// Allows users to create multiple profiles for different contexts.
+  /// Each profile can have different display information, preferences,
+  /// and metadata while belonging to the same user account.
+  $async.Future<$2.CreateProfileResponse> createProfile(
+          $pb.ClientContext? ctx, $2.CreateProfileRequest request) =>
+      _client.invoke<$2.CreateProfileResponse>(ctx, 'OpenAuth', 'CreateProfile',
+          request, $2.CreateProfileResponse());
+
+  /// ListUserProfiles retrieves all profiles for a specific user.
+  ///
+  /// Returns paginated list of profiles belonging to a user.
+  /// Useful for profile selection interfaces and management.
+  $async.Future<$2.ListUserProfilesResponse> listUserProfiles(
+          $pb.ClientContext? ctx, $2.ListUserProfilesRequest request) =>
+      _client.invoke<$2.ListUserProfilesResponse>(ctx, 'OpenAuth',
+          'ListUserProfiles', request, $2.ListUserProfilesResponse());
+
+  /// UpdateProfile modifies an existing profile.
+  ///
+  /// Supports partial updates - only provided fields are modified.
+  /// Profile updates are independent of user account information.
+  $async.Future<$2.UpdateProfileResponse> updateProfile(
+          $pb.ClientContext? ctx, $2.UpdateProfileRequest request) =>
+      _client.invoke<$2.UpdateProfileResponse>(ctx, 'OpenAuth', 'UpdateProfile',
+          request, $2.UpdateProfileResponse());
+
+  /// DeleteProfile removes a specific profile.
+  ///
+  /// Permanently deletes a profile and all associated data.
+  /// Users must have at least one profile, so deletion of the last
+  /// profile may be restricted based on business rules.
+  $async.Future<$2.DeleteProfileResponse> deleteProfile(
+          $pb.ClientContext? ctx, $2.DeleteProfileRequest request) =>
+      _client.invoke<$2.DeleteProfileResponse>(ctx, 'OpenAuth', 'DeleteProfile',
+          request, $2.DeleteProfileResponse());
+
+  /// SignIn authenticates a user and creates a new session.
+  ///
+  /// Supports multiple login methods:
+  /// - Username + password
+  /// - Email + password
+  /// - Phone + password
+  ///
+  /// Returns access token, refresh token, and user information.
+  /// Tracks device information and manages session security.
+  $async.Future<$2.SignInResponse> signIn(
+          $pb.ClientContext? ctx, $2.SignInRequest request) =>
+      _client.invoke<$2.SignInResponse>(
+          ctx, 'OpenAuth', 'SignIn', request, $2.SignInResponse());
+
+  /// RefreshToken generates new access token using refresh token.
+  ///
+  /// Implements token rotation for enhanced security where each refresh
+  /// generates a new refresh token and invalidates the old one.
+  $async.Future<$2.RefreshTokenResponse> refreshToken(
+          $pb.ClientContext? ctx, $2.RefreshTokenRequest request) =>
+      _client.invoke<$2.RefreshTokenResponse>(
+          ctx, 'OpenAuth', 'RefreshToken', request, $2.RefreshTokenResponse());
+
+  /// Logout terminates user session(s).
+  ///
+  /// Can logout from current session or all sessions across devices.
+  /// Invalidates tokens and cleans up session data.
+  $async.Future<$2.LogoutResponse> logout(
+          $pb.ClientContext? ctx, $2.LogoutRequest request) =>
+      _client.invoke<$2.LogoutResponse>(
+          ctx, 'OpenAuth', 'Logout', request, $2.LogoutResponse());
+
+  /// ValidateToken checks if an access token is valid and active.
+  ///
+  /// Used for authentication middleware and token verification.
+  /// Returns user information if token is valid.
+  $async.Future<$2.ValidateTokenResponse> validateToken(
+          $pb.ClientContext? ctx, $2.ValidateTokenRequest request) =>
+      _client.invoke<$2.ValidateTokenResponse>(ctx, 'OpenAuth', 'ValidateToken',
+          request, $2.ValidateTokenResponse());
+
+  /// ListUserSessions retrieves active sessions for a user.
+  ///
+  /// Shows all devices and sessions where the user is logged in.
+  /// Useful for security management and device tracking.
+  $async.Future<$2.ListUserSessionsResponse> listUserSessions(
+          $pb.ClientContext? ctx, $2.ListUserSessionsRequest request) =>
+      _client.invoke<$2.ListUserSessionsResponse>(ctx, 'OpenAuth',
+          'ListUserSessions', request, $2.ListUserSessionsResponse());
+
+  /// TerminateSession ends a specific user session.
+  ///
+  /// Allows users to logout from specific devices remotely.
+  /// Useful for security when a device is lost or compromised.
+  $async.Future<$2.TerminateSessionResponse> terminateSession(
+          $pb.ClientContext? ctx, $2.TerminateSessionRequest request) =>
+      _client.invoke<$2.TerminateSessionResponse>(ctx, 'OpenAuth',
+          'TerminateSession', request, $2.TerminateSessionResponse());
 }

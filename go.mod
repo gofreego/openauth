@@ -4,6 +4,7 @@ go 1.23.3
 
 require (
 	github.com/gofreego/goutils v1.3.7-0.20250830135653-07263dff58ae
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.2
 	golang.org/x/crypto v0.39.0

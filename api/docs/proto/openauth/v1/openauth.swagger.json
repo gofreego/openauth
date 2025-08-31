@@ -16,6 +16,142 @@
     "application/json"
   ],
   "paths": {
+    "/openauth/v1/auth/logout": {
+      "post": {
+        "summary": "Logout terminates user session(s).",
+        "description": "Can logout from current session or all sessions across devices.\nInvalidates tokens and cleans up session data.",
+        "operationId": "OpenAuth_Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LogoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LogoutRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/auth/refresh": {
+      "post": {
+        "summary": "RefreshToken generates new access token using refresh token.",
+        "description": "Implements token rotation for enhanced security where each refresh\ngenerates a new refresh token and invalidates the old one.",
+        "operationId": "OpenAuth_RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RefreshTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RefreshTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/auth/signin": {
+      "post": {
+        "summary": "SignIn authenticates a user and creates a new session.",
+        "description": "Supports multiple login methods:\n- Username + password\n- Email + password  \n- Phone + password\n\nReturns access token, refresh token, and user information.\nTracks device information and manages session security.",
+        "operationId": "OpenAuth_SignIn",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SignInResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SignInRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/auth/validate": {
+      "post": {
+        "summary": "ValidateToken checks if an access token is valid and active.",
+        "description": "Used for authentication middleware and token verification.\nReturns user information if token is valid.",
+        "operationId": "OpenAuth_ValidateToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ValidateTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ValidateTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/permissions": {
       "get": {
         "summary": "ListPermissions retrieves permissions with optional filtering and pagination.",
@@ -319,6 +455,38 @@
             "schema": {
               "$ref": "#/definitions/OpenAuthUpdateProfileBody"
             }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/sessions/{sessionId}": {
+      "delete": {
+        "summary": "TerminateSession ends a specific user session.",
+        "description": "Allows users to logout from specific devices remotely.\nUseful for security when a device is lost or compromised.",
+        "operationId": "OpenAuth_TerminateSession",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1TerminateSessionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "tags": [
@@ -686,6 +854,58 @@
             "schema": {
               "$ref": "#/definitions/OpenAuthCreateProfileBody"
             }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/{userUuid}/sessions": {
+      "get": {
+        "summary": "ListUserSessions retrieves active sessions for a user.",
+        "description": "Shows all devices and sessions where the user is logged in.\nUseful for security management and device tracking.",
+        "operationId": "OpenAuth_ListUserSessions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserSessionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1296,6 +1516,31 @@
       },
       "title": "ListUserProfilesResponse"
     },
+    "v1ListUserSessionsResponse": {
+      "type": "object",
+      "properties": {
+        "sessions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Session"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "ListUserSessionsResponse"
+    },
     "v1ListUsersResponse": {
       "type": "object",
       "properties": {
@@ -1323,6 +1568,37 @@
         }
       },
       "title": "ListUsersResponse"
+    },
+    "v1LogoutRequest": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "title": "Specific session to logout"
+        },
+        "allSessions": {
+          "type": "boolean",
+          "title": "Logout from all devices"
+        }
+      },
+      "title": "LogoutRequest to end user session"
+    },
+    "v1LogoutResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "sessionsTerminated": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Number of sessions ended"
+        }
+      },
+      "title": "LogoutResponse"
     },
     "v1Permission": {
       "type": "object",
@@ -1378,6 +1654,42 @@
       },
       "description": "PingResponse is the response message for the Ping RPC method."
     },
+    "v1RefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string"
+        },
+        "deviceId": {
+          "type": "string"
+        }
+      },
+      "title": "RefreshTokenRequest to refresh access token"
+    },
+    "v1RefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string",
+          "title": "New refresh token (rotation)"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "refreshExpiresAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "RefreshTokenResponse with new tokens"
+    },
     "v1ResendVerificationRequest": {
       "type": "object",
       "properties": {
@@ -1408,6 +1720,118 @@
         }
       },
       "title": "ResendVerificationResponse"
+    },
+    "v1Session": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Session UUID"
+        },
+        "userId": {
+          "type": "string",
+          "title": "User UUID"
+        },
+        "deviceId": {
+          "type": "string"
+        },
+        "deviceName": {
+          "type": "string"
+        },
+        "deviceType": {
+          "type": "string"
+        },
+        "userAgent": {
+          "type": "string"
+        },
+        "ipAddress": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "lastActivityAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "Session information"
+    },
+    "v1SignInRequest": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "title": "username, email, or phone"
+        },
+        "password": {
+          "type": "string"
+        },
+        "deviceId": {
+          "type": "string",
+          "title": "Unique device identifier"
+        },
+        "deviceName": {
+          "type": "string",
+          "title": "Human-readable device name"
+        },
+        "deviceType": {
+          "type": "string",
+          "title": "web, mobile, desktop, tablet"
+        },
+        "rememberMe": {
+          "type": "boolean",
+          "title": "Extend session duration"
+        }
+      },
+      "title": "SignInRequest for user authentication"
+    },
+    "v1SignInResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Access token expiration (Unix timestamp)"
+        },
+        "refreshExpiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Refresh token expiration (Unix timestamp)"
+        },
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile",
+          "title": "Primary profile"
+        },
+        "sessionId": {
+          "type": "string",
+          "title": "Session UUID for tracking"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "SignInResponse with authentication tokens and user data"
     },
     "v1SignUpRequest": {
       "type": "object",
@@ -1444,6 +1868,18 @@
         }
       },
       "title": "SignUpResponse after successful registration - only user data"
+    },
+    "v1TerminateSessionResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "TerminateSessionResponse"
     },
     "v1UpdateProfileResponse": {
       "type": "object",
@@ -1600,6 +2036,36 @@
         }
       },
       "title": "UserProfile represents extended user profile information"
+    },
+    "v1ValidateTokenRequest": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        }
+      },
+      "title": "ValidateTokenRequest to check token validity"
+    },
+    "v1ValidateTokenResponse": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "user": {
+          "$ref": "#/definitions/v1User",
+          "title": "User info if token is valid"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Token expiration"
+        }
+      },
+      "title": "ValidateTokenResponse"
     },
     "v1VerificationResponse": {
       "type": "object",

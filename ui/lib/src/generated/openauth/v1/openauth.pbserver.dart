@@ -57,6 +57,26 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $2.ListUsersRequest request);
   $async.Future<$2.DeleteUserResponse> deleteUser(
       $pb.ServerContext ctx, $2.DeleteUserRequest request);
+  $async.Future<$2.CreateProfileResponse> createProfile(
+      $pb.ServerContext ctx, $2.CreateProfileRequest request);
+  $async.Future<$2.ListUserProfilesResponse> listUserProfiles(
+      $pb.ServerContext ctx, $2.ListUserProfilesRequest request);
+  $async.Future<$2.UpdateProfileResponse> updateProfile(
+      $pb.ServerContext ctx, $2.UpdateProfileRequest request);
+  $async.Future<$2.DeleteProfileResponse> deleteProfile(
+      $pb.ServerContext ctx, $2.DeleteProfileRequest request);
+  $async.Future<$2.SignInResponse> signIn(
+      $pb.ServerContext ctx, $2.SignInRequest request);
+  $async.Future<$2.RefreshTokenResponse> refreshToken(
+      $pb.ServerContext ctx, $2.RefreshTokenRequest request);
+  $async.Future<$2.LogoutResponse> logout(
+      $pb.ServerContext ctx, $2.LogoutRequest request);
+  $async.Future<$2.ValidateTokenResponse> validateToken(
+      $pb.ServerContext ctx, $2.ValidateTokenRequest request);
+  $async.Future<$2.ListUserSessionsResponse> listUserSessions(
+      $pb.ServerContext ctx, $2.ListUserSessionsRequest request);
+  $async.Future<$2.TerminateSessionResponse> terminateSession(
+      $pb.ServerContext ctx, $2.TerminateSessionRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -94,6 +114,26 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
         return $2.ListUsersRequest();
       case 'DeleteUser':
         return $2.DeleteUserRequest();
+      case 'CreateProfile':
+        return $2.CreateProfileRequest();
+      case 'ListUserProfiles':
+        return $2.ListUserProfilesRequest();
+      case 'UpdateProfile':
+        return $2.UpdateProfileRequest();
+      case 'DeleteProfile':
+        return $2.DeleteProfileRequest();
+      case 'SignIn':
+        return $2.SignInRequest();
+      case 'RefreshToken':
+        return $2.RefreshTokenRequest();
+      case 'Logout':
+        return $2.LogoutRequest();
+      case 'ValidateToken':
+        return $2.ValidateTokenRequest();
+      case 'ListUserSessions':
+        return $2.ListUserSessionsRequest();
+      case 'TerminateSession':
+        return $2.TerminateSessionRequest();
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -136,6 +176,26 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
         return listUsers(ctx, request as $2.ListUsersRequest);
       case 'DeleteUser':
         return deleteUser(ctx, request as $2.DeleteUserRequest);
+      case 'CreateProfile':
+        return createProfile(ctx, request as $2.CreateProfileRequest);
+      case 'ListUserProfiles':
+        return listUserProfiles(ctx, request as $2.ListUserProfilesRequest);
+      case 'UpdateProfile':
+        return updateProfile(ctx, request as $2.UpdateProfileRequest);
+      case 'DeleteProfile':
+        return deleteProfile(ctx, request as $2.DeleteProfileRequest);
+      case 'SignIn':
+        return signIn(ctx, request as $2.SignInRequest);
+      case 'RefreshToken':
+        return refreshToken(ctx, request as $2.RefreshTokenRequest);
+      case 'Logout':
+        return logout(ctx, request as $2.LogoutRequest);
+      case 'ValidateToken':
+        return validateToken(ctx, request as $2.ValidateTokenRequest);
+      case 'ListUserSessions':
+        return listUserSessions(ctx, request as $2.ListUserSessionsRequest);
+      case 'TerminateSession':
+        return terminateSession(ctx, request as $2.TerminateSessionRequest);
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }

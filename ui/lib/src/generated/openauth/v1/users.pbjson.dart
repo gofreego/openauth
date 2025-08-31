@@ -81,120 +81,130 @@ const UserProfile$json = {
     {'1': 'uuid', '3': 2, '4': 1, '5': 9, '10': 'uuid'},
     {'1': 'user_id', '3': 3, '4': 1, '5': 3, '10': 'userId'},
     {
-      '1': 'first_name',
+      '1': 'profile_name',
       '3': 4,
       '4': 1,
       '5': 9,
       '9': 0,
+      '10': 'profileName',
+      '17': true
+    },
+    {
+      '1': 'first_name',
+      '3': 5,
+      '4': 1,
+      '5': 9,
+      '9': 1,
       '10': 'firstName',
       '17': true
     },
     {
       '1': 'last_name',
-      '3': 5,
+      '3': 6,
       '4': 1,
       '5': 9,
-      '9': 1,
+      '9': 2,
       '10': 'lastName',
       '17': true
     },
     {
       '1': 'display_name',
-      '3': 6,
+      '3': 7,
       '4': 1,
       '5': 9,
-      '9': 2,
+      '9': 3,
       '10': 'displayName',
       '17': true
     },
-    {'1': 'bio', '3': 7, '4': 1, '5': 9, '9': 3, '10': 'bio', '17': true},
+    {'1': 'bio', '3': 8, '4': 1, '5': 9, '9': 4, '10': 'bio', '17': true},
     {
       '1': 'avatar_url',
-      '3': 8,
+      '3': 9,
       '4': 1,
       '5': 9,
-      '9': 4,
+      '9': 5,
       '10': 'avatarUrl',
       '17': true
     },
     {
       '1': 'date_of_birth',
-      '3': 9,
+      '3': 10,
       '4': 1,
       '5': 3,
-      '9': 5,
+      '9': 6,
       '10': 'dateOfBirth',
       '17': true
     },
     {
       '1': 'gender',
-      '3': 10,
+      '3': 11,
       '4': 1,
       '5': 9,
-      '9': 6,
+      '9': 7,
       '10': 'gender',
       '17': true
     },
     {
       '1': 'timezone',
-      '3': 11,
+      '3': 12,
       '4': 1,
       '5': 9,
-      '9': 7,
+      '9': 8,
       '10': 'timezone',
       '17': true
     },
     {
       '1': 'locale',
-      '3': 12,
+      '3': 13,
       '4': 1,
       '5': 9,
-      '9': 8,
+      '9': 9,
       '10': 'locale',
       '17': true
     },
     {
       '1': 'country',
-      '3': 13,
+      '3': 14,
       '4': 1,
       '5': 9,
-      '9': 9,
+      '9': 10,
       '10': 'country',
       '17': true
     },
-    {'1': 'city', '3': 14, '4': 1, '5': 9, '9': 10, '10': 'city', '17': true},
+    {'1': 'city', '3': 15, '4': 1, '5': 9, '9': 11, '10': 'city', '17': true},
     {
       '1': 'address',
-      '3': 15,
+      '3': 16,
       '4': 1,
       '5': 9,
-      '9': 11,
+      '9': 12,
       '10': 'address',
       '17': true
     },
     {
       '1': 'postal_code',
-      '3': 16,
+      '3': 17,
       '4': 1,
       '5': 9,
-      '9': 12,
+      '9': 13,
       '10': 'postalCode',
       '17': true
     },
     {
       '1': 'website_url',
-      '3': 17,
+      '3': 18,
       '4': 1,
       '5': 9,
-      '9': 13,
+      '9': 14,
       '10': 'websiteUrl',
       '17': true
     },
-    {'1': 'metadata', '3': 18, '4': 1, '5': 12, '10': 'metadata'},
-    {'1': 'created_at', '3': 19, '4': 1, '5': 3, '10': 'createdAt'},
-    {'1': 'updated_at', '3': 20, '4': 1, '5': 3, '10': 'updatedAt'},
+    {'1': 'metadata', '3': 19, '4': 1, '5': 12, '10': 'metadata'},
+    {'1': 'created_at', '3': 20, '4': 1, '5': 3, '10': 'createdAt'},
+    {'1': 'updated_at', '3': 21, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
   '8': [
+    {'1': '_profile_name'},
     {'1': '_first_name'},
     {'1': '_last_name'},
     {'1': '_display_name'},
@@ -215,20 +225,21 @@ const UserProfile$json = {
 /// Descriptor for `UserProfile`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List userProfileDescriptor = $convert.base64Decode(
     'CgtVc2VyUHJvZmlsZRIOCgJpZBgBIAEoA1ICaWQSEgoEdXVpZBgCIAEoCVIEdXVpZBIXCgd1c2'
-    'VyX2lkGAMgASgDUgZ1c2VySWQSIgoKZmlyc3RfbmFtZRgEIAEoCUgAUglmaXJzdE5hbWWIAQES'
-    'IAoJbGFzdF9uYW1lGAUgASgJSAFSCGxhc3ROYW1liAEBEiYKDGRpc3BsYXlfbmFtZRgGIAEoCU'
-    'gCUgtkaXNwbGF5TmFtZYgBARIVCgNiaW8YByABKAlIA1IDYmlviAEBEiIKCmF2YXRhcl91cmwY'
-    'CCABKAlIBFIJYXZhdGFyVXJsiAEBEicKDWRhdGVfb2ZfYmlydGgYCSABKANIBVILZGF0ZU9mQm'
-    'lydGiIAQESGwoGZ2VuZGVyGAogASgJSAZSBmdlbmRlcogBARIfCgh0aW1lem9uZRgLIAEoCUgH'
-    'Ugh0aW1lem9uZYgBARIbCgZsb2NhbGUYDCABKAlICFIGbG9jYWxliAEBEh0KB2NvdW50cnkYDS'
-    'ABKAlICVIHY291bnRyeYgBARIXCgRjaXR5GA4gASgJSApSBGNpdHmIAQESHQoHYWRkcmVzcxgP'
-    'IAEoCUgLUgdhZGRyZXNziAEBEiQKC3Bvc3RhbF9jb2RlGBAgASgJSAxSCnBvc3RhbENvZGWIAQ'
-    'ESJAoLd2Vic2l0ZV91cmwYESABKAlIDVIKd2Vic2l0ZVVybIgBARIaCghtZXRhZGF0YRgSIAEo'
-    'DFIIbWV0YWRhdGESHQoKY3JlYXRlZF9hdBgTIAEoA1IJY3JlYXRlZEF0Eh0KCnVwZGF0ZWRfYX'
-    'QYFCABKANSCXVwZGF0ZWRBdEINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg8KDV9kaXNw'
-    'bGF5X25hbWVCBgoEX2Jpb0INCgtfYXZhdGFyX3VybEIQCg5fZGF0ZV9vZl9iaXJ0aEIJCgdfZ2'
-    'VuZGVyQgsKCV90aW1lem9uZUIJCgdfbG9jYWxlQgoKCF9jb3VudHJ5QgcKBV9jaXR5QgoKCF9h'
-    'ZGRyZXNzQg4KDF9wb3N0YWxfY29kZUIOCgxfd2Vic2l0ZV91cmw=');
+    'VyX2lkGAMgASgDUgZ1c2VySWQSJgoMcHJvZmlsZV9uYW1lGAQgASgJSABSC3Byb2ZpbGVOYW1l'
+    'iAEBEiIKCmZpcnN0X25hbWUYBSABKAlIAVIJZmlyc3ROYW1liAEBEiAKCWxhc3RfbmFtZRgGIA'
+    'EoCUgCUghsYXN0TmFtZYgBARImCgxkaXNwbGF5X25hbWUYByABKAlIA1ILZGlzcGxheU5hbWWI'
+    'AQESFQoDYmlvGAggASgJSARSA2Jpb4gBARIiCgphdmF0YXJfdXJsGAkgASgJSAVSCWF2YXRhcl'
+    'VybIgBARInCg1kYXRlX29mX2JpcnRoGAogASgDSAZSC2RhdGVPZkJpcnRoiAEBEhsKBmdlbmRl'
+    'chgLIAEoCUgHUgZnZW5kZXKIAQESHwoIdGltZXpvbmUYDCABKAlICFIIdGltZXpvbmWIAQESGw'
+    'oGbG9jYWxlGA0gASgJSAlSBmxvY2FsZYgBARIdCgdjb3VudHJ5GA4gASgJSApSB2NvdW50cnmI'
+    'AQESFwoEY2l0eRgPIAEoCUgLUgRjaXR5iAEBEh0KB2FkZHJlc3MYECABKAlIDFIHYWRkcmVzc4'
+    'gBARIkCgtwb3N0YWxfY29kZRgRIAEoCUgNUgpwb3N0YWxDb2RliAEBEiQKC3dlYnNpdGVfdXJs'
+    'GBIgASgJSA5SCndlYnNpdGVVcmyIAQESGgoIbWV0YWRhdGEYEyABKAxSCG1ldGFkYXRhEh0KCm'
+    'NyZWF0ZWRfYXQYFCABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GBUgASgDUgl1cGRhdGVk'
+    'QXRCDwoNX3Byb2ZpbGVfbmFtZUINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg8KDV9kaX'
+    'NwbGF5X25hbWVCBgoEX2Jpb0INCgtfYXZhdGFyX3VybEIQCg5fZGF0ZV9vZl9iaXJ0aEIJCgdf'
+    'Z2VuZGVyQgsKCV90aW1lem9uZUIJCgdfbG9jYWxlQgoKCF9jb3VudHJ5QgcKBV9jaXR5QgoKCF'
+    '9hZGRyZXNzQg4KDF9wb3N0YWxfY29kZUIOCgxfd2Vic2l0ZV91cmw=');
 
 @$core.Deprecated('Use signUpRequestDescriptor instead')
 const SignUpRequest$json = {
@@ -238,62 +249,10 @@ const SignUpRequest$json = {
     {'1': 'email', '3': 2, '4': 1, '5': 9, '9': 0, '10': 'email', '17': true},
     {'1': 'phone', '3': 3, '4': 1, '5': 9, '9': 1, '10': 'phone', '17': true},
     {'1': 'password', '3': 4, '4': 1, '5': 9, '10': 'password'},
-    {
-      '1': 'first_name',
-      '3': 5,
-      '4': 1,
-      '5': 9,
-      '9': 2,
-      '10': 'firstName',
-      '17': true
-    },
-    {
-      '1': 'last_name',
-      '3': 6,
-      '4': 1,
-      '5': 9,
-      '9': 3,
-      '10': 'lastName',
-      '17': true
-    },
-    {
-      '1': 'display_name',
-      '3': 7,
-      '4': 1,
-      '5': 9,
-      '9': 4,
-      '10': 'displayName',
-      '17': true
-    },
-    {
-      '1': 'timezone',
-      '3': 8,
-      '4': 1,
-      '5': 9,
-      '9': 5,
-      '10': 'timezone',
-      '17': true
-    },
-    {'1': 'locale', '3': 9, '4': 1, '5': 9, '9': 6, '10': 'locale', '17': true},
-    {
-      '1': 'country',
-      '3': 10,
-      '4': 1,
-      '5': 9,
-      '9': 7,
-      '10': 'country',
-      '17': true
-    },
   ],
   '8': [
     {'1': '_email'},
     {'1': '_phone'},
-    {'1': '_first_name'},
-    {'1': '_last_name'},
-    {'1': '_display_name'},
-    {'1': '_timezone'},
-    {'1': '_locale'},
-    {'1': '_country'},
   ],
 };
 
@@ -301,37 +260,24 @@ const SignUpRequest$json = {
 final $typed_data.Uint8List signUpRequestDescriptor = $convert.base64Decode(
     'Cg1TaWduVXBSZXF1ZXN0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIZCgVlbWFpbBgCIA'
     'EoCUgAUgVlbWFpbIgBARIZCgVwaG9uZRgDIAEoCUgBUgVwaG9uZYgBARIaCghwYXNzd29yZBgE'
-    'IAEoCVIIcGFzc3dvcmQSIgoKZmlyc3RfbmFtZRgFIAEoCUgCUglmaXJzdE5hbWWIAQESIAoJbG'
-    'FzdF9uYW1lGAYgASgJSANSCGxhc3ROYW1liAEBEiYKDGRpc3BsYXlfbmFtZRgHIAEoCUgEUgtk'
-    'aXNwbGF5TmFtZYgBARIfCgh0aW1lem9uZRgIIAEoCUgFUgh0aW1lem9uZYgBARIbCgZsb2NhbG'
-    'UYCSABKAlIBlIGbG9jYWxliAEBEh0KB2NvdW50cnkYCiABKAlIB1IHY291bnRyeYgBAUIICgZf'
-    'ZW1haWxCCAoGX3Bob25lQg0KC19maXJzdF9uYW1lQgwKCl9sYXN0X25hbWVCDwoNX2Rpc3BsYX'
-    'lfbmFtZUILCglfdGltZXpvbmVCCQoHX2xvY2FsZUIKCghfY291bnRyeQ==');
+    'IAEoCVIIcGFzc3dvcmRCCAoGX2VtYWlsQggKBl9waG9uZQ==');
 
 @$core.Deprecated('Use signUpResponseDescriptor instead')
 const SignUpResponse$json = {
   '1': 'SignUpResponse',
   '2': [
     {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.v1.User', '10': 'user'},
-    {
-      '1': 'profile',
-      '3': 2,
-      '4': 1,
-      '5': 11,
-      '6': '.v1.UserProfile',
-      '10': 'profile'
-    },
-    {'1': 'message', '3': 3, '4': 1, '5': 9, '10': 'message'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
     {
       '1': 'email_verification_required',
-      '3': 4,
+      '3': 3,
       '4': 1,
       '5': 8,
       '10': 'emailVerificationRequired'
     },
     {
       '1': 'phone_verification_required',
-      '3': 5,
+      '3': 4,
       '4': 1,
       '5': 8,
       '10': 'phoneVerificationRequired'
@@ -341,11 +287,10 @@ const SignUpResponse$json = {
 
 /// Descriptor for `SignUpResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List signUpResponseDescriptor = $convert.base64Decode(
-    'Cg5TaWduVXBSZXNwb25zZRIcCgR1c2VyGAEgASgLMggudjEuVXNlclIEdXNlchIpCgdwcm9maW'
-    'xlGAIgASgLMg8udjEuVXNlclByb2ZpbGVSB3Byb2ZpbGUSGAoHbWVzc2FnZRgDIAEoCVIHbWVz'
-    'c2FnZRI+ChtlbWFpbF92ZXJpZmljYXRpb25fcmVxdWlyZWQYBCABKAhSGWVtYWlsVmVyaWZpY2'
-    'F0aW9uUmVxdWlyZWQSPgobcGhvbmVfdmVyaWZpY2F0aW9uX3JlcXVpcmVkGAUgASgIUhlwaG9u'
-    'ZVZlcmlmaWNhdGlvblJlcXVpcmVk');
+    'Cg5TaWduVXBSZXNwb25zZRIcCgR1c2VyGAEgASgLMggudjEuVXNlclIEdXNlchIYCgdtZXNzYW'
+    'dlGAIgASgJUgdtZXNzYWdlEj4KG2VtYWlsX3ZlcmlmaWNhdGlvbl9yZXF1aXJlZBgDIAEoCFIZ'
+    'ZW1haWxWZXJpZmljYXRpb25SZXF1aXJlZBI+ChtwaG9uZV92ZXJpZmljYXRpb25fcmVxdWlyZW'
+    'QYBCABKAhSGXBob25lVmVyaWZpY2F0aW9uUmVxdWlyZWQ=');
 
 @$core.Deprecated('Use verifyEmailRequestDescriptor instead')
 const VerifyEmailRequest$json = {
@@ -486,6 +431,427 @@ const CheckEmailResponse$json = {
 final $typed_data.Uint8List checkEmailResponseDescriptor = $convert.base64Decode(
     'ChJDaGVja0VtYWlsUmVzcG9uc2USHAoJYXZhaWxhYmxlGAEgASgIUglhdmFpbGFibGUSGAoHbW'
     'Vzc2FnZRgCIAEoCVIHbWVzc2FnZQ==');
+
+@$core.Deprecated('Use createProfileRequestDescriptor instead')
+const CreateProfileRequest$json = {
+  '1': 'CreateProfileRequest',
+  '2': [
+    {'1': 'user_uuid', '3': 1, '4': 1, '5': 9, '10': 'userUuid'},
+    {
+      '1': 'profile_name',
+      '3': 2,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'profileName',
+      '17': true
+    },
+    {
+      '1': 'first_name',
+      '3': 3,
+      '4': 1,
+      '5': 9,
+      '9': 1,
+      '10': 'firstName',
+      '17': true
+    },
+    {
+      '1': 'last_name',
+      '3': 4,
+      '4': 1,
+      '5': 9,
+      '9': 2,
+      '10': 'lastName',
+      '17': true
+    },
+    {
+      '1': 'display_name',
+      '3': 5,
+      '4': 1,
+      '5': 9,
+      '9': 3,
+      '10': 'displayName',
+      '17': true
+    },
+    {'1': 'bio', '3': 6, '4': 1, '5': 9, '9': 4, '10': 'bio', '17': true},
+    {
+      '1': 'avatar_url',
+      '3': 7,
+      '4': 1,
+      '5': 9,
+      '9': 5,
+      '10': 'avatarUrl',
+      '17': true
+    },
+    {
+      '1': 'date_of_birth',
+      '3': 8,
+      '4': 1,
+      '5': 3,
+      '9': 6,
+      '10': 'dateOfBirth',
+      '17': true
+    },
+    {'1': 'gender', '3': 9, '4': 1, '5': 9, '9': 7, '10': 'gender', '17': true},
+    {
+      '1': 'timezone',
+      '3': 10,
+      '4': 1,
+      '5': 9,
+      '9': 8,
+      '10': 'timezone',
+      '17': true
+    },
+    {
+      '1': 'locale',
+      '3': 11,
+      '4': 1,
+      '5': 9,
+      '9': 9,
+      '10': 'locale',
+      '17': true
+    },
+    {
+      '1': 'country',
+      '3': 12,
+      '4': 1,
+      '5': 9,
+      '9': 10,
+      '10': 'country',
+      '17': true
+    },
+    {'1': 'city', '3': 13, '4': 1, '5': 9, '9': 11, '10': 'city', '17': true},
+    {
+      '1': 'address',
+      '3': 14,
+      '4': 1,
+      '5': 9,
+      '9': 12,
+      '10': 'address',
+      '17': true
+    },
+    {
+      '1': 'postal_code',
+      '3': 15,
+      '4': 1,
+      '5': 9,
+      '9': 13,
+      '10': 'postalCode',
+      '17': true
+    },
+    {
+      '1': 'website_url',
+      '3': 16,
+      '4': 1,
+      '5': 9,
+      '9': 14,
+      '10': 'websiteUrl',
+      '17': true
+    },
+    {'1': 'metadata', '3': 17, '4': 1, '5': 12, '10': 'metadata'},
+  ],
+  '8': [
+    {'1': '_profile_name'},
+    {'1': '_first_name'},
+    {'1': '_last_name'},
+    {'1': '_display_name'},
+    {'1': '_bio'},
+    {'1': '_avatar_url'},
+    {'1': '_date_of_birth'},
+    {'1': '_gender'},
+    {'1': '_timezone'},
+    {'1': '_locale'},
+    {'1': '_country'},
+    {'1': '_city'},
+    {'1': '_address'},
+    {'1': '_postal_code'},
+    {'1': '_website_url'},
+  ],
+};
+
+/// Descriptor for `CreateProfileRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createProfileRequestDescriptor = $convert.base64Decode(
+    'ChRDcmVhdGVQcm9maWxlUmVxdWVzdBIbCgl1c2VyX3V1aWQYASABKAlSCHVzZXJVdWlkEiYKDH'
+    'Byb2ZpbGVfbmFtZRgCIAEoCUgAUgtwcm9maWxlTmFtZYgBARIiCgpmaXJzdF9uYW1lGAMgASgJ'
+    'SAFSCWZpcnN0TmFtZYgBARIgCglsYXN0X25hbWUYBCABKAlIAlIIbGFzdE5hbWWIAQESJgoMZG'
+    'lzcGxheV9uYW1lGAUgASgJSANSC2Rpc3BsYXlOYW1liAEBEhUKA2JpbxgGIAEoCUgEUgNiaW+I'
+    'AQESIgoKYXZhdGFyX3VybBgHIAEoCUgFUglhdmF0YXJVcmyIAQESJwoNZGF0ZV9vZl9iaXJ0aB'
+    'gIIAEoA0gGUgtkYXRlT2ZCaXJ0aIgBARIbCgZnZW5kZXIYCSABKAlIB1IGZ2VuZGVyiAEBEh8K'
+    'CHRpbWV6b25lGAogASgJSAhSCHRpbWV6b25liAEBEhsKBmxvY2FsZRgLIAEoCUgJUgZsb2NhbG'
+    'WIAQESHQoHY291bnRyeRgMIAEoCUgKUgdjb3VudHJ5iAEBEhcKBGNpdHkYDSABKAlIC1IEY2l0'
+    'eYgBARIdCgdhZGRyZXNzGA4gASgJSAxSB2FkZHJlc3OIAQESJAoLcG9zdGFsX2NvZGUYDyABKA'
+    'lIDVIKcG9zdGFsQ29kZYgBARIkCgt3ZWJzaXRlX3VybBgQIAEoCUgOUgp3ZWJzaXRlVXJsiAEB'
+    'EhoKCG1ldGFkYXRhGBEgASgMUghtZXRhZGF0YUIPCg1fcHJvZmlsZV9uYW1lQg0KC19maXJzdF'
+    '9uYW1lQgwKCl9sYXN0X25hbWVCDwoNX2Rpc3BsYXlfbmFtZUIGCgRfYmlvQg0KC19hdmF0YXJf'
+    'dXJsQhAKDl9kYXRlX29mX2JpcnRoQgkKB19nZW5kZXJCCwoJX3RpbWV6b25lQgkKB19sb2NhbG'
+    'VCCgoIX2NvdW50cnlCBwoFX2NpdHlCCgoIX2FkZHJlc3NCDgoMX3Bvc3RhbF9jb2RlQg4KDF93'
+    'ZWJzaXRlX3VybA==');
+
+@$core.Deprecated('Use createProfileResponseDescriptor instead')
+const CreateProfileResponse$json = {
+  '1': 'CreateProfileResponse',
+  '2': [
+    {
+      '1': 'profile',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.v1.UserProfile',
+      '10': 'profile'
+    },
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `CreateProfileResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createProfileResponseDescriptor = $convert.base64Decode(
+    'ChVDcmVhdGVQcm9maWxlUmVzcG9uc2USKQoHcHJvZmlsZRgBIAEoCzIPLnYxLlVzZXJQcm9maW'
+    'xlUgdwcm9maWxlEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2U=');
+
+@$core.Deprecated('Use listUserProfilesRequestDescriptor instead')
+const ListUserProfilesRequest$json = {
+  '1': 'ListUserProfilesRequest',
+  '2': [
+    {'1': 'user_uuid', '3': 1, '4': 1, '5': 9, '10': 'userUuid'},
+    {'1': 'limit', '3': 2, '4': 1, '5': 5, '10': 'limit'},
+    {'1': 'offset', '3': 3, '4': 1, '5': 5, '10': 'offset'},
+  ],
+};
+
+/// Descriptor for `ListUserProfilesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listUserProfilesRequestDescriptor =
+    $convert.base64Decode(
+        'ChdMaXN0VXNlclByb2ZpbGVzUmVxdWVzdBIbCgl1c2VyX3V1aWQYASABKAlSCHVzZXJVdWlkEh'
+        'QKBWxpbWl0GAIgASgFUgVsaW1pdBIWCgZvZmZzZXQYAyABKAVSBm9mZnNldA==');
+
+@$core.Deprecated('Use listUserProfilesResponseDescriptor instead')
+const ListUserProfilesResponse$json = {
+  '1': 'ListUserProfilesResponse',
+  '2': [
+    {
+      '1': 'profiles',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.v1.UserProfile',
+      '10': 'profiles'
+    },
+    {'1': 'total_count', '3': 2, '4': 1, '5': 5, '10': 'totalCount'},
+    {'1': 'limit', '3': 3, '4': 1, '5': 5, '10': 'limit'},
+    {'1': 'offset', '3': 4, '4': 1, '5': 5, '10': 'offset'},
+    {'1': 'has_more', '3': 5, '4': 1, '5': 8, '10': 'hasMore'},
+  ],
+};
+
+/// Descriptor for `ListUserProfilesResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listUserProfilesResponseDescriptor = $convert.base64Decode(
+    'ChhMaXN0VXNlclByb2ZpbGVzUmVzcG9uc2USKwoIcHJvZmlsZXMYASADKAsyDy52MS5Vc2VyUH'
+    'JvZmlsZVIIcHJvZmlsZXMSHwoLdG90YWxfY291bnQYAiABKAVSCnRvdGFsQ291bnQSFAoFbGlt'
+    'aXQYAyABKAVSBWxpbWl0EhYKBm9mZnNldBgEIAEoBVIGb2Zmc2V0EhkKCGhhc19tb3JlGAUgAS'
+    'gIUgdoYXNNb3Jl');
+
+@$core.Deprecated('Use updateProfileRequestDescriptor instead')
+const UpdateProfileRequest$json = {
+  '1': 'UpdateProfileRequest',
+  '2': [
+    {'1': 'profile_uuid', '3': 1, '4': 1, '5': 9, '10': 'profileUuid'},
+    {
+      '1': 'profile_name',
+      '3': 2,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'profileName',
+      '17': true
+    },
+    {
+      '1': 'first_name',
+      '3': 3,
+      '4': 1,
+      '5': 9,
+      '9': 1,
+      '10': 'firstName',
+      '17': true
+    },
+    {
+      '1': 'last_name',
+      '3': 4,
+      '4': 1,
+      '5': 9,
+      '9': 2,
+      '10': 'lastName',
+      '17': true
+    },
+    {
+      '1': 'display_name',
+      '3': 5,
+      '4': 1,
+      '5': 9,
+      '9': 3,
+      '10': 'displayName',
+      '17': true
+    },
+    {'1': 'bio', '3': 6, '4': 1, '5': 9, '9': 4, '10': 'bio', '17': true},
+    {
+      '1': 'avatar_url',
+      '3': 7,
+      '4': 1,
+      '5': 9,
+      '9': 5,
+      '10': 'avatarUrl',
+      '17': true
+    },
+    {
+      '1': 'date_of_birth',
+      '3': 8,
+      '4': 1,
+      '5': 3,
+      '9': 6,
+      '10': 'dateOfBirth',
+      '17': true
+    },
+    {'1': 'gender', '3': 9, '4': 1, '5': 9, '9': 7, '10': 'gender', '17': true},
+    {
+      '1': 'timezone',
+      '3': 10,
+      '4': 1,
+      '5': 9,
+      '9': 8,
+      '10': 'timezone',
+      '17': true
+    },
+    {
+      '1': 'locale',
+      '3': 11,
+      '4': 1,
+      '5': 9,
+      '9': 9,
+      '10': 'locale',
+      '17': true
+    },
+    {
+      '1': 'country',
+      '3': 12,
+      '4': 1,
+      '5': 9,
+      '9': 10,
+      '10': 'country',
+      '17': true
+    },
+    {'1': 'city', '3': 13, '4': 1, '5': 9, '9': 11, '10': 'city', '17': true},
+    {
+      '1': 'address',
+      '3': 14,
+      '4': 1,
+      '5': 9,
+      '9': 12,
+      '10': 'address',
+      '17': true
+    },
+    {
+      '1': 'postal_code',
+      '3': 15,
+      '4': 1,
+      '5': 9,
+      '9': 13,
+      '10': 'postalCode',
+      '17': true
+    },
+    {
+      '1': 'website_url',
+      '3': 16,
+      '4': 1,
+      '5': 9,
+      '9': 14,
+      '10': 'websiteUrl',
+      '17': true
+    },
+    {'1': 'metadata', '3': 17, '4': 1, '5': 12, '10': 'metadata'},
+  ],
+  '8': [
+    {'1': '_profile_name'},
+    {'1': '_first_name'},
+    {'1': '_last_name'},
+    {'1': '_display_name'},
+    {'1': '_bio'},
+    {'1': '_avatar_url'},
+    {'1': '_date_of_birth'},
+    {'1': '_gender'},
+    {'1': '_timezone'},
+    {'1': '_locale'},
+    {'1': '_country'},
+    {'1': '_city'},
+    {'1': '_address'},
+    {'1': '_postal_code'},
+    {'1': '_website_url'},
+  ],
+};
+
+/// Descriptor for `UpdateProfileRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateProfileRequestDescriptor = $convert.base64Decode(
+    'ChRVcGRhdGVQcm9maWxlUmVxdWVzdBIhCgxwcm9maWxlX3V1aWQYASABKAlSC3Byb2ZpbGVVdW'
+    'lkEiYKDHByb2ZpbGVfbmFtZRgCIAEoCUgAUgtwcm9maWxlTmFtZYgBARIiCgpmaXJzdF9uYW1l'
+    'GAMgASgJSAFSCWZpcnN0TmFtZYgBARIgCglsYXN0X25hbWUYBCABKAlIAlIIbGFzdE5hbWWIAQ'
+    'ESJgoMZGlzcGxheV9uYW1lGAUgASgJSANSC2Rpc3BsYXlOYW1liAEBEhUKA2JpbxgGIAEoCUgE'
+    'UgNiaW+IAQESIgoKYXZhdGFyX3VybBgHIAEoCUgFUglhdmF0YXJVcmyIAQESJwoNZGF0ZV9vZl'
+    '9iaXJ0aBgIIAEoA0gGUgtkYXRlT2ZCaXJ0aIgBARIbCgZnZW5kZXIYCSABKAlIB1IGZ2VuZGVy'
+    'iAEBEh8KCHRpbWV6b25lGAogASgJSAhSCHRpbWV6b25liAEBEhsKBmxvY2FsZRgLIAEoCUgJUg'
+    'Zsb2NhbGWIAQESHQoHY291bnRyeRgMIAEoCUgKUgdjb3VudHJ5iAEBEhcKBGNpdHkYDSABKAlI'
+    'C1IEY2l0eYgBARIdCgdhZGRyZXNzGA4gASgJSAxSB2FkZHJlc3OIAQESJAoLcG9zdGFsX2NvZG'
+    'UYDyABKAlIDVIKcG9zdGFsQ29kZYgBARIkCgt3ZWJzaXRlX3VybBgQIAEoCUgOUgp3ZWJzaXRl'
+    'VXJsiAEBEhoKCG1ldGFkYXRhGBEgASgMUghtZXRhZGF0YUIPCg1fcHJvZmlsZV9uYW1lQg0KC1'
+    '9maXJzdF9uYW1lQgwKCl9sYXN0X25hbWVCDwoNX2Rpc3BsYXlfbmFtZUIGCgRfYmlvQg0KC19h'
+    'dmF0YXJfdXJsQhAKDl9kYXRlX29mX2JpcnRoQgkKB19nZW5kZXJCCwoJX3RpbWV6b25lQgkKB1'
+    '9sb2NhbGVCCgoIX2NvdW50cnlCBwoFX2NpdHlCCgoIX2FkZHJlc3NCDgoMX3Bvc3RhbF9jb2Rl'
+    'Qg4KDF93ZWJzaXRlX3VybA==');
+
+@$core.Deprecated('Use updateProfileResponseDescriptor instead')
+const UpdateProfileResponse$json = {
+  '1': 'UpdateProfileResponse',
+  '2': [
+    {
+      '1': 'profile',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.v1.UserProfile',
+      '10': 'profile'
+    },
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `UpdateProfileResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateProfileResponseDescriptor = $convert.base64Decode(
+    'ChVVcGRhdGVQcm9maWxlUmVzcG9uc2USKQoHcHJvZmlsZRgBIAEoCzIPLnYxLlVzZXJQcm9maW'
+    'xlUgdwcm9maWxlEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2U=');
+
+@$core.Deprecated('Use deleteProfileRequestDescriptor instead')
+const DeleteProfileRequest$json = {
+  '1': 'DeleteProfileRequest',
+  '2': [
+    {'1': 'profile_uuid', '3': 1, '4': 1, '5': 9, '10': 'profileUuid'},
+  ],
+};
+
+/// Descriptor for `DeleteProfileRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteProfileRequestDescriptor = $convert.base64Decode(
+    'ChREZWxldGVQcm9maWxlUmVxdWVzdBIhCgxwcm9maWxlX3V1aWQYASABKAlSC3Byb2ZpbGVVdW'
+    'lk');
+
+@$core.Deprecated('Use deleteProfileResponseDescriptor instead')
+const DeleteProfileResponse$json = {
+  '1': 'DeleteProfileResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `DeleteProfileResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteProfileResponseDescriptor = $convert.base64Decode(
+    'ChVEZWxldGVQcm9maWxlUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCgdtZX'
+    'NzYWdlGAIgASgJUgdtZXNzYWdl');
 
 @$core.Deprecated('Use getUserRequestDescriptor instead')
 const GetUserRequest$json = {
@@ -859,3 +1225,369 @@ const DeleteUserResponse$json = {
 final $typed_data.Uint8List deleteUserResponseDescriptor = $convert.base64Decode(
     'ChJEZWxldGVVc2VyUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCgdtZXNzYW'
     'dlGAIgASgJUgdtZXNzYWdl');
+
+@$core.Deprecated('Use signInRequestDescriptor instead')
+const SignInRequest$json = {
+  '1': 'SignInRequest',
+  '2': [
+    {'1': 'identifier', '3': 1, '4': 1, '5': 9, '10': 'identifier'},
+    {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
+    {
+      '1': 'device_id',
+      '3': 3,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'deviceId',
+      '17': true
+    },
+    {
+      '1': 'device_name',
+      '3': 4,
+      '4': 1,
+      '5': 9,
+      '9': 1,
+      '10': 'deviceName',
+      '17': true
+    },
+    {
+      '1': 'device_type',
+      '3': 5,
+      '4': 1,
+      '5': 9,
+      '9': 2,
+      '10': 'deviceType',
+      '17': true
+    },
+    {
+      '1': 'remember_me',
+      '3': 6,
+      '4': 1,
+      '5': 8,
+      '9': 3,
+      '10': 'rememberMe',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_device_id'},
+    {'1': '_device_name'},
+    {'1': '_device_type'},
+    {'1': '_remember_me'},
+  ],
+};
+
+/// Descriptor for `SignInRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signInRequestDescriptor = $convert.base64Decode(
+    'Cg1TaWduSW5SZXF1ZXN0Eh4KCmlkZW50aWZpZXIYASABKAlSCmlkZW50aWZpZXISGgoIcGFzc3'
+    'dvcmQYAiABKAlSCHBhc3N3b3JkEiAKCWRldmljZV9pZBgDIAEoCUgAUghkZXZpY2VJZIgBARIk'
+    'CgtkZXZpY2VfbmFtZRgEIAEoCUgBUgpkZXZpY2VOYW1liAEBEiQKC2RldmljZV90eXBlGAUgAS'
+    'gJSAJSCmRldmljZVR5cGWIAQESJAoLcmVtZW1iZXJfbWUYBiABKAhIA1IKcmVtZW1iZXJNZYgB'
+    'AUIMCgpfZGV2aWNlX2lkQg4KDF9kZXZpY2VfbmFtZUIOCgxfZGV2aWNlX3R5cGVCDgoMX3JlbW'
+    'VtYmVyX21l');
+
+@$core.Deprecated('Use signInResponseDescriptor instead')
+const SignInResponse$json = {
+  '1': 'SignInResponse',
+  '2': [
+    {'1': 'access_token', '3': 1, '4': 1, '5': 9, '10': 'accessToken'},
+    {'1': 'refresh_token', '3': 2, '4': 1, '5': 9, '10': 'refreshToken'},
+    {'1': 'expires_at', '3': 3, '4': 1, '5': 3, '10': 'expiresAt'},
+    {
+      '1': 'refresh_expires_at',
+      '3': 4,
+      '4': 1,
+      '5': 3,
+      '10': 'refreshExpiresAt'
+    },
+    {'1': 'user', '3': 5, '4': 1, '5': 11, '6': '.v1.User', '10': 'user'},
+    {
+      '1': 'profile',
+      '3': 6,
+      '4': 1,
+      '5': 11,
+      '6': '.v1.UserProfile',
+      '10': 'profile'
+    },
+    {'1': 'session_id', '3': 7, '4': 1, '5': 9, '10': 'sessionId'},
+    {'1': 'message', '3': 8, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `SignInResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signInResponseDescriptor = $convert.base64Decode(
+    'Cg5TaWduSW5SZXNwb25zZRIhCgxhY2Nlc3NfdG9rZW4YASABKAlSC2FjY2Vzc1Rva2VuEiMKDX'
+    'JlZnJlc2hfdG9rZW4YAiABKAlSDHJlZnJlc2hUb2tlbhIdCgpleHBpcmVzX2F0GAMgASgDUgll'
+    'eHBpcmVzQXQSLAoScmVmcmVzaF9leHBpcmVzX2F0GAQgASgDUhByZWZyZXNoRXhwaXJlc0F0Eh'
+    'wKBHVzZXIYBSABKAsyCC52MS5Vc2VyUgR1c2VyEikKB3Byb2ZpbGUYBiABKAsyDy52MS5Vc2Vy'
+    'UHJvZmlsZVIHcHJvZmlsZRIdCgpzZXNzaW9uX2lkGAcgASgJUglzZXNzaW9uSWQSGAoHbWVzc2'
+    'FnZRgIIAEoCVIHbWVzc2FnZQ==');
+
+@$core.Deprecated('Use refreshTokenRequestDescriptor instead')
+const RefreshTokenRequest$json = {
+  '1': 'RefreshTokenRequest',
+  '2': [
+    {'1': 'refresh_token', '3': 1, '4': 1, '5': 9, '10': 'refreshToken'},
+    {
+      '1': 'device_id',
+      '3': 2,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'deviceId',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_device_id'},
+  ],
+};
+
+/// Descriptor for `RefreshTokenRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List refreshTokenRequestDescriptor = $convert.base64Decode(
+    'ChNSZWZyZXNoVG9rZW5SZXF1ZXN0EiMKDXJlZnJlc2hfdG9rZW4YASABKAlSDHJlZnJlc2hUb2'
+    'tlbhIgCglkZXZpY2VfaWQYAiABKAlIAFIIZGV2aWNlSWSIAQFCDAoKX2RldmljZV9pZA==');
+
+@$core.Deprecated('Use refreshTokenResponseDescriptor instead')
+const RefreshTokenResponse$json = {
+  '1': 'RefreshTokenResponse',
+  '2': [
+    {'1': 'access_token', '3': 1, '4': 1, '5': 9, '10': 'accessToken'},
+    {'1': 'refresh_token', '3': 2, '4': 1, '5': 9, '10': 'refreshToken'},
+    {'1': 'expires_at', '3': 3, '4': 1, '5': 3, '10': 'expiresAt'},
+    {
+      '1': 'refresh_expires_at',
+      '3': 4,
+      '4': 1,
+      '5': 3,
+      '10': 'refreshExpiresAt'
+    },
+    {'1': 'message', '3': 5, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `RefreshTokenResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List refreshTokenResponseDescriptor = $convert.base64Decode(
+    'ChRSZWZyZXNoVG9rZW5SZXNwb25zZRIhCgxhY2Nlc3NfdG9rZW4YASABKAlSC2FjY2Vzc1Rva2'
+    'VuEiMKDXJlZnJlc2hfdG9rZW4YAiABKAlSDHJlZnJlc2hUb2tlbhIdCgpleHBpcmVzX2F0GAMg'
+    'ASgDUglleHBpcmVzQXQSLAoScmVmcmVzaF9leHBpcmVzX2F0GAQgASgDUhByZWZyZXNoRXhwaX'
+    'Jlc0F0EhgKB21lc3NhZ2UYBSABKAlSB21lc3NhZ2U=');
+
+@$core.Deprecated('Use logoutRequestDescriptor instead')
+const LogoutRequest$json = {
+  '1': 'LogoutRequest',
+  '2': [
+    {
+      '1': 'session_id',
+      '3': 1,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'sessionId',
+      '17': true
+    },
+    {
+      '1': 'all_sessions',
+      '3': 2,
+      '4': 1,
+      '5': 8,
+      '9': 1,
+      '10': 'allSessions',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_session_id'},
+    {'1': '_all_sessions'},
+  ],
+};
+
+/// Descriptor for `LogoutRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List logoutRequestDescriptor = $convert.base64Decode(
+    'Cg1Mb2dvdXRSZXF1ZXN0EiIKCnNlc3Npb25faWQYASABKAlIAFIJc2Vzc2lvbklkiAEBEiYKDG'
+    'FsbF9zZXNzaW9ucxgCIAEoCEgBUgthbGxTZXNzaW9uc4gBAUINCgtfc2Vzc2lvbl9pZEIPCg1f'
+    'YWxsX3Nlc3Npb25z');
+
+@$core.Deprecated('Use logoutResponseDescriptor instead')
+const LogoutResponse$json = {
+  '1': 'LogoutResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+    {
+      '1': 'sessions_terminated',
+      '3': 3,
+      '4': 1,
+      '5': 5,
+      '10': 'sessionsTerminated'
+    },
+  ],
+};
+
+/// Descriptor for `LogoutResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List logoutResponseDescriptor = $convert.base64Decode(
+    'Cg5Mb2dvdXRSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEhgKB21lc3NhZ2UYAi'
+    'ABKAlSB21lc3NhZ2USLwoTc2Vzc2lvbnNfdGVybWluYXRlZBgDIAEoBVISc2Vzc2lvbnNUZXJt'
+    'aW5hdGVk');
+
+@$core.Deprecated('Use validateTokenRequestDescriptor instead')
+const ValidateTokenRequest$json = {
+  '1': 'ValidateTokenRequest',
+  '2': [
+    {'1': 'access_token', '3': 1, '4': 1, '5': 9, '10': 'accessToken'},
+  ],
+};
+
+/// Descriptor for `ValidateTokenRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List validateTokenRequestDescriptor = $convert.base64Decode(
+    'ChRWYWxpZGF0ZVRva2VuUmVxdWVzdBIhCgxhY2Nlc3NfdG9rZW4YASABKAlSC2FjY2Vzc1Rva2'
+    'Vu');
+
+@$core.Deprecated('Use validateTokenResponseDescriptor instead')
+const ValidateTokenResponse$json = {
+  '1': 'ValidateTokenResponse',
+  '2': [
+    {'1': 'valid', '3': 1, '4': 1, '5': 8, '10': 'valid'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+    {
+      '1': 'user',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.v1.User',
+      '9': 0,
+      '10': 'user',
+      '17': true
+    },
+    {
+      '1': 'expires_at',
+      '3': 4,
+      '4': 1,
+      '5': 3,
+      '9': 1,
+      '10': 'expiresAt',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_user'},
+    {'1': '_expires_at'},
+  ],
+};
+
+/// Descriptor for `ValidateTokenResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List validateTokenResponseDescriptor = $convert.base64Decode(
+    'ChVWYWxpZGF0ZVRva2VuUmVzcG9uc2USFAoFdmFsaWQYASABKAhSBXZhbGlkEhgKB21lc3NhZ2'
+    'UYAiABKAlSB21lc3NhZ2USIQoEdXNlchgDIAEoCzIILnYxLlVzZXJIAFIEdXNlcogBARIiCgpl'
+    'eHBpcmVzX2F0GAQgASgDSAFSCWV4cGlyZXNBdIgBAUIHCgVfdXNlckINCgtfZXhwaXJlc19hdA'
+    '==');
+
+@$core.Deprecated('Use sessionDescriptor instead')
+const Session$json = {
+  '1': 'Session',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'user_id', '3': 2, '4': 1, '5': 9, '10': 'userId'},
+    {'1': 'device_id', '3': 3, '4': 1, '5': 9, '10': 'deviceId'},
+    {'1': 'device_name', '3': 4, '4': 1, '5': 9, '10': 'deviceName'},
+    {'1': 'device_type', '3': 5, '4': 1, '5': 9, '10': 'deviceType'},
+    {'1': 'user_agent', '3': 6, '4': 1, '5': 9, '10': 'userAgent'},
+    {'1': 'ip_address', '3': 7, '4': 1, '5': 9, '10': 'ipAddress'},
+    {'1': 'location', '3': 8, '4': 1, '5': 9, '10': 'location'},
+    {'1': 'is_active', '3': 9, '4': 1, '5': 8, '10': 'isActive'},
+    {'1': 'expires_at', '3': 10, '4': 1, '5': 3, '10': 'expiresAt'},
+    {'1': 'last_activity_at', '3': 11, '4': 1, '5': 3, '10': 'lastActivityAt'},
+    {'1': 'created_at', '3': 12, '4': 1, '5': 3, '10': 'createdAt'},
+  ],
+};
+
+/// Descriptor for `Session`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List sessionDescriptor = $convert.base64Decode(
+    'CgdTZXNzaW9uEg4KAmlkGAEgASgJUgJpZBIXCgd1c2VyX2lkGAIgASgJUgZ1c2VySWQSGwoJZG'
+    'V2aWNlX2lkGAMgASgJUghkZXZpY2VJZBIfCgtkZXZpY2VfbmFtZRgEIAEoCVIKZGV2aWNlTmFt'
+    'ZRIfCgtkZXZpY2VfdHlwZRgFIAEoCVIKZGV2aWNlVHlwZRIdCgp1c2VyX2FnZW50GAYgASgJUg'
+    'l1c2VyQWdlbnQSHQoKaXBfYWRkcmVzcxgHIAEoCVIJaXBBZGRyZXNzEhoKCGxvY2F0aW9uGAgg'
+    'ASgJUghsb2NhdGlvbhIbCglpc19hY3RpdmUYCSABKAhSCGlzQWN0aXZlEh0KCmV4cGlyZXNfYX'
+    'QYCiABKANSCWV4cGlyZXNBdBIoChBsYXN0X2FjdGl2aXR5X2F0GAsgASgDUg5sYXN0QWN0aXZp'
+    'dHlBdBIdCgpjcmVhdGVkX2F0GAwgASgDUgljcmVhdGVkQXQ=');
+
+@$core.Deprecated('Use listUserSessionsRequestDescriptor instead')
+const ListUserSessionsRequest$json = {
+  '1': 'ListUserSessionsRequest',
+  '2': [
+    {'1': 'user_uuid', '3': 1, '4': 1, '5': 9, '10': 'userUuid'},
+    {'1': 'limit', '3': 2, '4': 1, '5': 5, '10': 'limit'},
+    {'1': 'offset', '3': 3, '4': 1, '5': 5, '10': 'offset'},
+    {
+      '1': 'active_only',
+      '3': 4,
+      '4': 1,
+      '5': 8,
+      '9': 0,
+      '10': 'activeOnly',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_active_only'},
+  ],
+};
+
+/// Descriptor for `ListUserSessionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listUserSessionsRequestDescriptor = $convert.base64Decode(
+    'ChdMaXN0VXNlclNlc3Npb25zUmVxdWVzdBIbCgl1c2VyX3V1aWQYASABKAlSCHVzZXJVdWlkEh'
+    'QKBWxpbWl0GAIgASgFUgVsaW1pdBIWCgZvZmZzZXQYAyABKAVSBm9mZnNldBIkCgthY3RpdmVf'
+    'b25seRgEIAEoCEgAUgphY3RpdmVPbmx5iAEBQg4KDF9hY3RpdmVfb25seQ==');
+
+@$core.Deprecated('Use listUserSessionsResponseDescriptor instead')
+const ListUserSessionsResponse$json = {
+  '1': 'ListUserSessionsResponse',
+  '2': [
+    {
+      '1': 'sessions',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.v1.Session',
+      '10': 'sessions'
+    },
+    {'1': 'total_count', '3': 2, '4': 1, '5': 5, '10': 'totalCount'},
+    {'1': 'limit', '3': 3, '4': 1, '5': 5, '10': 'limit'},
+    {'1': 'offset', '3': 4, '4': 1, '5': 5, '10': 'offset'},
+  ],
+};
+
+/// Descriptor for `ListUserSessionsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listUserSessionsResponseDescriptor = $convert.base64Decode(
+    'ChhMaXN0VXNlclNlc3Npb25zUmVzcG9uc2USJwoIc2Vzc2lvbnMYASADKAsyCy52MS5TZXNzaW'
+    '9uUghzZXNzaW9ucxIfCgt0b3RhbF9jb3VudBgCIAEoBVIKdG90YWxDb3VudBIUCgVsaW1pdBgD'
+    'IAEoBVIFbGltaXQSFgoGb2Zmc2V0GAQgASgFUgZvZmZzZXQ=');
+
+@$core.Deprecated('Use terminateSessionRequestDescriptor instead')
+const TerminateSessionRequest$json = {
+  '1': 'TerminateSessionRequest',
+  '2': [
+    {'1': 'session_id', '3': 1, '4': 1, '5': 9, '10': 'sessionId'},
+  ],
+};
+
+/// Descriptor for `TerminateSessionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List terminateSessionRequestDescriptor =
+    $convert.base64Decode(
+        'ChdUZXJtaW5hdGVTZXNzaW9uUmVxdWVzdBIdCgpzZXNzaW9uX2lkGAEgASgJUglzZXNzaW9uSW'
+        'Q=');
+
+@$core.Deprecated('Use terminateSessionResponseDescriptor instead')
+const TerminateSessionResponse$json = {
+  '1': 'TerminateSessionResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `TerminateSessionResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List terminateSessionResponseDescriptor =
+    $convert.base64Decode(
+        'ChhUZXJtaW5hdGVTZXNzaW9uUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCg'
+        'dtZXNzYWdlGAIgASgJUgdtZXNzYWdl');

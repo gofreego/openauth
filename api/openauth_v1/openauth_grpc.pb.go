@@ -40,6 +40,12 @@ const (
 	OpenAuth_ListUserProfiles_FullMethodName   = "/v1.OpenAuth/ListUserProfiles"
 	OpenAuth_UpdateProfile_FullMethodName      = "/v1.OpenAuth/UpdateProfile"
 	OpenAuth_DeleteProfile_FullMethodName      = "/v1.OpenAuth/DeleteProfile"
+	OpenAuth_SignIn_FullMethodName             = "/v1.OpenAuth/SignIn"
+	OpenAuth_RefreshToken_FullMethodName       = "/v1.OpenAuth/RefreshToken"
+	OpenAuth_Logout_FullMethodName             = "/v1.OpenAuth/Logout"
+	OpenAuth_ValidateToken_FullMethodName      = "/v1.OpenAuth/ValidateToken"
+	OpenAuth_ListUserSessions_FullMethodName   = "/v1.OpenAuth/ListUserSessions"
+	OpenAuth_TerminateSession_FullMethodName   = "/v1.OpenAuth/TerminateSession"
 )
 
 // OpenAuthClient is the client API for OpenAuth service.
@@ -194,6 +200,41 @@ type OpenAuthClient interface {
 	// Users must have at least one profile, so deletion of the last
 	// profile may be restricted based on business rules.
 	DeleteProfile(ctx context.Context, in *DeleteProfileRequest, opts ...grpc.CallOption) (*DeleteProfileResponse, error)
+	// SignIn authenticates a user and creates a new session.
+	//
+	// Supports multiple login methods:
+	// - Username + password
+	// - Email + password
+	// - Phone + password
+	//
+	// Returns access token, refresh token, and user information.
+	// Tracks device information and manages session security.
+	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	// RefreshToken generates new access token using refresh token.
+	//
+	// Implements token rotation for enhanced security where each refresh
+	// generates a new refresh token and invalidates the old one.
+	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	// Logout terminates user session(s).
+	//
+	// Can logout from current session or all sessions across devices.
+	// Invalidates tokens and cleans up session data.
+	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	// ValidateToken checks if an access token is valid and active.
+	//
+	// Used for authentication middleware and token verification.
+	// Returns user information if token is valid.
+	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
+	// ListUserSessions retrieves active sessions for a user.
+	//
+	// Shows all devices and sessions where the user is logged in.
+	// Useful for security management and device tracking.
+	ListUserSessions(ctx context.Context, in *ListUserSessionsRequest, opts ...grpc.CallOption) (*ListUserSessionsResponse, error)
+	// TerminateSession ends a specific user session.
+	//
+	// Allows users to logout from specific devices remotely.
+	// Useful for security when a device is lost or compromised.
+	TerminateSession(ctx context.Context, in *TerminateSessionRequest, opts ...grpc.CallOption) (*TerminateSessionResponse, error)
 }
 
 type openAuthClient struct {
@@ -414,6 +455,66 @@ func (c *openAuthClient) DeleteProfile(ctx context.Context, in *DeleteProfileReq
 	return out, nil
 }
 
+func (c *openAuthClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_SignIn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RefreshTokenResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_RefreshToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LogoutResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_Logout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ValidateTokenResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ValidateToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ListUserSessions(ctx context.Context, in *ListUserSessionsRequest, opts ...grpc.CallOption) (*ListUserSessionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserSessionsResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ListUserSessions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) TerminateSession(ctx context.Context, in *TerminateSessionRequest, opts ...grpc.CallOption) (*TerminateSessionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TerminateSessionResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_TerminateSession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenAuthServer is the server API for OpenAuth service.
 // All implementations must embed UnimplementedOpenAuthServer
 // for forward compatibility.
@@ -566,6 +667,41 @@ type OpenAuthServer interface {
 	// Users must have at least one profile, so deletion of the last
 	// profile may be restricted based on business rules.
 	DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error)
+	// SignIn authenticates a user and creates a new session.
+	//
+	// Supports multiple login methods:
+	// - Username + password
+	// - Email + password
+	// - Phone + password
+	//
+	// Returns access token, refresh token, and user information.
+	// Tracks device information and manages session security.
+	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
+	// RefreshToken generates new access token using refresh token.
+	//
+	// Implements token rotation for enhanced security where each refresh
+	// generates a new refresh token and invalidates the old one.
+	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
+	// Logout terminates user session(s).
+	//
+	// Can logout from current session or all sessions across devices.
+	// Invalidates tokens and cleans up session data.
+	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	// ValidateToken checks if an access token is valid and active.
+	//
+	// Used for authentication middleware and token verification.
+	// Returns user information if token is valid.
+	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
+	// ListUserSessions retrieves active sessions for a user.
+	//
+	// Shows all devices and sessions where the user is logged in.
+	// Useful for security management and device tracking.
+	ListUserSessions(context.Context, *ListUserSessionsRequest) (*ListUserSessionsResponse, error)
+	// TerminateSession ends a specific user session.
+	//
+	// Allows users to logout from specific devices remotely.
+	// Useful for security when a device is lost or compromised.
+	TerminateSession(context.Context, *TerminateSessionRequest) (*TerminateSessionResponse, error)
 	mustEmbedUnimplementedOpenAuthServer()
 }
 
@@ -638,6 +774,24 @@ func (UnimplementedOpenAuthServer) UpdateProfile(context.Context, *UpdateProfile
 }
 func (UnimplementedOpenAuthServer) DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProfile not implemented")
+}
+func (UnimplementedOpenAuthServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
+}
+func (UnimplementedOpenAuthServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
+}
+func (UnimplementedOpenAuthServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedOpenAuthServer) ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateToken not implemented")
+}
+func (UnimplementedOpenAuthServer) ListUserSessions(context.Context, *ListUserSessionsRequest) (*ListUserSessionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserSessions not implemented")
+}
+func (UnimplementedOpenAuthServer) TerminateSession(context.Context, *TerminateSessionRequest) (*TerminateSessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TerminateSession not implemented")
 }
 func (UnimplementedOpenAuthServer) mustEmbedUnimplementedOpenAuthServer() {}
 func (UnimplementedOpenAuthServer) testEmbeddedByValue()                  {}
@@ -1038,6 +1192,114 @@ func _OpenAuth_DeleteProfile_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).SignIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_SignIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).SignIn(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).RefreshToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_RefreshToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_Logout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).Logout(ctx, req.(*LogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ValidateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ValidateToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ValidateToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ValidateToken(ctx, req.(*ValidateTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ListUserSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserSessionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ListUserSessions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ListUserSessions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ListUserSessions(ctx, req.(*ListUserSessionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_TerminateSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TerminateSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).TerminateSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_TerminateSession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).TerminateSession(ctx, req.(*TerminateSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenAuth_ServiceDesc is the grpc.ServiceDesc for OpenAuth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1128,6 +1390,30 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProfile",
 			Handler:    _OpenAuth_DeleteProfile_Handler,
+		},
+		{
+			MethodName: "SignIn",
+			Handler:    _OpenAuth_SignIn_Handler,
+		},
+		{
+			MethodName: "RefreshToken",
+			Handler:    _OpenAuth_RefreshToken_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _OpenAuth_Logout_Handler,
+		},
+		{
+			MethodName: "ValidateToken",
+			Handler:    _OpenAuth_ValidateToken_Handler,
+		},
+		{
+			MethodName: "ListUserSessions",
+			Handler:    _OpenAuth_ListUserSessions_Handler,
+		},
+		{
+			MethodName: "TerminateSession",
+			Handler:    _OpenAuth_TerminateSession_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

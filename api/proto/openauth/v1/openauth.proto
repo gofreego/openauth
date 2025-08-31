@@ -282,5 +282,76 @@ service OpenAuth {
             delete: "/openauth/v1/profiles/{profile_uuid}"
         };
     }
+
+    // ===== AUTHENTICATION & SESSION MANAGEMENT =====
+
+    // SignIn authenticates a user and creates a new session.
+    //
+    // Supports multiple login methods:
+    // - Username + password
+    // - Email + password  
+    // - Phone + password
+    //
+    // Returns access token, refresh token, and user information.
+    // Tracks device information and manages session security.
+    rpc SignIn (SignInRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/auth/signin"
+            body: "*"
+        };
+    }
+
+    // RefreshToken generates new access token using refresh token.
+    //
+    // Implements token rotation for enhanced security where each refresh
+    // generates a new refresh token and invalidates the old one.
+    rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/auth/refresh"
+            body: "*"
+        };
+    }
+
+    // Logout terminates user session(s).
+    //
+    // Can logout from current session or all sessions across devices.
+    // Invalidates tokens and cleans up session data.
+    rpc Logout (LogoutRequest) returns (LogoutResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/auth/logout"
+            body: "*"
+        };
+    }
+
+    // ValidateToken checks if an access token is valid and active.
+    //
+    // Used for authentication middleware and token verification.
+    // Returns user information if token is valid.
+    rpc ValidateToken (ValidateTokenRequest) returns (ValidateTokenResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/auth/validate"
+            body: "*"
+        };
+    }
+
+    // ListUserSessions retrieves active sessions for a user.
+    //
+    // Shows all devices and sessions where the user is logged in.
+    // Useful for security management and device tracking.
+    rpc ListUserSessions (ListUserSessionsRequest) returns (ListUserSessionsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/{user_uuid}/sessions"
+        };
+    }
+
+    // TerminateSession ends a specific user session.
+    //
+    // Allows users to logout from specific devices remotely.
+    // Useful for security when a device is lost or compromised.
+    rpc TerminateSession (TerminateSessionRequest) returns (TerminateSessionResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/sessions/{session_id}"
+        };
+    }
 }
 

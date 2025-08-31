@@ -118,6 +118,66 @@ const $core.Map<$core.String, $core.dynamic> OpenAuthServiceBase$json = {
       '3': '.v1.DeleteUserResponse',
       '4': {}
     },
+    {
+      '1': 'CreateProfile',
+      '2': '.v1.CreateProfileRequest',
+      '3': '.v1.CreateProfileResponse',
+      '4': {}
+    },
+    {
+      '1': 'ListUserProfiles',
+      '2': '.v1.ListUserProfilesRequest',
+      '3': '.v1.ListUserProfilesResponse',
+      '4': {}
+    },
+    {
+      '1': 'UpdateProfile',
+      '2': '.v1.UpdateProfileRequest',
+      '3': '.v1.UpdateProfileResponse',
+      '4': {}
+    },
+    {
+      '1': 'DeleteProfile',
+      '2': '.v1.DeleteProfileRequest',
+      '3': '.v1.DeleteProfileResponse',
+      '4': {}
+    },
+    {
+      '1': 'SignIn',
+      '2': '.v1.SignInRequest',
+      '3': '.v1.SignInResponse',
+      '4': {}
+    },
+    {
+      '1': 'RefreshToken',
+      '2': '.v1.RefreshTokenRequest',
+      '3': '.v1.RefreshTokenResponse',
+      '4': {}
+    },
+    {
+      '1': 'Logout',
+      '2': '.v1.LogoutRequest',
+      '3': '.v1.LogoutResponse',
+      '4': {}
+    },
+    {
+      '1': 'ValidateToken',
+      '2': '.v1.ValidateTokenRequest',
+      '3': '.v1.ValidateTokenResponse',
+      '4': {}
+    },
+    {
+      '1': 'ListUserSessions',
+      '2': '.v1.ListUserSessionsRequest',
+      '3': '.v1.ListUserSessionsResponse',
+      '4': {}
+    },
+    {
+      '1': 'TerminateSession',
+      '2': '.v1.TerminateSessionRequest',
+      '3': '.v1.TerminateSessionResponse',
+      '4': {}
+    },
   ],
 };
 
@@ -137,7 +197,6 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.v1.SignUpRequest': $2.SignUpRequest$json,
   '.v1.SignUpResponse': $2.SignUpResponse$json,
   '.v1.User': $2.User$json,
-  '.v1.UserProfile': $2.UserProfile$json,
   '.v1.VerifyEmailRequest': $2.VerifyEmailRequest$json,
   '.v1.VerificationResponse': $2.VerificationResponse$json,
   '.v1.VerifyPhoneRequest': $2.VerifyPhoneRequest$json,
@@ -149,6 +208,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.v1.CheckEmailResponse': $2.CheckEmailResponse$json,
   '.v1.GetUserRequest': $2.GetUserRequest$json,
   '.v1.GetUserResponse': $2.GetUserResponse$json,
+  '.v1.UserProfile': $2.UserProfile$json,
   '.v1.UpdateUserRequest': $2.UpdateUserRequest$json,
   '.v1.UpdateUserResponse': $2.UpdateUserResponse$json,
   '.v1.ChangePasswordRequest': $2.ChangePasswordRequest$json,
@@ -157,6 +217,27 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.v1.ListUsersResponse': $2.ListUsersResponse$json,
   '.v1.DeleteUserRequest': $2.DeleteUserRequest$json,
   '.v1.DeleteUserResponse': $2.DeleteUserResponse$json,
+  '.v1.CreateProfileRequest': $2.CreateProfileRequest$json,
+  '.v1.CreateProfileResponse': $2.CreateProfileResponse$json,
+  '.v1.ListUserProfilesRequest': $2.ListUserProfilesRequest$json,
+  '.v1.ListUserProfilesResponse': $2.ListUserProfilesResponse$json,
+  '.v1.UpdateProfileRequest': $2.UpdateProfileRequest$json,
+  '.v1.UpdateProfileResponse': $2.UpdateProfileResponse$json,
+  '.v1.DeleteProfileRequest': $2.DeleteProfileRequest$json,
+  '.v1.DeleteProfileResponse': $2.DeleteProfileResponse$json,
+  '.v1.SignInRequest': $2.SignInRequest$json,
+  '.v1.SignInResponse': $2.SignInResponse$json,
+  '.v1.RefreshTokenRequest': $2.RefreshTokenRequest$json,
+  '.v1.RefreshTokenResponse': $2.RefreshTokenResponse$json,
+  '.v1.LogoutRequest': $2.LogoutRequest$json,
+  '.v1.LogoutResponse': $2.LogoutResponse$json,
+  '.v1.ValidateTokenRequest': $2.ValidateTokenRequest$json,
+  '.v1.ValidateTokenResponse': $2.ValidateTokenResponse$json,
+  '.v1.ListUserSessionsRequest': $2.ListUserSessionsRequest$json,
+  '.v1.ListUserSessionsResponse': $2.ListUserSessionsResponse$json,
+  '.v1.Session': $2.Session$json,
+  '.v1.TerminateSessionRequest': $2.TerminateSessionRequest$json,
+  '.v1.TerminateSessionResponse': $2.TerminateSessionResponse$json,
 };
 
 /// Descriptor for `OpenAuth`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -193,4 +274,24 @@ final $typed_data.Uint8List openAuthServiceDescriptor = $convert.base64Decode(
     'N0VXNlcnMSFC52MS5MaXN0VXNlcnNSZXF1ZXN0GhUudjEuTGlzdFVzZXJzUmVzcG9uc2UiGoLT'
     '5JMCFBISL29wZW5hdXRoL3YxL3VzZXJzEl4KCkRlbGV0ZVVzZXISFS52MS5EZWxldGVVc2VyUm'
     'VxdWVzdBoWLnYxLkRlbGV0ZVVzZXJSZXNwb25zZSIhgtPkkwIbKhkvb3BlbmF1dGgvdjEvdXNl'
-    'cnMve3V1aWR9');
+    'cnMve3V1aWR9EngKDUNyZWF0ZVByb2ZpbGUSGC52MS5DcmVhdGVQcm9maWxlUmVxdWVzdBoZLn'
+    'YxLkNyZWF0ZVByb2ZpbGVSZXNwb25zZSIygtPkkwIsOgEqIicvb3BlbmF1dGgvdjEvdXNlcnMv'
+    'e3VzZXJfdXVpZH0vcHJvZmlsZXMSfgoQTGlzdFVzZXJQcm9maWxlcxIbLnYxLkxpc3RVc2VyUH'
+    'JvZmlsZXNSZXF1ZXN0GhwudjEuTGlzdFVzZXJQcm9maWxlc1Jlc3BvbnNlIi+C0+STAikSJy9v'
+    'cGVuYXV0aC92MS91c2Vycy97dXNlcl91dWlkfS9wcm9maWxlcxJ1Cg1VcGRhdGVQcm9maWxlEh'
+    'gudjEuVXBkYXRlUHJvZmlsZVJlcXVlc3QaGS52MS5VcGRhdGVQcm9maWxlUmVzcG9uc2UiL4LT'
+    '5JMCKToBKhokL29wZW5hdXRoL3YxL3Byb2ZpbGVzL3twcm9maWxlX3V1aWR9EnIKDURlbGV0ZV'
+    'Byb2ZpbGUSGC52MS5EZWxldGVQcm9maWxlUmVxdWVzdBoZLnYxLkRlbGV0ZVByb2ZpbGVSZXNw'
+    'b25zZSIsgtPkkwImKiQvb3BlbmF1dGgvdjEvcHJvZmlsZXMve3Byb2ZpbGVfdXVpZH0SVAoGU2'
+    'lnbkluEhEudjEuU2lnbkluUmVxdWVzdBoSLnYxLlNpZ25JblJlc3BvbnNlIiOC0+STAh06ASoi'
+    'GC9vcGVuYXV0aC92MS9hdXRoL3NpZ25pbhJnCgxSZWZyZXNoVG9rZW4SFy52MS5SZWZyZXNoVG'
+    '9rZW5SZXF1ZXN0GhgudjEuUmVmcmVzaFRva2VuUmVzcG9uc2UiJILT5JMCHjoBKiIZL29wZW5h'
+    'dXRoL3YxL2F1dGgvcmVmcmVzaBJUCgZMb2dvdXQSES52MS5Mb2dvdXRSZXF1ZXN0GhIudjEuTG'
+    '9nb3V0UmVzcG9uc2UiI4LT5JMCHToBKiIYL29wZW5hdXRoL3YxL2F1dGgvbG9nb3V0EmsKDVZh'
+    'bGlkYXRlVG9rZW4SGC52MS5WYWxpZGF0ZVRva2VuUmVxdWVzdBoZLnYxLlZhbGlkYXRlVG9rZW'
+    '5SZXNwb25zZSIlgtPkkwIfOgEqIhovb3BlbmF1dGgvdjEvYXV0aC92YWxpZGF0ZRJ+ChBMaXN0'
+    'VXNlclNlc3Npb25zEhsudjEuTGlzdFVzZXJTZXNzaW9uc1JlcXVlc3QaHC52MS5MaXN0VXNlcl'
+    'Nlc3Npb25zUmVzcG9uc2UiL4LT5JMCKRInL29wZW5hdXRoL3YxL3VzZXJzL3t1c2VyX3V1aWR9'
+    'L3Nlc3Npb25zEnkKEFRlcm1pbmF0ZVNlc3Npb24SGy52MS5UZXJtaW5hdGVTZXNzaW9uUmVxdW'
+    'VzdBocLnYxLlRlcm1pbmF0ZVNlc3Npb25SZXNwb25zZSIqgtPkkwIkKiIvb3BlbmF1dGgvdjEv'
+    'c2Vzc2lvbnMve3Nlc3Npb25faWR9');

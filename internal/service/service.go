@@ -48,6 +48,17 @@ type Repository interface {
 	GetOTPVerification(ctx context.Context, identifier, code string) (*dao.OTPVerification, error)
 	UpdateVerificationStatus(ctx context.Context, userID int64, field string, verified bool) error
 	DeleteOTPVerification(ctx context.Context, identifier, otpType string) error
+
+	// Session management methods
+	CreateSession(ctx context.Context, session *dao.Session) (*dao.Session, error)
+	GetSessionByToken(ctx context.Context, sessionToken string) (*dao.Session, error)
+	GetSessionByUUID(ctx context.Context, sessionUUID string) (*dao.Session, error)
+	GetSessionByRefreshToken(ctx context.Context, refreshToken string) (*dao.Session, error)
+	UpdateSession(ctx context.Context, sessionUUID string, updates map[string]interface{}) (*dao.Session, error)
+	DeleteSession(ctx context.Context, sessionUUID string) error
+	DeleteUserSessions(ctx context.Context, userUUID string) error
+	ListUserSessions(ctx context.Context, userUUID string, limit, offset int32, activeOnly bool) ([]*dao.Session, int32, error)
+	UpdateLastActivity(ctx context.Context, sessionUUID string) error
 }
 
 type Service struct {
