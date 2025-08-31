@@ -3,9 +3,14 @@ package v1;
 
 option go_package = "./openauth_v1";
 
+import "proto/common/headers.proto";
+
 // PingRequest is the request message for the Ping RPC method.
 message PingRequest {
-    string message = 1;
+    // Common header fields for authentication and client identification
+    RequestHeaders headers = 1;
+    
+    string message = 2;
 }
 
 // PingResponse is the response message for the Ping RPC method.

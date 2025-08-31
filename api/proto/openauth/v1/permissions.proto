@@ -3,6 +3,8 @@ package v1;
 
 option go_package = "./openauth_v1";
 
+import "proto/common/headers.proto";
+
 // Permission represents a specific authorization rule in the system.
 // It follows a Resource-Based Access Control (RBAC) pattern where permissions
 // are defined by combining a resource (what) with an action (how).
@@ -46,58 +48,67 @@ message Permission {
 
 // Request to create a new permission
 message CreatePermissionRequest {
+    // Common header fields for authentication and client identification
+    RequestHeaders headers = 1;
+    
     // Unique name for the permission, typically in format "resource.action"
     // Must be unique across all permissions
     // Examples: "users.create", "orders.approve", "reports.export"
-    string name = 1;
+    string name = 2;
     
     // Human-readable display name
     // Examples: "Create Users", "Approve Orders", "Export Reports"
-    string display_name = 2;
+    string display_name = 3;
     
     // Optional detailed description explaining what this permission allows
-    optional string description = 3;
+    optional string description = 4;
     
     // The resource this permission applies to
     // Should be a noun representing an entity in your system
     // Examples: "users", "groups", "permissions", "posts", "orders"
-    string resource = 4;
+    string resource = 5;
     
     // The action that can be performed on the resource
     // Should be a verb representing an operation
     // Examples: "create", "read", "update", "delete", "list", "publish", "approve"
-    string action = 5;
+    string action = 6;
 }
 
 // Request to retrieve a specific permission by ID
 message GetPermissionRequest {
+    // Common header fields for authentication and client identification
+    RequestHeaders headers = 1;
+    
     // The unique identifier of the permission to retrieve
-    int64 id = 1;
+    int64 id = 2;
 }
 
 // Request to list permissions with optional filtering and pagination
 message ListPermissionsRequest {
+    // Common header fields for authentication and client identification
+    RequestHeaders headers = 1;
+    
     // Maximum number of permissions to return (default: 10, max: 100)
-    optional int32 limit = 1;
+    optional int32 limit = 2;
     
     // Number of permissions to skip for pagination (default: 0)
-    optional int32 offset = 2;
+    optional int32 offset = 3;
     
     // Search term to filter permissions by name, display_name, or description
     // Uses case-insensitive partial matching
-    optional string search = 3;
+    optional string search = 4;
     
     // Filter permissions by specific resource
     // Examples: "users", "groups", "permissions"
-    optional string resource = 4;
+    optional string resource = 5;
     
     // Filter permissions by specific action
     // Examples: "create", "read", "update", "delete"
-    optional string action = 5;
+    optional string action = 6;
     
     // Filter by system vs user-created permissions
     // true: only system permissions, false: only user-created permissions
-    optional bool is_system = 6;
+    optional bool is_system = 7;
 }
 
 // Response containing a list of permissions with pagination metadata
@@ -121,32 +132,38 @@ message ListPermissionsResponse {
 
 // Request to update an existing permission
 message UpdatePermissionRequest {
+    // Common header fields for authentication and client identification
+    RequestHeaders headers = 1;
+    
     // The unique identifier of the permission to update
-    int64 id = 1;
+    int64 id = 2;
     
     // New name for the permission (optional)
     // Must be unique if provided
-    optional string name = 2;
+    optional string name = 3;
     
     // New display name for the permission (optional)
-    optional string display_name = 3;
+    optional string display_name = 4;
     
     // New description for the permission (optional)
     // Set to empty string to clear existing description
-    optional string description = 4;
+    optional string description = 5;
     
     // New resource for the permission (optional)
-    optional string resource = 5;
+    optional string resource = 6;
     
     // New action for the permission (optional)
-    optional string action = 6;
+    optional string action = 7;
 }
 
 // Request to delete a permission
 message DeletePermissionRequest {
+    // Common header fields for authentication and client identification
+    RequestHeaders headers = 1;
+    
     // The unique identifier of the permission to delete
     // Note: System permissions cannot be deleted
-    int64 id = 1;
+    int64 id = 2;
 }
 
 // Response confirming permission deletion

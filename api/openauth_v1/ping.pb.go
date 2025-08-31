@@ -23,8 +23,10 @@ const (
 
 // PingRequest is the request message for the Ping RPC method.
 type PingRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Common header fields for authentication and client identification
+	Headers       *RequestHeaders `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
+	Message       string          `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -57,6 +59,13 @@ func (x *PingRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PingRequest.ProtoReflect.Descriptor instead.
 func (*PingRequest) Descriptor() ([]byte, []int) {
 	return file_proto_common_ping_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *PingRequest) GetHeaders() *RequestHeaders {
+	if x != nil {
+		return x.Headers
+	}
+	return nil
 }
 
 func (x *PingRequest) GetMessage() string {
@@ -115,9 +124,10 @@ var File_proto_common_ping_proto protoreflect.FileDescriptor
 
 const file_proto_common_ping_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/common/ping.proto\x12\x02v1\"'\n" +
-	"\vPingRequest\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"(\n" +
+	"\x17proto/common/ping.proto\x12\x02v1\x1a\x1aproto/common/headers.proto\"U\n" +
+	"\vPingRequest\x12,\n" +
+	"\aheaders\x18\x01 \x01(\v2\x12.v1.RequestHeadersR\aheaders\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"(\n" +
 	"\fPingResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessageB\x0fZ\r./openauth_v1b\x06proto3"
 
@@ -135,15 +145,17 @@ func file_proto_common_ping_proto_rawDescGZIP() []byte {
 
 var file_proto_common_ping_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_proto_common_ping_proto_goTypes = []any{
-	(*PingRequest)(nil),  // 0: v1.PingRequest
-	(*PingResponse)(nil), // 1: v1.PingResponse
+	(*PingRequest)(nil),    // 0: v1.PingRequest
+	(*PingResponse)(nil),   // 1: v1.PingResponse
+	(*RequestHeaders)(nil), // 2: v1.RequestHeaders
 }
 var file_proto_common_ping_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: v1.PingRequest.headers:type_name -> v1.RequestHeaders
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_common_ping_proto_init() }
@@ -151,6 +163,7 @@ func file_proto_common_ping_proto_init() {
 	if File_proto_common_ping_proto != nil {
 		return
 	}
+	file_proto_common_headers_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

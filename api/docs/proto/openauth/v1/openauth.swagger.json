@@ -37,6 +37,27 @@
         },
         "parameters": [
           {
+            "name": "headers.authorization",
+            "description": "JWT authentication token (Bearer token)\nShould be provided in Authorization header as \"Bearer \u003ctoken\u003e\"",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientId",
+            "description": "Client identifier for tracking and analytics\nUsed to identify the calling application or service",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientVersion",
+            "description": "Client version for compatibility and feature tracking\nUsed to track client versions and handle backward compatibility",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "limit",
             "description": "Maximum number of permissions to return (default: 10, max: 100)",
             "in": "query",
@@ -145,6 +166,27 @@
             "required": true,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "headers.authorization",
+            "description": "JWT authentication token (Bearer token)\nShould be provided in Authorization header as \"Bearer \u003ctoken\u003e\"",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientId",
+            "description": "Client identifier for tracking and analytics\nUsed to identify the calling application or service",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientVersion",
+            "description": "Client version for compatibility and feature tracking\nUsed to track client versions and handle backward compatibility",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -177,6 +219,27 @@
             "required": true,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "headers.authorization",
+            "description": "JWT authentication token (Bearer token)\nShould be provided in Authorization header as \"Bearer \u003ctoken\u003e\"",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientId",
+            "description": "Client identifier for tracking and analytics\nUsed to identify the calling application or service",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientVersion",
+            "description": "Client version for compatibility and feature tracking\nUsed to track client versions and handle backward compatibility",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -244,6 +307,27 @@
         },
         "parameters": [
           {
+            "name": "headers.authorization",
+            "description": "JWT authentication token (Bearer token)\nShould be provided in Authorization header as \"Bearer \u003ctoken\u003e\"",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientId",
+            "description": "Client identifier for tracking and analytics\nUsed to identify the calling application or service",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "headers.xClientVersion",
+            "description": "Client version for compatibility and feature tracking\nUsed to track client versions and handle backward compatibility",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "message",
             "in": "query",
             "required": false,
@@ -260,6 +344,10 @@
     "OpenAuthUpdatePermissionBody": {
       "type": "object",
       "properties": {
+        "headers": {
+          "$ref": "#/definitions/v1RequestHeaders",
+          "title": "Common header fields for authentication and client identification"
+        },
         "name": {
           "type": "string",
           "title": "New name for the permission (optional)\nMust be unique if provided"
@@ -314,6 +402,10 @@
     "v1CreatePermissionRequest": {
       "type": "object",
       "properties": {
+        "headers": {
+          "$ref": "#/definitions/v1RequestHeaders",
+          "title": "Common header fields for authentication and client identification"
+        },
         "name": {
           "type": "string",
           "title": "Unique name for the permission, typically in format \"resource.action\"\nMust be unique across all permissions\nExamples: \"users.create\", \"orders.approve\", \"reports.export\""
@@ -437,6 +529,24 @@
         }
       },
       "description": "PingResponse is the response message for the Ping RPC method."
+    },
+    "v1RequestHeaders": {
+      "type": "object",
+      "properties": {
+        "authorization": {
+          "type": "string",
+          "title": "JWT authentication token (Bearer token)\nShould be provided in Authorization header as \"Bearer \u003ctoken\u003e\""
+        },
+        "xClientId": {
+          "type": "string",
+          "title": "Client identifier for tracking and analytics\nUsed to identify the calling application or service"
+        },
+        "xClientVersion": {
+          "type": "string",
+          "title": "Client version for compatibility and feature tracking\nUsed to track client versions and handle backward compatibility"
+        }
+      },
+      "title": "Common header fields for authentication and client identification\nThese headers are used across all API requests for authentication and tracking"
     }
   }
 }

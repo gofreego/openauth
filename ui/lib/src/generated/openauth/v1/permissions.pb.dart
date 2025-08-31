@@ -15,6 +15,8 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import '../../common/ping.pb.dart' as $0;
+
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 /// Permission represents a specific authorization rule in the system.
@@ -191,6 +193,7 @@ class Permission extends $pb.GeneratedMessage {
 /// Request to create a new permission
 class CreatePermissionRequest extends $pb.GeneratedMessage {
   factory CreatePermissionRequest({
+    $0.RequestHeaders? headers,
     $core.String? name,
     $core.String? displayName,
     $core.String? description,
@@ -198,6 +201,7 @@ class CreatePermissionRequest extends $pb.GeneratedMessage {
     $core.String? action,
   }) {
     final result = create();
+    if (headers != null) result.headers = headers;
     if (name != null) result.name = name;
     if (displayName != null) result.displayName = displayName;
     if (description != null) result.description = description;
@@ -219,11 +223,13 @@ class CreatePermissionRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'CreatePermissionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'v1'),
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'name')
-    ..aOS(2, _omitFieldNames ? '' : 'displayName')
-    ..aOS(3, _omitFieldNames ? '' : 'description')
-    ..aOS(4, _omitFieldNames ? '' : 'resource')
-    ..aOS(5, _omitFieldNames ? '' : 'action')
+    ..aOM<$0.RequestHeaders>(1, _omitFieldNames ? '' : 'headers',
+        subBuilder: $0.RequestHeaders.create)
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..aOS(3, _omitFieldNames ? '' : 'displayName')
+    ..aOS(4, _omitFieldNames ? '' : 'description')
+    ..aOS(5, _omitFieldNames ? '' : 'resource')
+    ..aOS(6, _omitFieldNames ? '' : 'action')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -249,70 +255,84 @@ class CreatePermissionRequest extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<CreatePermissionRequest>(create);
   static CreatePermissionRequest? _defaultInstance;
 
+  /// Common header fields for authentication and client identification
+  @$pb.TagNumber(1)
+  $0.RequestHeaders get headers => $_getN(0);
+  @$pb.TagNumber(1)
+  set headers($0.RequestHeaders value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasHeaders() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearHeaders() => $_clearField(1);
+  @$pb.TagNumber(1)
+  $0.RequestHeaders ensureHeaders() => $_ensure(0);
+
   /// Unique name for the permission, typically in format "resource.action"
   /// Must be unique across all permissions
   /// Examples: "users.create", "orders.approve", "reports.export"
-  @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set name($core.String value) => $_setString(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearName() => $_clearField(1);
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => $_clearField(2);
 
   /// Human-readable display name
   /// Examples: "Create Users", "Approve Orders", "Export Reports"
-  @$pb.TagNumber(2)
-  $core.String get displayName => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set displayName($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(2)
-  $core.bool hasDisplayName() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearDisplayName() => $_clearField(2);
+  @$pb.TagNumber(3)
+  $core.String get displayName => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set displayName($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasDisplayName() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearDisplayName() => $_clearField(3);
 
   /// Optional detailed description explaining what this permission allows
-  @$pb.TagNumber(3)
-  $core.String get description => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set description($core.String value) => $_setString(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasDescription() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearDescription() => $_clearField(3);
+  @$pb.TagNumber(4)
+  $core.String get description => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set description($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasDescription() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearDescription() => $_clearField(4);
 
   /// The resource this permission applies to
   /// Should be a noun representing an entity in your system
   /// Examples: "users", "groups", "permissions", "posts", "orders"
-  @$pb.TagNumber(4)
-  $core.String get resource => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set resource($core.String value) => $_setString(3, value);
-  @$pb.TagNumber(4)
-  $core.bool hasResource() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearResource() => $_clearField(4);
+  @$pb.TagNumber(5)
+  $core.String get resource => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set resource($core.String value) => $_setString(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasResource() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearResource() => $_clearField(5);
 
   /// The action that can be performed on the resource
   /// Should be a verb representing an operation
   /// Examples: "create", "read", "update", "delete", "list", "publish", "approve"
-  @$pb.TagNumber(5)
-  $core.String get action => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set action($core.String value) => $_setString(4, value);
-  @$pb.TagNumber(5)
-  $core.bool hasAction() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearAction() => $_clearField(5);
+  @$pb.TagNumber(6)
+  $core.String get action => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set action($core.String value) => $_setString(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasAction() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearAction() => $_clearField(6);
 }
 
 /// Request to retrieve a specific permission by ID
 class GetPermissionRequest extends $pb.GeneratedMessage {
   factory GetPermissionRequest({
+    $0.RequestHeaders? headers,
     $fixnum.Int64? id,
   }) {
     final result = create();
+    if (headers != null) result.headers = headers;
     if (id != null) result.id = id;
     return result;
   }
@@ -330,7 +350,9 @@ class GetPermissionRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'GetPermissionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'v1'),
       createEmptyInstance: create)
-    ..aInt64(1, _omitFieldNames ? '' : 'id')
+    ..aOM<$0.RequestHeaders>(1, _omitFieldNames ? '' : 'headers',
+        subBuilder: $0.RequestHeaders.create)
+    ..aInt64(2, _omitFieldNames ? '' : 'id')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -355,20 +377,33 @@ class GetPermissionRequest extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<GetPermissionRequest>(create);
   static GetPermissionRequest? _defaultInstance;
 
+  /// Common header fields for authentication and client identification
+  @$pb.TagNumber(1)
+  $0.RequestHeaders get headers => $_getN(0);
+  @$pb.TagNumber(1)
+  set headers($0.RequestHeaders value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasHeaders() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearHeaders() => $_clearField(1);
+  @$pb.TagNumber(1)
+  $0.RequestHeaders ensureHeaders() => $_ensure(0);
+
   /// The unique identifier of the permission to retrieve
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get id => $_getI64(0);
-  @$pb.TagNumber(1)
-  set id($fixnum.Int64 value) => $_setInt64(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearId() => $_clearField(1);
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get id => $_getI64(1);
+  @$pb.TagNumber(2)
+  set id($fixnum.Int64 value) => $_setInt64(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearId() => $_clearField(2);
 }
 
 /// Request to list permissions with optional filtering and pagination
 class ListPermissionsRequest extends $pb.GeneratedMessage {
   factory ListPermissionsRequest({
+    $0.RequestHeaders? headers,
     $core.int? limit,
     $core.int? offset,
     $core.String? search,
@@ -377,6 +412,7 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
     $core.bool? isSystem,
   }) {
     final result = create();
+    if (headers != null) result.headers = headers;
     if (limit != null) result.limit = limit;
     if (offset != null) result.offset = offset;
     if (search != null) result.search = search;
@@ -399,12 +435,14 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'ListPermissionsRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'v1'),
       createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(2, _omitFieldNames ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOS(3, _omitFieldNames ? '' : 'search')
-    ..aOS(4, _omitFieldNames ? '' : 'resource')
-    ..aOS(5, _omitFieldNames ? '' : 'action')
-    ..aOB(6, _omitFieldNames ? '' : 'isSystem')
+    ..aOM<$0.RequestHeaders>(1, _omitFieldNames ? '' : 'headers',
+        subBuilder: $0.RequestHeaders.create)
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'limit', $pb.PbFieldType.O3)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'offset', $pb.PbFieldType.O3)
+    ..aOS(4, _omitFieldNames ? '' : 'search')
+    ..aOS(5, _omitFieldNames ? '' : 'resource')
+    ..aOS(6, _omitFieldNames ? '' : 'action')
+    ..aOB(7, _omitFieldNames ? '' : 'isSystem')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -430,69 +468,81 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<ListPermissionsRequest>(create);
   static ListPermissionsRequest? _defaultInstance;
 
+  /// Common header fields for authentication and client identification
+  @$pb.TagNumber(1)
+  $0.RequestHeaders get headers => $_getN(0);
+  @$pb.TagNumber(1)
+  set headers($0.RequestHeaders value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasHeaders() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearHeaders() => $_clearField(1);
+  @$pb.TagNumber(1)
+  $0.RequestHeaders ensureHeaders() => $_ensure(0);
+
   /// Maximum number of permissions to return (default: 10, max: 100)
-  @$pb.TagNumber(1)
-  $core.int get limit => $_getIZ(0);
-  @$pb.TagNumber(1)
-  set limit($core.int value) => $_setSignedInt32(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasLimit() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearLimit() => $_clearField(1);
+  @$pb.TagNumber(2)
+  $core.int get limit => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set limit($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasLimit() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLimit() => $_clearField(2);
 
   /// Number of permissions to skip for pagination (default: 0)
-  @$pb.TagNumber(2)
-  $core.int get offset => $_getIZ(1);
-  @$pb.TagNumber(2)
-  set offset($core.int value) => $_setSignedInt32(1, value);
-  @$pb.TagNumber(2)
-  $core.bool hasOffset() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearOffset() => $_clearField(2);
+  @$pb.TagNumber(3)
+  $core.int get offset => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set offset($core.int value) => $_setSignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasOffset() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearOffset() => $_clearField(3);
 
   /// Search term to filter permissions by name, display_name, or description
   /// Uses case-insensitive partial matching
-  @$pb.TagNumber(3)
-  $core.String get search => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set search($core.String value) => $_setString(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasSearch() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearSearch() => $_clearField(3);
+  @$pb.TagNumber(4)
+  $core.String get search => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set search($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasSearch() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSearch() => $_clearField(4);
 
   /// Filter permissions by specific resource
   /// Examples: "users", "groups", "permissions"
-  @$pb.TagNumber(4)
-  $core.String get resource => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set resource($core.String value) => $_setString(3, value);
-  @$pb.TagNumber(4)
-  $core.bool hasResource() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearResource() => $_clearField(4);
+  @$pb.TagNumber(5)
+  $core.String get resource => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set resource($core.String value) => $_setString(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasResource() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearResource() => $_clearField(5);
 
   /// Filter permissions by specific action
   /// Examples: "create", "read", "update", "delete"
-  @$pb.TagNumber(5)
-  $core.String get action => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set action($core.String value) => $_setString(4, value);
-  @$pb.TagNumber(5)
-  $core.bool hasAction() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearAction() => $_clearField(5);
+  @$pb.TagNumber(6)
+  $core.String get action => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set action($core.String value) => $_setString(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasAction() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearAction() => $_clearField(6);
 
   /// Filter by system vs user-created permissions
   /// true: only system permissions, false: only user-created permissions
-  @$pb.TagNumber(6)
-  $core.bool get isSystem => $_getBF(5);
-  @$pb.TagNumber(6)
-  set isSystem($core.bool value) => $_setBool(5, value);
-  @$pb.TagNumber(6)
-  $core.bool hasIsSystem() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearIsSystem() => $_clearField(6);
+  @$pb.TagNumber(7)
+  $core.bool get isSystem => $_getBF(6);
+  @$pb.TagNumber(7)
+  set isSystem($core.bool value) => $_setBool(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasIsSystem() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearIsSystem() => $_clearField(7);
 }
 
 /// Response containing a list of permissions with pagination metadata
@@ -607,6 +657,7 @@ class ListPermissionsResponse extends $pb.GeneratedMessage {
 /// Request to update an existing permission
 class UpdatePermissionRequest extends $pb.GeneratedMessage {
   factory UpdatePermissionRequest({
+    $0.RequestHeaders? headers,
     $fixnum.Int64? id,
     $core.String? name,
     $core.String? displayName,
@@ -615,6 +666,7 @@ class UpdatePermissionRequest extends $pb.GeneratedMessage {
     $core.String? action,
   }) {
     final result = create();
+    if (headers != null) result.headers = headers;
     if (id != null) result.id = id;
     if (name != null) result.name = name;
     if (displayName != null) result.displayName = displayName;
@@ -637,12 +689,14 @@ class UpdatePermissionRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'UpdatePermissionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'v1'),
       createEmptyInstance: create)
-    ..aInt64(1, _omitFieldNames ? '' : 'id')
-    ..aOS(2, _omitFieldNames ? '' : 'name')
-    ..aOS(3, _omitFieldNames ? '' : 'displayName')
-    ..aOS(4, _omitFieldNames ? '' : 'description')
-    ..aOS(5, _omitFieldNames ? '' : 'resource')
-    ..aOS(6, _omitFieldNames ? '' : 'action')
+    ..aOM<$0.RequestHeaders>(1, _omitFieldNames ? '' : 'headers',
+        subBuilder: $0.RequestHeaders.create)
+    ..aInt64(2, _omitFieldNames ? '' : 'id')
+    ..aOS(3, _omitFieldNames ? '' : 'name')
+    ..aOS(4, _omitFieldNames ? '' : 'displayName')
+    ..aOS(5, _omitFieldNames ? '' : 'description')
+    ..aOS(6, _omitFieldNames ? '' : 'resource')
+    ..aOS(7, _omitFieldNames ? '' : 'action')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -668,75 +722,89 @@ class UpdatePermissionRequest extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<UpdatePermissionRequest>(create);
   static UpdatePermissionRequest? _defaultInstance;
 
+  /// Common header fields for authentication and client identification
+  @$pb.TagNumber(1)
+  $0.RequestHeaders get headers => $_getN(0);
+  @$pb.TagNumber(1)
+  set headers($0.RequestHeaders value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasHeaders() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearHeaders() => $_clearField(1);
+  @$pb.TagNumber(1)
+  $0.RequestHeaders ensureHeaders() => $_ensure(0);
+
   /// The unique identifier of the permission to update
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get id => $_getI64(0);
-  @$pb.TagNumber(1)
-  set id($fixnum.Int64 value) => $_setInt64(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearId() => $_clearField(1);
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get id => $_getI64(1);
+  @$pb.TagNumber(2)
+  set id($fixnum.Int64 value) => $_setInt64(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearId() => $_clearField(2);
 
   /// New name for the permission (optional)
   /// Must be unique if provided
-  @$pb.TagNumber(2)
-  $core.String get name => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set name($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(2)
-  $core.bool hasName() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearName() => $_clearField(2);
+  @$pb.TagNumber(3)
+  $core.String get name => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set name($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasName() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearName() => $_clearField(3);
 
   /// New display name for the permission (optional)
-  @$pb.TagNumber(3)
-  $core.String get displayName => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set displayName($core.String value) => $_setString(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasDisplayName() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearDisplayName() => $_clearField(3);
+  @$pb.TagNumber(4)
+  $core.String get displayName => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set displayName($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasDisplayName() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearDisplayName() => $_clearField(4);
 
   /// New description for the permission (optional)
   /// Set to empty string to clear existing description
-  @$pb.TagNumber(4)
-  $core.String get description => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set description($core.String value) => $_setString(3, value);
-  @$pb.TagNumber(4)
-  $core.bool hasDescription() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearDescription() => $_clearField(4);
+  @$pb.TagNumber(5)
+  $core.String get description => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set description($core.String value) => $_setString(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasDescription() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearDescription() => $_clearField(5);
 
   /// New resource for the permission (optional)
-  @$pb.TagNumber(5)
-  $core.String get resource => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set resource($core.String value) => $_setString(4, value);
-  @$pb.TagNumber(5)
-  $core.bool hasResource() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearResource() => $_clearField(5);
+  @$pb.TagNumber(6)
+  $core.String get resource => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set resource($core.String value) => $_setString(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasResource() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearResource() => $_clearField(6);
 
   /// New action for the permission (optional)
-  @$pb.TagNumber(6)
-  $core.String get action => $_getSZ(5);
-  @$pb.TagNumber(6)
-  set action($core.String value) => $_setString(5, value);
-  @$pb.TagNumber(6)
-  $core.bool hasAction() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearAction() => $_clearField(6);
+  @$pb.TagNumber(7)
+  $core.String get action => $_getSZ(6);
+  @$pb.TagNumber(7)
+  set action($core.String value) => $_setString(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasAction() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearAction() => $_clearField(7);
 }
 
 /// Request to delete a permission
 class DeletePermissionRequest extends $pb.GeneratedMessage {
   factory DeletePermissionRequest({
+    $0.RequestHeaders? headers,
     $fixnum.Int64? id,
   }) {
     final result = create();
+    if (headers != null) result.headers = headers;
     if (id != null) result.id = id;
     return result;
   }
@@ -754,7 +822,9 @@ class DeletePermissionRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'DeletePermissionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'v1'),
       createEmptyInstance: create)
-    ..aInt64(1, _omitFieldNames ? '' : 'id')
+    ..aOM<$0.RequestHeaders>(1, _omitFieldNames ? '' : 'headers',
+        subBuilder: $0.RequestHeaders.create)
+    ..aInt64(2, _omitFieldNames ? '' : 'id')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -780,16 +850,28 @@ class DeletePermissionRequest extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<DeletePermissionRequest>(create);
   static DeletePermissionRequest? _defaultInstance;
 
+  /// Common header fields for authentication and client identification
+  @$pb.TagNumber(1)
+  $0.RequestHeaders get headers => $_getN(0);
+  @$pb.TagNumber(1)
+  set headers($0.RequestHeaders value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasHeaders() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearHeaders() => $_clearField(1);
+  @$pb.TagNumber(1)
+  $0.RequestHeaders ensureHeaders() => $_ensure(0);
+
   /// The unique identifier of the permission to delete
   /// Note: System permissions cannot be deleted
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get id => $_getI64(0);
-  @$pb.TagNumber(1)
-  set id($fixnum.Int64 value) => $_setInt64(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearId() => $_clearField(1);
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get id => $_getI64(1);
+  @$pb.TagNumber(2)
+  set id($fixnum.Int64 value) => $_setInt64(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearId() => $_clearField(2);
 }
 
 /// Response confirming permission deletion
