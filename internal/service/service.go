@@ -2,12 +2,27 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
 )
 
 type Config struct {
+	JWT      JWTConfig      `yaml:"JWT"`
+	Security SecurityConfig `yaml:"Security"`
+}
+
+type JWTConfig struct {
+	SecretKey       string        `yaml:"SecretKey"`       // JWT signing secret key
+	AccessTokenTTL  time.Duration `yaml:"AccessTokenTTL"`  // Access token expiration time
+	RefreshTokenTTL time.Duration `yaml:"RefreshTokenTTL"` // Refresh token expiration time
+}
+
+type SecurityConfig struct {
+	BcryptCost       int           `yaml:"BcryptCost"`       // Password hashing cost
+	MaxLoginAttempts int           `yaml:"MaxLoginAttempts"` // Maximum failed login attempts
+	LockoutDuration  time.Duration `yaml:"LockoutDuration"`  // Account lockout duration
 }
 
 type Repository interface {
@@ -63,11 +78,13 @@ type Repository interface {
 
 type Service struct {
 	repo Repository
+	cfg  *Config
 	openauth_v1.UnimplementedOpenAuthServer
 }
 
 func NewService(ctx context.Context, cfg *Config, repo Repository) *Service {
 	return &Service{
 		repo: repo,
+		cfg:  cfg,
 	}
 }

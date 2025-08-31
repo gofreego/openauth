@@ -19,9 +19,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// JWT secret key - in production, this should be loaded from environment variables
-var jwtSecret = []byte("your-256-bit-secret-key-here-change-in-production")
-
 // Token claims structure
 type JWTClaims struct {
 	UserID      string `json:"user_id"`
@@ -29,6 +26,41 @@ type JWTClaims struct {
 	SessionUUID string `json:"session_uuid"`
 	DeviceID    string `json:"device_id,omitempty"`
 	jwt.RegisteredClaims
+}
+
+// getJWTSecret returns the JWT secret key from configuration
+func (s *Service) getJWTSecret() []byte {
+	// Get from configuration
+	if s.cfg != nil && s.cfg.JWT.SecretKey != "" {
+		return []byte(s.cfg.JWT.SecretKey)
+	}
+
+	// Default fallback (not recommended for production)
+	return []byte("your-256-bit-secret-key-here-change-in-production")
+}
+
+// getAccessTokenTTL returns the access token TTL from configuration
+func (s *Service) getAccessTokenTTL() time.Duration {
+	if s.cfg != nil && s.cfg.JWT.AccessTokenTTL > 0 {
+		return s.cfg.JWT.AccessTokenTTL
+	}
+	return 15 * time.Minute // Default: 15 minutes
+}
+
+// getRefreshTokenTTL returns the refresh token TTL from configuration
+func (s *Service) getRefreshTokenTTL() time.Duration {
+	if s.cfg != nil && s.cfg.JWT.RefreshTokenTTL > 0 {
+		return s.cfg.JWT.RefreshTokenTTL
+	}
+	return 7 * 24 * time.Hour // Default: 7 days
+}
+
+// getBcryptCost returns the bcrypt cost from configuration
+func (s *Service) getBcryptCost() int {
+	if s.cfg != nil && s.cfg.Security.BcryptCost > 0 {
+		return s.cfg.Security.BcryptCost
+	}
+	return 12 // Default bcrypt cost
 }
 
 // SignIn authenticates a user and creates a new session
@@ -105,12 +137,12 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	}
 
 	// Determine session duration
-	accessTokenDuration := 15 * time.Minute    // 15 minutes
-	refreshTokenDuration := 7 * 24 * time.Hour // 7 days
+	accessTokenDuration := s.getAccessTokenTTL()
+	refreshTokenDuration := s.getRefreshTokenTTL()
 
 	if req.RememberMe != nil && *req.RememberMe {
-		accessTokenDuration = 1 * time.Hour        // 1 hour
-		refreshTokenDuration = 30 * 24 * time.Hour // 30 days
+		accessTokenDuration = accessTokenDuration * 4   // 4x longer access token
+		refreshTokenDuration = refreshTokenDuration * 4 // 4x longer refresh token
 	}
 
 	expiresAt := time.Now().Add(accessTokenDuration).Unix()
@@ -204,8 +236,8 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 		return nil, status.Error(codes.Internal, "failed to generate new refresh token")
 	}
 
-	accessTokenDuration := 15 * time.Minute
-	refreshTokenDuration := 7 * 24 * time.Hour
+	accessTokenDuration := s.getAccessTokenTTL()
+	refreshTokenDuration := s.getRefreshTokenTTL()
 
 	expiresAt := time.Now().Add(accessTokenDuration).Unix()
 	refreshExpiresAt := time.Now().Add(refreshTokenDuration).Unix()
@@ -411,7 +443,7 @@ func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, dura
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString(s.getJWTSecret())
 }
 
 // validateAccessToken parses and validates a JWT access token
@@ -420,7 +452,7 @@ func (s *Service) validateAccessToken(tokenString string) (*JWTClaims, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return jwtSecret, nil
+		return s.getJWTSecret(), nil
 	})
 
 	if err != nil {

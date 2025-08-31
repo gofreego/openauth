@@ -46,7 +46,7 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	}
 
 	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.getBcryptCost())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to hash password")
 	}
@@ -448,7 +448,7 @@ func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePas
 	}
 
 	// Hash new password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), s.getBcryptCost())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to hash new password")
 	}
