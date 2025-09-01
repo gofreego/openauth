@@ -1727,6 +1727,9 @@
         "description": {
           "type": "string",
           "title": "Optional detailed description of the group"
+        },
+        "isDefault": {
+          "type": "boolean"
         }
       },
       "title": "CreateGroupRequest to create a new group"

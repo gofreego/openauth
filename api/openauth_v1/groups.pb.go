@@ -129,6 +129,7 @@ type CreateGroupRequest struct {
 	DisplayName string `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	// Optional detailed description of the group
 	Description   *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	IsDefault     bool    `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -182,6 +183,13 @@ func (x *CreateGroupRequest) GetDescription() string {
 		return *x.Description
 	}
 	return ""
+}
+
+func (x *CreateGroupRequest) GetIsDefault() bool {
+	if x != nil {
+		return x.IsDefault
+	}
+	return false
 }
 
 // CreateGroupResponse after successful group creation
@@ -1336,11 +1344,13 @@ const file_proto_openauth_v1_groups_proto_rawDesc = "" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\a \x01(\x03R\tupdatedAtB\x0e\n" +
-	"\f_description\"\x82\x01\n" +
+	"\f_description\"\xa1\x01\n" +
 	"\x12CreateGroupRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01B\x0e\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\x04 \x01(\bR\tisDefaultB\x0e\n" +
 	"\f_description\"P\n" +
 	"\x13CreateGroupResponse\x12\x1f\n" +
 	"\x05group\x18\x01 \x01(\v2\t.v1.GroupR\x05group\x12\x18\n" +

@@ -14,20 +14,12 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/models"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
-
-// Token claims structure
-type JWTClaims struct {
-	UserID      string `json:"user_id"`
-	UserUUID    string `json:"user_uuid"`
-	SessionUUID string `json:"session_uuid"`
-	DeviceID    string `json:"device_id,omitempty"`
-	jwt.RegisteredClaims
-}
 
 // getJWTSecret returns the JWT secret key from configuration
 func (s *Service) getJWTSecret() []byte {
@@ -421,7 +413,7 @@ func generateRefreshToken() (string, error) {
 
 // generateAccessToken creates a JWT access token
 func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, duration time.Duration) (string, error) {
-	claims := JWTClaims{
+	claims := models.JWTClaims{
 		UserID:      fmt.Sprintf("%d", user.ID),
 		UserUUID:    user.UUID.String(),
 		SessionUUID: session.UUID.String(),
@@ -442,8 +434,8 @@ func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, dura
 }
 
 // ValidateAccessToken parses and validates a JWT access token
-func (s *Service) ValidateAccessToken(tokenString string) (*JWTClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (s *Service) ValidateAccessToken(tokenString string) (*models.JWTClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &models.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -454,7 +446,7 @@ func (s *Service) ValidateAccessToken(tokenString string) (*JWTClaims, error) {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(*JWTClaims); ok && token.Valid {
+	if claims, ok := token.Claims.(*models.JWTClaims); ok && token.Valid {
 		return claims, nil
 	}
 

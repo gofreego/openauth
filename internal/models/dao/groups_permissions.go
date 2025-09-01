@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"time"
+
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/google/uuid"
 )
@@ -15,6 +17,16 @@ type Permission struct {
 	CreatedBy   int64   `db:"created_by" json:"createdBy"`
 	CreatedAt   int64   `db:"created_at" json:"createdAt"`
 	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
+}
+
+func (p *Permission) FromCreatePermissionRequest(req *openauth_v1.CreatePermissionRequest, createdBy int64) {
+	p.Name = req.Name
+	p.DisplayName = req.DisplayName
+	p.Description = req.Description
+	p.IsSystem = false
+	p.CreatedBy = createdBy
+	p.CreatedAt = time.Now().Unix()
+	p.UpdatedAt = time.Now().Unix()
 }
 
 // ToProto converts a Permission DAO to protobuf Permission
@@ -47,6 +59,17 @@ type Group struct {
 	CreatedBy   int64     `db:"created_by" json:"createdBy"`
 	CreatedAt   int64     `db:"created_at" json:"createdAt"`
 	UpdatedAt   int64     `db:"updated_at" json:"updatedAt"`
+}
+
+func (g *Group) FromCreateGroupRequest(req *openauth_v1.CreateGroupRequest, createdBy int64) {
+	g.Name = req.Name
+	g.DisplayName = req.DisplayName
+	g.Description = req.Description
+	g.IsSystem = false
+	g.IsDefault = req.IsDefault
+	g.CreatedBy = createdBy
+	g.CreatedAt = time.Now().Unix()
+	g.UpdatedAt = time.Now().Unix()
 }
 
 // ToProto converts a Group DAO to protobuf Group
