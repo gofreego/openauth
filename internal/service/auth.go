@@ -128,7 +128,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	}
 
 	// Generate JWT access token
-	accessToken, err := s.generateAccessToken(user, createdSession, accessTokenDuration)
+	accessToken, err := s.generateAccessToken(ctx, user, createdSession, accessTokenDuration, req)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to generate access token")
 	}
@@ -199,7 +199,7 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 	}
 
 	// Generate new JWT access token
-	accessToken, err := s.generateAccessToken(user, updatedSession, accessTokenDuration)
+	accessToken, err := s.generateAccessToken(ctx, user, updatedSession, accessTokenDuration, nil)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to generate access token")
 	}
@@ -367,7 +367,7 @@ func generateRefreshToken() (string, error) {
 }
 
 // generateAccessToken creates a JWT access token
-func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, duration time.Duration) (string, error) {
+func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, session *dao.Session, duration time.Duration, req *openauth_v1.SignInRequest) (string, error) {
 	claims := jwtutils.JWTClaims{
 		UserID:      user.ID,
 		UserUUID:    user.UUID.String(),
@@ -382,6 +382,24 @@ func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, dura
 
 	if session.DeviceID != nil {
 		claims.DeviceID = *session.DeviceID
+	}
+
+	// Include profile IDs if requested
+	if req != nil && req.Profiles != nil && *req.Profiles {
+		profileIDs, err := s.getUserProfileIDs(ctx, user.ID)
+		if err != nil {
+			return "", fmt.Errorf("failed to get user profile IDs: %w", err)
+		}
+		claims.ProfileIds = profileIDs
+	}
+
+	// Include permissions if requested
+	if req != nil && req.IncludePermissions != nil && *req.IncludePermissions {
+		permissions, err := s.getUserPermissions(ctx, user.ID)
+		if err != nil {
+			return "", fmt.Errorf("failed to get user permissions: %w", err)
+		}
+		claims.Permissions = permissions
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -406,4 +424,51 @@ func (s *Service) ValidateAccessToken(tokenString string) (*jwtutils.JWTClaims, 
 	}
 
 	return nil, fmt.Errorf("invalid token")
+}
+
+// getUserProfileIDs fetches all profile UUIDs for a given user
+func (s *Service) getUserProfileIDs(ctx context.Context, userID int64) ([]string, error) {
+	user, err := s.repo.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+
+	profileFilter := &filter.UserProfilesFilter{
+		UserUUID: user.UUID.String(),
+		Limit:    100, // Set a reasonable limit
+		Offset:   0,
+	}
+
+	profiles, err := s.repo.ListUserProfiles(ctx, profileFilter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list user profiles: %w", err)
+	}
+
+	profileIDs := make([]string, len(profiles))
+	for i, profile := range profiles {
+		profileIDs[i] = profile.UUID.String()
+	}
+
+	return profileIDs, nil
+}
+
+// getUserPermissions fetches all effective permissions for a given user
+func (s *Service) getUserPermissions(ctx context.Context, userID int64) ([]string, error) {
+	permissionFilter := &filter.UserEffectivePermissionFilter{
+		UserID: userID,
+		Limit:  100, // Set a reasonable limit
+		Offset: 0,
+	}
+
+	permissions, err := s.repo.GetUserEffectivePermissions(ctx, permissionFilter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user permissions: %w", err)
+	}
+
+	permissionNames := make([]string, len(permissions))
+	for i, permission := range permissions {
+		permissionNames[i] = permission.Name
+	}
+
+	return permissionNames, nil
 }

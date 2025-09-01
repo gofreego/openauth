@@ -99,14 +99,16 @@ func (x *SignInMetadata) GetLong() float64 {
 
 // SignInRequest for user authentication
 type SignInRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"` // Can be username, email, or phone - determined by backend
-	Password      *string                `protobuf:"bytes,2,opt,name=password,proto3,oneof" json:"password,omitempty"`
-	Otp           *string                `protobuf:"bytes,3,opt,name=otp,proto3,oneof" json:"otp,omitempty"`                                  // One-time password for 2FA
-	RememberMe    *bool                  `protobuf:"varint,4,opt,name=remember_me,json=rememberMe,proto3,oneof" json:"remember_me,omitempty"` // Extend session duration
-	Metadata      *SignInMetadata        `protobuf:"bytes,5,opt,name=metadata,proto3,oneof" json:"metadata,omitempty"`                        // Optional device metadata
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Username           string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"` // Can be username, email, or phone - determined by backend
+	Password           *string                `protobuf:"bytes,2,opt,name=password,proto3,oneof" json:"password,omitempty"`
+	Otp                *string                `protobuf:"bytes,3,opt,name=otp,proto3,oneof" json:"otp,omitempty"`                                                          // One-time password for 2FA
+	RememberMe         *bool                  `protobuf:"varint,4,opt,name=remember_me,json=rememberMe,proto3,oneof" json:"remember_me,omitempty"`                         // Extend session duration
+	Metadata           *SignInMetadata        `protobuf:"bytes,5,opt,name=metadata,proto3,oneof" json:"metadata,omitempty"`                                                // Optional device metadata
+	Profiles           *bool                  `protobuf:"varint,6,opt,name=profiles,proto3,oneof" json:"profiles,omitempty"`                                               // Include user profile ids in access token
+	IncludePermissions *bool                  `protobuf:"varint,7,opt,name=include_permissions,json=includePermissions,proto3,oneof" json:"include_permissions,omitempty"` // Include user permissions in access token
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *SignInRequest) Reset() {
@@ -172,6 +174,20 @@ func (x *SignInRequest) GetMetadata() *SignInMetadata {
 		return x.Metadata
 	}
 	return nil
+}
+
+func (x *SignInRequest) GetProfiles() bool {
+	if x != nil && x.Profiles != nil {
+		return *x.Profiles
+	}
+	return false
+}
+
+func (x *SignInRequest) GetIncludePermissions() bool {
+	if x != nil && x.IncludePermissions != nil {
+		return *x.IncludePermissions
+	}
+	return false
 }
 
 // SignInResponse with authentication tokens and user data
@@ -988,18 +1004,22 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"\f_device_nameB\x0e\n" +
 	"\f_device_typeB\x06\n" +
 	"\x04_latB\a\n" +
-	"\x05_long\"\xf0\x01\n" +
+	"\x05_long\"\xec\x02\n" +
 	"\rSignInRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1f\n" +
 	"\bpassword\x18\x02 \x01(\tH\x00R\bpassword\x88\x01\x01\x12\x15\n" +
 	"\x03otp\x18\x03 \x01(\tH\x01R\x03otp\x88\x01\x01\x12$\n" +
 	"\vremember_me\x18\x04 \x01(\bH\x02R\n" +
 	"rememberMe\x88\x01\x01\x123\n" +
-	"\bmetadata\x18\x05 \x01(\v2\x12.v1.SignInMetadataH\x03R\bmetadata\x88\x01\x01B\v\n" +
+	"\bmetadata\x18\x05 \x01(\v2\x12.v1.SignInMetadataH\x03R\bmetadata\x88\x01\x01\x12\x1f\n" +
+	"\bprofiles\x18\x06 \x01(\bH\x04R\bprofiles\x88\x01\x01\x124\n" +
+	"\x13include_permissions\x18\a \x01(\bH\x05R\x12includePermissions\x88\x01\x01B\v\n" +
 	"\t_passwordB\x06\n" +
 	"\x04_otpB\x0e\n" +
 	"\f_remember_meB\v\n" +
-	"\t_metadata\"\xfc\x01\n" +
+	"\t_metadataB\v\n" +
+	"\t_profilesB\x16\n" +
+	"\x14_include_permissions\"\xfc\x01\n" +
 	"\x0eSignInResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1d\n" +

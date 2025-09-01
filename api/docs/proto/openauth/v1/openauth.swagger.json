@@ -2876,6 +2876,14 @@
         "metadata": {
           "$ref": "#/definitions/v1SignInMetadata",
           "title": "Optional device metadata"
+        },
+        "profiles": {
+          "type": "boolean",
+          "title": "Include user profile ids in access token"
+        },
+        "includePermissions": {
+          "type": "boolean",
+          "title": "Include user permissions in access token"
         }
       },
       "title": "SignInRequest for user authentication"

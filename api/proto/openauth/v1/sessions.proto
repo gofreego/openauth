@@ -18,6 +18,8 @@ message SignInRequest {
     optional string otp = 3;                      // One-time password for 2FA
     optional bool remember_me = 4;      // Extend session duration
     optional SignInMetadata metadata = 5;       // Optional device metadata
+    optional bool profiles = 6;            // Include user profile ids in access token
+    optional bool include_permissions = 7; // Include user permissions in access token
 }
 
 // SignInResponse with authentication tokens and user data
@@ -35,6 +37,8 @@ message SignInResponse {
 message RefreshTokenRequest {
     string refresh_token = 1;
     optional string device_id = 2;
+    optional bool profiles = 3;            // Include user profile ids in access token
+    optional bool include_permissions = 4; // Include user permissions in access token
 }
 
 // RefreshTokenResponse with new tokens
