@@ -35,93 +35,48 @@ final ThemeData darkTheme = ThemeData(
   textTheme: const TextTheme(
     displayLarge: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 64,
-      fontWeight: FontWeight.w300,
-      height: 1.2,
     ),
     displayMedium: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 48,
-      fontWeight: FontWeight.w400,
-      height: 1.3,
     ),
     displaySmall: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 40,
-      fontWeight: FontWeight.w500,
-      height: 1.3,
     ),
     headlineLarge: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 36,
-      fontWeight: FontWeight.w600,
-      height: 1.4,
     ),
     headlineMedium: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 30,
-      fontWeight: FontWeight.w600,
-      height: 1.4,
     ),
     headlineSmall: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 26,
-      fontWeight: FontWeight.w600,
-      height: 1.4,
     ),
     titleLarge: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 22,
-      fontWeight: FontWeight.w700,
-      height: 1.5,
     ),
     titleMedium: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      height: 1.5,
     ),
     titleSmall: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      height: 1.5,
     ),
     bodyLarge: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 18,
-      fontWeight: FontWeight.w400,
-      height: 1.6,
     ),
     bodyMedium: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      height: 1.6,
     ),
     bodySmall: TextStyle(
       color: AppColors.textLight,
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      height: 1.5,
     ),
     labelLarge: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      height: 1.4,
     ),
     labelMedium: TextStyle(
       color: AppColors.textLight,
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      height: 1.4,
     ),
     labelSmall: TextStyle(
       color: AppColors.textMuted,
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      height: 1.4,
     ),
   ),
   
@@ -134,10 +89,10 @@ final ThemeData darkTheme = ThemeData(
       borderRadius: BorderRadius.circular(16),
       side: BorderSide(
         color: AppColors.borderDarkTransparent,
-        width: 0.5,
+        width: 1,
       ),
     ),
-    margin: const EdgeInsets.all(12),
+    margin: const EdgeInsets.all(8),
   ),
 
   // Elevated Button Theme
@@ -149,12 +104,11 @@ final ThemeData darkTheme = ThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      elevation: 3,
+      elevation: 2,
       shadowColor: AppColors.primaryTransparent,
       textStyle: const TextStyle(
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: FontWeight.w600,
-        height: 1.4,
       ),
     ),
   ),
@@ -169,9 +123,8 @@ final ThemeData darkTheme = ThemeData(
       ),
       side: const BorderSide(color: AppColors.primaryLight, width: 1.5),
       textStyle: const TextStyle(
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: FontWeight.w600,
-        height: 1.4,
       ),
     ),
   ),
@@ -185,9 +138,8 @@ final ThemeData darkTheme = ThemeData(
         borderRadius: BorderRadius.circular(8),
       ),
       textStyle: const TextStyle(
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: FontWeight.w600,
-        height: 1.4,
       ),
     ),
   ),
@@ -212,7 +164,7 @@ final ThemeData darkTheme = ThemeData(
       borderRadius: BorderRadius.circular(8),
       borderSide: const BorderSide(color: AppColors.error, width: 1),
     ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     hintStyle: const TextStyle(color: AppColors.textMuted),
     errorStyle: const TextStyle(color: AppColors.error),
   ),
@@ -226,9 +178,8 @@ final ThemeData darkTheme = ThemeData(
     centerTitle: false,
     titleTextStyle: TextStyle(
       color: AppColors.darkOnBackground,
-      fontSize: 26,
+      fontSize: 24,
       fontWeight: FontWeight.bold,
-      height: 1.3,
     ),
     iconTheme: IconThemeData(
       color: AppColors.darkOnBackground,
@@ -286,8 +237,8 @@ final ThemeData darkTheme = ThemeData(
     unselectedItemColor: AppColors.textLight,
     elevation: 8,
     type: BottomNavigationBarType.fixed,
-    selectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 13, height: 1.3),
-    unselectedLabelStyle: TextStyle(fontSize: 13, height: 1.3),
+    selectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+    unselectedLabelStyle: TextStyle(fontSize: 12),
   ),
   
   // Divider Theme
