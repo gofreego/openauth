@@ -319,10 +319,6 @@ func local_request_OpenAuth_CreateGroup_0(ctx context.Context, marshaler runtime
 
 }
 
-var (
-	filter_OpenAuth_GetGroup_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
 func request_OpenAuth_GetGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetGroupRequest
 	var metadata runtime.ServerMetadata
@@ -334,26 +330,14 @@ func request_OpenAuth_GetGroup_0(ctx context.Context, marshaler runtime.Marshale
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	if protoReq.Identifier == nil {
-		protoReq.Identifier = &GetGroupRequest_Uuid{}
-	} else if _, ok := protoReq.Identifier.(*GetGroupRequest_Uuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *GetGroupRequest_Uuid, but: %t\n", protoReq.Identifier)
-	}
-	protoReq.Identifier.(*GetGroupRequest_Uuid).Uuid, err = runtime.String(val)
+	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_OpenAuth_GetGroup_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.GetGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -372,26 +356,14 @@ func local_request_OpenAuth_GetGroup_0(ctx context.Context, marshaler runtime.Ma
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	if protoReq.Identifier == nil {
-		protoReq.Identifier = &GetGroupRequest_Uuid{}
-	} else if _, ok := protoReq.Identifier.(*GetGroupRequest_Uuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *GetGroupRequest_Uuid, but: %t\n", protoReq.Identifier)
-	}
-	protoReq.Identifier.(*GetGroupRequest_Uuid).Uuid, err = runtime.String(val)
+	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_OpenAuth_GetGroup_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.GetGroup(ctx, &protoReq)
@@ -450,19 +422,14 @@ func request_OpenAuth_UpdateGroup_0(ctx context.Context, marshaler runtime.Marsh
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	if protoReq.Identifier == nil {
-		protoReq.Identifier = &UpdateGroupRequest_Uuid{}
-	} else if _, ok := protoReq.Identifier.(*UpdateGroupRequest_Uuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *UpdateGroupRequest_Uuid, but: %t\n", protoReq.Identifier)
-	}
-	protoReq.Identifier.(*UpdateGroupRequest_Uuid).Uuid, err = runtime.String(val)
+	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.UpdateGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -485,29 +452,20 @@ func local_request_OpenAuth_UpdateGroup_0(ctx context.Context, marshaler runtime
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	if protoReq.Identifier == nil {
-		protoReq.Identifier = &UpdateGroupRequest_Uuid{}
-	} else if _, ok := protoReq.Identifier.(*UpdateGroupRequest_Uuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *UpdateGroupRequest_Uuid, but: %t\n", protoReq.Identifier)
-	}
-	protoReq.Identifier.(*UpdateGroupRequest_Uuid).Uuid, err = runtime.String(val)
+	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.UpdateGroup(ctx, &protoReq)
 	return msg, metadata, err
 
 }
-
-var (
-	filter_OpenAuth_DeleteGroup_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
 
 func request_OpenAuth_DeleteGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DeleteGroupRequest
@@ -520,26 +478,14 @@ func request_OpenAuth_DeleteGroup_0(ctx context.Context, marshaler runtime.Marsh
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	if protoReq.Identifier == nil {
-		protoReq.Identifier = &DeleteGroupRequest_Uuid{}
-	} else if _, ok := protoReq.Identifier.(*DeleteGroupRequest_Uuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *DeleteGroupRequest_Uuid, but: %t\n", protoReq.Identifier)
-	}
-	protoReq.Identifier.(*DeleteGroupRequest_Uuid).Uuid, err = runtime.String(val)
+	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_OpenAuth_DeleteGroup_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.DeleteGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -558,26 +504,14 @@ func local_request_OpenAuth_DeleteGroup_0(ctx context.Context, marshaler runtime
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	if protoReq.Identifier == nil {
-		protoReq.Identifier = &DeleteGroupRequest_Uuid{}
-	} else if _, ok := protoReq.Identifier.(*DeleteGroupRequest_Uuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *DeleteGroupRequest_Uuid, but: %t\n", protoReq.Identifier)
-	}
-	protoReq.Identifier.(*DeleteGroupRequest_Uuid).Uuid, err = runtime.String(val)
+	protoReq.Id, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_OpenAuth_DeleteGroup_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.DeleteGroup(ctx, &protoReq)
@@ -593,43 +527,6 @@ func request_OpenAuth_AssignUserToGroup_0(ctx context.Context, marshaler runtime
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["group_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_uuid")
-	}
-
-	if protoReq.GroupIdentifier == nil {
-		protoReq.GroupIdentifier = &AssignUserToGroupRequest_GroupUuid{}
-	} else if _, ok := protoReq.GroupIdentifier.(*AssignUserToGroupRequest_GroupUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *AssignUserToGroupRequest_GroupUuid, but: %t\n", protoReq.GroupIdentifier)
-	}
-	protoReq.GroupIdentifier.(*AssignUserToGroupRequest_GroupUuid).GroupUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_uuid", err)
-	}
-
-	val, ok = pathParams["user_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
-	}
-
-	if protoReq.UserIdentifier == nil {
-		protoReq.UserIdentifier = &AssignUserToGroupRequest_UserUuid{}
-	} else if _, ok := protoReq.UserIdentifier.(*AssignUserToGroupRequest_UserUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *AssignUserToGroupRequest_UserUuid, but: %t\n", protoReq.UserIdentifier)
-	}
-	protoReq.UserIdentifier.(*AssignUserToGroupRequest_UserUuid).UserUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
-	}
-
 	msg, err := client.AssignUserToGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -643,51 +540,10 @@ func local_request_OpenAuth_AssignUserToGroup_0(ctx context.Context, marshaler r
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["group_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_uuid")
-	}
-
-	if protoReq.GroupIdentifier == nil {
-		protoReq.GroupIdentifier = &AssignUserToGroupRequest_GroupUuid{}
-	} else if _, ok := protoReq.GroupIdentifier.(*AssignUserToGroupRequest_GroupUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *AssignUserToGroupRequest_GroupUuid, but: %t\n", protoReq.GroupIdentifier)
-	}
-	protoReq.GroupIdentifier.(*AssignUserToGroupRequest_GroupUuid).GroupUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_uuid", err)
-	}
-
-	val, ok = pathParams["user_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
-	}
-
-	if protoReq.UserIdentifier == nil {
-		protoReq.UserIdentifier = &AssignUserToGroupRequest_UserUuid{}
-	} else if _, ok := protoReq.UserIdentifier.(*AssignUserToGroupRequest_UserUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *AssignUserToGroupRequest_UserUuid, but: %t\n", protoReq.UserIdentifier)
-	}
-	protoReq.UserIdentifier.(*AssignUserToGroupRequest_UserUuid).UserUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
-	}
-
 	msg, err := server.AssignUserToGroup(ctx, &protoReq)
 	return msg, metadata, err
 
 }
-
-var (
-	filter_OpenAuth_RemoveUserFromGroup_0 = &utilities.DoubleArray{Encoding: map[string]int{"group_uuid": 0, "user_uuid": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
-)
 
 func request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq RemoveUserFromGroupRequest
@@ -700,41 +556,24 @@ func request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["group_uuid"]
+	val, ok = pathParams["group_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_id")
 	}
 
-	if protoReq.GroupIdentifier == nil {
-		protoReq.GroupIdentifier = &RemoveUserFromGroupRequest_GroupUuid{}
-	} else if _, ok := protoReq.GroupIdentifier.(*RemoveUserFromGroupRequest_GroupUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *RemoveUserFromGroupRequest_GroupUuid, but: %t\n", protoReq.GroupIdentifier)
-	}
-	protoReq.GroupIdentifier.(*RemoveUserFromGroupRequest_GroupUuid).GroupUuid, err = runtime.String(val)
+	protoReq.GroupId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	val, ok = pathParams["user_uuid"]
+	val, ok = pathParams["user_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
 	}
 
-	if protoReq.UserIdentifier == nil {
-		protoReq.UserIdentifier = &RemoveUserFromGroupRequest_UserUuid{}
-	} else if _, ok := protoReq.UserIdentifier.(*RemoveUserFromGroupRequest_UserUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *RemoveUserFromGroupRequest_UserUuid, but: %t\n", protoReq.UserIdentifier)
-	}
-	protoReq.UserIdentifier.(*RemoveUserFromGroupRequest_UserUuid).UserUuid, err = runtime.String(val)
+	protoReq.UserId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_OpenAuth_RemoveUserFromGroup_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
 	msg, err := client.RemoveUserFromGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -753,41 +592,24 @@ func local_request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["group_uuid"]
+	val, ok = pathParams["group_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_id")
 	}
 
-	if protoReq.GroupIdentifier == nil {
-		protoReq.GroupIdentifier = &RemoveUserFromGroupRequest_GroupUuid{}
-	} else if _, ok := protoReq.GroupIdentifier.(*RemoveUserFromGroupRequest_GroupUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *RemoveUserFromGroupRequest_GroupUuid, but: %t\n", protoReq.GroupIdentifier)
-	}
-	protoReq.GroupIdentifier.(*RemoveUserFromGroupRequest_GroupUuid).GroupUuid, err = runtime.String(val)
+	protoReq.GroupId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	val, ok = pathParams["user_uuid"]
+	val, ok = pathParams["user_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
 	}
 
-	if protoReq.UserIdentifier == nil {
-		protoReq.UserIdentifier = &RemoveUserFromGroupRequest_UserUuid{}
-	} else if _, ok := protoReq.UserIdentifier.(*RemoveUserFromGroupRequest_UserUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *RemoveUserFromGroupRequest_UserUuid, but: %t\n", protoReq.UserIdentifier)
-	}
-	protoReq.UserIdentifier.(*RemoveUserFromGroupRequest_UserUuid).UserUuid, err = runtime.String(val)
+	protoReq.UserId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
-	}
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_OpenAuth_RemoveUserFromGroup_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
 	msg, err := server.RemoveUserFromGroup(ctx, &protoReq)
@@ -796,7 +618,7 @@ func local_request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler
 }
 
 var (
-	filter_OpenAuth_ListGroupUsers_0 = &utilities.DoubleArray{Encoding: map[string]int{"group_uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_OpenAuth_ListGroupUsers_0 = &utilities.DoubleArray{Encoding: map[string]int{"group_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_OpenAuth_ListGroupUsers_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -810,19 +632,14 @@ func request_OpenAuth_ListGroupUsers_0(ctx context.Context, marshaler runtime.Ma
 		_   = err
 	)
 
-	val, ok = pathParams["group_uuid"]
+	val, ok = pathParams["group_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_id")
 	}
 
-	if protoReq.GroupIdentifier == nil {
-		protoReq.GroupIdentifier = &ListGroupUsersRequest_GroupUuid{}
-	} else if _, ok := protoReq.GroupIdentifier.(*ListGroupUsersRequest_GroupUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *ListGroupUsersRequest_GroupUuid, but: %t\n", protoReq.GroupIdentifier)
-	}
-	protoReq.GroupIdentifier.(*ListGroupUsersRequest_GroupUuid).GroupUuid, err = runtime.String(val)
+	protoReq.GroupId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -848,19 +665,14 @@ func local_request_OpenAuth_ListGroupUsers_0(ctx context.Context, marshaler runt
 		_   = err
 	)
 
-	val, ok = pathParams["group_uuid"]
+	val, ok = pathParams["group_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_id")
 	}
 
-	if protoReq.GroupIdentifier == nil {
-		protoReq.GroupIdentifier = &ListGroupUsersRequest_GroupUuid{}
-	} else if _, ok := protoReq.GroupIdentifier.(*ListGroupUsersRequest_GroupUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *ListGroupUsersRequest_GroupUuid, but: %t\n", protoReq.GroupIdentifier)
-	}
-	protoReq.GroupIdentifier.(*ListGroupUsersRequest_GroupUuid).GroupUuid, err = runtime.String(val)
+	protoReq.GroupId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -876,7 +688,7 @@ func local_request_OpenAuth_ListGroupUsers_0(ctx context.Context, marshaler runt
 }
 
 var (
-	filter_OpenAuth_ListUserGroups_0 = &utilities.DoubleArray{Encoding: map[string]int{"user_uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_OpenAuth_ListUserGroups_0 = &utilities.DoubleArray{Encoding: map[string]int{"user_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_OpenAuth_ListUserGroups_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -890,19 +702,14 @@ func request_OpenAuth_ListUserGroups_0(ctx context.Context, marshaler runtime.Ma
 		_   = err
 	)
 
-	val, ok = pathParams["user_uuid"]
+	val, ok = pathParams["user_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
 	}
 
-	if protoReq.UserIdentifier == nil {
-		protoReq.UserIdentifier = &ListUserGroupsRequest_UserUuid{}
-	} else if _, ok := protoReq.UserIdentifier.(*ListUserGroupsRequest_UserUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *ListUserGroupsRequest_UserUuid, but: %t\n", protoReq.UserIdentifier)
-	}
-	protoReq.UserIdentifier.(*ListUserGroupsRequest_UserUuid).UserUuid, err = runtime.String(val)
+	protoReq.UserId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -928,19 +735,14 @@ func local_request_OpenAuth_ListUserGroups_0(ctx context.Context, marshaler runt
 		_   = err
 	)
 
-	val, ok = pathParams["user_uuid"]
+	val, ok = pathParams["user_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
 	}
 
-	if protoReq.UserIdentifier == nil {
-		protoReq.UserIdentifier = &ListUserGroupsRequest_UserUuid{}
-	} else if _, ok := protoReq.UserIdentifier.(*ListUserGroupsRequest_UserUuid); !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "expect type: *ListUserGroupsRequest_UserUuid, but: %t\n", protoReq.UserIdentifier)
-	}
-	protoReq.UserIdentifier.(*ListUserGroupsRequest_UserUuid).UserUuid, err = runtime.String(val)
+	protoReq.UserId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -1034,7 +836,7 @@ func local_request_OpenAuth_VerifyPhone_0(ctx context.Context, marshaler runtime
 }
 
 func request_OpenAuth_ResendVerification_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ResendVerificationRequest
+	var protoReq SendVerificationCodeRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -1047,7 +849,7 @@ func request_OpenAuth_ResendVerification_0(ctx context.Context, marshaler runtim
 }
 
 func local_request_OpenAuth_ResendVerification_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ResendVerificationRequest
+	var protoReq SendVerificationCodeRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -2127,7 +1929,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/GetGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/GetGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2177,7 +1979,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/UpdateGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/UpdateGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2202,7 +2004,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/DeleteGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/DeleteGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2227,7 +2029,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignUserToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_uuid}/users/{user_uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignUserToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2252,7 +2054,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemoveUserFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_uuid}/users/{user_uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemoveUserFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users/{user_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2277,7 +2079,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/ListGroupUsers", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_uuid}/users"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/ListGroupUsers", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2302,7 +2104,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/ListUserGroups", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_uuid}/groups"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/ListUserGroups", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/groups"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3045,7 +2847,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/GetGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/GetGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3089,7 +2891,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/UpdateGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/UpdateGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3111,7 +2913,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/DeleteGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/DeleteGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3133,7 +2935,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignUserToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_uuid}/users/{user_uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignUserToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3155,7 +2957,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemoveUserFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_uuid}/users/{user_uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemoveUserFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users/{user_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3177,7 +2979,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/ListGroupUsers", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_uuid}/users"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/ListGroupUsers", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3199,7 +3001,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/ListUserGroups", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_uuid}/groups"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/ListUserGroups", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/groups"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3695,21 +3497,21 @@ var (
 
 	pattern_OpenAuth_CreateGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"openauth", "v1", "groups"}, ""))
 
-	pattern_OpenAuth_GetGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "groups", "uuid"}, ""))
+	pattern_OpenAuth_GetGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "groups", "id"}, ""))
 
 	pattern_OpenAuth_ListGroups_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"openauth", "v1", "groups"}, ""))
 
-	pattern_OpenAuth_UpdateGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "groups", "uuid"}, ""))
+	pattern_OpenAuth_UpdateGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "groups", "id"}, ""))
 
-	pattern_OpenAuth_DeleteGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "groups", "uuid"}, ""))
+	pattern_OpenAuth_DeleteGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "groups", "id"}, ""))
 
-	pattern_OpenAuth_AssignUserToGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"openauth", "v1", "groups", "group_uuid", "users", "user_uuid"}, ""))
+	pattern_OpenAuth_AssignUserToGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "groups", "users"}, ""))
 
-	pattern_OpenAuth_RemoveUserFromGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"openauth", "v1", "groups", "group_uuid", "users", "user_uuid"}, ""))
+	pattern_OpenAuth_RemoveUserFromGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"openauth", "v1", "groups", "group_id", "users", "user_id"}, ""))
 
-	pattern_OpenAuth_ListGroupUsers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_uuid", "users"}, ""))
+	pattern_OpenAuth_ListGroupUsers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_id", "users"}, ""))
 
-	pattern_OpenAuth_ListUserGroups_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_uuid", "groups"}, ""))
+	pattern_OpenAuth_ListUserGroups_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "groups"}, ""))
 
 	pattern_OpenAuth_SignUp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "users", "signup"}, ""))
 

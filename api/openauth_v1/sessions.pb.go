@@ -101,9 +101,10 @@ func (x *SignInMetadata) GetLong() float64 {
 type SignInRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"` // Can be username, email, or phone - determined by backend
-	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	RememberMe    *bool                  `protobuf:"varint,3,opt,name=remember_me,json=rememberMe,proto3,oneof" json:"remember_me,omitempty"` // Extend session duration
-	Metadata      *SignInMetadata        `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`                              // Optional device metadata
+	Password      *string                `protobuf:"bytes,2,opt,name=password,proto3,oneof" json:"password,omitempty"`
+	Otp           *string                `protobuf:"bytes,3,opt,name=otp,proto3,oneof" json:"otp,omitempty"`                                  // One-time password for 2FA
+	RememberMe    *bool                  `protobuf:"varint,4,opt,name=remember_me,json=rememberMe,proto3,oneof" json:"remember_me,omitempty"` // Extend session duration
+	Metadata      *SignInMetadata        `protobuf:"bytes,5,opt,name=metadata,proto3,oneof" json:"metadata,omitempty"`                        // Optional device metadata
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -146,8 +147,15 @@ func (x *SignInRequest) GetUsername() string {
 }
 
 func (x *SignInRequest) GetPassword() string {
-	if x != nil {
-		return x.Password
+	if x != nil && x.Password != nil {
+		return *x.Password
+	}
+	return ""
+}
+
+func (x *SignInRequest) GetOtp() string {
+	if x != nil && x.Otp != nil {
+		return *x.Otp
 	}
 	return ""
 }
@@ -823,9 +831,6 @@ func (x *ListUserSessionsRequest) GetActiveOnly() bool {
 type ListUserSessionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Sessions      []*Session             `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -865,27 +870,6 @@ func (x *ListUserSessionsResponse) GetSessions() []*Session {
 		return x.Sessions
 	}
 	return nil
-}
-
-func (x *ListUserSessionsResponse) GetTotalCount() int32 {
-	if x != nil {
-		return x.TotalCount
-	}
-	return 0
-}
-
-func (x *ListUserSessionsResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *ListUserSessionsResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
 }
 
 // TerminateSessionRequest to end specific session
@@ -1004,14 +988,18 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"\f_device_nameB\x0e\n" +
 	"\f_device_typeB\x06\n" +
 	"\x04_latB\a\n" +
-	"\x05_long\"\xad\x01\n" +
+	"\x05_long\"\xf0\x01\n" +
 	"\rSignInRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12$\n" +
-	"\vremember_me\x18\x03 \x01(\bH\x00R\n" +
-	"rememberMe\x88\x01\x01\x12.\n" +
-	"\bmetadata\x18\x04 \x01(\v2\x12.v1.SignInMetadataR\bmetadataB\x0e\n" +
-	"\f_remember_me\"\xfc\x01\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x1f\n" +
+	"\bpassword\x18\x02 \x01(\tH\x00R\bpassword\x88\x01\x01\x12\x15\n" +
+	"\x03otp\x18\x03 \x01(\tH\x01R\x03otp\x88\x01\x01\x12$\n" +
+	"\vremember_me\x18\x04 \x01(\bH\x02R\n" +
+	"rememberMe\x88\x01\x01\x123\n" +
+	"\bmetadata\x18\x05 \x01(\v2\x12.v1.SignInMetadataH\x03R\bmetadata\x88\x01\x01B\v\n" +
+	"\t_passwordB\x06\n" +
+	"\x04_otpB\x0e\n" +
+	"\f_remember_meB\v\n" +
+	"\t_metadata\"\xfc\x01\n" +
 	"\x0eSignInResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1d\n" +
@@ -1080,13 +1068,9 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12$\n" +
 	"\vactive_only\x18\x04 \x01(\bH\x00R\n" +
 	"activeOnly\x88\x01\x01B\x0e\n" +
-	"\f_active_only\"\x92\x01\n" +
+	"\f_active_only\"C\n" +
 	"\x18ListUserSessionsResponse\x12'\n" +
-	"\bsessions\x18\x01 \x03(\v2\v.v1.SessionR\bsessions\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\"8\n" +
+	"\bsessions\x18\x01 \x03(\v2\v.v1.SessionR\bsessions\"8\n" +
 	"\x17TerminateSessionRequest\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\"N\n" +

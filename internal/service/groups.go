@@ -7,7 +7,6 @@ import (
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
-	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -24,7 +23,7 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 
 	// Normalize the name
 	req.Name = strings.ToLower(strings.TrimSpace(req.Name))
-	
+
 	// Check if group name already exists
 	exists, err := s.repo.CheckGroupNameExists(ctx, req.Name)
 	if err != nil {
@@ -36,7 +35,6 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 
 	// Create group DAO
 	group := &dao.Group{
-		UUID:        uuid.New(),
 		Name:        req.Name,
 		DisplayName: req.DisplayName,
 		IsSystem:    false, // User-created groups are not system groups
@@ -161,7 +159,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 
 	// Build updates map
 	updates := make(map[string]interface{})
-	
+
 	if req.NewName != nil && *req.NewName != "" {
 		newName := strings.ToLower(strings.TrimSpace(*req.NewName))
 		if newName != group.Name {
@@ -176,15 +174,15 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 			updates["name"] = newName
 		}
 	}
-	
+
 	if req.DisplayName != nil {
 		updates["display_name"] = *req.DisplayName
 	}
-	
+
 	if req.Description != nil {
 		updates["description"] = *req.Description
 	}
-	
+
 	if req.IsDefault != nil {
 		updates["is_default"] = *req.IsDefault
 	}
@@ -477,7 +475,6 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 	for i, group := range groups {
 		protoGroups[i] = &openauth_v1.UserGroup{
 			GroupId:          group.ID,
-			GroupUuid:        group.UUID.String(),
 			GroupName:        group.Name,
 			GroupDisplayName: group.DisplayName,
 			GroupDescription: group.Description,

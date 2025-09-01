@@ -187,7 +187,7 @@ type OpenAuthClient interface {
 	//
 	// Useful when users don't receive the initial verification code
 	// or when the code has expired. Includes rate limiting to prevent abuse.
-	ResendVerification(ctx context.Context, in *ResendVerificationRequest, opts ...grpc.CallOption) (*ResendVerificationResponse, error)
+	ResendVerification(ctx context.Context, in *SendVerificationCodeRequest, opts ...grpc.CallOption) (*SendVerificationCodeResponse, error)
 	// CheckUsername checks if a username is available for registration.
 	//
 	// Returns availability status and suggestions for alternative usernames
@@ -478,9 +478,9 @@ func (c *openAuthClient) VerifyPhone(ctx context.Context, in *VerifyPhoneRequest
 	return out, nil
 }
 
-func (c *openAuthClient) ResendVerification(ctx context.Context, in *ResendVerificationRequest, opts ...grpc.CallOption) (*ResendVerificationResponse, error) {
+func (c *openAuthClient) ResendVerification(ctx context.Context, in *SendVerificationCodeRequest, opts ...grpc.CallOption) (*SendVerificationCodeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ResendVerificationResponse)
+	out := new(SendVerificationCodeResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_ResendVerification_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -788,7 +788,7 @@ type OpenAuthServer interface {
 	//
 	// Useful when users don't receive the initial verification code
 	// or when the code has expired. Includes rate limiting to prevent abuse.
-	ResendVerification(context.Context, *ResendVerificationRequest) (*ResendVerificationResponse, error)
+	ResendVerification(context.Context, *SendVerificationCodeRequest) (*SendVerificationCodeResponse, error)
 	// CheckUsername checks if a username is available for registration.
 	//
 	// Returns availability status and suggestions for alternative usernames
@@ -953,7 +953,7 @@ func (UnimplementedOpenAuthServer) VerifyEmail(context.Context, *VerifyEmailRequ
 func (UnimplementedOpenAuthServer) VerifyPhone(context.Context, *VerifyPhoneRequest) (*VerificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyPhone not implemented")
 }
-func (UnimplementedOpenAuthServer) ResendVerification(context.Context, *ResendVerificationRequest) (*ResendVerificationResponse, error) {
+func (UnimplementedOpenAuthServer) ResendVerification(context.Context, *SendVerificationCodeRequest) (*SendVerificationCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResendVerification not implemented")
 }
 func (UnimplementedOpenAuthServer) CheckUsername(context.Context, *CheckUsernameRequest) (*CheckUsernameResponse, error) {
@@ -1353,7 +1353,7 @@ func _OpenAuth_VerifyPhone_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _OpenAuth_ResendVerification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ResendVerificationRequest)
+	in := new(SendVerificationCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1365,7 +1365,7 @@ func _OpenAuth_ResendVerification_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: OpenAuth_ResendVerification_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpenAuthServer).ResendVerification(ctx, req.(*ResendVerificationRequest))
+		return srv.(OpenAuthServer).ResendVerification(ctx, req.(*SendVerificationCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

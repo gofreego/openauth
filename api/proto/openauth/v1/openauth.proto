@@ -122,7 +122,7 @@ service OpenAuth {
     // Returns complete group information including metadata and system status.
     rpc GetGroup (GetGroupRequest) returns (GetGroupResponse) {
         option (google.api.http) = {
-            get: "/openauth/v1/groups/{uuid}"
+            get: "/openauth/v1/groups/{id}"
         };
     }
 
@@ -144,7 +144,7 @@ service OpenAuth {
     // System groups (is_system=true) cannot be modified to prevent breaking core functionality.
     rpc UpdateGroup (UpdateGroupRequest) returns (UpdateGroupResponse) {
         option (google.api.http) = {
-            put: "/openauth/v1/groups/{uuid}"
+            put: "/openauth/v1/groups/{id}"
             body: "*"
         };
     }
@@ -155,7 +155,7 @@ service OpenAuth {
     // Warning: Deleting a group will remove all user assignments and group permissions.
     rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {
         option (google.api.http) = {
-            delete: "/openauth/v1/groups/{uuid}"
+            delete: "/openauth/v1/groups/{id}"
         };
     }
 
@@ -165,7 +165,7 @@ service OpenAuth {
     // Supports optional expiration time for temporary group membership.
     rpc AssignUserToGroup (AssignUserToGroupRequest) returns (AssignUserToGroupResponse) {
         option (google.api.http) = {
-            post: "/openauth/v1/groups/{group_uuid}/users/{user_uuid}"
+            post: "/openauth/v1/groups/users"
             body: "*"
         };
     }
@@ -176,7 +176,7 @@ service OpenAuth {
     // Direct user permissions are not affected.
     rpc RemoveUserFromGroup (RemoveUserFromGroupRequest) returns (RemoveUserFromGroupResponse) {
         option (google.api.http) = {
-            delete: "/openauth/v1/groups/{group_uuid}/users/{user_uuid}"
+            delete: "/openauth/v1/groups/{group_id}/users/{user_id}"
         };
     }
 
@@ -185,7 +185,7 @@ service OpenAuth {
     // Returns paginated list of users with their group membership details.
     rpc ListGroupUsers (ListGroupUsersRequest) returns (ListGroupUsersResponse) {
         option (google.api.http) = {
-            get: "/openauth/v1/groups/{group_uuid}/users"
+            get: "/openauth/v1/groups/{group_id}/users"
         };
     }
 
@@ -194,7 +194,7 @@ service OpenAuth {
     // Returns paginated list of groups the user belongs to.
     rpc ListUserGroups (ListUserGroupsRequest) returns (ListUserGroupsResponse) {
         option (google.api.http) = {
-            get: "/openauth/v1/users/{user_uuid}/groups"
+            get: "/openauth/v1/users/{user_id}/groups"
         };
     }
 
@@ -245,7 +245,7 @@ service OpenAuth {
     // 
     // Useful when users don't receive the initial verification code
     // or when the code has expired. Includes rate limiting to prevent abuse.
-    rpc ResendVerification (ResendVerificationRequest) returns (ResendVerificationResponse) {
+    rpc ResendVerification (SendVerificationCodeRequest) returns (SendVerificationCodeResponse) {
         option (google.api.http) = {
             post: "/openauth/v1/users/resend-verification"
             body: "*"

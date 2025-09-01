@@ -1,0 +1,10 @@
+syntax = "proto3";
+package v1;
+
+option go_package = "./openauth_v1";
+
+enum SortOrder {
+    NONE = 0;
+    ASC = 1;
+    DESC = 2;
+}

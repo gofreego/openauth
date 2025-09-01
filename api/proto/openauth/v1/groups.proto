@@ -8,29 +8,22 @@ message Group {
     // Unique identifier for the group
     int64 id = 1;
     
-    // Unique UUID for the group
-    string uuid = 2;
-    
     // Unique name for the group
-    string name = 3;
+    string name = 2;
     
     // Human-readable display name for the group
-    string display_name = 4;
-    
+    string display_name = 3;
+
     // Optional detailed description of the group
-    optional string description = 5;
-    
-    // Whether this is a system group (cannot be deleted)
-    bool is_system = 6;
-    
-    // Whether this is the default group for new users
-    bool is_default = 7;
-    
+    optional string description = 4;
+
+    int64 created_by = 5;
+
     // Timestamp when the group was created
-    int64 created_at = 8;
-    
+    int64 created_at = 6;
+
     // Timestamp when the group was last updated
-    int64 updated_at = 9;
+    int64 updated_at = 7;
 }
 
 // CreateGroupRequest to create a new group
@@ -43,9 +36,6 @@ message CreateGroupRequest {
     
     // Optional detailed description of the group
     optional string description = 3;
-    
-    // Whether this is the default group for new users (optional, defaults to false)
-    optional bool is_default = 4;
 }
 
 // CreateGroupResponse after successful group creation
@@ -54,13 +44,9 @@ message CreateGroupResponse {
     string message = 2;
 }
 
-// GetGroupRequest to get group by ID or name
+// GetGroupRequest to get group by ID
 message GetGroupRequest {
-    oneof identifier {
-        int64 id = 1;
-        string uuid = 2;
-        string name = 3;
-    }
+    int64 id = 1;
 }
 
 // GetGroupResponse
@@ -70,13 +56,8 @@ message GetGroupResponse {
 
 // UpdateGroupRequest to update group information
 message UpdateGroupRequest {
-    // Identifier for the group to update
-    oneof identifier {
-        int64 id = 1;
-        string uuid = 2;
-        string name = 3;
-    }
-    
+    int64 id = 1;
+
     // Optional new name for the group
     optional string new_name = 4;
     
@@ -85,9 +66,6 @@ message UpdateGroupRequest {
     
     // Optional new description
     optional string description = 6;
-    
-    // Optional new default status
-    optional bool is_default = 7;
 }
 
 // UpdateGroupResponse
@@ -98,11 +76,7 @@ message UpdateGroupResponse {
 
 // DeleteGroupRequest to delete a group
 message DeleteGroupRequest {
-    oneof identifier {
-        int64 id = 1;
-        string uuid = 2;
-        string name = 3;
-    }
+    int64 id = 1;
 }
 
 // DeleteGroupResponse
@@ -118,43 +92,24 @@ message ListGroupsRequest {
     
     // Number of groups to skip (for pagination)
     int32 offset = 2;
-    
+
+    optional int64 id = 3;
+
     // Optional search query (searches name, display_name, description)
-    optional string search = 3;
-    
-    // Optional filter by system groups
-    optional bool is_system = 4;
-    
-    // Optional filter by default groups
-    optional bool is_default = 5;
+    optional string search = 4;
 }
 
 // ListGroupsResponse
 message ListGroupsResponse {
     repeated Group groups = 1;
-    int32 total_count = 2;
-    int32 limit = 3;
-    int32 offset = 4;
-    bool has_more = 5;
 }
 
 // AssignUserToGroupRequest to add a user to a group
 message AssignUserToGroupRequest {
-    // User identifier
-    oneof user_identifier {
-        int64 user_id = 1;
-        string user_uuid = 2;
-    }
-    
-    // Group identifier
-    oneof group_identifier {
-        int64 group_id = 3;
-        string group_uuid = 4;
-        string group_name = 5;
-    }
-    
+    int64 user_id = 1;
+    int64 group_id = 2;
     // Optional expiration time for the group membership
-    optional int64 expires_at = 6;
+    optional int64 expires_at = 3;
 }
 
 // AssignUserToGroupResponse
@@ -165,18 +120,8 @@ message AssignUserToGroupResponse {
 
 // RemoveUserFromGroupRequest to remove a user from a group
 message RemoveUserFromGroupRequest {
-    // User identifier
-    oneof user_identifier {
-        int64 user_id = 1;
-        string user_uuid = 2;
-    }
-    
-    // Group identifier
-    oneof group_identifier {
-        int64 group_id = 3;
-        string group_uuid = 4;
-        string group_name = 5;
-    }
+    int64 user_id = 1;
+    int64 group_id = 2;
 }
 
 // RemoveUserFromGroupResponse
@@ -187,25 +132,15 @@ message RemoveUserFromGroupResponse {
 
 // ListGroupUsersRequest to get all users in a group
 message ListGroupUsersRequest {
-    // Group identifier
-    oneof group_identifier {
-        int64 group_id = 1;
-        string group_uuid = 2;
-        string group_name = 3;
-    }
-    
+    int64 group_id = 1;
     // Pagination
-    int32 limit = 4;
-    int32 offset = 5;
+    int32 limit = 2;
+    int32 offset = 3;
 }
 
 // ListGroupUsersResponse
 message ListGroupUsersResponse {
     repeated GroupUser users = 1;
-    int32 total_count = 2;
-    int32 limit = 3;
-    int32 offset = 4;
-    bool has_more = 5;
 }
 
 // GroupUser represents a user's membership in a group
@@ -215,41 +150,34 @@ message GroupUser {
     string username = 3;
     optional string email = 4;
     optional string name = 5;
-    optional int64 expires_at = 6;
-    int64 assigned_at = 7;
+    optional string avatar = 6;
+    optional int64 expires_at = 7;
+    int64 assigned_at = 8;
+    int64 assigned_by = 9;
 }
 
 // ListUserGroupsRequest to get all groups for a user
 message ListUserGroupsRequest {
-    // User identifier
-    oneof user_identifier {
-        int64 user_id = 1;
-        string user_uuid = 2;
-    }
-    
+    int64 user_id = 1;
     // Pagination
-    int32 limit = 3;
-    int32 offset = 4;
+    int32 limit = 2;
+    int32 offset = 3;
 }
 
 // ListUserGroupsResponse
 message ListUserGroupsResponse {
     repeated UserGroup groups = 1;
-    int32 total_count = 2;
-    int32 limit = 3;
-    int32 offset = 4;
-    bool has_more = 5;
 }
 
 // UserGroup represents a group membership for a user
 message UserGroup {
     int64 group_id = 1;
-    string group_uuid = 2;
-    string group_name = 3;
-    string group_display_name = 4;
-    optional string group_description = 5;
-    bool is_system = 6;
-    bool is_default = 7;
-    optional int64 expires_at = 8;
-    int64 assigned_at = 9;
+    string group_name = 2;
+    string group_display_name = 3;
+    optional string group_description = 4;
+    bool is_system = 5;
+    bool is_default = 6;
+    optional int64 expires_at = 7;
+    int64 assigned_at = 8;
+    int64 assigned_by = 9;
 }

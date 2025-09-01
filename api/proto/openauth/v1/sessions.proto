@@ -14,9 +14,10 @@ message SignInMetadata {
 // SignInRequest for user authentication
 message SignInRequest {
     string username = 1;                // Can be username, email, or phone - determined by backend
-    string password = 2;
-    optional bool remember_me = 3;     // Extend session duration
-    SignInMetadata metadata = 4;       // Optional device metadata
+    optional string password = 2;
+    optional string otp = 3;                      // One-time password for 2FA
+    optional bool remember_me = 4;      // Extend session duration
+    optional SignInMetadata metadata = 5;       // Optional device metadata
 }
 
 // SignInResponse with authentication tokens and user data
@@ -98,9 +99,6 @@ message ListUserSessionsRequest {
 // ListUserSessionsResponse
 message ListUserSessionsResponse {
     repeated Session sessions = 1;
-    int32 total_count = 2;
-    int32 limit = 3;
-    int32 offset = 4;
 }
 
 // TerminateSessionRequest to end specific session

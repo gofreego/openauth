@@ -26,22 +26,17 @@ type Group struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for the group
 	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Unique UUID for the group
-	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
 	// Unique name for the group
-	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Human-readable display name for the group
-	DisplayName string `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	DisplayName string `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	// Optional detailed description of the group
-	Description *string `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// Whether this is a system group (cannot be deleted)
-	IsSystem bool `protobuf:"varint,6,opt,name=is_system,json=isSystem,proto3" json:"is_system,omitempty"`
-	// Whether this is the default group for new users
-	IsDefault bool `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	Description *string `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	CreatedBy   int64   `protobuf:"varint,5,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	// Timestamp when the group was created
-	CreatedAt int64 `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt int64 `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Timestamp when the group was last updated
-	UpdatedAt     int64 `protobuf:"varint,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt     int64 `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -83,13 +78,6 @@ func (x *Group) GetId() int64 {
 	return 0
 }
 
-func (x *Group) GetUuid() string {
-	if x != nil {
-		return x.Uuid
-	}
-	return ""
-}
-
 func (x *Group) GetName() string {
 	if x != nil {
 		return x.Name
@@ -111,18 +99,11 @@ func (x *Group) GetDescription() string {
 	return ""
 }
 
-func (x *Group) GetIsSystem() bool {
+func (x *Group) GetCreatedBy() int64 {
 	if x != nil {
-		return x.IsSystem
+		return x.CreatedBy
 	}
-	return false
-}
-
-func (x *Group) GetIsDefault() bool {
-	if x != nil {
-		return x.IsDefault
-	}
-	return false
+	return 0
 }
 
 func (x *Group) GetCreatedAt() int64 {
@@ -147,9 +128,7 @@ type CreateGroupRequest struct {
 	// Human-readable display name for the group
 	DisplayName string `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	// Optional detailed description of the group
-	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// Whether this is the default group for new users (optional, defaults to false)
-	IsDefault     *bool `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3,oneof" json:"is_default,omitempty"`
+	Description   *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -205,13 +184,6 @@ func (x *CreateGroupRequest) GetDescription() string {
 	return ""
 }
 
-func (x *CreateGroupRequest) GetIsDefault() bool {
-	if x != nil && x.IsDefault != nil {
-		return *x.IsDefault
-	}
-	return false
-}
-
 // CreateGroupResponse after successful group creation
 type CreateGroupResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -265,15 +237,10 @@ func (x *CreateGroupResponse) GetMessage() string {
 	return ""
 }
 
-// GetGroupRequest to get group by ID or name
+// GetGroupRequest to get group by ID
 type GetGroupRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Types that are valid to be assigned to Identifier:
-	//
-	//	*GetGroupRequest_Id
-	//	*GetGroupRequest_Uuid
-	//	*GetGroupRequest_Name
-	Identifier    isGetGroupRequest_Identifier `protobuf_oneof:"identifier"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -308,61 +275,12 @@ func (*GetGroupRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_groups_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetGroupRequest) GetIdentifier() isGetGroupRequest_Identifier {
-	if x != nil {
-		return x.Identifier
-	}
-	return nil
-}
-
 func (x *GetGroupRequest) GetId() int64 {
 	if x != nil {
-		if x, ok := x.Identifier.(*GetGroupRequest_Id); ok {
-			return x.Id
-		}
+		return x.Id
 	}
 	return 0
 }
-
-func (x *GetGroupRequest) GetUuid() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*GetGroupRequest_Uuid); ok {
-			return x.Uuid
-		}
-	}
-	return ""
-}
-
-func (x *GetGroupRequest) GetName() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*GetGroupRequest_Name); ok {
-			return x.Name
-		}
-	}
-	return ""
-}
-
-type isGetGroupRequest_Identifier interface {
-	isGetGroupRequest_Identifier()
-}
-
-type GetGroupRequest_Id struct {
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
-}
-
-type GetGroupRequest_Uuid struct {
-	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3,oneof"`
-}
-
-type GetGroupRequest_Name struct {
-	Name string `protobuf:"bytes,3,opt,name=name,proto3,oneof"`
-}
-
-func (*GetGroupRequest_Id) isGetGroupRequest_Identifier() {}
-
-func (*GetGroupRequest_Uuid) isGetGroupRequest_Identifier() {}
-
-func (*GetGroupRequest_Name) isGetGroupRequest_Identifier() {}
 
 // GetGroupResponse
 type GetGroupResponse struct {
@@ -412,22 +330,13 @@ func (x *GetGroupResponse) GetGroup() *Group {
 // UpdateGroupRequest to update group information
 type UpdateGroupRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Identifier for the group to update
-	//
-	// Types that are valid to be assigned to Identifier:
-	//
-	//	*UpdateGroupRequest_Id
-	//	*UpdateGroupRequest_Uuid
-	//	*UpdateGroupRequest_Name
-	Identifier isUpdateGroupRequest_Identifier `protobuf_oneof:"identifier"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Optional new name for the group
 	NewName *string `protobuf:"bytes,4,opt,name=new_name,json=newName,proto3,oneof" json:"new_name,omitempty"`
 	// Optional new display name
 	DisplayName *string `protobuf:"bytes,5,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
 	// Optional new description
-	Description *string `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// Optional new default status
-	IsDefault     *bool `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3,oneof" json:"is_default,omitempty"`
+	Description   *string `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -462,38 +371,11 @@ func (*UpdateGroupRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_groups_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UpdateGroupRequest) GetIdentifier() isUpdateGroupRequest_Identifier {
-	if x != nil {
-		return x.Identifier
-	}
-	return nil
-}
-
 func (x *UpdateGroupRequest) GetId() int64 {
 	if x != nil {
-		if x, ok := x.Identifier.(*UpdateGroupRequest_Id); ok {
-			return x.Id
-		}
+		return x.Id
 	}
 	return 0
-}
-
-func (x *UpdateGroupRequest) GetUuid() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*UpdateGroupRequest_Uuid); ok {
-			return x.Uuid
-		}
-	}
-	return ""
-}
-
-func (x *UpdateGroupRequest) GetName() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*UpdateGroupRequest_Name); ok {
-			return x.Name
-		}
-	}
-	return ""
 }
 
 func (x *UpdateGroupRequest) GetNewName() string {
@@ -516,35 +398,6 @@ func (x *UpdateGroupRequest) GetDescription() string {
 	}
 	return ""
 }
-
-func (x *UpdateGroupRequest) GetIsDefault() bool {
-	if x != nil && x.IsDefault != nil {
-		return *x.IsDefault
-	}
-	return false
-}
-
-type isUpdateGroupRequest_Identifier interface {
-	isUpdateGroupRequest_Identifier()
-}
-
-type UpdateGroupRequest_Id struct {
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
-}
-
-type UpdateGroupRequest_Uuid struct {
-	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3,oneof"`
-}
-
-type UpdateGroupRequest_Name struct {
-	Name string `protobuf:"bytes,3,opt,name=name,proto3,oneof"`
-}
-
-func (*UpdateGroupRequest_Id) isUpdateGroupRequest_Identifier() {}
-
-func (*UpdateGroupRequest_Uuid) isUpdateGroupRequest_Identifier() {}
-
-func (*UpdateGroupRequest_Name) isUpdateGroupRequest_Identifier() {}
 
 // UpdateGroupResponse
 type UpdateGroupResponse struct {
@@ -601,13 +454,8 @@ func (x *UpdateGroupResponse) GetMessage() string {
 
 // DeleteGroupRequest to delete a group
 type DeleteGroupRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Types that are valid to be assigned to Identifier:
-	//
-	//	*DeleteGroupRequest_Id
-	//	*DeleteGroupRequest_Uuid
-	//	*DeleteGroupRequest_Name
-	Identifier    isDeleteGroupRequest_Identifier `protobuf_oneof:"identifier"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -642,61 +490,12 @@ func (*DeleteGroupRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_groups_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *DeleteGroupRequest) GetIdentifier() isDeleteGroupRequest_Identifier {
-	if x != nil {
-		return x.Identifier
-	}
-	return nil
-}
-
 func (x *DeleteGroupRequest) GetId() int64 {
 	if x != nil {
-		if x, ok := x.Identifier.(*DeleteGroupRequest_Id); ok {
-			return x.Id
-		}
+		return x.Id
 	}
 	return 0
 }
-
-func (x *DeleteGroupRequest) GetUuid() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*DeleteGroupRequest_Uuid); ok {
-			return x.Uuid
-		}
-	}
-	return ""
-}
-
-func (x *DeleteGroupRequest) GetName() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*DeleteGroupRequest_Name); ok {
-			return x.Name
-		}
-	}
-	return ""
-}
-
-type isDeleteGroupRequest_Identifier interface {
-	isDeleteGroupRequest_Identifier()
-}
-
-type DeleteGroupRequest_Id struct {
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
-}
-
-type DeleteGroupRequest_Uuid struct {
-	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3,oneof"`
-}
-
-type DeleteGroupRequest_Name struct {
-	Name string `protobuf:"bytes,3,opt,name=name,proto3,oneof"`
-}
-
-func (*DeleteGroupRequest_Id) isDeleteGroupRequest_Identifier() {}
-
-func (*DeleteGroupRequest_Uuid) isDeleteGroupRequest_Identifier() {}
-
-func (*DeleteGroupRequest_Name) isDeleteGroupRequest_Identifier() {}
 
 // DeleteGroupResponse
 type DeleteGroupResponse struct {
@@ -757,13 +556,10 @@ type ListGroupsRequest struct {
 	// Maximum number of groups to return (default: 10, max: 100)
 	Limit int32 `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
 	// Number of groups to skip (for pagination)
-	Offset int32 `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Offset int32  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Id     *int64 `protobuf:"varint,3,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	// Optional search query (searches name, display_name, description)
-	Search *string `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
-	// Optional filter by system groups
-	IsSystem *bool `protobuf:"varint,4,opt,name=is_system,json=isSystem,proto3,oneof" json:"is_system,omitempty"`
-	// Optional filter by default groups
-	IsDefault     *bool `protobuf:"varint,5,opt,name=is_default,json=isDefault,proto3,oneof" json:"is_default,omitempty"`
+	Search        *string `protobuf:"bytes,4,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -812,6 +608,13 @@ func (x *ListGroupsRequest) GetOffset() int32 {
 	return 0
 }
 
+func (x *ListGroupsRequest) GetId() int64 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
 func (x *ListGroupsRequest) GetSearch() string {
 	if x != nil && x.Search != nil {
 		return *x.Search
@@ -819,28 +622,10 @@ func (x *ListGroupsRequest) GetSearch() string {
 	return ""
 }
 
-func (x *ListGroupsRequest) GetIsSystem() bool {
-	if x != nil && x.IsSystem != nil {
-		return *x.IsSystem
-	}
-	return false
-}
-
-func (x *ListGroupsRequest) GetIsDefault() bool {
-	if x != nil && x.IsDefault != nil {
-		return *x.IsDefault
-	}
-	return false
-}
-
 // ListGroupsResponse
 type ListGroupsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Groups        []*Group               `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
-	HasMore       bool                   `protobuf:"varint,5,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -882,54 +667,13 @@ func (x *ListGroupsResponse) GetGroups() []*Group {
 	return nil
 }
 
-func (x *ListGroupsResponse) GetTotalCount() int32 {
-	if x != nil {
-		return x.TotalCount
-	}
-	return 0
-}
-
-func (x *ListGroupsResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *ListGroupsResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListGroupsResponse) GetHasMore() bool {
-	if x != nil {
-		return x.HasMore
-	}
-	return false
-}
-
 // AssignUserToGroupRequest to add a user to a group
 type AssignUserToGroupRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// User identifier
-	//
-	// Types that are valid to be assigned to UserIdentifier:
-	//
-	//	*AssignUserToGroupRequest_UserId
-	//	*AssignUserToGroupRequest_UserUuid
-	UserIdentifier isAssignUserToGroupRequest_UserIdentifier `protobuf_oneof:"user_identifier"`
-	// Group identifier
-	//
-	// Types that are valid to be assigned to GroupIdentifier:
-	//
-	//	*AssignUserToGroupRequest_GroupId
-	//	*AssignUserToGroupRequest_GroupUuid
-	//	*AssignUserToGroupRequest_GroupName
-	GroupIdentifier isAssignUserToGroupRequest_GroupIdentifier `protobuf_oneof:"group_identifier"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	UserId  int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	GroupId int64                  `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	// Optional expiration time for the group membership
-	ExpiresAt     *int64 `protobuf:"varint,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	ExpiresAt     *int64 `protobuf:"varint,3,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -964,63 +708,18 @@ func (*AssignUserToGroupRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_groups_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *AssignUserToGroupRequest) GetUserIdentifier() isAssignUserToGroupRequest_UserIdentifier {
-	if x != nil {
-		return x.UserIdentifier
-	}
-	return nil
-}
-
 func (x *AssignUserToGroupRequest) GetUserId() int64 {
 	if x != nil {
-		if x, ok := x.UserIdentifier.(*AssignUserToGroupRequest_UserId); ok {
-			return x.UserId
-		}
+		return x.UserId
 	}
 	return 0
-}
-
-func (x *AssignUserToGroupRequest) GetUserUuid() string {
-	if x != nil {
-		if x, ok := x.UserIdentifier.(*AssignUserToGroupRequest_UserUuid); ok {
-			return x.UserUuid
-		}
-	}
-	return ""
-}
-
-func (x *AssignUserToGroupRequest) GetGroupIdentifier() isAssignUserToGroupRequest_GroupIdentifier {
-	if x != nil {
-		return x.GroupIdentifier
-	}
-	return nil
 }
 
 func (x *AssignUserToGroupRequest) GetGroupId() int64 {
 	if x != nil {
-		if x, ok := x.GroupIdentifier.(*AssignUserToGroupRequest_GroupId); ok {
-			return x.GroupId
-		}
+		return x.GroupId
 	}
 	return 0
-}
-
-func (x *AssignUserToGroupRequest) GetGroupUuid() string {
-	if x != nil {
-		if x, ok := x.GroupIdentifier.(*AssignUserToGroupRequest_GroupUuid); ok {
-			return x.GroupUuid
-		}
-	}
-	return ""
-}
-
-func (x *AssignUserToGroupRequest) GetGroupName() string {
-	if x != nil {
-		if x, ok := x.GroupIdentifier.(*AssignUserToGroupRequest_GroupName); ok {
-			return x.GroupName
-		}
-	}
-	return ""
 }
 
 func (x *AssignUserToGroupRequest) GetExpiresAt() int64 {
@@ -1029,44 +728,6 @@ func (x *AssignUserToGroupRequest) GetExpiresAt() int64 {
 	}
 	return 0
 }
-
-type isAssignUserToGroupRequest_UserIdentifier interface {
-	isAssignUserToGroupRequest_UserIdentifier()
-}
-
-type AssignUserToGroupRequest_UserId struct {
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3,oneof"`
-}
-
-type AssignUserToGroupRequest_UserUuid struct {
-	UserUuid string `protobuf:"bytes,2,opt,name=user_uuid,json=userUuid,proto3,oneof"`
-}
-
-func (*AssignUserToGroupRequest_UserId) isAssignUserToGroupRequest_UserIdentifier() {}
-
-func (*AssignUserToGroupRequest_UserUuid) isAssignUserToGroupRequest_UserIdentifier() {}
-
-type isAssignUserToGroupRequest_GroupIdentifier interface {
-	isAssignUserToGroupRequest_GroupIdentifier()
-}
-
-type AssignUserToGroupRequest_GroupId struct {
-	GroupId int64 `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3,oneof"`
-}
-
-type AssignUserToGroupRequest_GroupUuid struct {
-	GroupUuid string `protobuf:"bytes,4,opt,name=group_uuid,json=groupUuid,proto3,oneof"`
-}
-
-type AssignUserToGroupRequest_GroupName struct {
-	GroupName string `protobuf:"bytes,5,opt,name=group_name,json=groupName,proto3,oneof"`
-}
-
-func (*AssignUserToGroupRequest_GroupId) isAssignUserToGroupRequest_GroupIdentifier() {}
-
-func (*AssignUserToGroupRequest_GroupUuid) isAssignUserToGroupRequest_GroupIdentifier() {}
-
-func (*AssignUserToGroupRequest_GroupName) isAssignUserToGroupRequest_GroupIdentifier() {}
 
 // AssignUserToGroupResponse
 type AssignUserToGroupResponse struct {
@@ -1123,24 +784,11 @@ func (x *AssignUserToGroupResponse) GetMessage() string {
 
 // RemoveUserFromGroupRequest to remove a user from a group
 type RemoveUserFromGroupRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// User identifier
-	//
-	// Types that are valid to be assigned to UserIdentifier:
-	//
-	//	*RemoveUserFromGroupRequest_UserId
-	//	*RemoveUserFromGroupRequest_UserUuid
-	UserIdentifier isRemoveUserFromGroupRequest_UserIdentifier `protobuf_oneof:"user_identifier"`
-	// Group identifier
-	//
-	// Types that are valid to be assigned to GroupIdentifier:
-	//
-	//	*RemoveUserFromGroupRequest_GroupId
-	//	*RemoveUserFromGroupRequest_GroupUuid
-	//	*RemoveUserFromGroupRequest_GroupName
-	GroupIdentifier isRemoveUserFromGroupRequest_GroupIdentifier `protobuf_oneof:"group_identifier"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	GroupId       int64                  `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RemoveUserFromGroupRequest) Reset() {
@@ -1173,102 +821,19 @@ func (*RemoveUserFromGroupRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_groups_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *RemoveUserFromGroupRequest) GetUserIdentifier() isRemoveUserFromGroupRequest_UserIdentifier {
-	if x != nil {
-		return x.UserIdentifier
-	}
-	return nil
-}
-
 func (x *RemoveUserFromGroupRequest) GetUserId() int64 {
 	if x != nil {
-		if x, ok := x.UserIdentifier.(*RemoveUserFromGroupRequest_UserId); ok {
-			return x.UserId
-		}
+		return x.UserId
 	}
 	return 0
-}
-
-func (x *RemoveUserFromGroupRequest) GetUserUuid() string {
-	if x != nil {
-		if x, ok := x.UserIdentifier.(*RemoveUserFromGroupRequest_UserUuid); ok {
-			return x.UserUuid
-		}
-	}
-	return ""
-}
-
-func (x *RemoveUserFromGroupRequest) GetGroupIdentifier() isRemoveUserFromGroupRequest_GroupIdentifier {
-	if x != nil {
-		return x.GroupIdentifier
-	}
-	return nil
 }
 
 func (x *RemoveUserFromGroupRequest) GetGroupId() int64 {
 	if x != nil {
-		if x, ok := x.GroupIdentifier.(*RemoveUserFromGroupRequest_GroupId); ok {
-			return x.GroupId
-		}
+		return x.GroupId
 	}
 	return 0
 }
-
-func (x *RemoveUserFromGroupRequest) GetGroupUuid() string {
-	if x != nil {
-		if x, ok := x.GroupIdentifier.(*RemoveUserFromGroupRequest_GroupUuid); ok {
-			return x.GroupUuid
-		}
-	}
-	return ""
-}
-
-func (x *RemoveUserFromGroupRequest) GetGroupName() string {
-	if x != nil {
-		if x, ok := x.GroupIdentifier.(*RemoveUserFromGroupRequest_GroupName); ok {
-			return x.GroupName
-		}
-	}
-	return ""
-}
-
-type isRemoveUserFromGroupRequest_UserIdentifier interface {
-	isRemoveUserFromGroupRequest_UserIdentifier()
-}
-
-type RemoveUserFromGroupRequest_UserId struct {
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3,oneof"`
-}
-
-type RemoveUserFromGroupRequest_UserUuid struct {
-	UserUuid string `protobuf:"bytes,2,opt,name=user_uuid,json=userUuid,proto3,oneof"`
-}
-
-func (*RemoveUserFromGroupRequest_UserId) isRemoveUserFromGroupRequest_UserIdentifier() {}
-
-func (*RemoveUserFromGroupRequest_UserUuid) isRemoveUserFromGroupRequest_UserIdentifier() {}
-
-type isRemoveUserFromGroupRequest_GroupIdentifier interface {
-	isRemoveUserFromGroupRequest_GroupIdentifier()
-}
-
-type RemoveUserFromGroupRequest_GroupId struct {
-	GroupId int64 `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3,oneof"`
-}
-
-type RemoveUserFromGroupRequest_GroupUuid struct {
-	GroupUuid string `protobuf:"bytes,4,opt,name=group_uuid,json=groupUuid,proto3,oneof"`
-}
-
-type RemoveUserFromGroupRequest_GroupName struct {
-	GroupName string `protobuf:"bytes,5,opt,name=group_name,json=groupName,proto3,oneof"`
-}
-
-func (*RemoveUserFromGroupRequest_GroupId) isRemoveUserFromGroupRequest_GroupIdentifier() {}
-
-func (*RemoveUserFromGroupRequest_GroupUuid) isRemoveUserFromGroupRequest_GroupIdentifier() {}
-
-func (*RemoveUserFromGroupRequest_GroupName) isRemoveUserFromGroupRequest_GroupIdentifier() {}
 
 // RemoveUserFromGroupResponse
 type RemoveUserFromGroupResponse struct {
@@ -1325,18 +890,11 @@ func (x *RemoveUserFromGroupResponse) GetMessage() string {
 
 // ListGroupUsersRequest to get all users in a group
 type ListGroupUsersRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Group identifier
-	//
-	// Types that are valid to be assigned to GroupIdentifier:
-	//
-	//	*ListGroupUsersRequest_GroupId
-	//	*ListGroupUsersRequest_GroupUuid
-	//	*ListGroupUsersRequest_GroupName
-	GroupIdentifier isListGroupUsersRequest_GroupIdentifier `protobuf_oneof:"group_identifier"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	GroupId int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	// Pagination
-	Limit         int32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32 `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1371,38 +929,11 @@ func (*ListGroupUsersRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_groups_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *ListGroupUsersRequest) GetGroupIdentifier() isListGroupUsersRequest_GroupIdentifier {
-	if x != nil {
-		return x.GroupIdentifier
-	}
-	return nil
-}
-
 func (x *ListGroupUsersRequest) GetGroupId() int64 {
 	if x != nil {
-		if x, ok := x.GroupIdentifier.(*ListGroupUsersRequest_GroupId); ok {
-			return x.GroupId
-		}
+		return x.GroupId
 	}
 	return 0
-}
-
-func (x *ListGroupUsersRequest) GetGroupUuid() string {
-	if x != nil {
-		if x, ok := x.GroupIdentifier.(*ListGroupUsersRequest_GroupUuid); ok {
-			return x.GroupUuid
-		}
-	}
-	return ""
-}
-
-func (x *ListGroupUsersRequest) GetGroupName() string {
-	if x != nil {
-		if x, ok := x.GroupIdentifier.(*ListGroupUsersRequest_GroupName); ok {
-			return x.GroupName
-		}
-	}
-	return ""
 }
 
 func (x *ListGroupUsersRequest) GetLimit() int32 {
@@ -1419,36 +950,10 @@ func (x *ListGroupUsersRequest) GetOffset() int32 {
 	return 0
 }
 
-type isListGroupUsersRequest_GroupIdentifier interface {
-	isListGroupUsersRequest_GroupIdentifier()
-}
-
-type ListGroupUsersRequest_GroupId struct {
-	GroupId int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3,oneof"`
-}
-
-type ListGroupUsersRequest_GroupUuid struct {
-	GroupUuid string `protobuf:"bytes,2,opt,name=group_uuid,json=groupUuid,proto3,oneof"`
-}
-
-type ListGroupUsersRequest_GroupName struct {
-	GroupName string `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3,oneof"`
-}
-
-func (*ListGroupUsersRequest_GroupId) isListGroupUsersRequest_GroupIdentifier() {}
-
-func (*ListGroupUsersRequest_GroupUuid) isListGroupUsersRequest_GroupIdentifier() {}
-
-func (*ListGroupUsersRequest_GroupName) isListGroupUsersRequest_GroupIdentifier() {}
-
 // ListGroupUsersResponse
 type ListGroupUsersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Users         []*GroupUser           `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
-	HasMore       bool                   `protobuf:"varint,5,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1490,34 +995,6 @@ func (x *ListGroupUsersResponse) GetUsers() []*GroupUser {
 	return nil
 }
 
-func (x *ListGroupUsersResponse) GetTotalCount() int32 {
-	if x != nil {
-		return x.TotalCount
-	}
-	return 0
-}
-
-func (x *ListGroupUsersResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *ListGroupUsersResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListGroupUsersResponse) GetHasMore() bool {
-	if x != nil {
-		return x.HasMore
-	}
-	return false
-}
-
 // GroupUser represents a user's membership in a group
 type GroupUser struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1526,8 +1003,10 @@ type GroupUser struct {
 	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
 	Email         *string                `protobuf:"bytes,4,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	Name          *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	ExpiresAt     *int64                 `protobuf:"varint,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	AssignedAt    int64                  `protobuf:"varint,7,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
+	Avatar        *string                `protobuf:"bytes,6,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
+	ExpiresAt     *int64                 `protobuf:"varint,7,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	AssignedAt    int64                  `protobuf:"varint,8,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
+	AssignedBy    int64                  `protobuf:"varint,9,opt,name=assigned_by,json=assignedBy,proto3" json:"assigned_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1597,6 +1076,13 @@ func (x *GroupUser) GetName() string {
 	return ""
 }
 
+func (x *GroupUser) GetAvatar() string {
+	if x != nil && x.Avatar != nil {
+		return *x.Avatar
+	}
+	return ""
+}
+
 func (x *GroupUser) GetExpiresAt() int64 {
 	if x != nil && x.ExpiresAt != nil {
 		return *x.ExpiresAt
@@ -1611,19 +1097,20 @@ func (x *GroupUser) GetAssignedAt() int64 {
 	return 0
 }
 
+func (x *GroupUser) GetAssignedBy() int64 {
+	if x != nil {
+		return x.AssignedBy
+	}
+	return 0
+}
+
 // ListUserGroupsRequest to get all groups for a user
 type ListUserGroupsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// User identifier
-	//
-	// Types that are valid to be assigned to UserIdentifier:
-	//
-	//	*ListUserGroupsRequest_UserId
-	//	*ListUserGroupsRequest_UserUuid
-	UserIdentifier isListUserGroupsRequest_UserIdentifier `protobuf_oneof:"user_identifier"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	UserId int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Pagination
-	Limit         int32 `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32 `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1658,29 +1145,11 @@ func (*ListUserGroupsRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_groups_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *ListUserGroupsRequest) GetUserIdentifier() isListUserGroupsRequest_UserIdentifier {
-	if x != nil {
-		return x.UserIdentifier
-	}
-	return nil
-}
-
 func (x *ListUserGroupsRequest) GetUserId() int64 {
 	if x != nil {
-		if x, ok := x.UserIdentifier.(*ListUserGroupsRequest_UserId); ok {
-			return x.UserId
-		}
+		return x.UserId
 	}
 	return 0
-}
-
-func (x *ListUserGroupsRequest) GetUserUuid() string {
-	if x != nil {
-		if x, ok := x.UserIdentifier.(*ListUserGroupsRequest_UserUuid); ok {
-			return x.UserUuid
-		}
-	}
-	return ""
 }
 
 func (x *ListUserGroupsRequest) GetLimit() int32 {
@@ -1697,30 +1166,10 @@ func (x *ListUserGroupsRequest) GetOffset() int32 {
 	return 0
 }
 
-type isListUserGroupsRequest_UserIdentifier interface {
-	isListUserGroupsRequest_UserIdentifier()
-}
-
-type ListUserGroupsRequest_UserId struct {
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3,oneof"`
-}
-
-type ListUserGroupsRequest_UserUuid struct {
-	UserUuid string `protobuf:"bytes,2,opt,name=user_uuid,json=userUuid,proto3,oneof"`
-}
-
-func (*ListUserGroupsRequest_UserId) isListUserGroupsRequest_UserIdentifier() {}
-
-func (*ListUserGroupsRequest_UserUuid) isListUserGroupsRequest_UserIdentifier() {}
-
 // ListUserGroupsResponse
 type ListUserGroupsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Groups        []*UserGroup           `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
-	HasMore       bool                   `protobuf:"varint,5,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1762,46 +1211,18 @@ func (x *ListUserGroupsResponse) GetGroups() []*UserGroup {
 	return nil
 }
 
-func (x *ListUserGroupsResponse) GetTotalCount() int32 {
-	if x != nil {
-		return x.TotalCount
-	}
-	return 0
-}
-
-func (x *ListUserGroupsResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *ListUserGroupsResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListUserGroupsResponse) GetHasMore() bool {
-	if x != nil {
-		return x.HasMore
-	}
-	return false
-}
-
 // UserGroup represents a group membership for a user
 type UserGroup struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	GroupId          int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	GroupUuid        string                 `protobuf:"bytes,2,opt,name=group_uuid,json=groupUuid,proto3" json:"group_uuid,omitempty"`
-	GroupName        string                 `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
-	GroupDisplayName string                 `protobuf:"bytes,4,opt,name=group_display_name,json=groupDisplayName,proto3" json:"group_display_name,omitempty"`
-	GroupDescription *string                `protobuf:"bytes,5,opt,name=group_description,json=groupDescription,proto3,oneof" json:"group_description,omitempty"`
-	IsSystem         bool                   `protobuf:"varint,6,opt,name=is_system,json=isSystem,proto3" json:"is_system,omitempty"`
-	IsDefault        bool                   `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	ExpiresAt        *int64                 `protobuf:"varint,8,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	AssignedAt       int64                  `protobuf:"varint,9,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
+	GroupName        string                 `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
+	GroupDisplayName string                 `protobuf:"bytes,3,opt,name=group_display_name,json=groupDisplayName,proto3" json:"group_display_name,omitempty"`
+	GroupDescription *string                `protobuf:"bytes,4,opt,name=group_description,json=groupDescription,proto3,oneof" json:"group_description,omitempty"`
+	IsSystem         bool                   `protobuf:"varint,5,opt,name=is_system,json=isSystem,proto3" json:"is_system,omitempty"`
+	IsDefault        bool                   `protobuf:"varint,6,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	ExpiresAt        *int64                 `protobuf:"varint,7,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	AssignedAt       int64                  `protobuf:"varint,8,opt,name=assigned_at,json=assignedAt,proto3" json:"assigned_at,omitempty"`
+	AssignedBy       int64                  `protobuf:"varint,9,opt,name=assigned_by,json=assignedBy,proto3" json:"assigned_by,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1841,13 +1262,6 @@ func (x *UserGroup) GetGroupId() int64 {
 		return x.GroupId
 	}
 	return 0
-}
-
-func (x *UserGroup) GetGroupUuid() string {
-	if x != nil {
-		return x.GroupUuid
-	}
-	return ""
 }
 
 func (x *UserGroup) GetGroupName() string {
@@ -1899,175 +1313,126 @@ func (x *UserGroup) GetAssignedAt() int64 {
 	return 0
 }
 
+func (x *UserGroup) GetAssignedBy() int64 {
+	if x != nil {
+		return x.AssignedBy
+	}
+	return 0
+}
+
 var File_proto_openauth_v1_groups_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_groups_proto_rawDesc = "" +
 	"\n" +
-	"\x1eproto/openauth/v1/groups.proto\x12\x02v1\"\x93\x02\n" +
+	"\x1eproto/openauth/v1/groups.proto\x12\x02v1\"\xe2\x01\n" +
 	"\x05Group\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12!\n" +
-	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12%\n" +
-	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1b\n" +
-	"\tis_system\x18\x06 \x01(\bR\bisSystem\x12\x1d\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
+	"\fdisplay_name\x18\x03 \x01(\tR\vdisplayName\x12%\n" +
+	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\a \x01(\bR\tisDefault\x12\x1d\n" +
+	"created_by\x18\x05 \x01(\x03R\tcreatedBy\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\b \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\x03R\tupdatedAtB\x0e\n" +
-	"\f_description\"\xb5\x01\n" +
+	"updated_at\x18\a \x01(\x03R\tupdatedAtB\x0e\n" +
+	"\f_description\"\x82\x01\n" +
 	"\x12CreateGroupRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\"\n" +
-	"\n" +
-	"is_default\x18\x04 \x01(\bH\x01R\tisDefault\x88\x01\x01B\x0e\n" +
-	"\f_descriptionB\r\n" +
-	"\v_is_default\"P\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01B\x0e\n" +
+	"\f_description\"P\n" +
 	"\x13CreateGroupResponse\x12\x1f\n" +
 	"\x05group\x18\x01 \x01(\v2\t.v1.GroupR\x05group\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"]\n" +
-	"\x0fGetGroupRequest\x12\x10\n" +
-	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x12\x14\n" +
-	"\x04uuid\x18\x02 \x01(\tH\x00R\x04uuid\x12\x14\n" +
-	"\x04name\x18\x03 \x01(\tH\x00R\x04nameB\f\n" +
-	"\n" +
-	"identifier\"3\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"!\n" +
+	"\x0fGetGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"3\n" +
 	"\x10GetGroupResponse\x12\x1f\n" +
-	"\x05group\x18\x01 \x01(\v2\t.v1.GroupR\x05group\"\xb0\x02\n" +
-	"\x12UpdateGroupRequest\x12\x10\n" +
-	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x12\x14\n" +
-	"\x04uuid\x18\x02 \x01(\tH\x00R\x04uuid\x12\x14\n" +
-	"\x04name\x18\x03 \x01(\tH\x00R\x04name\x12\x1e\n" +
-	"\bnew_name\x18\x04 \x01(\tH\x01R\anewName\x88\x01\x01\x12&\n" +
-	"\fdisplay_name\x18\x05 \x01(\tH\x02R\vdisplayName\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x06 \x01(\tH\x03R\vdescription\x88\x01\x01\x12\"\n" +
-	"\n" +
-	"is_default\x18\a \x01(\bH\x04R\tisDefault\x88\x01\x01B\f\n" +
-	"\n" +
-	"identifierB\v\n" +
+	"\x05group\x18\x01 \x01(\v2\t.v1.GroupR\x05group\"\xc1\x01\n" +
+	"\x12UpdateGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1e\n" +
+	"\bnew_name\x18\x04 \x01(\tH\x00R\anewName\x88\x01\x01\x12&\n" +
+	"\fdisplay_name\x18\x05 \x01(\tH\x01R\vdisplayName\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x06 \x01(\tH\x02R\vdescription\x88\x01\x01B\v\n" +
 	"\t_new_nameB\x0f\n" +
 	"\r_display_nameB\x0e\n" +
-	"\f_descriptionB\r\n" +
-	"\v_is_default\"P\n" +
+	"\f_description\"P\n" +
 	"\x13UpdateGroupResponse\x12\x1f\n" +
 	"\x05group\x18\x01 \x01(\v2\t.v1.GroupR\x05group\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"`\n" +
-	"\x12DeleteGroupRequest\x12\x10\n" +
-	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x12\x14\n" +
-	"\x04uuid\x18\x02 \x01(\tH\x00R\x04uuid\x12\x14\n" +
-	"\x04name\x18\x03 \x01(\tH\x00R\x04nameB\f\n" +
-	"\n" +
-	"identifier\"I\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"$\n" +
+	"\x12DeleteGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"I\n" +
 	"\x13DeleteGroupResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xcc\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x85\x01\n" +
 	"\x11ListGroupsRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x1b\n" +
-	"\x06search\x18\x03 \x01(\tH\x00R\x06search\x88\x01\x01\x12 \n" +
-	"\tis_system\x18\x04 \x01(\bH\x01R\bisSystem\x88\x01\x01\x12\"\n" +
-	"\n" +
-	"is_default\x18\x05 \x01(\bH\x02R\tisDefault\x88\x01\x01B\t\n" +
-	"\a_searchB\f\n" +
-	"\n" +
-	"_is_systemB\r\n" +
-	"\v_is_default\"\xa1\x01\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x13\n" +
+	"\x02id\x18\x03 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x1b\n" +
+	"\x06search\x18\x04 \x01(\tH\x01R\x06search\x88\x01\x01B\x05\n" +
+	"\x03_idB\t\n" +
+	"\a_search\"7\n" +
 	"\x12ListGroupsResponse\x12!\n" +
-	"\x06groups\x18\x01 \x03(\v2\t.v1.GroupR\x06groups\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x19\n" +
-	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\x8d\x02\n" +
-	"\x18AssignUserToGroupRequest\x12\x19\n" +
-	"\auser_id\x18\x01 \x01(\x03H\x00R\x06userId\x12\x1d\n" +
-	"\tuser_uuid\x18\x02 \x01(\tH\x00R\buserUuid\x12\x1b\n" +
-	"\bgroup_id\x18\x03 \x01(\x03H\x01R\agroupId\x12\x1f\n" +
+	"\x06groups\x18\x01 \x03(\v2\t.v1.GroupR\x06groups\"\x81\x01\n" +
+	"\x18AssignUserToGroupRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\"\n" +
 	"\n" +
-	"group_uuid\x18\x04 \x01(\tH\x01R\tgroupUuid\x12\x1f\n" +
-	"\n" +
-	"group_name\x18\x05 \x01(\tH\x01R\tgroupName\x12\"\n" +
-	"\n" +
-	"expires_at\x18\x06 \x01(\x03H\x02R\texpiresAt\x88\x01\x01B\x11\n" +
-	"\x0fuser_identifierB\x12\n" +
-	"\x10group_identifierB\r\n" +
+	"expires_at\x18\x03 \x01(\x03H\x00R\texpiresAt\x88\x01\x01B\r\n" +
 	"\v_expires_at\"O\n" +
 	"\x19AssignUserToGroupResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xdc\x01\n" +
-	"\x1aRemoveUserFromGroupRequest\x12\x19\n" +
-	"\auser_id\x18\x01 \x01(\x03H\x00R\x06userId\x12\x1d\n" +
-	"\tuser_uuid\x18\x02 \x01(\tH\x00R\buserUuid\x12\x1b\n" +
-	"\bgroup_id\x18\x03 \x01(\x03H\x01R\agroupId\x12\x1f\n" +
-	"\n" +
-	"group_uuid\x18\x04 \x01(\tH\x01R\tgroupUuid\x12\x1f\n" +
-	"\n" +
-	"group_name\x18\x05 \x01(\tH\x01R\tgroupNameB\x11\n" +
-	"\x0fuser_identifierB\x12\n" +
-	"\x10group_identifier\"Q\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"P\n" +
+	"\x1aRemoveUserFromGroupRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"Q\n" +
 	"\x1bRemoveUserFromGroupResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xb8\x01\n" +
-	"\x15ListGroupUsersRequest\x12\x1b\n" +
-	"\bgroup_id\x18\x01 \x01(\x03H\x00R\agroupId\x12\x1f\n" +
-	"\n" +
-	"group_uuid\x18\x02 \x01(\tH\x00R\tgroupUuid\x12\x1f\n" +
-	"\n" +
-	"group_name\x18\x03 \x01(\tH\x00R\tgroupName\x12\x14\n" +
-	"\x05limit\x18\x04 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x05 \x01(\x05R\x06offsetB\x12\n" +
-	"\x10group_identifier\"\xa7\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"`\n" +
+	"\x15ListGroupUsersRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"=\n" +
 	"\x16ListGroupUsersResponse\x12#\n" +
-	"\x05users\x18\x01 \x03(\v2\r.v1.GroupUserR\x05users\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x19\n" +
-	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\xf8\x01\n" +
+	"\x05users\x18\x01 \x03(\v2\r.v1.GroupUserR\x05users\"\xc1\x02\n" +
 	"\tGroupUser\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\tuser_uuid\x18\x02 \x01(\tR\buserUuid\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x19\n" +
 	"\x05email\x18\x04 \x01(\tH\x00R\x05email\x88\x01\x01\x12\x17\n" +
-	"\x04name\x18\x05 \x01(\tH\x01R\x04name\x88\x01\x01\x12\"\n" +
+	"\x04name\x18\x05 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x1b\n" +
+	"\x06avatar\x18\x06 \x01(\tH\x02R\x06avatar\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"expires_at\x18\x06 \x01(\x03H\x02R\texpiresAt\x88\x01\x01\x12\x1f\n" +
-	"\vassigned_at\x18\a \x01(\x03R\n" +
-	"assignedAtB\b\n" +
+	"expires_at\x18\a \x01(\x03H\x03R\texpiresAt\x88\x01\x01\x12\x1f\n" +
+	"\vassigned_at\x18\b \x01(\x03R\n" +
+	"assignedAt\x12\x1f\n" +
+	"\vassigned_by\x18\t \x01(\x03R\n" +
+	"assignedByB\b\n" +
 	"\x06_emailB\a\n" +
-	"\x05_nameB\r\n" +
-	"\v_expires_at\"\x92\x01\n" +
-	"\x15ListUserGroupsRequest\x12\x19\n" +
-	"\auser_id\x18\x01 \x01(\x03H\x00R\x06userId\x12\x1d\n" +
-	"\tuser_uuid\x18\x02 \x01(\tH\x00R\buserUuid\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offsetB\x11\n" +
-	"\x0fuser_identifier\"\xa9\x01\n" +
+	"\x05_nameB\t\n" +
+	"\a_avatarB\r\n" +
+	"\v_expires_at\"^\n" +
+	"\x15ListUserGroupsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"?\n" +
 	"\x16ListUserGroupsResponse\x12%\n" +
-	"\x06groups\x18\x01 \x03(\v2\r.v1.UserGroupR\x06groups\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x19\n" +
-	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\xea\x02\n" +
+	"\x06groups\x18\x01 \x03(\v2\r.v1.UserGroupR\x06groups\"\xec\x02\n" +
 	"\tUserGroup\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x1d\n" +
 	"\n" +
-	"group_uuid\x18\x02 \x01(\tR\tgroupUuid\x12\x1d\n" +
+	"group_name\x18\x02 \x01(\tR\tgroupName\x12,\n" +
+	"\x12group_display_name\x18\x03 \x01(\tR\x10groupDisplayName\x120\n" +
+	"\x11group_description\x18\x04 \x01(\tH\x00R\x10groupDescription\x88\x01\x01\x12\x1b\n" +
+	"\tis_system\x18\x05 \x01(\bR\bisSystem\x12\x1d\n" +
 	"\n" +
-	"group_name\x18\x03 \x01(\tR\tgroupName\x12,\n" +
-	"\x12group_display_name\x18\x04 \x01(\tR\x10groupDisplayName\x120\n" +
-	"\x11group_description\x18\x05 \x01(\tH\x00R\x10groupDescription\x88\x01\x01\x12\x1b\n" +
-	"\tis_system\x18\x06 \x01(\bR\bisSystem\x12\x1d\n" +
+	"is_default\x18\x06 \x01(\bR\tisDefault\x12\"\n" +
 	"\n" +
-	"is_default\x18\a \x01(\bR\tisDefault\x12\"\n" +
-	"\n" +
-	"expires_at\x18\b \x01(\x03H\x01R\texpiresAt\x88\x01\x01\x12\x1f\n" +
-	"\vassigned_at\x18\t \x01(\x03R\n" +
-	"assignedAtB\x14\n" +
+	"expires_at\x18\a \x01(\x03H\x01R\texpiresAt\x88\x01\x01\x12\x1f\n" +
+	"\vassigned_at\x18\b \x01(\x03R\n" +
+	"assignedAt\x12\x1f\n" +
+	"\vassigned_by\x18\t \x01(\x03R\n" +
+	"assignedByB\x14\n" +
 	"\x12_group_descriptionB\r\n" +
 	"\v_expires_atB\x0fZ\r./openauth_v1b\x06proto3"
 
@@ -2128,46 +1493,10 @@ func file_proto_openauth_v1_groups_proto_init() {
 	}
 	file_proto_openauth_v1_groups_proto_msgTypes[0].OneofWrappers = []any{}
 	file_proto_openauth_v1_groups_proto_msgTypes[1].OneofWrappers = []any{}
-	file_proto_openauth_v1_groups_proto_msgTypes[3].OneofWrappers = []any{
-		(*GetGroupRequest_Id)(nil),
-		(*GetGroupRequest_Uuid)(nil),
-		(*GetGroupRequest_Name)(nil),
-	}
-	file_proto_openauth_v1_groups_proto_msgTypes[5].OneofWrappers = []any{
-		(*UpdateGroupRequest_Id)(nil),
-		(*UpdateGroupRequest_Uuid)(nil),
-		(*UpdateGroupRequest_Name)(nil),
-	}
-	file_proto_openauth_v1_groups_proto_msgTypes[7].OneofWrappers = []any{
-		(*DeleteGroupRequest_Id)(nil),
-		(*DeleteGroupRequest_Uuid)(nil),
-		(*DeleteGroupRequest_Name)(nil),
-	}
+	file_proto_openauth_v1_groups_proto_msgTypes[5].OneofWrappers = []any{}
 	file_proto_openauth_v1_groups_proto_msgTypes[9].OneofWrappers = []any{}
-	file_proto_openauth_v1_groups_proto_msgTypes[11].OneofWrappers = []any{
-		(*AssignUserToGroupRequest_UserId)(nil),
-		(*AssignUserToGroupRequest_UserUuid)(nil),
-		(*AssignUserToGroupRequest_GroupId)(nil),
-		(*AssignUserToGroupRequest_GroupUuid)(nil),
-		(*AssignUserToGroupRequest_GroupName)(nil),
-	}
-	file_proto_openauth_v1_groups_proto_msgTypes[13].OneofWrappers = []any{
-		(*RemoveUserFromGroupRequest_UserId)(nil),
-		(*RemoveUserFromGroupRequest_UserUuid)(nil),
-		(*RemoveUserFromGroupRequest_GroupId)(nil),
-		(*RemoveUserFromGroupRequest_GroupUuid)(nil),
-		(*RemoveUserFromGroupRequest_GroupName)(nil),
-	}
-	file_proto_openauth_v1_groups_proto_msgTypes[15].OneofWrappers = []any{
-		(*ListGroupUsersRequest_GroupId)(nil),
-		(*ListGroupUsersRequest_GroupUuid)(nil),
-		(*ListGroupUsersRequest_GroupName)(nil),
-	}
+	file_proto_openauth_v1_groups_proto_msgTypes[11].OneofWrappers = []any{}
 	file_proto_openauth_v1_groups_proto_msgTypes[17].OneofWrappers = []any{}
-	file_proto_openauth_v1_groups_proto_msgTypes[18].OneofWrappers = []any{
-		(*ListUserGroupsRequest_UserId)(nil),
-		(*ListUserGroupsRequest_UserUuid)(nil),
-	}
 	file_proto_openauth_v1_groups_proto_msgTypes[20].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

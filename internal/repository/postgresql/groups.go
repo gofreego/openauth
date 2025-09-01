@@ -13,12 +13,12 @@ import (
 // CreateGroup creates a new group in the database
 func (r *Repository) CreateGroup(ctx context.Context, group *dao.Group) (*dao.Group, error) {
 	query := `
-		INSERT INTO groups (uuid, name, display_name, description, is_system, is_default, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO groups (name, display_name, description, is_system, is_default, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id`
 
 	err := r.connManager.Primary().QueryRowContext(ctx, query,
-		group.UUID, group.Name, group.DisplayName, group.Description,
+		group.Name, group.DisplayName, group.Description,
 		group.IsSystem, group.IsDefault, group.CreatedAt, group.UpdatedAt,
 	).Scan(&group.ID)
 
@@ -350,7 +350,7 @@ func (r *Repository) IsUserInGroup(ctx context.Context, userID, groupID int64) (
 func (r *Repository) scanGroup(row *sql.Row) (*dao.Group, error) {
 	var group dao.Group
 	err := row.Scan(
-		&group.ID, &group.UUID, &group.Name, &group.DisplayName,
+		&group.ID, &group.Name, &group.DisplayName,
 		&group.Description, &group.IsSystem, &group.IsDefault,
 		&group.CreatedAt, &group.UpdatedAt)
 
@@ -368,7 +368,7 @@ func (r *Repository) scanGroup(row *sql.Row) (*dao.Group, error) {
 func (r *Repository) scanGroupFromRows(rows *sql.Rows) (*dao.Group, error) {
 	var group dao.Group
 	err := rows.Scan(
-		&group.ID, &group.UUID, &group.Name, &group.DisplayName,
+		&group.ID, &group.Name, &group.DisplayName,
 		&group.Description, &group.IsSystem, &group.IsDefault,
 		&group.CreatedAt, &group.UpdatedAt)
 

@@ -24,24 +24,15 @@ message Permission {
     // Optional detailed description of what this permission allows
     optional string description = 4;
     
-    // The resource this permission applies to (what entity/domain object)
-    // Examples: "users", "groups", "permissions", "sessions", "posts", "orders"
-    string resource = 5;
-    
-    // The action that can be performed on the resource
-    // Common actions: "create", "read", "update", "delete", "list"
-    // Custom actions: "publish", "approve", "archive", "export"
-    string action = 6;
-    
     // Whether this is a system permission (cannot be modified/deleted)
     // System permissions are critical for application functionality
-    bool is_system = 7;
+    int64 created_by = 5;
     
     // Unix timestamp when the permission was created
-    int64 created_at = 8;
-    
+    int64 created_at = 6;
+
     // Unix timestamp when the permission was last updated
-    int64 updated_at = 9;
+    int64 updated_at = 7;
 }
 
 // Request to create a new permission
@@ -57,16 +48,6 @@ message CreatePermissionRequest {
     
     // Optional detailed description explaining what this permission allows
     optional string description = 3;
-    
-    // The resource this permission applies to
-    // Should be a noun representing an entity in your system
-    // Examples: "users", "groups", "permissions", "posts", "orders"
-    string resource = 4;
-    
-    // The action that can be performed on the resource
-    // Should be a verb representing an operation
-    // Examples: "create", "read", "update", "delete", "list", "publish", "approve"
-    string action = 5;
 }
 
 // Request to retrieve a specific permission by ID
@@ -86,37 +67,18 @@ message ListPermissionsRequest {
     // Search term to filter permissions by name, display_name, or description
     // Uses case-insensitive partial matching
     optional string search = 3;
-    
-    // Filter permissions by specific resource
-    // Examples: "users", "groups", "permissions"
-    optional string resource = 4;
-    
-    // Filter permissions by specific action
-    // Examples: "create", "read", "update", "delete"
-    optional string action = 5;
-    
-    // Filter by system vs user-created permissions
-    // true: only system permissions, false: only user-created permissions
-    optional bool is_system = 6;
 }
 
 // Response containing a list of permissions with pagination metadata
 message ListPermissionsResponse {
     // Array of permissions matching the request criteria
     repeated Permission permissions = 1;
-    
-    // Total number of permissions that match the filter criteria
-    // (not just the current page)
-    int32 total_count = 2;
-    
+   
     // The limit value used for this request
-    int32 limit = 3;
-    
+    int32 limit = 2;
+
     // The offset value used for this request
-    int32 offset = 4;
-    
-    // Whether there are more permissions available beyond the current result set
-    bool has_more = 5;
+    int32 offset = 3;
 }
 
 // Request to update an existing permission
@@ -134,12 +96,6 @@ message UpdatePermissionRequest {
     // New description for the permission (optional)
     // Set to empty string to clear existing description
     optional string description = 4;
-    
-    // New resource for the permission (optional)
-    optional string resource = 5;
-    
-    // New action for the permission (optional)
-    optional string action = 6;
 }
 
 // Request to delete a permission

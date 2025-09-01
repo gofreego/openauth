@@ -33,13 +33,14 @@ type User struct {
 	AvatarUrl           *string                `protobuf:"bytes,7,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"` // URL to user's avatar image
 	EmailVerified       bool                   `protobuf:"varint,8,opt,name=email_verified,json=emailVerified,proto3" json:"email_verified,omitempty"`
 	PhoneVerified       bool                   `protobuf:"varint,9,opt,name=phone_verified,json=phoneVerified,proto3" json:"phone_verified,omitempty"`
-	IsActive            bool                   `protobuf:"varint,10,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	IsLocked            bool                   `protobuf:"varint,11,opt,name=is_locked,json=isLocked,proto3" json:"is_locked,omitempty"`
-	FailedLoginAttempts int32                  `protobuf:"varint,12,opt,name=failed_login_attempts,json=failedLoginAttempts,proto3" json:"failed_login_attempts,omitempty"`
-	LastLoginAt         *int64                 `protobuf:"varint,13,opt,name=last_login_at,json=lastLoginAt,proto3,oneof" json:"last_login_at,omitempty"`
-	PasswordChangedAt   int64                  `protobuf:"varint,14,opt,name=password_changed_at,json=passwordChangedAt,proto3" json:"password_changed_at,omitempty"`
-	CreatedAt           int64                  `protobuf:"varint,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt           int64                  `protobuf:"varint,16,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Deactivated         bool                   `protobuf:"varint,10,opt,name=deactivated,proto3" json:"deactivated,omitempty"`
+	IsActive            bool                   `protobuf:"varint,11,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	IsLocked            bool                   `protobuf:"varint,12,opt,name=is_locked,json=isLocked,proto3" json:"is_locked,omitempty"`
+	FailedLoginAttempts int32                  `protobuf:"varint,13,opt,name=failed_login_attempts,json=failedLoginAttempts,proto3" json:"failed_login_attempts,omitempty"`
+	LastLoginAt         *int64                 `protobuf:"varint,14,opt,name=last_login_at,json=lastLoginAt,proto3,oneof" json:"last_login_at,omitempty"`
+	PasswordChangedAt   int64                  `protobuf:"varint,15,opt,name=password_changed_at,json=passwordChangedAt,proto3" json:"password_changed_at,omitempty"`
+	CreatedAt           int64                  `protobuf:"varint,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt           int64                  `protobuf:"varint,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -133,6 +134,13 @@ func (x *User) GetEmailVerified() bool {
 func (x *User) GetPhoneVerified() bool {
 	if x != nil {
 		return x.PhoneVerified
+	}
+	return false
+}
+
+func (x *User) GetDeactivated() bool {
+	if x != nil {
+		return x.Deactivated
 	}
 	return false
 }
@@ -398,8 +406,7 @@ type SignUpRequest struct {
 	Email         *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	Phone         *string                `protobuf:"bytes,3,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
 	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
-	Name          *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name,omitempty"`                            // Display name for the user
-	AvatarUrl     *string                `protobuf:"bytes,6,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"` // URL to user's avatar image
+	Name          *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name,omitempty"` // Display name for the user
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -465,13 +472,6 @@ func (x *SignUpRequest) GetPassword() string {
 func (x *SignUpRequest) GetName() string {
 	if x != nil && x.Name != nil {
 		return *x.Name
-	}
-	return ""
-}
-
-func (x *SignUpRequest) GetAvatarUrl() string {
-	if x != nil && x.AvatarUrl != nil {
-		return *x.AvatarUrl
 	}
 	return ""
 }
@@ -704,28 +704,28 @@ func (x *VerificationResponse) GetMessage() string {
 	return ""
 }
 
-// ResendVerificationRequest to resend verification codes
-type ResendVerificationRequest struct {
+// SendVerificationCodeRequest to resend verification codes
+type SendVerificationCodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"` // email or phone - determined by backend
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ResendVerificationRequest) Reset() {
-	*x = ResendVerificationRequest{}
+func (x *SendVerificationCodeRequest) Reset() {
+	*x = SendVerificationCodeRequest{}
 	mi := &file_proto_openauth_v1_users_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ResendVerificationRequest) String() string {
+func (x *SendVerificationCodeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ResendVerificationRequest) ProtoMessage() {}
+func (*SendVerificationCodeRequest) ProtoMessage() {}
 
-func (x *ResendVerificationRequest) ProtoReflect() protoreflect.Message {
+func (x *SendVerificationCodeRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_openauth_v1_users_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -737,42 +737,43 @@ func (x *ResendVerificationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ResendVerificationRequest.ProtoReflect.Descriptor instead.
-func (*ResendVerificationRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SendVerificationCodeRequest.ProtoReflect.Descriptor instead.
+func (*SendVerificationCodeRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ResendVerificationRequest) GetIdentifier() string {
+func (x *SendVerificationCodeRequest) GetIdentifier() string {
 	if x != nil {
 		return x.Identifier
 	}
 	return ""
 }
 
-// ResendVerificationResponse
-type ResendVerificationResponse struct {
+// SendVerificationCodeResponse
+type SendVerificationCodeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Sent          bool                   `protobuf:"varint,1,opt,name=sent,proto3" json:"sent,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	ExpiresAt     int64                  `protobuf:"varint,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"` // When the code expires
+	ExpiresAt     int64                  `protobuf:"varint,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`       // When the code expires
+	ResendAfter   int64                  `protobuf:"varint,4,opt,name=resend_after,json=resendAfter,proto3" json:"resend_after,omitempty"` // When the user can request another code (Unix timestamp milliseconds)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ResendVerificationResponse) Reset() {
-	*x = ResendVerificationResponse{}
+func (x *SendVerificationCodeResponse) Reset() {
+	*x = SendVerificationCodeResponse{}
 	mi := &file_proto_openauth_v1_users_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ResendVerificationResponse) String() string {
+func (x *SendVerificationCodeResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ResendVerificationResponse) ProtoMessage() {}
+func (*SendVerificationCodeResponse) ProtoMessage() {}
 
-func (x *ResendVerificationResponse) ProtoReflect() protoreflect.Message {
+func (x *SendVerificationCodeResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_openauth_v1_users_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -784,28 +785,35 @@ func (x *ResendVerificationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ResendVerificationResponse.ProtoReflect.Descriptor instead.
-func (*ResendVerificationResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SendVerificationCodeResponse.ProtoReflect.Descriptor instead.
+func (*SendVerificationCodeResponse) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ResendVerificationResponse) GetSent() bool {
+func (x *SendVerificationCodeResponse) GetSent() bool {
 	if x != nil {
 		return x.Sent
 	}
 	return false
 }
 
-func (x *ResendVerificationResponse) GetMessage() string {
+func (x *SendVerificationCodeResponse) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
 	return ""
 }
 
-func (x *ResendVerificationResponse) GetExpiresAt() int64 {
+func (x *SendVerificationCodeResponse) GetExpiresAt() int64 {
 	if x != nil {
 		return x.ExpiresAt
+	}
+	return 0
+}
+
+func (x *SendVerificationCodeResponse) GetResendAfter() int64 {
+	if x != nil {
+		return x.ResendAfter
 	}
 	return 0
 }
@@ -1702,17 +1710,15 @@ func (x *DeleteProfileResponse) GetMessage() string {
 	return ""
 }
 
-// GetUserRequest to get user by ID or username
+// GetUserRequest to get user by ID
 type GetUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Identifier:
 	//
 	//	*GetUserRequest_Id
 	//	*GetUserRequest_Uuid
-	//	*GetUserRequest_Username
-	//	*GetUserRequest_Email
 	Identifier     isGetUserRequest_Identifier `protobuf_oneof:"identifier"`
-	IncludeProfile bool                        `protobuf:"varint,5,opt,name=include_profile,json=includeProfile,proto3" json:"include_profile,omitempty"` // Whether to include profile information
+	IncludeProfile bool                        `protobuf:"varint,3,opt,name=include_profile,json=includeProfile,proto3" json:"include_profile,omitempty"` // Whether to include profile information
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1772,24 +1778,6 @@ func (x *GetUserRequest) GetUuid() string {
 	return ""
 }
 
-func (x *GetUserRequest) GetUsername() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*GetUserRequest_Username); ok {
-			return x.Username
-		}
-	}
-	return ""
-}
-
-func (x *GetUserRequest) GetEmail() string {
-	if x != nil {
-		if x, ok := x.Identifier.(*GetUserRequest_Email); ok {
-			return x.Email
-		}
-	}
-	return ""
-}
-
 func (x *GetUserRequest) GetIncludeProfile() bool {
 	if x != nil {
 		return x.IncludeProfile
@@ -1809,27 +1797,15 @@ type GetUserRequest_Uuid struct {
 	Uuid string `protobuf:"bytes,2,opt,name=uuid,proto3,oneof"`
 }
 
-type GetUserRequest_Username struct {
-	Username string `protobuf:"bytes,3,opt,name=username,proto3,oneof"`
-}
-
-type GetUserRequest_Email struct {
-	Email string `protobuf:"bytes,4,opt,name=email,proto3,oneof"`
-}
-
 func (*GetUserRequest_Id) isGetUserRequest_Identifier() {}
 
 func (*GetUserRequest_Uuid) isGetUserRequest_Identifier() {}
-
-func (*GetUserRequest_Username) isGetUserRequest_Identifier() {}
-
-func (*GetUserRequest_Email) isGetUserRequest_Identifier() {}
 
 // GetUserResponse
 type GetUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	Profile       *UserProfile           `protobuf:"bytes,2,opt,name=profile,proto3,oneof" json:"profile,omitempty"`
+	Profiles      []*UserProfile         `protobuf:"bytes,2,rep,name=profiles,proto3" json:"profiles,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1871,35 +1847,23 @@ func (x *GetUserResponse) GetUser() *User {
 	return nil
 }
 
-func (x *GetUserResponse) GetProfile() *UserProfile {
+func (x *GetUserResponse) GetProfiles() []*UserProfile {
 	if x != nil {
-		return x.Profile
+		return x.Profiles
 	}
 	return nil
 }
 
 // UpdateUserRequest to update user information
 type UpdateUserRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Uuid     string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Username *string                `protobuf:"bytes,2,opt,name=username,proto3,oneof" json:"username,omitempty"`
-	Email    *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	Phone    *string                `protobuf:"bytes,4,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
-	IsActive *bool                  `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
-	Name     *string                `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name,omitempty"` // Display name for the user
-	// Profile updates
-	FirstName     *string `protobuf:"bytes,7,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
-	LastName      *string `protobuf:"bytes,8,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
-	DisplayName   *string `protobuf:"bytes,9,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
-	Bio           *string `protobuf:"bytes,10,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
-	AvatarUrl     *string `protobuf:"bytes,11,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
-	Timezone      *string `protobuf:"bytes,12,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
-	Locale        *string `protobuf:"bytes,13,opt,name=locale,proto3,oneof" json:"locale,omitempty"`
-	Country       *string `protobuf:"bytes,14,opt,name=country,proto3,oneof" json:"country,omitempty"`
-	City          *string `protobuf:"bytes,15,opt,name=city,proto3,oneof" json:"city,omitempty"`
-	Address       *string `protobuf:"bytes,16,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	PostalCode    *string `protobuf:"bytes,17,opt,name=postal_code,json=postalCode,proto3,oneof" json:"postal_code,omitempty"`
-	WebsiteUrl    *string `protobuf:"bytes,18,opt,name=website_url,json=websiteUrl,proto3,oneof" json:"website_url,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Username      *string                `protobuf:"bytes,2,opt,name=username,proto3,oneof" json:"username,omitempty"`
+	Email         *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	Phone         *string                `protobuf:"bytes,4,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
+	IsActive      *bool                  `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
+	Name          *string                `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name,omitempty"`                            // Display name for the user
+	AvatarUrl     *string                `protobuf:"bytes,7,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"` // URL to user's avatar image
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1976,86 +1940,9 @@ func (x *UpdateUserRequest) GetName() string {
 	return ""
 }
 
-func (x *UpdateUserRequest) GetFirstName() string {
-	if x != nil && x.FirstName != nil {
-		return *x.FirstName
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetLastName() string {
-	if x != nil && x.LastName != nil {
-		return *x.LastName
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetDisplayName() string {
-	if x != nil && x.DisplayName != nil {
-		return *x.DisplayName
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetBio() string {
-	if x != nil && x.Bio != nil {
-		return *x.Bio
-	}
-	return ""
-}
-
 func (x *UpdateUserRequest) GetAvatarUrl() string {
 	if x != nil && x.AvatarUrl != nil {
 		return *x.AvatarUrl
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetTimezone() string {
-	if x != nil && x.Timezone != nil {
-		return *x.Timezone
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetLocale() string {
-	if x != nil && x.Locale != nil {
-		return *x.Locale
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetCountry() string {
-	if x != nil && x.Country != nil {
-		return *x.Country
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetCity() string {
-	if x != nil && x.City != nil {
-		return *x.City
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetAddress() string {
-	if x != nil && x.Address != nil {
-		return *x.Address
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetPostalCode() string {
-	if x != nil && x.PostalCode != nil {
-		return *x.PostalCode
-	}
-	return ""
-}
-
-func (x *UpdateUserRequest) GetWebsiteUrl() string {
-	if x != nil && x.WebsiteUrl != nil {
-		return *x.WebsiteUrl
 	}
 	return ""
 }
@@ -2064,7 +1951,6 @@ func (x *UpdateUserRequest) GetWebsiteUrl() string {
 type UpdateUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	Profile       *UserProfile           `protobuf:"bytes,2,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2102,13 +1988,6 @@ func (*UpdateUserResponse) Descriptor() ([]byte, []int) {
 func (x *UpdateUserResponse) GetUser() *User {
 	if x != nil {
 		return x.User
-	}
-	return nil
-}
-
-func (x *UpdateUserResponse) GetProfile() *UserProfile {
-	if x != nil {
-		return x.Profile
 	}
 	return nil
 }
@@ -2232,12 +2111,12 @@ type ListUsersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
 	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
-	Search        *string                `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`                                     // Search in username, email, first_name, last_name
-	IsActive      *bool                  `protobuf:"varint,4,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`                // Filter by active status
-	EmailVerified *bool                  `protobuf:"varint,5,opt,name=email_verified,json=emailVerified,proto3,oneof" json:"email_verified,omitempty"` // Filter by email verification status
-	PhoneVerified *bool                  `protobuf:"varint,6,opt,name=phone_verified,json=phoneVerified,proto3,oneof" json:"phone_verified,omitempty"` // Filter by phone verification status
-	SortBy        *string                `protobuf:"bytes,7,opt,name=sort_by,json=sortBy,proto3,oneof" json:"sort_by,omitempty"`                       // Sort by field (username, email, created_at, etc.)
-	SortOrder     *string                `protobuf:"bytes,8,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`              // asc or desc
+	Search        *string                `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`                                           // Search in username, email, first_name, last_name
+	IsActive      *bool                  `protobuf:"varint,4,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`                      // Filter by active status
+	EmailVerified *bool                  `protobuf:"varint,5,opt,name=email_verified,json=emailVerified,proto3,oneof" json:"email_verified,omitempty"`       // Filter by email verification status
+	PhoneVerified *bool                  `protobuf:"varint,6,opt,name=phone_verified,json=phoneVerified,proto3,oneof" json:"phone_verified,omitempty"`       // Filter by phone verification status
+	SortBy        *string                `protobuf:"bytes,7,opt,name=sort_by,json=sortBy,proto3,oneof" json:"sort_by,omitempty"`                             // Sort by field (username, email, created_at, etc.)
+	SortOrder     *SortOrder             `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3,enum=v1.SortOrder,oneof" json:"sort_order,omitempty"` // asc or desc
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2321,21 +2200,17 @@ func (x *ListUsersRequest) GetSortBy() string {
 	return ""
 }
 
-func (x *ListUsersRequest) GetSortOrder() string {
+func (x *ListUsersRequest) GetSortOrder() SortOrder {
 	if x != nil && x.SortOrder != nil {
 		return *x.SortOrder
 	}
-	return ""
+	return SortOrder_NONE
 }
 
 // ListUsersResponse
 type ListUsersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
-	HasMore       bool                   `protobuf:"varint,5,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2375,34 +2250,6 @@ func (x *ListUsersResponse) GetUsers() []*User {
 		return x.Users
 	}
 	return nil
-}
-
-func (x *ListUsersResponse) GetTotalCount() int32 {
-	if x != nil {
-		return x.TotalCount
-	}
-	return 0
-}
-
-func (x *ListUsersResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *ListUsersResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListUsersResponse) GetHasMore() bool {
-	if x != nil {
-		return x.HasMore
-	}
-	return false
 }
 
 // DeleteUserRequest to delete/deactivate user
@@ -2515,7 +2362,7 @@ var File_proto_openauth_v1_users_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\n" +
-	"\x1dproto/openauth/v1/users.proto\x12\x02v1\"\xca\x04\n" +
+	"\x1dproto/openauth/v1/users.proto\x12\x02v1\x1a\x17proto/common/sort.proto\"\xec\x04\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12\x1a\n" +
@@ -2526,17 +2373,18 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\n" +
 	"avatar_url\x18\a \x01(\tH\x03R\tavatarUrl\x88\x01\x01\x12%\n" +
 	"\x0eemail_verified\x18\b \x01(\bR\remailVerified\x12%\n" +
-	"\x0ephone_verified\x18\t \x01(\bR\rphoneVerified\x12\x1b\n" +
-	"\tis_active\x18\n" +
-	" \x01(\bR\bisActive\x12\x1b\n" +
-	"\tis_locked\x18\v \x01(\bR\bisLocked\x122\n" +
-	"\x15failed_login_attempts\x18\f \x01(\x05R\x13failedLoginAttempts\x12'\n" +
-	"\rlast_login_at\x18\r \x01(\x03H\x04R\vlastLoginAt\x88\x01\x01\x12.\n" +
-	"\x13password_changed_at\x18\x0e \x01(\x03R\x11passwordChangedAt\x12\x1d\n" +
+	"\x0ephone_verified\x18\t \x01(\bR\rphoneVerified\x12 \n" +
+	"\vdeactivated\x18\n" +
+	" \x01(\bR\vdeactivated\x12\x1b\n" +
+	"\tis_active\x18\v \x01(\bR\bisActive\x12\x1b\n" +
+	"\tis_locked\x18\f \x01(\bR\bisLocked\x122\n" +
+	"\x15failed_login_attempts\x18\r \x01(\x05R\x13failedLoginAttempts\x12'\n" +
+	"\rlast_login_at\x18\x0e \x01(\x03H\x04R\vlastLoginAt\x88\x01\x01\x12.\n" +
+	"\x13password_changed_at\x18\x0f \x01(\x03R\x11passwordChangedAt\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x0f \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x10 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x10 \x01(\x03R\tupdatedAtB\b\n" +
+	"updated_at\x18\x11 \x01(\x03R\tupdatedAtB\b\n" +
 	"\x06_emailB\b\n" +
 	"\x06_phoneB\a\n" +
 	"\x05_nameB\r\n" +
@@ -2589,19 +2437,16 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\n" +
 	"\b_addressB\x0e\n" +
 	"\f_postal_codeB\x0e\n" +
-	"\f_website_url\"\xe6\x01\n" +
+	"\f_website_url\"\xb3\x01\n" +
 	"\rSignUpRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x19\n" +
 	"\x05email\x18\x02 \x01(\tH\x00R\x05email\x88\x01\x01\x12\x19\n" +
 	"\x05phone\x18\x03 \x01(\tH\x01R\x05phone\x88\x01\x01\x12\x1a\n" +
 	"\bpassword\x18\x04 \x01(\tR\bpassword\x12\x17\n" +
-	"\x04name\x18\x05 \x01(\tH\x02R\x04name\x88\x01\x01\x12\"\n" +
-	"\n" +
-	"avatar_url\x18\x06 \x01(\tH\x03R\tavatarUrl\x88\x01\x01B\b\n" +
+	"\x04name\x18\x05 \x01(\tH\x02R\x04name\x88\x01\x01B\b\n" +
 	"\x06_emailB\b\n" +
 	"\x06_phoneB\a\n" +
-	"\x05_nameB\r\n" +
-	"\v_avatar_url\"\xc8\x01\n" +
+	"\x05_name\"\xc8\x01\n" +
 	"\x0eSignUpResponse\x12\x1c\n" +
 	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12>\n" +
@@ -2615,16 +2460,17 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x11verification_code\x18\x02 \x01(\tR\x10verificationCode\"L\n" +
 	"\x14VerificationResponse\x12\x1a\n" +
 	"\bverified\x18\x01 \x01(\bR\bverified\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\";\n" +
-	"\x19ResendVerificationRequest\x12\x1e\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"=\n" +
+	"\x1bSendVerificationCodeRequest\x12\x1e\n" +
 	"\n" +
 	"identifier\x18\x01 \x01(\tR\n" +
-	"identifier\"i\n" +
-	"\x1aResendVerificationResponse\x12\x12\n" +
+	"identifier\"\x8e\x01\n" +
+	"\x1cSendVerificationCodeResponse\x12\x12\n" +
 	"\x04sent\x18\x01 \x01(\bR\x04sent\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12\x1d\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\x03R\texpiresAt\"2\n" +
+	"expires_at\x18\x03 \x01(\x03R\texpiresAt\x12!\n" +
+	"\fresend_after\x18\x04 \x01(\x03R\vresendAfter\"2\n" +
 	"\x14CheckUsernameRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\"q\n" +
 	"\x15CheckUsernameResponse\x12\x1c\n" +
@@ -2741,20 +2587,16 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\fprofile_uuid\x18\x01 \x01(\tR\vprofileUuid\"K\n" +
 	"\x15DeleteProfileResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xa5\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"o\n" +
 	"\x0eGetUserRequest\x12\x10\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x12\x14\n" +
-	"\x04uuid\x18\x02 \x01(\tH\x00R\x04uuid\x12\x1c\n" +
-	"\busername\x18\x03 \x01(\tH\x00R\busername\x12\x16\n" +
-	"\x05email\x18\x04 \x01(\tH\x00R\x05email\x12'\n" +
-	"\x0finclude_profile\x18\x05 \x01(\bR\x0eincludeProfileB\f\n" +
+	"\x04uuid\x18\x02 \x01(\tH\x00R\x04uuid\x12'\n" +
+	"\x0finclude_profile\x18\x03 \x01(\bR\x0eincludeProfileB\f\n" +
 	"\n" +
-	"identifier\"k\n" +
+	"identifier\"\\\n" +
 	"\x0fGetUserResponse\x12\x1c\n" +
-	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12.\n" +
-	"\aprofile\x18\x02 \x01(\v2\x0f.v1.UserProfileH\x00R\aprofile\x88\x01\x01B\n" +
-	"\n" +
-	"\b_profile\"\x99\x06\n" +
+	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12+\n" +
+	"\bprofiles\x18\x02 \x03(\v2\x0f.v1.UserProfileR\bprofiles\"\xa4\x02\n" +
 	"\x11UpdateUserRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1f\n" +
 	"\busername\x18\x02 \x01(\tH\x00R\busername\x88\x01\x01\x12\x19\n" +
@@ -2763,54 +2605,23 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\tis_active\x18\x05 \x01(\bH\x03R\bisActive\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x06 \x01(\tH\x04R\x04name\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"first_name\x18\a \x01(\tH\x05R\tfirstName\x88\x01\x01\x12 \n" +
-	"\tlast_name\x18\b \x01(\tH\x06R\blastName\x88\x01\x01\x12&\n" +
-	"\fdisplay_name\x18\t \x01(\tH\aR\vdisplayName\x88\x01\x01\x12\x15\n" +
-	"\x03bio\x18\n" +
-	" \x01(\tH\bR\x03bio\x88\x01\x01\x12\"\n" +
-	"\n" +
-	"avatar_url\x18\v \x01(\tH\tR\tavatarUrl\x88\x01\x01\x12\x1f\n" +
-	"\btimezone\x18\f \x01(\tH\n" +
-	"R\btimezone\x88\x01\x01\x12\x1b\n" +
-	"\x06locale\x18\r \x01(\tH\vR\x06locale\x88\x01\x01\x12\x1d\n" +
-	"\acountry\x18\x0e \x01(\tH\fR\acountry\x88\x01\x01\x12\x17\n" +
-	"\x04city\x18\x0f \x01(\tH\rR\x04city\x88\x01\x01\x12\x1d\n" +
-	"\aaddress\x18\x10 \x01(\tH\x0eR\aaddress\x88\x01\x01\x12$\n" +
-	"\vpostal_code\x18\x11 \x01(\tH\x0fR\n" +
-	"postalCode\x88\x01\x01\x12$\n" +
-	"\vwebsite_url\x18\x12 \x01(\tH\x10R\n" +
-	"websiteUrl\x88\x01\x01B\v\n" +
+	"avatar_url\x18\a \x01(\tH\x05R\tavatarUrl\x88\x01\x01B\v\n" +
 	"\t_usernameB\b\n" +
 	"\x06_emailB\b\n" +
 	"\x06_phoneB\f\n" +
 	"\n" +
 	"_is_activeB\a\n" +
 	"\x05_nameB\r\n" +
-	"\v_first_nameB\f\n" +
-	"\n" +
-	"_last_nameB\x0f\n" +
-	"\r_display_nameB\x06\n" +
-	"\x04_bioB\r\n" +
-	"\v_avatar_urlB\v\n" +
-	"\t_timezoneB\t\n" +
-	"\a_localeB\n" +
-	"\n" +
-	"\b_countryB\a\n" +
-	"\x05_cityB\n" +
-	"\n" +
-	"\b_addressB\x0e\n" +
-	"\f_postal_codeB\x0e\n" +
-	"\f_website_url\"]\n" +
+	"\v_avatar_url\"2\n" +
 	"\x12UpdateUserResponse\x12\x1c\n" +
-	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12)\n" +
-	"\aprofile\x18\x02 \x01(\v2\x0f.v1.UserProfileR\aprofile\"y\n" +
+	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\"y\n" +
 	"\x15ChangePasswordRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12)\n" +
 	"\x10current_password\x18\x02 \x01(\tR\x0fcurrentPassword\x12!\n" +
 	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"L\n" +
 	"\x16ChangePasswordResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xf3\x02\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x82\x03\n" +
 	"\x10ListUsersRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x1b\n" +
@@ -2818,9 +2629,9 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\tis_active\x18\x04 \x01(\bH\x01R\bisActive\x88\x01\x01\x12*\n" +
 	"\x0eemail_verified\x18\x05 \x01(\bH\x02R\remailVerified\x88\x01\x01\x12*\n" +
 	"\x0ephone_verified\x18\x06 \x01(\bH\x03R\rphoneVerified\x88\x01\x01\x12\x1c\n" +
-	"\asort_by\x18\a \x01(\tH\x04R\x06sortBy\x88\x01\x01\x12\"\n" +
+	"\asort_by\x18\a \x01(\tH\x04R\x06sortBy\x88\x01\x01\x121\n" +
 	"\n" +
-	"sort_order\x18\b \x01(\tH\x05R\tsortOrder\x88\x01\x01B\t\n" +
+	"sort_order\x18\b \x01(\x0e2\r.v1.SortOrderH\x05R\tsortOrder\x88\x01\x01B\t\n" +
 	"\a_searchB\f\n" +
 	"\n" +
 	"_is_activeB\x11\n" +
@@ -2828,14 +2639,9 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x0f_phone_verifiedB\n" +
 	"\n" +
 	"\b_sort_byB\r\n" +
-	"\v_sort_order\"\x9d\x01\n" +
+	"\v_sort_order\"3\n" +
 	"\x11ListUsersResponse\x12\x1e\n" +
-	"\x05users\x18\x01 \x03(\v2\b.v1.UserR\x05users\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x19\n" +
-	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"H\n" +
+	"\x05users\x18\x01 \x03(\v2\b.v1.UserR\x05users\"H\n" +
 	"\x11DeleteUserRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1f\n" +
 	"\vsoft_delete\x18\x02 \x01(\bR\n" +
@@ -2858,53 +2664,54 @@ func file_proto_openauth_v1_users_proto_rawDescGZIP() []byte {
 
 var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_proto_openauth_v1_users_proto_goTypes = []any{
-	(*User)(nil),                       // 0: v1.User
-	(*UserProfile)(nil),                // 1: v1.UserProfile
-	(*SignUpRequest)(nil),              // 2: v1.SignUpRequest
-	(*SignUpResponse)(nil),             // 3: v1.SignUpResponse
-	(*VerifyEmailRequest)(nil),         // 4: v1.VerifyEmailRequest
-	(*VerifyPhoneRequest)(nil),         // 5: v1.VerifyPhoneRequest
-	(*VerificationResponse)(nil),       // 6: v1.VerificationResponse
-	(*ResendVerificationRequest)(nil),  // 7: v1.ResendVerificationRequest
-	(*ResendVerificationResponse)(nil), // 8: v1.ResendVerificationResponse
-	(*CheckUsernameRequest)(nil),       // 9: v1.CheckUsernameRequest
-	(*CheckUsernameResponse)(nil),      // 10: v1.CheckUsernameResponse
-	(*CheckEmailRequest)(nil),          // 11: v1.CheckEmailRequest
-	(*CheckEmailResponse)(nil),         // 12: v1.CheckEmailResponse
-	(*CreateProfileRequest)(nil),       // 13: v1.CreateProfileRequest
-	(*CreateProfileResponse)(nil),      // 14: v1.CreateProfileResponse
-	(*ListUserProfilesRequest)(nil),    // 15: v1.ListUserProfilesRequest
-	(*ListUserProfilesResponse)(nil),   // 16: v1.ListUserProfilesResponse
-	(*UpdateProfileRequest)(nil),       // 17: v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil),      // 18: v1.UpdateProfileResponse
-	(*DeleteProfileRequest)(nil),       // 19: v1.DeleteProfileRequest
-	(*DeleteProfileResponse)(nil),      // 20: v1.DeleteProfileResponse
-	(*GetUserRequest)(nil),             // 21: v1.GetUserRequest
-	(*GetUserResponse)(nil),            // 22: v1.GetUserResponse
-	(*UpdateUserRequest)(nil),          // 23: v1.UpdateUserRequest
-	(*UpdateUserResponse)(nil),         // 24: v1.UpdateUserResponse
-	(*ChangePasswordRequest)(nil),      // 25: v1.ChangePasswordRequest
-	(*ChangePasswordResponse)(nil),     // 26: v1.ChangePasswordResponse
-	(*ListUsersRequest)(nil),           // 27: v1.ListUsersRequest
-	(*ListUsersResponse)(nil),          // 28: v1.ListUsersResponse
-	(*DeleteUserRequest)(nil),          // 29: v1.DeleteUserRequest
-	(*DeleteUserResponse)(nil),         // 30: v1.DeleteUserResponse
+	(*User)(nil),                         // 0: v1.User
+	(*UserProfile)(nil),                  // 1: v1.UserProfile
+	(*SignUpRequest)(nil),                // 2: v1.SignUpRequest
+	(*SignUpResponse)(nil),               // 3: v1.SignUpResponse
+	(*VerifyEmailRequest)(nil),           // 4: v1.VerifyEmailRequest
+	(*VerifyPhoneRequest)(nil),           // 5: v1.VerifyPhoneRequest
+	(*VerificationResponse)(nil),         // 6: v1.VerificationResponse
+	(*SendVerificationCodeRequest)(nil),  // 7: v1.SendVerificationCodeRequest
+	(*SendVerificationCodeResponse)(nil), // 8: v1.SendVerificationCodeResponse
+	(*CheckUsernameRequest)(nil),         // 9: v1.CheckUsernameRequest
+	(*CheckUsernameResponse)(nil),        // 10: v1.CheckUsernameResponse
+	(*CheckEmailRequest)(nil),            // 11: v1.CheckEmailRequest
+	(*CheckEmailResponse)(nil),           // 12: v1.CheckEmailResponse
+	(*CreateProfileRequest)(nil),         // 13: v1.CreateProfileRequest
+	(*CreateProfileResponse)(nil),        // 14: v1.CreateProfileResponse
+	(*ListUserProfilesRequest)(nil),      // 15: v1.ListUserProfilesRequest
+	(*ListUserProfilesResponse)(nil),     // 16: v1.ListUserProfilesResponse
+	(*UpdateProfileRequest)(nil),         // 17: v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),        // 18: v1.UpdateProfileResponse
+	(*DeleteProfileRequest)(nil),         // 19: v1.DeleteProfileRequest
+	(*DeleteProfileResponse)(nil),        // 20: v1.DeleteProfileResponse
+	(*GetUserRequest)(nil),               // 21: v1.GetUserRequest
+	(*GetUserResponse)(nil),              // 22: v1.GetUserResponse
+	(*UpdateUserRequest)(nil),            // 23: v1.UpdateUserRequest
+	(*UpdateUserResponse)(nil),           // 24: v1.UpdateUserResponse
+	(*ChangePasswordRequest)(nil),        // 25: v1.ChangePasswordRequest
+	(*ChangePasswordResponse)(nil),       // 26: v1.ChangePasswordResponse
+	(*ListUsersRequest)(nil),             // 27: v1.ListUsersRequest
+	(*ListUsersResponse)(nil),            // 28: v1.ListUsersResponse
+	(*DeleteUserRequest)(nil),            // 29: v1.DeleteUserRequest
+	(*DeleteUserResponse)(nil),           // 30: v1.DeleteUserResponse
+	(SortOrder)(0),                       // 31: v1.SortOrder
 }
 var file_proto_openauth_v1_users_proto_depIdxs = []int32{
-	0, // 0: v1.SignUpResponse.user:type_name -> v1.User
-	1, // 1: v1.CreateProfileResponse.profile:type_name -> v1.UserProfile
-	1, // 2: v1.ListUserProfilesResponse.profiles:type_name -> v1.UserProfile
-	1, // 3: v1.UpdateProfileResponse.profile:type_name -> v1.UserProfile
-	0, // 4: v1.GetUserResponse.user:type_name -> v1.User
-	1, // 5: v1.GetUserResponse.profile:type_name -> v1.UserProfile
-	0, // 6: v1.UpdateUserResponse.user:type_name -> v1.User
-	1, // 7: v1.UpdateUserResponse.profile:type_name -> v1.UserProfile
-	0, // 8: v1.ListUsersResponse.users:type_name -> v1.User
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	0,  // 0: v1.SignUpResponse.user:type_name -> v1.User
+	1,  // 1: v1.CreateProfileResponse.profile:type_name -> v1.UserProfile
+	1,  // 2: v1.ListUserProfilesResponse.profiles:type_name -> v1.UserProfile
+	1,  // 3: v1.UpdateProfileResponse.profile:type_name -> v1.UserProfile
+	0,  // 4: v1.GetUserResponse.user:type_name -> v1.User
+	1,  // 5: v1.GetUserResponse.profiles:type_name -> v1.UserProfile
+	0,  // 6: v1.UpdateUserResponse.user:type_name -> v1.User
+	31, // 7: v1.ListUsersRequest.sort_order:type_name -> v1.SortOrder
+	0,  // 8: v1.ListUsersResponse.users:type_name -> v1.User
+	9,  // [9:9] is the sub-list for method output_type
+	9,  // [9:9] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_users_proto_init() }
@@ -2912,6 +2719,7 @@ func file_proto_openauth_v1_users_proto_init() {
 	if File_proto_openauth_v1_users_proto != nil {
 		return
 	}
+	file_proto_common_sort_proto_init()
 	file_proto_openauth_v1_users_proto_msgTypes[0].OneofWrappers = []any{}
 	file_proto_openauth_v1_users_proto_msgTypes[1].OneofWrappers = []any{}
 	file_proto_openauth_v1_users_proto_msgTypes[2].OneofWrappers = []any{}
@@ -2920,10 +2728,7 @@ func file_proto_openauth_v1_users_proto_init() {
 	file_proto_openauth_v1_users_proto_msgTypes[21].OneofWrappers = []any{
 		(*GetUserRequest_Id)(nil),
 		(*GetUserRequest_Uuid)(nil),
-		(*GetUserRequest_Username)(nil),
-		(*GetUserRequest_Email)(nil),
 	}
-	file_proto_openauth_v1_users_proto_msgTypes[22].OneofWrappers = []any{}
 	file_proto_openauth_v1_users_proto_msgTypes[23].OneofWrappers = []any{}
 	file_proto_openauth_v1_users_proto_msgTypes[27].OneofWrappers = []any{}
 	type x struct{}

@@ -1,6 +1,8 @@
 syntax = "proto3";
 package v1;
 
+import "proto/common/sort.proto";
+
 option go_package = "./openauth_v1";
 
 // User represents a user account in the system
@@ -14,13 +16,14 @@ message User {
     optional string avatar_url = 7;  // URL to user's avatar image
     bool email_verified = 8;
     bool phone_verified = 9;
-    bool is_active = 10;
-    bool is_locked = 11;
-    int32 failed_login_attempts = 12;
-    optional int64 last_login_at = 13;
-    int64 password_changed_at = 14;
-    int64 created_at = 15;
-    int64 updated_at = 16;
+    bool deactivated = 10;
+    bool is_active = 11;
+    bool is_locked = 12;
+    int32 failed_login_attempts = 13;
+    optional int64 last_login_at = 14;
+    int64 password_changed_at = 15;
+    int64 created_at = 16;
+    int64 updated_at = 17;
 }
 
 // UserProfile represents extended user profile information
@@ -55,7 +58,6 @@ message SignUpRequest {
     optional string phone = 3;
     string password = 4;
     optional string name = 5;  // Display name for the user
-    optional string avatar_url = 6;  // URL to user's avatar image
 }
 
 // SignUpResponse after successful registration - only user data
@@ -84,16 +86,17 @@ message VerificationResponse {
     string message = 2;
 }
 
-// ResendVerificationRequest to resend verification codes
-message ResendVerificationRequest {
+// SendVerificationCodeRequest to resend verification codes
+message SendVerificationCodeRequest {
     string identifier = 1;  // email or phone - determined by backend
 }
 
-// ResendVerificationResponse
-message ResendVerificationResponse {
+// SendVerificationCodeResponse
+message SendVerificationCodeResponse {
     bool sent = 1;
     string message = 2;
     int64 expires_at = 3;  // When the code expires
+    int64 resend_after = 4; // When the user can request another code (Unix timestamp milliseconds)
 }
 
 // CheckUsernameRequest to check username availability
@@ -202,21 +205,19 @@ message DeleteProfileResponse {
     string message = 2;
 }
 
-// GetUserRequest to get user by ID or username
+// GetUserRequest to get user by ID
 message GetUserRequest {
     oneof identifier {
         int64 id = 1;
         string uuid = 2;
-        string username = 3;
-        string email = 4;
     }
-    bool include_profile = 5;  // Whether to include profile information
+    bool include_profile = 3;  // Whether to include profile information
 }
 
 // GetUserResponse
 message GetUserResponse {
     User user = 1;
-    optional UserProfile profile = 2;
+    repeated UserProfile profiles = 2;
 }
 
 // UpdateUserRequest to update user information
@@ -227,26 +228,12 @@ message UpdateUserRequest {
     optional string phone = 4;
     optional bool is_active = 5;
     optional string name = 6;  // Display name for the user
-    
-    // Profile updates
-    optional string first_name = 7;
-    optional string last_name = 8;
-    optional string display_name = 9;
-    optional string bio = 10;
-    optional string avatar_url = 11;
-    optional string timezone = 12;
-    optional string locale = 13;
-    optional string country = 14;
-    optional string city = 15;
-    optional string address = 16;
-    optional string postal_code = 17;
-    optional string website_url = 18;
+    optional string avatar_url = 7;  // URL to user's avatar image
 }
 
 // UpdateUserResponse
 message UpdateUserResponse {
     User user = 1;
-    UserProfile profile = 2;
 }
 
 // ChangePasswordRequest to change user password
@@ -271,16 +258,12 @@ message ListUsersRequest {
     optional bool email_verified = 5;  // Filter by email verification status
     optional bool phone_verified = 6;  // Filter by phone verification status
     optional string sort_by = 7;       // Sort by field (username, email, created_at, etc.)
-    optional string sort_order = 8;    // asc or desc
+    optional SortOrder sort_order = 8;    // asc or desc
 }
 
 // ListUsersResponse
 message ListUsersResponse {
     repeated User users = 1;
-    int32 total_count = 2;
-    int32 limit = 3;
-    int32 offset = 4;
-    bool has_more = 5;
 }
 
 // DeleteUserRequest to delete/deactivate user

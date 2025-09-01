@@ -2,7 +2,6 @@ package dao
 
 import (
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"github.com/google/uuid"
 )
 
 // Permissions table
@@ -40,22 +39,20 @@ func (p *Permission) ToProto() *openauth_v1.Permission {
 
 // Groups (roles) table
 type Group struct {
-	ID          int64     `db:"id" json:"id"`
-	UUID        uuid.UUID `db:"uuid" json:"uuid"`
-	Name        string    `db:"name" json:"name"`
-	DisplayName string    `db:"display_name" json:"displayName"`
-	Description *string   `db:"description" json:"description,omitempty"`
-	IsSystem    bool      `db:"is_system" json:"isSystem"`
-	IsDefault   bool      `db:"is_default" json:"isDefault"`
-	CreatedAt   int64     `db:"created_at" json:"createdAt"`
-	UpdatedAt   int64     `db:"updated_at" json:"updatedAt"`
+	ID          int64   `db:"id" json:"id"`
+	Name        string  `db:"name" json:"name"`
+	DisplayName string  `db:"display_name" json:"displayName"`
+	Description *string `db:"description" json:"description,omitempty"`
+	IsSystem    bool    `db:"is_system" json:"isSystem"`
+	IsDefault   bool    `db:"is_default" json:"isDefault"`
+	CreatedAt   int64   `db:"created_at" json:"createdAt"`
+	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
 }
 
 // ToProto converts a Group DAO to protobuf Group
 func (g *Group) ToProto() *openauth_v1.Group {
 	proto := &openauth_v1.Group{
 		Id:          g.ID,
-		Uuid:        g.UUID.String(),
 		Name:        g.Name,
 		DisplayName: g.DisplayName,
 		IsSystem:    g.IsSystem,

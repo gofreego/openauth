@@ -39,20 +39,13 @@ type Permission struct {
 	DisplayName string `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	// Optional detailed description of what this permission allows
 	Description *string `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// The resource this permission applies to (what entity/domain object)
-	// Examples: "users", "groups", "permissions", "sessions", "posts", "orders"
-	Resource string `protobuf:"bytes,5,opt,name=resource,proto3" json:"resource,omitempty"`
-	// The action that can be performed on the resource
-	// Common actions: "create", "read", "update", "delete", "list"
-	// Custom actions: "publish", "approve", "archive", "export"
-	Action string `protobuf:"bytes,6,opt,name=action,proto3" json:"action,omitempty"`
 	// Whether this is a system permission (cannot be modified/deleted)
 	// System permissions are critical for application functionality
-	IsSystem bool `protobuf:"varint,7,opt,name=is_system,json=isSystem,proto3" json:"is_system,omitempty"`
+	CreatedBy int64 `protobuf:"varint,5,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
 	// Unix timestamp when the permission was created
-	CreatedAt int64 `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt int64 `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Unix timestamp when the permission was last updated
-	UpdatedAt     int64 `protobuf:"varint,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt     int64 `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -115,25 +108,11 @@ func (x *Permission) GetDescription() string {
 	return ""
 }
 
-func (x *Permission) GetResource() string {
+func (x *Permission) GetCreatedBy() int64 {
 	if x != nil {
-		return x.Resource
+		return x.CreatedBy
 	}
-	return ""
-}
-
-func (x *Permission) GetAction() string {
-	if x != nil {
-		return x.Action
-	}
-	return ""
-}
-
-func (x *Permission) GetIsSystem() bool {
-	if x != nil {
-		return x.IsSystem
-	}
-	return false
+	return 0
 }
 
 func (x *Permission) GetCreatedAt() int64 {
@@ -161,15 +140,7 @@ type CreatePermissionRequest struct {
 	// Examples: "Create Users", "Approve Orders", "Export Reports"
 	DisplayName string `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	// Optional detailed description explaining what this permission allows
-	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// The resource this permission applies to
-	// Should be a noun representing an entity in your system
-	// Examples: "users", "groups", "permissions", "posts", "orders"
-	Resource string `protobuf:"bytes,4,opt,name=resource,proto3" json:"resource,omitempty"`
-	// The action that can be performed on the resource
-	// Should be a verb representing an operation
-	// Examples: "create", "read", "update", "delete", "list", "publish", "approve"
-	Action        string `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
+	Description   *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -221,20 +192,6 @@ func (x *CreatePermissionRequest) GetDisplayName() string {
 func (x *CreatePermissionRequest) GetDescription() string {
 	if x != nil && x.Description != nil {
 		return *x.Description
-	}
-	return ""
-}
-
-func (x *CreatePermissionRequest) GetResource() string {
-	if x != nil {
-		return x.Resource
-	}
-	return ""
-}
-
-func (x *CreatePermissionRequest) GetAction() string {
-	if x != nil {
-		return x.Action
 	}
 	return ""
 }
@@ -294,16 +251,7 @@ type ListPermissionsRequest struct {
 	Offset *int32 `protobuf:"varint,2,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
 	// Search term to filter permissions by name, display_name, or description
 	// Uses case-insensitive partial matching
-	Search *string `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
-	// Filter permissions by specific resource
-	// Examples: "users", "groups", "permissions"
-	Resource *string `protobuf:"bytes,4,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
-	// Filter permissions by specific action
-	// Examples: "create", "read", "update", "delete"
-	Action *string `protobuf:"bytes,5,opt,name=action,proto3,oneof" json:"action,omitempty"`
-	// Filter by system vs user-created permissions
-	// true: only system permissions, false: only user-created permissions
-	IsSystem      *bool `protobuf:"varint,6,opt,name=is_system,json=isSystem,proto3,oneof" json:"is_system,omitempty"`
+	Search        *string `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -359,41 +307,15 @@ func (x *ListPermissionsRequest) GetSearch() string {
 	return ""
 }
 
-func (x *ListPermissionsRequest) GetResource() string {
-	if x != nil && x.Resource != nil {
-		return *x.Resource
-	}
-	return ""
-}
-
-func (x *ListPermissionsRequest) GetAction() string {
-	if x != nil && x.Action != nil {
-		return *x.Action
-	}
-	return ""
-}
-
-func (x *ListPermissionsRequest) GetIsSystem() bool {
-	if x != nil && x.IsSystem != nil {
-		return *x.IsSystem
-	}
-	return false
-}
-
 // Response containing a list of permissions with pagination metadata
 type ListPermissionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Array of permissions matching the request criteria
 	Permissions []*Permission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	// Total number of permissions that match the filter criteria
-	// (not just the current page)
-	TotalCount int32 `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	// The limit value used for this request
-	Limit int32 `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	// The offset value used for this request
-	Offset int32 `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
-	// Whether there are more permissions available beyond the current result set
-	HasMore       bool `protobuf:"varint,5,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	Offset        int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -435,13 +357,6 @@ func (x *ListPermissionsResponse) GetPermissions() []*Permission {
 	return nil
 }
 
-func (x *ListPermissionsResponse) GetTotalCount() int32 {
-	if x != nil {
-		return x.TotalCount
-	}
-	return 0
-}
-
 func (x *ListPermissionsResponse) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
@@ -456,13 +371,6 @@ func (x *ListPermissionsResponse) GetOffset() int32 {
 	return 0
 }
 
-func (x *ListPermissionsResponse) GetHasMore() bool {
-	if x != nil {
-		return x.HasMore
-	}
-	return false
-}
-
 // Request to update an existing permission
 type UpdatePermissionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -475,11 +383,7 @@ type UpdatePermissionRequest struct {
 	DisplayName *string `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3,oneof" json:"display_name,omitempty"`
 	// New description for the permission (optional)
 	// Set to empty string to clear existing description
-	Description *string `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// New resource for the permission (optional)
-	Resource *string `protobuf:"bytes,5,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
-	// New action for the permission (optional)
-	Action        *string `protobuf:"bytes,6,opt,name=action,proto3,oneof" json:"action,omitempty"`
+	Description   *string `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -538,20 +442,6 @@ func (x *UpdatePermissionRequest) GetDisplayName() string {
 func (x *UpdatePermissionRequest) GetDescription() string {
 	if x != nil && x.Description != nil {
 		return *x.Description
-	}
-	return ""
-}
-
-func (x *UpdatePermissionRequest) GetResource() string {
-	if x != nil && x.Resource != nil {
-		return *x.Resource
-	}
-	return ""
-}
-
-func (x *UpdatePermissionRequest) GetAction() string {
-	if x != nil && x.Action != nil {
-		return *x.Action
 	}
 	return ""
 }
@@ -662,63 +552,46 @@ var File_proto_openauth_v1_permissions_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_permissions_proto_rawDesc = "" +
 	"\n" +
-	"#proto/openauth/v1/permissions.proto\x12\x02v1\"\x99\x02\n" +
+	"#proto/openauth/v1/permissions.proto\x12\x02v1\"\xe7\x01\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
 	"\fdisplay_name\x18\x03 \x01(\tR\vdisplayName\x12%\n" +
-	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1a\n" +
-	"\bresource\x18\x05 \x01(\tR\bresource\x12\x16\n" +
-	"\x06action\x18\x06 \x01(\tR\x06action\x12\x1b\n" +
-	"\tis_system\x18\a \x01(\bR\bisSystem\x12\x1d\n" +
+	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\b \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"created_by\x18\x05 \x01(\x03R\tcreatedBy\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\x03R\tupdatedAtB\x0e\n" +
-	"\f_description\"\xbb\x01\n" +
+	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\x03R\tupdatedAtB\x0e\n" +
+	"\f_description\"\x87\x01\n" +
 	"\x17CreatePermissionRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1a\n" +
-	"\bresource\x18\x04 \x01(\tR\bresource\x12\x16\n" +
-	"\x06action\x18\x05 \x01(\tR\x06actionB\x0e\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01B\x0e\n" +
 	"\f_description\"&\n" +
 	"\x14GetPermissionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x93\x02\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x8d\x01\n" +
 	"\x16ListPermissionsRequest\x12\x19\n" +
 	"\x05limit\x18\x01 \x01(\x05H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
 	"\x06offset\x18\x02 \x01(\x05H\x01R\x06offset\x88\x01\x01\x12\x1b\n" +
-	"\x06search\x18\x03 \x01(\tH\x02R\x06search\x88\x01\x01\x12\x1f\n" +
-	"\bresource\x18\x04 \x01(\tH\x03R\bresource\x88\x01\x01\x12\x1b\n" +
-	"\x06action\x18\x05 \x01(\tH\x04R\x06action\x88\x01\x01\x12 \n" +
-	"\tis_system\x18\x06 \x01(\bH\x05R\bisSystem\x88\x01\x01B\b\n" +
+	"\x06search\x18\x03 \x01(\tH\x02R\x06search\x88\x01\x01B\b\n" +
 	"\x06_limitB\t\n" +
 	"\a_offsetB\t\n" +
-	"\a_searchB\v\n" +
-	"\t_resourceB\t\n" +
-	"\a_actionB\f\n" +
-	"\n" +
-	"_is_system\"\xb5\x01\n" +
+	"\a_search\"y\n" +
 	"\x17ListPermissionsResponse\x120\n" +
-	"\vpermissions\x18\x01 \x03(\v2\x0e.v1.PermissionR\vpermissions\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x19\n" +
-	"\bhas_more\x18\x05 \x01(\bR\ahasMore\"\x91\x02\n" +
+	"\vpermissions\x18\x01 \x03(\v2\x0e.v1.PermissionR\vpermissions\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"\xbb\x01\n" +
 	"\x17UpdatePermissionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12&\n" +
 	"\fdisplay_name\x18\x03 \x01(\tH\x01R\vdisplayName\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x1f\n" +
-	"\bresource\x18\x05 \x01(\tH\x03R\bresource\x88\x01\x01\x12\x1b\n" +
-	"\x06action\x18\x06 \x01(\tH\x04R\x06action\x88\x01\x01B\a\n" +
+	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0f\n" +
 	"\r_display_nameB\x0e\n" +
-	"\f_descriptionB\v\n" +
-	"\t_resourceB\t\n" +
-	"\a_action\")\n" +
+	"\f_description\")\n" +
 	"\x17DeletePermissionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"N\n" +
 	"\x18DeletePermissionResponse\x12\x18\n" +
