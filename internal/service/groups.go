@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
@@ -15,31 +16,42 @@ import (
 
 // CreateGroup creates a new group in the system
 func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupRequest) (*openauth_v1.CreateGroupResponse, error) {
+	logger.Info(ctx, "Create group request initiated for name: %s", req.Name)
+
 	// Validate input
 	if req.Name == "" {
+		logger.Warn(ctx, "Create group failed: missing group name")
 		return nil, status.Error(codes.InvalidArgument, "group name is required")
 	}
 	if req.DisplayName == "" {
+		logger.Warn(ctx, "Create group failed: missing display name for group: %s", req.Name)
 		return nil, status.Error(codes.InvalidArgument, "group display name is required")
 	}
 
 	// Normalize the name
+	originalName := req.Name
 	req.Name = strings.ToLower(strings.TrimSpace(req.Name))
+	logger.Debug(ctx, "Normalized group name from '%s' to '%s'", originalName, req.Name)
 
 	// Check if group name already exists
 	exists, err := s.repo.CheckGroupNameExists(ctx, req.Name)
 	if err != nil {
+		logger.Error(ctx, "Failed to check group name availability for %s: %v", req.Name, err)
 		return nil, status.Error(codes.Internal, "failed to check group name availability")
 	}
 	if exists {
+		logger.Warn(ctx, "Create group failed: group name already exists: %s", req.Name)
 		return nil, status.Error(codes.AlreadyExists, "group name already exists")
 	}
 
 	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
+		logger.Warn(ctx, "Create group failed: failed to get user from context for group: %s", req.Name)
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
+
+	logger.Debug(ctx, "Group creation authorized by userID=%d for group: %s", claims.UserID, req.Name)
 
 	// Create group DAO using the FromCreateGroupRequest method
 	group := &dao.Group{}
@@ -48,8 +60,12 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 	// Create group in repository
 	createdGroup, err := s.repo.CreateGroup(ctx, group)
 	if err != nil {
+		logger.Error(ctx, "Failed to create group %s by userID=%d: %v", req.Name, claims.UserID, err)
 		return nil, status.Error(codes.Internal, "failed to create group")
 	}
+
+	logger.Info(ctx, "Group created successfully: ID=%d, name=%s, by userID=%d",
+		createdGroup.ID, createdGroup.Name, claims.UserID)
 
 	return &openauth_v1.CreateGroupResponse{
 		Group:   createdGroup.ToProtoGroup(),

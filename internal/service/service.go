@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
@@ -170,6 +171,9 @@ type Service struct {
 }
 
 func NewService(ctx context.Context, cfg *Config, repo Repository) *Service {
+	logger.Info(ctx, "Initializing OpenAuth Service with config: JWT TTL=%v, Security BcryptCost=%d",
+		cfg.JWT.GetAccessTokenTTL(), cfg.Security.GetBcryptCost())
+
 	return &Service{
 		repo: repo,
 		cfg:  cfg,

@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
@@ -16,22 +17,30 @@ import (
 
 // CreatePermission creates a new permission
 func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreatePermissionRequest) (*openauth_v1.Permission, error) {
+	logger.Info(ctx, "Create permission request initiated for name: %s", req.Name)
+
 	// Validate required fields
 	if req.Name == "" {
+		logger.Warn(ctx, "Create permission failed: missing name")
 		return nil, status.Error(codes.InvalidArgument, "name is required")
 	}
 	if req.DisplayName == "" {
+		logger.Warn(ctx, "Create permission failed: missing display_name for name: %s", req.Name)
 		return nil, status.Error(codes.InvalidArgument, "display_name is required")
 	}
 
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
+		logger.Warn(ctx, "Create permission failed: user not authenticated for name: %s", req.Name)
 		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
 	}
+
+	logger.Debug(ctx, "Permission creation authorized by userID=%d for name: %s", claims.UserID, req.Name)
 
 	// Check if permission with same name already exists
 	existing, err := s.repo.GetPermissionByName(ctx, req.Name)
 	if err == nil && existing != nil {
+		logger.Warn(ctx, "Create permission failed: permission already exists with name: %s", req.Name)
 		return nil, status.Error(codes.AlreadyExists, "permission with this name already exists")
 	}
 
@@ -52,8 +61,12 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	// Save to repository
 	createdPermission, err := s.repo.CreatePermission(ctx, new(dao.Permission).FromCreatePermissionRequest(req, claims.UserID))
 	if err != nil {
+		logger.Error(ctx, "Failed to create permission %s by userID=%d: %v", req.Name, claims.UserID, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create permission: %v", err))
 	}
+
+	logger.Info(ctx, "Permission created successfully: ID=%d, name=%s, by userID=%d",
+		createdPermission.ID, createdPermission.Name, claims.UserID)
 
 	// Convert to proto response
 	return createdPermission.ToProtoPermission(), nil

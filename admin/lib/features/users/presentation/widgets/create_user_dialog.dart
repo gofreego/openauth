@@ -22,6 +22,7 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _nameController = TextEditingController();
 
   @override
   void dispose() {
@@ -29,6 +30,7 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
     _emailController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -60,6 +62,24 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a name';
+                    }
+                    if (value.length < 3) {
+                      return 'Name must be at least 3 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _usernameController,
                   decoration: const InputDecoration(
@@ -173,6 +193,7 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           phone: phone.isEmpty ? null : phone,
+          name: _nameController.text,
         ),
       );
     }

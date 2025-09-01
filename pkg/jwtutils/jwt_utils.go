@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gofreego/goutils/logger"
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -24,22 +25,29 @@ type JWTClaims struct {
 
 // ExtractTokenFromMetadata extracts JWT token from gRPC metadata
 func ExtractTokenFromMetadata(ctx context.Context) (string, error) {
+	logger.Debug(ctx, "Extracting JWT token from metadata")
+
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
+		logger.Warn(ctx, "Token extraction failed: missing metadata")
 		return "", status.Error(codes.Unauthenticated, "missing metadata")
 	}
 
 	authHeaders := md.Get("authorization")
 	if len(authHeaders) == 0 {
+		logger.Warn(ctx, "Token extraction failed: missing authorization header")
 		return "", status.Error(codes.Unauthenticated, "missing authorization header")
 	}
 
 	authHeader := authHeaders[0]
 	if !strings.HasPrefix(authHeader, "Bearer ") {
+		logger.Warn(ctx, "Token extraction failed: invalid authorization header format")
 		return "", status.Error(codes.Unauthenticated, "invalid authorization header format")
 	}
 
-	return strings.TrimPrefix(authHeader, "Bearer "), nil
+	token := strings.TrimPrefix(authHeader, "Bearer ")
+	logger.Debug(ctx, "JWT token extracted successfully")
+	return token, nil
 }
 
 // ParseAndValidateToken parses and validates a JWT token
@@ -79,8 +87,10 @@ func SetUserInContext(ctx context.Context, claims *JWTClaims) context.Context {
 func GetUserFromContext(ctx context.Context) (*JWTClaims, error) {
 	claims, ok := ctx.Value(JWT_CLAIM_KEY_USER).(*JWTClaims)
 	if !ok {
+		logger.Warn(ctx, "User claims not found in context")
 		return nil, fmt.Errorf("user claims not found in context")
 	}
+	logger.Debug(ctx, "User claims retrieved from context: userID=%d, sessionUUID=%s", claims.UserID, claims.SessionUUID)
 	return claims, nil
 }
 
@@ -91,9 +101,12 @@ func HasPermission(ctx context.Context, permission string) (bool, error) {
 		return false, err
 	}
 
+	logger.Debug(ctx, "Checking permission '%s' for userID=%d", permission, claims.UserID)
+
 	// Check if user has system admin permission (grants all permissions)
 	for _, userPermission := range claims.Permissions {
 		if userPermission == "system.admin" {
+			logger.Debug(ctx, "System admin permission found for userID=%d", claims.UserID)
 			return true, nil
 		}
 	}
@@ -101,10 +114,12 @@ func HasPermission(ctx context.Context, permission string) (bool, error) {
 	// Check for specific permission
 	for _, userPermission := range claims.Permissions {
 		if userPermission == permission {
+			logger.Debug(ctx, "Permission '%s' granted for userID=%d", permission, claims.UserID)
 			return true, nil
 		}
 	}
 
+	logger.Debug(ctx, "Permission '%s' denied for userID=%d", permission, claims.UserID)
 	return false, nil
 }
 

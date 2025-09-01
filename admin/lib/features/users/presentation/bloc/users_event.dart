@@ -42,16 +42,18 @@ class CreateUserEvent extends UsersEvent {
   final String email;
   final String password;
   final String? phone;
+  final String name;
 
   const CreateUserEvent({
     required this.username,
     required this.email,
     required this.password,
     this.phone,
+    required this.name,
   });
 
   @override
-  List<Object?> get props => [username, email, password, phone];
+  List<Object?> get props => [username, email, password, phone, name];
 }
 
 class UpdateUserEvent extends UsersEvent {

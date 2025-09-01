@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/gofreego/openauth/internal/constants"
+	"github.com/gofreego/goutils/logger"
 )
 
 // AuthMiddleware provides JWT authentication for gRPC and HTTP requests
@@ -20,6 +21,7 @@ type AuthMiddleware struct {
 
 // NewAuthMiddleware creates a new auth middleware instance
 func NewAuthMiddleware(jwtSecret string, enabled bool) *AuthMiddleware {
+	logger.Info(context.Background(), "Initializing JWT Auth Middleware: enabled=%t", enabled)
 	return &AuthMiddleware{
 		jwtSecret: jwtSecret,
 		enabled:   enabled,
@@ -203,6 +205,7 @@ func (a *AuthMiddleware) hasPermission(claims *JWTClaims, requiredPermission str
 	// Check if user has system admin permission (grants all permissions)
 	for _, permission := range claims.Permissions {
 		if permission == constants.PermissionSystemAdmin {
+			logger.Debug(context.Background(), "User %s has system admin permission, granting access", claims.UserUUID)
 			return true
 		}
 	}
@@ -210,10 +213,13 @@ func (a *AuthMiddleware) hasPermission(claims *JWTClaims, requiredPermission str
 	// Check for specific permission
 	for _, permission := range claims.Permissions {
 		if permission == requiredPermission {
+			logger.Debug(context.Background(), "User %s has required permission %s", claims.UserUUID, requiredPermission)
 			return true
 		}
 	}
 
+	logger.Warn(context.Background(), "User %s lacks required permission %s. User permissions: %v", 
+		claims.UserUUID, requiredPermission, claims.Permissions)
 	return false
 }
 
@@ -221,28 +227,45 @@ func (a *AuthMiddleware) hasPermission(claims *JWTClaims, requiredPermission str
 func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if !a.enabled {
+			logger.Debug(ctx, "Auth middleware disabled, skipping authentication for method: %s", info.FullMethod)
 			return handler(ctx, req)
 		}
+		
 		// Skip auth for ping and sign-up endpoints
 		if a.skipAuth(info.FullMethod) {
+			logger.Debug(ctx, "Skipping authentication for exempt method: %s", info.FullMethod)
 			return handler(ctx, req)
 		}
+
+		logger.Debug(ctx, "Processing gRPC authentication for method: %s", info.FullMethod)
 
 		// Extract and validate token
 		token, err := ExtractTokenFromMetadata(ctx)
 		if err != nil {
+			logger.Warn(ctx, "Failed to extract token from metadata for method %s: %v", info.FullMethod, err)
 			return nil, err
 		}
 
 		claims, err := ParseAndValidateToken(token, a.jwtSecret)
 		if err != nil {
+			logger.Warn(ctx, "Invalid token for method %s: %v", info.FullMethod, err)
 			return nil, status.Error(codes.Unauthenticated, "invalid token")
 		}
+
+		logger.Debug(ctx, "Token validated for user %s (userID=%d) accessing method: %s", 
+			claims.UserUUID, claims.UserID, info.FullMethod)
 
 		// Check permissions for the requested method
 		requiredPermission := a.getRequiredPermissionForMethod(info.FullMethod)
 		if requiredPermission != "" && !a.hasPermission(claims, requiredPermission) {
+			logger.Warn(ctx, "Permission denied for user %s accessing method %s. Required: %s", 
+				claims.UserUUID, info.FullMethod, requiredPermission)
 			return nil, status.Error(codes.PermissionDenied, "insufficient permissions")
+		}
+
+		if requiredPermission != "" {
+			logger.Debug(ctx, "Permission check passed for user %s accessing method %s", 
+				claims.UserUUID, info.FullMethod)
 		}
 
 		// Add claims to context
@@ -256,28 +279,45 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		if !a.enabled {
+			logger.Debug(ss.Context(), "Auth middleware disabled, skipping authentication for stream method: %s", info.FullMethod)
 			return handler(srv, ss)
 		}
+		
 		// Skip auth for ping endpoints
 		if a.skipAuth(info.FullMethod) {
+			logger.Debug(ss.Context(), "Skipping authentication for exempt stream method: %s", info.FullMethod)
 			return handler(srv, ss)
 		}
+
+		logger.Debug(ss.Context(), "Processing gRPC stream authentication for method: %s", info.FullMethod)
 
 		// Extract and validate token
 		token, err := ExtractTokenFromMetadata(ss.Context())
 		if err != nil {
+			logger.Warn(ss.Context(), "Failed to extract token from stream metadata for method %s: %v", info.FullMethod, err)
 			return err
 		}
 
 		claims, err := ParseAndValidateToken(token, a.jwtSecret)
 		if err != nil {
+			logger.Warn(ss.Context(), "Invalid token for stream method %s: %v", info.FullMethod, err)
 			return status.Error(codes.Unauthenticated, "invalid token")
 		}
+
+		logger.Debug(ss.Context(), "Stream token validated for user %s (userID=%d) accessing method: %s", 
+			claims.UserUUID, claims.UserID, info.FullMethod)
 
 		// Check permissions for the requested method
 		requiredPermission := a.getRequiredPermissionForMethod(info.FullMethod)
 		if requiredPermission != "" && !a.hasPermission(claims, requiredPermission) {
+			logger.Warn(ss.Context(), "Stream permission denied for user %s accessing method %s. Required: %s", 
+				claims.UserUUID, info.FullMethod, requiredPermission)
 			return status.Error(codes.PermissionDenied, "insufficient permissions")
+		}
+
+		if requiredPermission != "" {
+			logger.Debug(ss.Context(), "Stream permission check passed for user %s accessing method %s", 
+				claims.UserUUID, info.FullMethod)
 		}
 
 		// Add claims to context
@@ -296,23 +336,29 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 // HTTPMiddleware provides JWT authentication for HTTP requests
 func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 	if !a.enabled {
+		logger.Info(context.Background(), "HTTP Auth middleware disabled")
 		return next
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Skip auth for ping and sign-up endpoints
 		if a.skipHTTPAuth(r.URL.Path) {
+			logger.Debug(r.Context(), "Skipping HTTP authentication for exempt path: %s %s", r.Method, r.URL.Path)
 			next.ServeHTTP(w, r)
 			return
 		}
 
+		logger.Debug(r.Context(), "Processing HTTP authentication for: %s %s", r.Method, r.URL.Path)
+
 		// Extract token from Authorization header
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
+			logger.Warn(r.Context(), "Missing authorization header for HTTP request: %s %s", r.Method, r.URL.Path)
 			http.Error(w, "missing authorization header", http.StatusUnauthorized)
 			return
 		}
 
 		if !strings.HasPrefix(authHeader, "Bearer ") {
+			logger.Warn(r.Context(), "Invalid authorization header format for HTTP request: %s %s", r.Method, r.URL.Path)
 			http.Error(w, "invalid authorization header format", http.StatusUnauthorized)
 			return
 		}
@@ -320,15 +366,26 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		claims, err := ParseAndValidateToken(token, a.jwtSecret)
 		if err != nil {
+			logger.Warn(r.Context(), "Invalid token for HTTP request %s %s: %v", r.Method, r.URL.Path, err)
 			http.Error(w, "invalid token", http.StatusUnauthorized)
 			return
 		}
 
+		logger.Debug(r.Context(), "HTTP token validated for user %s (userID=%d) accessing: %s %s", 
+			claims.UserUUID, claims.UserID, r.Method, r.URL.Path)
+
 		// Check permissions for the requested path and method
 		requiredPermission := a.getRequiredPermissionForHTTPPath(r.Method, r.URL.Path)
 		if requiredPermission != "" && !a.hasPermission(claims, requiredPermission) {
+			logger.Warn(r.Context(), "HTTP permission denied for user %s accessing %s %s. Required: %s", 
+				claims.UserUUID, r.Method, r.URL.Path, requiredPermission)
 			http.Error(w, "insufficient permissions", http.StatusForbidden)
 			return
+		}
+
+		if requiredPermission != "" {
+			logger.Debug(r.Context(), "HTTP permission check passed for user %s accessing %s %s", 
+				claims.UserUUID, r.Method, r.URL.Path)
 		}
 
 		// Add claims to request context
@@ -388,5 +445,6 @@ func (w *wrappedServerStream) Context() context.Context {
 
 // InitAuthMiddleware initializes auth middleware with config
 func InitAuthMiddleware(secretKey string, enabled bool) *AuthMiddleware {
+	logger.Info(context.Background(), "Initializing Auth Middleware with enabled=%t", enabled)
 	return NewAuthMiddleware(secretKey, enabled)
 }

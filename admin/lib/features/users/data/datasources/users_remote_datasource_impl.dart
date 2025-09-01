@@ -92,18 +92,19 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   @override
   Future<pb.SignUpResponse> createUser(pb.SignUpRequest request) async {
     try {
-      // For now, return mock data until backend is ready
-      await _apiService.post(
-        '/openauth/v1/users',
+      var response = await _apiService.post(
+        '/openauth/v1/users/signup',
         data: {
+          'name': request.name,
           'username': request.username,
           'email': request.email,
           'password': request.password,
           'phone': request.phone,
         },
       );
-
-      return _createMockSignUpResponse(request);
+      var result = pb.SignUpResponse();
+      result.mergeFromProto3Json(response.data);
+      return result;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to create user',

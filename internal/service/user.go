@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"time"
 
+	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
@@ -18,20 +19,26 @@ import (
 
 // SignUp creates a new user account in the system
 func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*openauth_v1.SignUpResponse, error) {
+	logger.Info(ctx, "Sign-up request initiated for username: %s", req.Username)
+
 	// Validate required fields
 	if req.Username == "" {
+		logger.Warn(ctx, "Sign-up failed: missing username")
 		return nil, status.Error(codes.InvalidArgument, "username is required")
 	}
 	if req.Password == "" {
+		logger.Warn(ctx, "Sign-up failed: missing password for username: %s", req.Username)
 		return nil, status.Error(codes.InvalidArgument, "password is required")
 	}
 
 	// Check if username already exists
 	usernameExists, err := s.repo.CheckUsernameExists(ctx, req.Username)
 	if err != nil {
+		logger.Error(ctx, "Failed to check username availability for %s: %v", req.Username, err)
 		return nil, status.Error(codes.Internal, "failed to check username availability")
 	}
 	if usernameExists {
+		logger.Warn(ctx, "Sign-up failed: username already exists: %s", req.Username)
 		return nil, status.Error(codes.AlreadyExists, "username already exists")
 	}
 
@@ -39,9 +46,11 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	if req.Email != nil && *req.Email != "" {
 		emailExists, err := s.repo.CheckEmailExists(ctx, *req.Email)
 		if err != nil {
+			logger.Error(ctx, "Failed to check email availability for %s: %v", *req.Email, err)
 			return nil, status.Error(codes.Internal, "failed to check email availability")
 		}
 		if emailExists {
+			logger.Warn(ctx, "Sign-up failed: email already exists: %s", *req.Email)
 			return nil, status.Error(codes.AlreadyExists, "email already exists")
 		}
 	}
@@ -49,12 +58,15 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	// Hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.cfg.Security.GetBcryptCost())
 	if err != nil {
+		logger.Error(ctx, "Failed to hash password for username %s: %v", req.Username, err)
 		return nil, status.Error(codes.Internal, "failed to hash password")
 	}
 
 	// Create user
 	now := time.Now().Unix()
 	userUUID := uuid.New()
+
+	logger.Debug(ctx, "Creating user record for username: %s, userUUID: %s", req.Username, userUUID.String())
 
 	user := &dao.User{
 		UUID:              userUUID,
@@ -77,30 +89,43 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	// Create user in database
 	createdUser, err := s.repo.CreateUser(ctx, user)
 	if err != nil {
+		logger.Error(ctx, "Failed to create user in database for username %s: %v", req.Username, err)
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
+
+	logger.Info(ctx, "User created successfully: userID=%d, username=%s, userUUID=%s",
+		createdUser.ID, createdUser.Username, createdUser.UUID.String())
 
 	// Send email verification if email provided
 	emailVerificationRequired := false
 	if req.Email != nil && *req.Email != "" {
+		logger.Debug(ctx, "Sending email verification for userID=%d, email=%s", createdUser.ID, *req.Email)
 		if err := s.sendEmailVerification(ctx, createdUser.ID, *req.Email); err != nil {
 			// Log error but don't fail registration
-			// TODO: Add proper logging
+			logger.Error(ctx, "Failed to send email verification for userID=%d, email=%s: %v",
+				createdUser.ID, *req.Email, err)
 		} else {
 			emailVerificationRequired = true
+			logger.Debug(ctx, "Email verification sent successfully for userID=%d", createdUser.ID)
 		}
 	}
 
 	// Send phone verification if phone provided
 	phoneVerificationRequired := false
 	if req.Phone != nil && *req.Phone != "" {
+		logger.Debug(ctx, "Sending phone verification for userID=%d, phone=%s", createdUser.ID, *req.Phone)
 		if err := s.sendPhoneVerification(ctx, createdUser.ID, *req.Phone); err != nil {
 			// Log error but don't fail registration
-			// TODO: Add proper logging
+			logger.Error(ctx, "Failed to send phone verification for userID=%d, phone=%s: %v",
+				createdUser.ID, *req.Phone, err)
 		} else {
 			phoneVerificationRequired = true
+			logger.Debug(ctx, "Phone verification sent successfully for userID=%d", createdUser.ID)
 		}
 	}
+
+	logger.Info(ctx, "Sign-up completed successfully for userID=%d, username=%s, email_verification=%t, phone_verification=%t",
+		createdUser.ID, createdUser.Username, emailVerificationRequired, phoneVerificationRequired)
 
 	return &openauth_v1.SignUpResponse{
 		User:                      createdUser.ToProtoUser(),
@@ -112,26 +137,35 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 
 // VerifyEmail verifies a user's email address using a verification code
 func (s *Service) VerifyEmail(ctx context.Context, req *openauth_v1.VerifyEmailRequest) (*openauth_v1.VerificationResponse, error) {
+	logger.Info(ctx, "Email verification request initiated for email: %s", req.Email)
+
 	if req.Email == "" {
+		logger.Warn(ctx, "Email verification failed: missing email")
 		return nil, status.Error(codes.InvalidArgument, "email is required")
 	}
 	if req.VerificationCode == "" {
+		logger.Warn(ctx, "Email verification failed: missing verification code for email: %s", req.Email)
 		return nil, status.Error(codes.InvalidArgument, "verification code is required")
 	}
 
 	// Get verification token
 	otpVerification, err := s.repo.GetOTPVerification(ctx, req.Email, req.VerificationCode)
 	if err != nil {
+		logger.Warn(ctx, "Email verification failed: invalid verification code for email %s: %v", req.Email, err)
 		return nil, status.Error(codes.NotFound, "invalid verification code")
 	}
 
 	// Check if expired
 	if time.Now().Unix() > otpVerification.ExpiresAt {
+		logger.Warn(ctx, "Email verification failed: code expired for email %s, userID=%v",
+			req.Email, otpVerification.UserID)
 		return nil, status.Error(codes.DeadlineExceeded, "verification code has expired")
 	}
 
 	// Check if already used
 	if otpVerification.IsUsed {
+		logger.Warn(ctx, "Email verification failed: code already used for email %s, userID=%v",
+			req.Email, otpVerification.UserID)
 		return nil, status.Error(codes.FailedPrecondition, "verification code has already been used")
 	}
 
@@ -139,15 +173,22 @@ func (s *Service) VerifyEmail(ctx context.Context, req *openauth_v1.VerifyEmailR
 	if otpVerification.UserID != nil {
 		err = s.repo.UpdateVerificationStatus(ctx, *otpVerification.UserID, "email_verified", true)
 		if err != nil {
+			logger.Error(ctx, "Failed to update email verification status for userID=%d, email=%s: %v",
+				*otpVerification.UserID, req.Email, err)
 			return nil, status.Error(codes.Internal, "failed to update verification status")
 		}
+		logger.Info(ctx, "Email verification status updated for userID=%d, email=%s",
+			*otpVerification.UserID, req.Email)
 	}
 
 	// Mark OTP as used
 	err = s.repo.DeleteOTPVerification(ctx, req.Email, "emailVerification")
 	if err != nil {
 		// Log error but don't fail the verification
+		logger.Error(ctx, "Failed to delete OTP verification for email %s: %v", req.Email, err)
 	}
+
+	logger.Info(ctx, "Email verification completed successfully for email: %s", req.Email)
 
 	return &openauth_v1.VerificationResponse{
 		Verified: true,

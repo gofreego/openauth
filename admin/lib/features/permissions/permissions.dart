@@ -25,7 +25,6 @@ export 'presentation/widgets/permissions_header.dart';
 export 'presentation/widgets/permissions_search_bar.dart';
 export 'presentation/widgets/permission_card.dart';
 export 'presentation/widgets/permission_details_dialog.dart';
-export 'presentation/widgets/create_permission_dialog.dart';
 
 // Legacy Data Layer (to be removed when UI is updated)
 export 'data/models/permission_model.dart';
