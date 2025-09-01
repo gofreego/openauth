@@ -329,12 +329,12 @@ func (r *Repository) CheckEmailExists(ctx context.Context, email string) (bool, 
 // CreateOTPVerification creates a new OTP verification record
 func (r *Repository) CreateOTPVerification(ctx context.Context, otp *dao.OTPVerification) error {
 	query := `
-		INSERT INTO otp_verifications (user_id, email, phone, otp_code, otp_type, is_used, 
+		INSERT INTO otp_verifications (user_id, identifier, otp_code, otp_type, is_used, 
 			expires_at, attempts, max_attempts, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 
 	_, err := r.connManager.Primary().ExecContext(ctx, query,
-		otp.UserID, otp.Email, otp.Phone, otp.OTPCode, otp.OTPType,
+		otp.UserID, otp.Identifier, otp.OTPCode, otp.OTPType,
 		otp.IsUsed, otp.ExpiresAt, otp.Attempts, otp.MaxAttempts, otp.CreatedAt)
 
 	return err
@@ -343,17 +343,17 @@ func (r *Repository) CreateOTPVerification(ctx context.Context, otp *dao.OTPVeri
 // GetOTPVerification retrieves an OTP verification record
 func (r *Repository) GetOTPVerification(ctx context.Context, identifier, code string) (*dao.OTPVerification, error) {
 	query := `
-		SELECT id, user_id, email, phone, otp_code, otp_type, is_used, expires_at,
+		SELECT id, user_id, identifier, otp_code, otp_type, is_used, expires_at,
 			attempts, max_attempts, created_at
 		FROM otp_verifications 
-		WHERE (email = $1 OR phone = $1) AND otp_code = $2 AND is_used = false
+		WHERE identifier = $1 AND otp_code = $2 AND is_used = false
 		ORDER BY created_at DESC LIMIT 1`
 
 	row := r.connManager.Primary().QueryRowContext(ctx, query, identifier, code)
 
 	var otp dao.OTPVerification
 	err := row.Scan(
-		&otp.ID, &otp.UserID, &otp.Email, &otp.Phone, &otp.OTPCode,
+		&otp.ID, &otp.UserID, &otp.Identifier, &otp.OTPCode,
 		&otp.OTPType, &otp.IsUsed, &otp.ExpiresAt, &otp.Attempts,
 		&otp.MaxAttempts, &otp.CreatedAt)
 

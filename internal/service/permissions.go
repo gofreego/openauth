@@ -22,12 +22,6 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	if req.DisplayName == "" {
 		return nil, status.Error(codes.InvalidArgument, "display_name is required")
 	}
-	if req.Resource == "" {
-		return nil, status.Error(codes.InvalidArgument, "resource is required")
-	}
-	if req.Action == "" {
-		return nil, status.Error(codes.InvalidArgument, "action is required")
-	}
 
 	// Check if permission with same name already exists
 	existing, err := s.repo.GetPermissionByName(ctx, req.Name)
@@ -40,8 +34,6 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	permission := &dao.Permission{
 		Name:        req.Name,
 		DisplayName: req.DisplayName,
-		Resource:    req.Resource,
-		Action:      req.Action,
 		IsSystem:    false, // User-created permissions are not system permissions
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -106,18 +98,10 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 	if req.Search != nil && *req.Search != "" {
 		filters["search"] = *req.Search
 	}
-	if req.Resource != nil && *req.Resource != "" {
-		filters["resource"] = *req.Resource
-	}
-	if req.Action != nil && *req.Action != "" {
-		filters["action"] = *req.Action
-	}
-	if req.IsSystem != nil {
-		filters["is_system"] = *req.IsSystem
-	}
+	// Note: Resource, Action, and IsSystem fields don't exist in ListPermissionsRequest
 
 	// Get permissions from repository
-	permissions, totalCount, err := s.repo.ListPermissions(ctx, limit, offset, filters)
+	permissions, _, err := s.repo.ListPermissions(ctx, limit, offset, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to list permissions: %v", err))
 	}
@@ -128,14 +112,10 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 		protoPermissions[i] = p.ToProto()
 	}
 
-	hasMore := offset+int32(len(permissions)) < totalCount
-
 	return &openauth_v1.ListPermissionsResponse{
 		Permissions: protoPermissions,
-		TotalCount:  totalCount,
 		Limit:       limit,
 		Offset:      offset,
-		HasMore:     hasMore,
 	}, nil
 }
 
@@ -188,19 +168,7 @@ func (s *Service) UpdatePermission(ctx context.Context, req *openauth_v1.UpdateP
 		updates["description"] = req.Description
 	}
 
-	if req.Resource != nil {
-		if *req.Resource == "" {
-			return nil, status.Error(codes.InvalidArgument, "resource cannot be empty")
-		}
-		updates["resource"] = *req.Resource
-	}
-
-	if req.Action != nil {
-		if *req.Action == "" {
-			return nil, status.Error(codes.InvalidArgument, "action cannot be empty")
-		}
-		updates["action"] = *req.Action
-	}
+	// Note: Resource and Action fields don't exist in UpdatePermissionRequest
 
 	// Update permission
 	updatedPermission, err := s.repo.UpdatePermission(ctx, req.Id, updates)

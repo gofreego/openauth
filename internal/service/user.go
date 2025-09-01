@@ -5,12 +5,10 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
-	"strings"
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
-	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -63,7 +61,7 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 		Email:             req.Email,
 		Phone:             req.Phone,
 		Name:              req.Name,
-		AvatarURL:         req.AvatarUrl,
+		AvatarURL:         nil, // Not available in SignUpRequest
 		PasswordHash:      string(hashedPassword),
 		EmailVerified:     false,
 		PhoneVerified:     false,
@@ -202,6 +200,8 @@ func (s *Service) VerifyPhone(ctx context.Context, req *openauth_v1.VerifyPhoneR
 }
 
 // ResendVerification resends verification codes for email or phone
+// TODO: Implement once ResendVerificationRequest and ResendVerificationResponse are defined in protobuf
+/*
 func (s *Service) ResendVerification(ctx context.Context, req *openauth_v1.ResendVerificationRequest) (*openauth_v1.ResendVerificationResponse, error) {
 	if req.Identifier == "" {
 		return nil, status.Error(codes.InvalidArgument, "identifier is required")
@@ -242,6 +242,7 @@ func (s *Service) ResendVerification(ctx context.Context, req *openauth_v1.Resen
 		ExpiresAt: expiresAt,
 	}, nil
 }
+*/
 
 // CheckUsername checks if a username is available for registration
 func (s *Service) CheckUsername(ctx context.Context, req *openauth_v1.CheckUsernameRequest) (*openauth_v1.CheckUsernameResponse, error) {
@@ -302,10 +303,6 @@ func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) 
 		user, err = s.repo.GetUserByID(ctx, identifier.Id)
 	case *openauth_v1.GetUserRequest_Uuid:
 		user, err = s.repo.GetUserByUUID(ctx, identifier.Uuid)
-	case *openauth_v1.GetUserRequest_Username:
-		user, err = s.repo.GetUserByUsername(ctx, identifier.Username)
-	case *openauth_v1.GetUserRequest_Email:
-		user, err = s.repo.GetUserByEmail(ctx, identifier.Email)
 	default:
 		return nil, status.Error(codes.InvalidArgument, "invalid identifier")
 	}
@@ -318,12 +315,10 @@ func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) 
 		User: user.ToProto(),
 	}
 
-	// Include profile if requested
+	// Include profiles if requested
 	if req.IncludeProfile {
-		profile, err := s.repo.GetUserProfile(ctx, user.ID)
-		if err == nil {
-			response.Profile = profile.ToProto()
-		}
+		// Note: Profile functionality would require GetUserProfiles method
+		// response.Profiles = protoProfiles
 	}
 
 	return response, nil
@@ -374,63 +369,8 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 		updatedUser = user
 	}
 
-	// Prepare profile updates
-	profileUpdates := make(map[string]interface{})
-	if req.FirstName != nil {
-		profileUpdates["first_name"] = *req.FirstName
-	}
-	if req.LastName != nil {
-		profileUpdates["last_name"] = *req.LastName
-	}
-	if req.DisplayName != nil {
-		profileUpdates["display_name"] = *req.DisplayName
-	}
-	if req.Bio != nil {
-		profileUpdates["bio"] = *req.Bio
-	}
-	if req.AvatarUrl != nil {
-		profileUpdates["avatar_url"] = *req.AvatarUrl
-	}
-	if req.Timezone != nil {
-		profileUpdates["timezone"] = *req.Timezone
-	}
-	if req.Locale != nil {
-		profileUpdates["locale"] = *req.Locale
-	}
-	if req.Country != nil {
-		profileUpdates["country"] = *req.Country
-	}
-	if req.City != nil {
-		profileUpdates["city"] = *req.City
-	}
-	if req.Address != nil {
-		profileUpdates["address"] = *req.Address
-	}
-	if req.PostalCode != nil {
-		profileUpdates["postal_code"] = *req.PostalCode
-	}
-	if req.WebsiteUrl != nil {
-		profileUpdates["website_url"] = *req.WebsiteUrl
-	}
-
-	// Update profile if there are changes
-	var updatedProfile *dao.Profile
-	if len(profileUpdates) > 0 {
-		profileUpdates["updated_at"] = time.Now().Unix()
-		updatedProfile, err = s.repo.UpdateUserProfile(ctx, user.ID, profileUpdates)
-		if err != nil {
-			return nil, status.Error(codes.Internal, "failed to update user profile")
-		}
-	} else {
-		updatedProfile, err = s.repo.GetUserProfile(ctx, user.ID)
-		if err != nil {
-			return nil, status.Error(codes.Internal, "failed to get user profile")
-		}
-	}
-
 	return &openauth_v1.UpdateUserResponse{
-		User:    updatedUser.ToProto(),
-		Profile: updatedProfile.ToProto(),
+		User: updatedUser.ToProto(),
 	}, nil
 }
 
@@ -516,7 +456,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	}
 
 	// Get users from repository
-	users, totalCount, err := s.repo.ListUsers(ctx, limit, offset, filters)
+	users, _, err := s.repo.ListUsers(ctx, limit, offset, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list users")
 	}
@@ -528,11 +468,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	}
 
 	return &openauth_v1.ListUsersResponse{
-		Users:      protoUsers,
-		TotalCount: totalCount,
-		Limit:      limit,
-		Offset:     offset,
-		HasMore:    offset+limit < totalCount,
+		Users: protoUsers,
 	}, nil
 }
 
@@ -577,7 +513,7 @@ func (s *Service) sendEmailVerification(ctx context.Context, userID int64, email
 	// Create OTP verification
 	otp := &dao.OTPVerification{
 		UserID:      &userID,
-		Email:       &email,
+		Identifier:  email,
 		OTPCode:     code,
 		OTPType:     "emailVerification",
 		IsUsed:      false,
@@ -612,7 +548,7 @@ func (s *Service) sendPhoneVerification(ctx context.Context, userID int64, phone
 
 	otp := &dao.OTPVerification{
 		UserID:      userIDPtr,
-		Phone:       &phone,
+		Identifier:  phone,
 		OTPCode:     code,
 		OTPType:     "phoneVerification",
 		IsUsed:      false,

@@ -12,8 +12,8 @@ import (
 // CreatePermission creates a new permission in the database
 func (r *Repository) CreatePermission(ctx context.Context, permission *dao.Permission) (*dao.Permission, error) {
 	query := `
-		INSERT INTO permissions (name, display_name, description, resource, action, is_system, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO permissions (name, display_name, description, is_system, created_by, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id`
 
 	var id int64
@@ -21,9 +21,8 @@ func (r *Repository) CreatePermission(ctx context.Context, permission *dao.Permi
 		permission.Name,
 		permission.DisplayName,
 		permission.Description,
-		permission.Resource,
-		permission.Action,
 		permission.IsSystem,
+		permission.CreatedBy,
 		permission.CreatedAt,
 		permission.UpdatedAt,
 	).Scan(&id)
@@ -39,7 +38,7 @@ func (r *Repository) CreatePermission(ctx context.Context, permission *dao.Permi
 // GetPermissionByID retrieves a permission by its ID
 func (r *Repository) GetPermissionByID(ctx context.Context, id int64) (*dao.Permission, error) {
 	query := `
-		SELECT id, name, display_name, description, resource, action, is_system, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, created_by, created_at, updated_at
 		FROM permissions
 		WHERE id = $1`
 
@@ -49,9 +48,8 @@ func (r *Repository) GetPermissionByID(ctx context.Context, id int64) (*dao.Perm
 		&permission.Name,
 		&permission.DisplayName,
 		&permission.Description,
-		&permission.Resource,
-		&permission.Action,
 		&permission.IsSystem,
+		&permission.CreatedBy,
 		&permission.CreatedAt,
 		&permission.UpdatedAt,
 	)
@@ -69,7 +67,7 @@ func (r *Repository) GetPermissionByID(ctx context.Context, id int64) (*dao.Perm
 // GetPermissionByName retrieves a permission by its name
 func (r *Repository) GetPermissionByName(ctx context.Context, name string) (*dao.Permission, error) {
 	query := `
-		SELECT id, name, display_name, description, resource, action, is_system, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, created_by, created_at, updated_at
 		FROM permissions
 		WHERE name = $1`
 
@@ -79,9 +77,8 @@ func (r *Repository) GetPermissionByName(ctx context.Context, name string) (*dao
 		&permission.Name,
 		&permission.DisplayName,
 		&permission.Description,
-		&permission.Resource,
-		&permission.Action,
 		&permission.IsSystem,
+		&permission.CreatedBy,
 		&permission.CreatedAt,
 		&permission.UpdatedAt,
 	)
@@ -111,14 +108,16 @@ func (r *Repository) ListPermissions(ctx context.Context, limit, offset int32, f
 	}
 
 	if resource, ok := filters["resource"]; ok {
-		whereConditions = append(whereConditions, fmt.Sprintf("resource = $%d", argIndex))
-		args = append(args, resource)
+		// Parse resource from name field (format: "resource.action")
+		whereConditions = append(whereConditions, fmt.Sprintf("name LIKE $%d", argIndex))
+		args = append(args, fmt.Sprintf("%s.%%", resource))
 		argIndex++
 	}
 
 	if action, ok := filters["action"]; ok {
-		whereConditions = append(whereConditions, fmt.Sprintf("action = $%d", argIndex))
-		args = append(args, action)
+		// Parse action from name field (format: "resource.action")
+		whereConditions = append(whereConditions, fmt.Sprintf("name LIKE $%d", argIndex))
+		args = append(args, fmt.Sprintf("%%.%s", action))
 		argIndex++
 	}
 
@@ -143,7 +142,7 @@ func (r *Repository) ListPermissions(ctx context.Context, limit, offset int32, f
 
 	// Data query
 	dataQuery := fmt.Sprintf(`
-		SELECT id, name, display_name, description, resource, action, is_system, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, created_by, created_at, updated_at
 		FROM permissions
 		%s
 		ORDER BY created_at DESC
@@ -165,9 +164,8 @@ func (r *Repository) ListPermissions(ctx context.Context, limit, offset int32, f
 			&permission.Name,
 			&permission.DisplayName,
 			&permission.Description,
-			&permission.Resource,
-			&permission.Action,
 			&permission.IsSystem,
+			&permission.CreatedBy,
 			&permission.CreatedAt,
 			&permission.UpdatedAt,
 		)
@@ -207,7 +205,7 @@ func (r *Repository) UpdatePermission(ctx context.Context, id int64, updates map
 		UPDATE permissions 
 		SET %s
 		WHERE id = $%d
-		RETURNING id, name, display_name, description, resource, action, is_system, created_at, updated_at`,
+		RETURNING id, name, display_name, description, is_system, created_by, created_at, updated_at`,
 		strings.Join(setClause, ", "), argIndex)
 
 	permission := &dao.Permission{}
@@ -216,9 +214,8 @@ func (r *Repository) UpdatePermission(ctx context.Context, id int64, updates map
 		&permission.Name,
 		&permission.DisplayName,
 		&permission.Description,
-		&permission.Resource,
-		&permission.Action,
 		&permission.IsSystem,
+		&permission.CreatedBy,
 		&permission.CreatedAt,
 		&permission.UpdatedAt,
 	)

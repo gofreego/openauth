@@ -67,7 +67,7 @@ func (s *Service) getBcryptCost() int {
 // SignIn authenticates a user and creates a new session
 func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
 	// Validate input
-	if req.Username == "" || req.Password == "" {
+	if req.Username == "" || req.Password == nil || *req.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "username and password are required")
 	}
 
@@ -103,7 +103,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	}
 
 	// Verify password
-	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(*req.Password)); err != nil {
 		// Increment failed login attempts
 		updates := map[string]interface{}{
 			"failed_login_attempts": user.FailedLoginCount + 1,
@@ -363,7 +363,7 @@ func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUse
 
 	activeOnly := req.ActiveOnly != nil && *req.ActiveOnly
 
-	sessions, totalCount, err := s.repo.ListUserSessions(ctx, req.UserUuid, limit, offset, activeOnly)
+	sessions, _, err := s.repo.ListUserSessions(ctx, req.UserUuid, limit, offset, activeOnly)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list sessions")
 	}
@@ -375,10 +375,7 @@ func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUse
 	}
 
 	return &openauth_v1.ListUserSessionsResponse{
-		Sessions:   protoSessions,
-		TotalCount: totalCount,
-		Limit:      limit,
-		Offset:     offset,
+		Sessions: protoSessions,
 	}, nil
 }
 

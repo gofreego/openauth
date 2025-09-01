@@ -38,7 +38,7 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 		Name:        req.Name,
 		DisplayName: req.DisplayName,
 		IsSystem:    false, // User-created groups are not system groups
-		IsDefault:   req.IsDefault != nil && *req.IsDefault,
+		IsDefault:   false, // User-created groups are not default by default
 		CreatedAt:   time.Now().Unix(),
 		UpdatedAt:   time.Now().Unix(),
 	}
@@ -64,16 +64,11 @@ func (s *Service) GetGroup(ctx context.Context, req *openauth_v1.GetGroupRequest
 	var group *dao.Group
 	var err error
 
-	switch identifier := req.Identifier.(type) {
-	case *openauth_v1.GetGroupRequest_Id:
-		group, err = s.repo.GetGroupByID(ctx, identifier.Id)
-	case *openauth_v1.GetGroupRequest_Uuid:
-		group, err = s.repo.GetGroupByUUID(ctx, identifier.Uuid)
-	case *openauth_v1.GetGroupRequest_Name:
-		group, err = s.repo.GetGroupByName(ctx, identifier.Name)
-	default:
-		return nil, status.Error(codes.InvalidArgument, "group identifier is required")
+	if req.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "group ID is required")
 	}
+
+	group, err = s.repo.GetGroupByID(ctx, req.Id)
 
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "group not found")
@@ -101,15 +96,10 @@ func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsReq
 	if req.Search != nil && *req.Search != "" {
 		filters["search"] = *req.Search
 	}
-	if req.IsSystem != nil {
-		filters["is_system"] = *req.IsSystem
-	}
-	if req.IsDefault != nil {
-		filters["is_default"] = *req.IsDefault
-	}
+	// Note: IsSystem and IsDefault fields don't exist in ListGroupsRequest
 
 	// Get groups from repository
-	groups, totalCount, err := s.repo.ListGroups(ctx, limit, offset, filters)
+	groups, _, err := s.repo.ListGroups(ctx, limit, offset, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list groups")
 	}
@@ -120,34 +110,19 @@ func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsReq
 		protoGroups[i] = group.ToProto()
 	}
 
-	hasMore := offset+limit < totalCount
-
 	return &openauth_v1.ListGroupsResponse{
-		Groups:     protoGroups,
-		TotalCount: totalCount,
-		Limit:      limit,
-		Offset:     offset,
-		HasMore:    hasMore,
+		Groups: protoGroups,
 	}, nil
 }
 
 // UpdateGroup modifies an existing group
 func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupRequest) (*openauth_v1.UpdateGroupResponse, error) {
-	// Get group to update
-	var group *dao.Group
-	var err error
-
-	switch identifier := req.Identifier.(type) {
-	case *openauth_v1.UpdateGroupRequest_Id:
-		group, err = s.repo.GetGroupByID(ctx, identifier.Id)
-	case *openauth_v1.UpdateGroupRequest_Uuid:
-		group, err = s.repo.GetGroupByUUID(ctx, identifier.Uuid)
-	case *openauth_v1.UpdateGroupRequest_Name:
-		group, err = s.repo.GetGroupByName(ctx, identifier.Name)
-	default:
-		return nil, status.Error(codes.InvalidArgument, "group identifier is required")
+	if req.Id == 0 {
+		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
+	// Get group to update
+	group, err := s.repo.GetGroupByID(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "group not found")
 	}
@@ -183,9 +158,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 		updates["description"] = *req.Description
 	}
 
-	if req.IsDefault != nil {
-		updates["is_default"] = *req.IsDefault
-	}
+	// Note: IsDefault field doesn't exist in UpdateGroupRequest
 
 	if len(updates) == 0 {
 		return &openauth_v1.UpdateGroupResponse{
@@ -210,21 +183,12 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 
 // DeleteGroup removes a group from the system
 func (s *Service) DeleteGroup(ctx context.Context, req *openauth_v1.DeleteGroupRequest) (*openauth_v1.DeleteGroupResponse, error) {
-	// Get group to delete
-	var group *dao.Group
-	var err error
-
-	switch identifier := req.Identifier.(type) {
-	case *openauth_v1.DeleteGroupRequest_Id:
-		group, err = s.repo.GetGroupByID(ctx, identifier.Id)
-	case *openauth_v1.DeleteGroupRequest_Uuid:
-		group, err = s.repo.GetGroupByUUID(ctx, identifier.Uuid)
-	case *openauth_v1.DeleteGroupRequest_Name:
-		group, err = s.repo.GetGroupByName(ctx, identifier.Name)
-	default:
-		return nil, status.Error(codes.InvalidArgument, "group identifier is required")
+	if req.Id == 0 {
+		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
+	// Get group to delete
+	group, err := s.repo.GetGroupByID(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "group not found")
 	}
@@ -248,46 +212,15 @@ func (s *Service) DeleteGroup(ctx context.Context, req *openauth_v1.DeleteGroupR
 
 // AssignUserToGroup adds a user to a group
 func (s *Service) AssignUserToGroup(ctx context.Context, req *openauth_v1.AssignUserToGroupRequest) (*openauth_v1.AssignUserToGroupResponse, error) {
-	// Get user ID
-	var userID int64
-	var err error
-
-	switch userIdentifier := req.UserIdentifier.(type) {
-	case *openauth_v1.AssignUserToGroupRequest_UserId:
-		userID = userIdentifier.UserId
-	case *openauth_v1.AssignUserToGroupRequest_UserUuid:
-		user, err := s.repo.GetUserByUUID(ctx, userIdentifier.UserUuid)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "user not found")
-		}
-		userID = user.ID
-	default:
-		return nil, status.Error(codes.InvalidArgument, "user identifier is required")
+	if req.UserId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user id is required")
 	}
-
-	// Get group ID
-	var groupID int64
-	switch groupIdentifier := req.GroupIdentifier.(type) {
-	case *openauth_v1.AssignUserToGroupRequest_GroupId:
-		groupID = groupIdentifier.GroupId
-	case *openauth_v1.AssignUserToGroupRequest_GroupUuid:
-		group, err := s.repo.GetGroupByUUID(ctx, groupIdentifier.GroupUuid)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "group not found")
-		}
-		groupID = group.ID
-	case *openauth_v1.AssignUserToGroupRequest_GroupName:
-		group, err := s.repo.GetGroupByName(ctx, groupIdentifier.GroupName)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "group not found")
-		}
-		groupID = group.ID
-	default:
-		return nil, status.Error(codes.InvalidArgument, "group identifier is required")
+	if req.GroupId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
 	// Check if user is already in the group
-	isInGroup, err := s.repo.IsUserInGroup(ctx, userID, groupID)
+	isInGroup, err := s.repo.IsUserInGroup(ctx, req.UserId, req.GroupId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to check group membership")
 	}
@@ -296,7 +229,7 @@ func (s *Service) AssignUserToGroup(ctx context.Context, req *openauth_v1.Assign
 	}
 
 	// Assign user to group
-	err = s.repo.AssignUserToGroup(ctx, userID, groupID, nil, req.ExpiresAt)
+	err = s.repo.AssignUserToGroup(ctx, req.UserId, req.GroupId, nil, req.ExpiresAt)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to assign user to group")
 	}
@@ -309,46 +242,15 @@ func (s *Service) AssignUserToGroup(ctx context.Context, req *openauth_v1.Assign
 
 // RemoveUserFromGroup removes a user from a group
 func (s *Service) RemoveUserFromGroup(ctx context.Context, req *openauth_v1.RemoveUserFromGroupRequest) (*openauth_v1.RemoveUserFromGroupResponse, error) {
-	// Get user ID
-	var userID int64
-	var err error
-
-	switch userIdentifier := req.UserIdentifier.(type) {
-	case *openauth_v1.RemoveUserFromGroupRequest_UserId:
-		userID = userIdentifier.UserId
-	case *openauth_v1.RemoveUserFromGroupRequest_UserUuid:
-		user, err := s.repo.GetUserByUUID(ctx, userIdentifier.UserUuid)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "user not found")
-		}
-		userID = user.ID
-	default:
-		return nil, status.Error(codes.InvalidArgument, "user identifier is required")
+	if req.UserId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user id is required")
 	}
-
-	// Get group ID
-	var groupID int64
-	switch groupIdentifier := req.GroupIdentifier.(type) {
-	case *openauth_v1.RemoveUserFromGroupRequest_GroupId:
-		groupID = groupIdentifier.GroupId
-	case *openauth_v1.RemoveUserFromGroupRequest_GroupUuid:
-		group, err := s.repo.GetGroupByUUID(ctx, groupIdentifier.GroupUuid)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "group not found")
-		}
-		groupID = group.ID
-	case *openauth_v1.RemoveUserFromGroupRequest_GroupName:
-		group, err := s.repo.GetGroupByName(ctx, groupIdentifier.GroupName)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "group not found")
-		}
-		groupID = group.ID
-	default:
-		return nil, status.Error(codes.InvalidArgument, "group identifier is required")
+	if req.GroupId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
 	// Check if user is in the group
-	isInGroup, err := s.repo.IsUserInGroup(ctx, userID, groupID)
+	isInGroup, err := s.repo.IsUserInGroup(ctx, req.UserId, req.GroupId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to check group membership")
 	}
@@ -357,7 +259,7 @@ func (s *Service) RemoveUserFromGroup(ctx context.Context, req *openauth_v1.Remo
 	}
 
 	// Remove user from group
-	err = s.repo.RemoveUserFromGroup(ctx, userID, groupID)
+	err = s.repo.RemoveUserFromGroup(ctx, req.UserId, req.GroupId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to remove user from group")
 	}
@@ -370,27 +272,8 @@ func (s *Service) RemoveUserFromGroup(ctx context.Context, req *openauth_v1.Remo
 
 // ListGroupUsers retrieves all users in a specific group
 func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroupUsersRequest) (*openauth_v1.ListGroupUsersResponse, error) {
-	// Get group ID
-	var groupID int64
-	var err error
-
-	switch groupIdentifier := req.GroupIdentifier.(type) {
-	case *openauth_v1.ListGroupUsersRequest_GroupId:
-		groupID = groupIdentifier.GroupId
-	case *openauth_v1.ListGroupUsersRequest_GroupUuid:
-		group, err := s.repo.GetGroupByUUID(ctx, groupIdentifier.GroupUuid)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "group not found")
-		}
-		groupID = group.ID
-	case *openauth_v1.ListGroupUsersRequest_GroupName:
-		group, err := s.repo.GetGroupByName(ctx, groupIdentifier.GroupName)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "group not found")
-		}
-		groupID = group.ID
-	default:
-		return nil, status.Error(codes.InvalidArgument, "group identifier is required")
+	if req.GroupId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
 	// Set default pagination
@@ -404,7 +287,7 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 	}
 
 	// Get users from repository
-	users, totalCount, err := s.repo.ListGroupUsers(ctx, groupID, limit, offset)
+	users, _, err := s.repo.ListGroupUsers(ctx, req.GroupId, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list group users")
 	}
@@ -423,34 +306,15 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 		}
 	}
 
-	hasMore := offset+limit < totalCount
-
 	return &openauth_v1.ListGroupUsersResponse{
-		Users:      protoUsers,
-		TotalCount: totalCount,
-		Limit:      limit,
-		Offset:     offset,
-		HasMore:    hasMore,
+		Users: protoUsers,
 	}, nil
 }
 
 // ListUserGroups retrieves all groups for a specific user
 func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserGroupsRequest) (*openauth_v1.ListUserGroupsResponse, error) {
-	// Get user ID
-	var userID int64
-	var err error
-
-	switch userIdentifier := req.UserIdentifier.(type) {
-	case *openauth_v1.ListUserGroupsRequest_UserId:
-		userID = userIdentifier.UserId
-	case *openauth_v1.ListUserGroupsRequest_UserUuid:
-		user, err := s.repo.GetUserByUUID(ctx, userIdentifier.UserUuid)
-		if err != nil {
-			return nil, status.Error(codes.NotFound, "user not found")
-		}
-		userID = user.ID
-	default:
-		return nil, status.Error(codes.InvalidArgument, "user identifier is required")
+	if req.UserId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user id is required")
 	}
 
 	// Set default pagination
@@ -464,7 +328,7 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 	}
 
 	// Get groups from repository
-	groups, totalCount, err := s.repo.ListUserGroups(ctx, userID, limit, offset)
+	groups, _, err := s.repo.ListUserGroups(ctx, req.UserId, limit, offset)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list user groups")
 	}
@@ -484,13 +348,7 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 		}
 	}
 
-	hasMore := offset+limit < totalCount
-
 	return &openauth_v1.ListUserGroupsResponse{
-		Groups:     protoGroups,
-		TotalCount: totalCount,
-		Limit:      limit,
-		Offset:     offset,
-		HasMore:    hasMore,
+		Groups: protoGroups,
 	}, nil
 }
