@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"github.com/gofreego/openauth/internal/auth"
+	"github.com/gofreego/openauth/pkg/auth"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

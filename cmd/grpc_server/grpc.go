@@ -8,9 +8,9 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/configs"
 	"github.com/gofreego/openauth/internal/constants"
-	"github.com/gofreego/openauth/internal/middleware"
 	"github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
+	"github.com/gofreego/openauth/pkg/middleware"
 	"google.golang.org/grpc"
 
 	"github.com/gofreego/goutils/logger"
