@@ -46,7 +46,7 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	}
 
 	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.getBcryptCost())
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.cfg.Security.GetBcryptCost())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to hash password")
 	}
@@ -102,7 +102,7 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	}
 
 	return &openauth_v1.SignUpResponse{
-		User:                      createdUser.ToProto(),
+		User:                      createdUser.ToProtoUser(),
 		Message:                   "User created successfully",
 		EmailVerificationRequired: emailVerificationRequired,
 		PhoneVerificationRequired: phoneVerificationRequired,
@@ -312,7 +312,7 @@ func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) 
 	}
 
 	response := &openauth_v1.GetUserResponse{
-		User: user.ToProto(),
+		User: user.ToProtoUser(),
 	}
 
 	// Include profiles if requested
@@ -370,7 +370,7 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 	}
 
 	return &openauth_v1.UpdateUserResponse{
-		User: updatedUser.ToProto(),
+		User: updatedUser.ToProtoUser(),
 	}, nil
 }
 
@@ -399,7 +399,7 @@ func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePas
 	}
 
 	// Hash new password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), s.getBcryptCost())
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), s.cfg.Security.GetBcryptCost())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to hash new password")
 	}
@@ -464,7 +464,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	// Convert to proto
 	protoUsers := make([]*openauth_v1.User, len(users))
 	for i, user := range users {
-		protoUsers[i] = user.ToProto()
+		protoUsers[i] = user.ToProtoUser()
 	}
 
 	return &openauth_v1.ListUsersResponse{
@@ -640,7 +640,7 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 	}
 
 	return &openauth_v1.CreateProfileResponse{
-		Profile: createdProfile.ToProto(),
+		Profile: createdProfile.ToProtoUserProfile(),
 		Message: "Profile created successfully",
 	}, nil
 }
@@ -676,7 +676,7 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 	// Convert to proto
 	protoProfiles := make([]*openauth_v1.UserProfile, len(profiles))
 	for i, profile := range profiles {
-		protoProfiles[i] = profile.ToProto()
+		protoProfiles[i] = profile.ToProtoUserProfile()
 	}
 
 	return &openauth_v1.ListUserProfilesResponse{
@@ -765,7 +765,7 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 	}
 
 	return &openauth_v1.UpdateProfileResponse{
-		Profile: updatedProfile.ToProto(),
+		Profile: updatedProfile.ToProtoUserProfile(),
 		Message: "Profile updated successfully",
 	}, nil
 }

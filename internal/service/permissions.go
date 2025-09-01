@@ -50,7 +50,7 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	}
 
 	// Convert to proto response
-	return createdPermission.ToProto(), nil
+	return createdPermission.ToProtoPermission(), nil
 }
 
 // GetPermission retrieves a permission by ID
@@ -67,7 +67,7 @@ func (s *Service) GetPermission(ctx context.Context, req *openauth_v1.GetPermiss
 		return nil, status.Error(codes.NotFound, "permission not found")
 	}
 
-	return permission.ToProto(), nil
+	return permission.ToProtoPermission(), nil
 }
 
 // ListPermissions retrieves permissions with filtering and pagination
@@ -109,7 +109,7 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 	// Convert to proto response
 	protoPermissions := make([]*openauth_v1.Permission, len(permissions))
 	for i, p := range permissions {
-		protoPermissions[i] = p.ToProto()
+		protoPermissions[i] = p.ToProtoPermission()
 	}
 
 	return &openauth_v1.ListPermissionsResponse{
@@ -176,7 +176,7 @@ func (s *Service) UpdatePermission(ctx context.Context, req *openauth_v1.UpdateP
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update permission: %v", err))
 	}
 
-	return updatedPermission.ToProto(), nil
+	return updatedPermission.ToProtoPermission(), nil
 }
 
 // DeletePermission deletes a permission

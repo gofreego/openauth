@@ -27,7 +27,7 @@ func (s *Service) GetCurrentUser(ctx context.Context, req *openauth_v1.GetUserRe
 
 	// Convert to protobuf response
 	return &openauth_v1.GetUserResponse{
-		User: user.ToProto(),
+		User: user.ToProtoUser(),
 	}, nil
 }
 
@@ -73,7 +73,7 @@ func (s *Service) UpdateCurrentUser(ctx context.Context, req *openauth_v1.Update
 	}
 
 	return &openauth_v1.UpdateUserResponse{
-		User: updatedUser.ToProto(),
+		User: updatedUser.ToProtoUser(),
 	}, nil
 }
 

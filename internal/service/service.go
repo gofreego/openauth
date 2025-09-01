@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 )
 
@@ -19,10 +20,59 @@ type JWTConfig struct {
 	RefreshTokenTTL time.Duration `yaml:"RefreshTokenTTL"` // Refresh token expiration time
 }
 
+// GetSecretKey returns the JWT secret key
+func (j *JWTConfig) GetSecretKey() []byte {
+	if j.SecretKey != "" {
+		return []byte(j.SecretKey)
+	}
+	// Default fallback (not recommended for production)
+	return []byte(constants.DefaultJWTSecretKey)
+}
+
+// GetAccessTokenTTL returns the access token TTL with default fallback
+func (j *JWTConfig) GetAccessTokenTTL() time.Duration {
+	if j.AccessTokenTTL > 0 {
+		return j.AccessTokenTTL
+	}
+	return constants.DefaultAccessTokenTTL
+}
+
+// GetRefreshTokenTTL returns the refresh token TTL with default fallback
+func (j *JWTConfig) GetRefreshTokenTTL() time.Duration {
+	if j.RefreshTokenTTL > 0 {
+		return j.RefreshTokenTTL
+	}
+	return constants.DefaultRefreshTokenTTL
+}
+
 type SecurityConfig struct {
 	BcryptCost       int           `yaml:"BcryptCost"`       // Password hashing cost
 	MaxLoginAttempts int           `yaml:"MaxLoginAttempts"` // Maximum failed login attempts
 	LockoutDuration  time.Duration `yaml:"LockoutDuration"`  // Account lockout duration
+}
+
+// GetBcryptCost returns the bcrypt cost with default fallback
+func (s *SecurityConfig) GetBcryptCost() int {
+	if s.BcryptCost > 0 {
+		return s.BcryptCost
+	}
+	return constants.DefaultBcryptCost
+}
+
+// GetMaxLoginAttempts returns the maximum login attempts with default fallback
+func (s *SecurityConfig) GetMaxLoginAttempts() int {
+	if s.MaxLoginAttempts > 0 {
+		return s.MaxLoginAttempts
+	}
+	return constants.DefaultMaxLoginAttempts
+}
+
+// GetLockoutDuration returns the lockout duration with default fallback
+func (s *SecurityConfig) GetLockoutDuration() time.Duration {
+	if s.LockoutDuration > 0 {
+		return s.LockoutDuration
+	}
+	return constants.DefaultLockoutDuration
 }
 
 type Repository interface {

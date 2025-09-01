@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"time"
+
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/google/uuid"
 )
@@ -27,8 +29,44 @@ type Session struct {
 	CreatedAt        int64     `db:"created_at" json:"createdAt"`
 }
 
-// ToProto converts Session DAO to protobuf Session
-func (s *Session) ToProto() *openauth_v1.Session {
+// FromSignInRequest initializes a Session DAO from SignInRequest data
+func (s *Session) FromSignInRequest(
+	sessionUUID uuid.UUID,
+	userID int64,
+	userUUID uuid.UUID,
+	sessionToken string,
+	refreshToken string,
+	expiresAt int64,
+	refreshExpiresAt int64,
+	req *openauth_v1.SignInRequest,
+) {
+	s.UUID = sessionUUID
+	s.UserID = userID
+	s.UserUUID = userUUID
+	s.SessionToken = sessionToken
+	s.RefreshToken = &refreshToken
+	s.IsActive = true
+	s.ExpiresAt = expiresAt
+	s.RefreshExpiresAt = &refreshExpiresAt
+	s.LastActivityAt = time.Now().Unix()
+	s.CreatedAt = time.Now().Unix()
+
+	// Set device information if provided
+	if req.Metadata != nil {
+		if req.Metadata.DeviceId != nil {
+			s.DeviceID = req.Metadata.DeviceId
+		}
+		if req.Metadata.DeviceName != nil {
+			s.DeviceName = req.Metadata.DeviceName
+		}
+		if req.Metadata.DeviceType != nil {
+			s.DeviceType = req.Metadata.DeviceType
+		}
+	}
+}
+
+// ToProtoSession converts Session DAO to protobuf Session
+func (s *Session) ToProtoSession() *openauth_v1.Session {
 	session := &openauth_v1.Session{
 		Id:             s.UUID.String(),
 		UserId:         s.UserUUID.String(),

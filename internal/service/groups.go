@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/auth"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -33,19 +35,21 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 		return nil, status.Error(codes.AlreadyExists, "group name already exists")
 	}
 
-	// Create group DAO
-	group := &dao.Group{
-		Name:        req.Name,
-		DisplayName: req.DisplayName,
-		IsSystem:    false, // User-created groups are not system groups
-		IsDefault:   false, // User-created groups are not default by default
-		CreatedAt:   time.Now().Unix(),
-		UpdatedAt:   time.Now().Unix(),
+	// Get current user ID from context
+	claims, err := auth.GetUserFromContext(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 
-	if req.Description != nil {
-		group.Description = req.Description
+	// Convert string user ID to int64
+	createdBy, err := strconv.ParseInt(claims.UserID, 10, 64)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "invalid user ID format")
 	}
+
+	// Create group DAO using the FromCreateGroupRequest method
+	group := &dao.Group{}
+	group.FromCreateGroupRequest(req, createdBy)
 
 	// Create group in repository
 	createdGroup, err := s.repo.CreateGroup(ctx, group)
@@ -54,7 +58,7 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 	}
 
 	return &openauth_v1.CreateGroupResponse{
-		Group:   createdGroup.ToProto(),
+		Group:   createdGroup.ToProtoGroup(),
 		Message: "Group created successfully",
 	}, nil
 }
@@ -75,7 +79,7 @@ func (s *Service) GetGroup(ctx context.Context, req *openauth_v1.GetGroupRequest
 	}
 
 	return &openauth_v1.GetGroupResponse{
-		Group: group.ToProto(),
+		Group: group.ToProtoGroup(),
 	}, nil
 }
 
@@ -107,7 +111,7 @@ func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsReq
 	// Convert to protobuf
 	protoGroups := make([]*openauth_v1.Group, len(groups))
 	for i, group := range groups {
-		protoGroups[i] = group.ToProto()
+		protoGroups[i] = group.ToProtoGroup()
 	}
 
 	return &openauth_v1.ListGroupsResponse{
@@ -162,7 +166,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 
 	if len(updates) == 0 {
 		return &openauth_v1.UpdateGroupResponse{
-			Group:   group.ToProto(),
+			Group:   group.ToProtoGroup(),
 			Message: "No changes to update",
 		}, nil
 	}
@@ -176,7 +180,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 	}
 
 	return &openauth_v1.UpdateGroupResponse{
-		Group:   updatedGroup.ToProto(),
+		Group:   updatedGroup.ToProtoGroup(),
 		Message: "Group updated successfully",
 	}, nil
 }
@@ -296,14 +300,7 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 	// In a more complete implementation, we'd have a specific query for group users with membership details
 	protoUsers := make([]*openauth_v1.GroupUser, len(users))
 	for i, user := range users {
-		protoUsers[i] = &openauth_v1.GroupUser{
-			UserId:     user.ID,
-			UserUuid:   user.UUID.String(),
-			Username:   user.Username,
-			Email:      user.Email,
-			Name:       user.Name,
-			AssignedAt: user.CreatedAt, // This would be the actual assignment timestamp in a full implementation
-		}
+		protoUsers[i] = user.ToProtoGroupUser(user.CreatedAt) // This would be the actual assignment timestamp in a full implementation
 	}
 
 	return &openauth_v1.ListGroupUsersResponse{
@@ -337,15 +334,7 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 	// In a more complete implementation, we'd have a specific query for user groups with membership details
 	protoGroups := make([]*openauth_v1.UserGroup, len(groups))
 	for i, group := range groups {
-		protoGroups[i] = &openauth_v1.UserGroup{
-			GroupId:          group.ID,
-			GroupName:        group.Name,
-			GroupDisplayName: group.DisplayName,
-			GroupDescription: group.Description,
-			IsSystem:         group.IsSystem,
-			IsDefault:        group.IsDefault,
-			AssignedAt:       group.CreatedAt, // This would be the actual assignment timestamp in a full implementation
-		}
+		protoGroups[i] = group.ToProtoUserGroup(group.CreatedAt) // This would be the actual assignment timestamp in a full implementation
 	}
 
 	return &openauth_v1.ListUserGroupsResponse{

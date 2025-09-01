@@ -51,8 +51,8 @@ type Profile struct {
 	UpdatedAt   int64      `db:"updated_at" json:"updatedAt"`
 }
 
-// ToProto converts a User DAO to protobuf User
-func (u *User) ToProto() *openauth_v1.User {
+// ToProtoUser converts a User DAO to protobuf User
+func (u *User) ToProtoUser() *openauth_v1.User {
 	return &openauth_v1.User{
 		Id:                  u.ID,
 		Uuid:                u.UUID.String(),
@@ -73,8 +73,20 @@ func (u *User) ToProto() *openauth_v1.User {
 	}
 }
 
-// ToProto converts a Profile DAO to protobuf UserProfile
-func (p *Profile) ToProto() *openauth_v1.UserProfile {
+// ToProtoGroupUser converts a User DAO to protobuf GroupUser for group user listings
+func (u *User) ToProtoGroupUser(assignedAt int64) *openauth_v1.GroupUser {
+	return &openauth_v1.GroupUser{
+		UserId:     u.ID,
+		UserUuid:   u.UUID.String(),
+		Username:   u.Username,
+		Email:      u.Email,
+		Name:       u.Name,
+		AssignedAt: assignedAt,
+	}
+}
+
+// ToProtoUserProfile converts a Profile DAO to protobuf UserProfile
+func (p *Profile) ToProtoUserProfile() *openauth_v1.UserProfile {
 	var dateOfBirth *int64
 	if p.DateOfBirth != nil {
 		timestamp := p.DateOfBirth.Unix()

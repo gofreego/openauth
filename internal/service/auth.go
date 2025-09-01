@@ -21,41 +21,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// getJWTSecret returns the JWT secret key from configuration
-func (s *Service) getJWTSecret() []byte {
-	// Get from configuration
-	if s.cfg != nil && s.cfg.JWT.SecretKey != "" {
-		return []byte(s.cfg.JWT.SecretKey)
-	}
-
-	// Default fallback (not recommended for production)
-	return []byte("your-256-bit-secret-key-here-change-in-production")
-}
-
-// getAccessTokenTTL returns the access token TTL from configuration
-func (s *Service) getAccessTokenTTL() time.Duration {
-	if s.cfg != nil && s.cfg.JWT.AccessTokenTTL > 0 {
-		return s.cfg.JWT.AccessTokenTTL
-	}
-	return 15 * time.Minute // Default: 15 minutes
-}
-
-// getRefreshTokenTTL returns the refresh token TTL from configuration
-func (s *Service) getRefreshTokenTTL() time.Duration {
-	if s.cfg != nil && s.cfg.JWT.RefreshTokenTTL > 0 {
-		return s.cfg.JWT.RefreshTokenTTL
-	}
-	return 7 * 24 * time.Hour // Default: 7 days
-}
-
-// getBcryptCost returns the bcrypt cost from configuration
-func (s *Service) getBcryptCost() int {
-	if s.cfg != nil && s.cfg.Security.BcryptCost > 0 {
-		return s.cfg.Security.BcryptCost
-	}
-	return 12 // Default bcrypt cost
-}
-
 // SignIn authenticates a user and creates a new session
 func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
 	// Validate input
@@ -102,7 +67,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		}
 
 		// Lock account if too many failed attempts
-		if user.FailedLoginCount >= 4 { // Lock after 5 failed attempts
+		if user.FailedLoginCount >= s.cfg.Security.GetMaxLoginAttempts()-1 {
 			updates["is_locked"] = true
 		}
 
@@ -131,8 +96,8 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	}
 
 	// Determine session duration
-	accessTokenDuration := s.getAccessTokenTTL()
-	refreshTokenDuration := s.getRefreshTokenTTL()
+	accessTokenDuration := s.cfg.JWT.GetAccessTokenTTL()
+	refreshTokenDuration := s.cfg.JWT.GetRefreshTokenTTL()
 
 	if req.RememberMe != nil && *req.RememberMe {
 		accessTokenDuration = accessTokenDuration * 4   // 4x longer access token
@@ -142,30 +107,18 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	expiresAt := time.Now().Add(accessTokenDuration).Unix()
 	refreshExpiresAt := time.Now().Add(refreshTokenDuration).Unix()
 
-	// Create session record
-	session := &dao.Session{
-		UUID:             sessionUUID,
-		UserID:           user.ID,
-		UserUUID:         user.UUID,
-		SessionToken:     sessionToken,
-		RefreshToken:     &refreshToken,
-		IsActive:         true,
-		ExpiresAt:        expiresAt,
-		RefreshExpiresAt: &refreshExpiresAt,
-		LastActivityAt:   time.Now().Unix(),
-		CreatedAt:        time.Now().Unix(),
-	}
-
-	// Set device information if provided
-	if req.Metadata.DeviceId != nil {
-		session.DeviceID = req.Metadata.DeviceId
-	}
-	if req.Metadata.DeviceName != nil {
-		session.DeviceName = req.Metadata.DeviceName
-	}
-	if req.Metadata.DeviceType != nil {
-		session.DeviceType = req.Metadata.DeviceType
-	}
+	// Create session record using FromSignInRequest method
+	session := &dao.Session{}
+	session.FromSignInRequest(
+		sessionUUID,
+		user.ID,
+		user.UUID,
+		sessionToken,
+		refreshToken,
+		expiresAt,
+		refreshExpiresAt,
+		req,
+	)
 
 	// Save session to database
 	createdSession, err := s.repo.CreateSession(ctx, session)
@@ -185,7 +138,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		RefreshToken:     refreshToken,
 		ExpiresAt:        expiresAt,
 		RefreshExpiresAt: refreshExpiresAt,
-		User:             user.ToProto(),
+		User:             user.ToProtoUser(),
 		SessionId:        sessionUUID.String(),
 		Message:          "Sign in successful",
 	}
@@ -226,8 +179,8 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 		return nil, status.Error(codes.Internal, "failed to generate new refresh token")
 	}
 
-	accessTokenDuration := s.getAccessTokenTTL()
-	refreshTokenDuration := s.getRefreshTokenTTL()
+	accessTokenDuration := s.cfg.JWT.GetAccessTokenTTL()
+	refreshTokenDuration := s.cfg.JWT.GetRefreshTokenTTL()
 
 	expiresAt := time.Now().Add(accessTokenDuration).Unix()
 	refreshExpiresAt := time.Now().Add(refreshTokenDuration).Unix()
@@ -332,7 +285,7 @@ func (s *Service) ValidateToken(ctx context.Context, req *openauth_v1.ValidateTo
 	return &openauth_v1.ValidateTokenResponse{
 		Valid:     true,
 		Message:   "token valid",
-		User:      user.ToProto(),
+		User:      user.ToProtoUser(),
 		ExpiresAt: &expiresAt,
 	}, nil
 }
@@ -363,7 +316,7 @@ func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUse
 	// Convert to proto
 	protoSessions := make([]*openauth_v1.Session, len(sessions))
 	for i, session := range sessions {
-		protoSessions[i] = session.ToProto()
+		protoSessions[i] = session.ToProtoSession()
 	}
 
 	return &openauth_v1.ListUserSessionsResponse{
@@ -430,7 +383,7 @@ func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, dura
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(s.getJWTSecret())
+	return token.SignedString(s.cfg.JWT.GetSecretKey())
 }
 
 // ValidateAccessToken parses and validates a JWT access token
@@ -439,7 +392,7 @@ func (s *Service) ValidateAccessToken(tokenString string) (*models.JWTClaims, er
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return s.getJWTSecret(), nil
+		return s.cfg.JWT.GetSecretKey(), nil
 	})
 
 	if err != nil {

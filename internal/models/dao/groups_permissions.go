@@ -29,8 +29,8 @@ func (p *Permission) FromCreatePermissionRequest(req *openauth_v1.CreatePermissi
 	p.UpdatedAt = time.Now().Unix()
 }
 
-// ToProto converts a Permission DAO to protobuf Permission
-func (p *Permission) ToProto() *openauth_v1.Permission {
+// ToProtoPermission converts a Permission DAO to protobuf Permission
+func (p *Permission) ToProtoPermission() *openauth_v1.Permission {
 	proto := &openauth_v1.Permission{
 		Id:          p.ID,
 		Name:        p.Name,
@@ -72,8 +72,8 @@ func (g *Group) FromCreateGroupRequest(req *openauth_v1.CreateGroupRequest, crea
 	g.UpdatedAt = time.Now().Unix()
 }
 
-// ToProto converts a Group DAO to protobuf Group
-func (g *Group) ToProto() *openauth_v1.Group {
+// ToProtoGroup converts a Group DAO to protobuf Group
+func (g *Group) ToProtoGroup() *openauth_v1.Group {
 	proto := &openauth_v1.Group{
 		Id:          g.ID,
 		Name:        g.Name,
@@ -88,6 +88,19 @@ func (g *Group) ToProto() *openauth_v1.Group {
 	}
 
 	return proto
+}
+
+// ToProtoUserGroup converts a Group DAO to protobuf UserGroup for user group listings
+func (g *Group) ToProtoUserGroup(assignedAt int64) *openauth_v1.UserGroup {
+	return &openauth_v1.UserGroup{
+		GroupId:          g.ID,
+		GroupName:        g.Name,
+		GroupDisplayName: g.DisplayName,
+		GroupDescription: g.Description,
+		IsSystem:         g.IsSystem,
+		IsDefault:        g.IsDefault,
+		AssignedAt:       assignedAt,
+	}
 }
 
 // Group ↔ Permission junction
