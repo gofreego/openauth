@@ -18,6 +18,8 @@ type Session struct {
 	UserAgent        *string   `db:"user_agent" json:"userAgent,omitempty"`
 	IPAddress        *string   `db:"ip_address" json:"ipAddress,omitempty"` // stored as INET
 	Location         *string   `db:"location" json:"location,omitempty"`
+	Lat              *float64  `db:"lat" json:"lat,omitempty"`
+	Lon              *float64  `db:"lon" json:"lon,omitempty"`
 	IsActive         bool      `db:"is_active" json:"isActive"`
 	ExpiresAt        int64     `db:"expires_at" json:"expiresAt"`
 	RefreshExpiresAt *int64    `db:"refresh_expires_at" json:"refreshExpiresAt,omitempty"`

@@ -2,6 +2,7 @@ package dao
 
 import (
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/google/uuid"
 )
 
 // Permissions table
@@ -10,9 +11,8 @@ type Permission struct {
 	Name        string  `db:"name" json:"name"` // e.g., users.create
 	DisplayName string  `db:"display_name" json:"displayName"`
 	Description *string `db:"description" json:"description,omitempty"`
-	Resource    string  `db:"resource" json:"resource"`  // e.g., users, posts
-	Action      string  `db:"action" json:"action"`      // e.g., create, read, update, delete
 	IsSystem    bool    `db:"is_system" json:"isSystem"` // system permissions cannot be deleted
+	CreatedBy   int64   `db:"created_by" json:"createdBy"`
 	CreatedAt   int64   `db:"created_at" json:"createdAt"`
 	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
 }
@@ -23,9 +23,6 @@ func (p *Permission) ToProto() *openauth_v1.Permission {
 		Id:          p.ID,
 		Name:        p.Name,
 		DisplayName: p.DisplayName,
-		Resource:    p.Resource,
-		Action:      p.Action,
-		IsSystem:    p.IsSystem,
 		CreatedAt:   p.CreatedAt,
 		UpdatedAt:   p.UpdatedAt,
 	}
@@ -39,14 +36,16 @@ func (p *Permission) ToProto() *openauth_v1.Permission {
 
 // Groups (roles) table
 type Group struct {
-	ID          int64   `db:"id" json:"id"`
-	Name        string  `db:"name" json:"name"`
-	DisplayName string  `db:"display_name" json:"displayName"`
-	Description *string `db:"description" json:"description,omitempty"`
-	IsSystem    bool    `db:"is_system" json:"isSystem"`
-	IsDefault   bool    `db:"is_default" json:"isDefault"`
-	CreatedAt   int64   `db:"created_at" json:"createdAt"`
-	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
+	ID          int64     `db:"id" json:"id"`
+	UUID        uuid.UUID `db:"uuid" json:"uuid"`
+	Name        string    `db:"name" json:"name"`
+	DisplayName string    `db:"display_name" json:"displayName"`
+	Description *string   `db:"description" json:"description,omitempty"`
+	IsSystem    bool      `db:"is_system" json:"isSystem"`
+	IsDefault   bool      `db:"is_default" json:"isDefault"`
+	CreatedBy   int64     `db:"created_by" json:"createdBy"`
+	CreatedAt   int64     `db:"created_at" json:"createdAt"`
+	UpdatedAt   int64     `db:"updated_at" json:"updatedAt"`
 }
 
 // ToProto converts a Group DAO to protobuf Group
@@ -55,8 +54,6 @@ func (g *Group) ToProto() *openauth_v1.Group {
 		Id:          g.ID,
 		Name:        g.Name,
 		DisplayName: g.DisplayName,
-		IsSystem:    g.IsSystem,
-		IsDefault:   g.IsDefault,
 		CreatedAt:   g.CreatedAt,
 		UpdatedAt:   g.UpdatedAt,
 	}
@@ -70,11 +67,11 @@ func (g *Group) ToProto() *openauth_v1.Group {
 
 // Group ↔ Permission junction
 type GroupPermission struct {
-	ID           int64  `db:"id" json:"id"`
-	GroupID      int64  `db:"group_id" json:"groupId"`
-	PermissionID int64  `db:"permission_id" json:"permissionId"`
-	GrantedBy    *int64 `db:"granted_by" json:"grantedBy,omitempty"`
-	CreatedAt    int64  `db:"created_at" json:"createdAt"`
+	ID           int64 `db:"id" json:"id"`
+	GroupID      int64 `db:"group_id" json:"groupId"`
+	PermissionID int64 `db:"permission_id" json:"permissionId"`
+	GrantedBy    int64 `db:"granted_by" json:"grantedBy"`
+	CreatedAt    int64 `db:"created_at" json:"createdAt"`
 }
 
 // User ↔ Group junction
@@ -82,7 +79,7 @@ type UserGroup struct {
 	ID         int64  `db:"id" json:"id"`
 	UserID     int64  `db:"user_id" json:"userId"`
 	GroupID    int64  `db:"group_id" json:"groupId"`
-	AssignedBy *int64 `db:"assigned_by" json:"assignedBy,omitempty"`
+	AssignedBy int64  `db:"assigned_by" json:"assignedBy"`
 	ExpiresAt  *int64 `db:"expires_at" json:"expiresAt,omitempty"`
 	CreatedAt  int64  `db:"created_at" json:"createdAt"`
 }
@@ -92,7 +89,7 @@ type UserPermission struct {
 	ID           int64  `db:"id" json:"id"`
 	UserID       int64  `db:"user_id" json:"userId"`
 	PermissionID int64  `db:"permission_id" json:"permissionId"`
-	GrantedBy    *int64 `db:"granted_by" json:"grantedBy,omitempty"`
+	GrantedBy    int64  `db:"granted_by" json:"grantedBy"`
 	ExpiresAt    *int64 `db:"expires_at" json:"expiresAt,omitempty"`
 	CreatedAt    int64  `db:"created_at" json:"createdAt"`
 }
