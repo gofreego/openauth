@@ -35,10 +35,16 @@ class AdminSidebar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24.0),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
+              color: theme.colorScheme.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: theme.colorScheme.outline.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -46,13 +52,13 @@ class AdminSidebar extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const AppLogo.medium(color: Colors.white),
+                const AppLogo.medium(),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     'OpenAuth Admin',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                       height: 1.2,
                     ),
