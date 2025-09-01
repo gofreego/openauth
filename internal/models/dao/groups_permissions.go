@@ -153,15 +153,15 @@ func (gp *GroupPermission) ToProtoGroupPermissionWithDetails(
 	groupDescription *string,
 ) *openauth_v1.GroupPermission {
 	proto := &openauth_v1.GroupPermission{
-		Id:                      gp.ID,
-		GroupId:                 gp.GroupID,
-		PermissionId:            gp.PermissionID,
-		PermissionName:          permissionName,
-		PermissionDisplayName:   permissionDisplayName,
-		GroupName:               groupName,
-		GroupDisplayName:        groupDisplayName,
-		GrantedBy:               gp.GrantedBy,
-		CreatedAt:               gp.CreatedAt,
+		Id:                    gp.ID,
+		GroupId:               gp.GroupID,
+		PermissionId:          gp.PermissionID,
+		PermissionName:        permissionName,
+		PermissionDisplayName: permissionDisplayName,
+		GroupName:             groupName,
+		GroupDisplayName:      groupDisplayName,
+		GrantedBy:             gp.GrantedBy,
+		CreatedAt:             gp.CreatedAt,
 	}
 
 	if permissionDescription != nil {

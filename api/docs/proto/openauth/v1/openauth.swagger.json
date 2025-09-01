@@ -2288,21 +2288,6 @@
             "$ref": "#/definitions/v1EffectivePermission"
           },
           "title": "Array of effective permissions for the user"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The limit value used for this request"
-        },
-        "offset": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The offset value used for this request"
-        },
-        "total": {
-          "type": "integer",
-          "format": "int32",
-          "title": "Total count of effective permissions for this user"
         }
       },
       "title": "Response containing effective permissions for a user"
@@ -2458,24 +2443,9 @@
             "$ref": "#/definitions/v1GroupPermission"
           },
           "title": "Array of permissions assigned to the group"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The limit value used for this request"
-        },
-        "offset": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The offset value used for this request"
-        },
-        "total": {
-          "type": "integer",
-          "format": "int32",
-          "title": "Total count of permissions for this group (for pagination)"
         }
       },
-      "title": "Response containing group permissions with pagination metadata"
+      "title": "Response containing group permissions"
     },
     "v1ListGroupUsersResponse": {
       "type": "object",
@@ -2550,24 +2520,9 @@
             "$ref": "#/definitions/v1UserPermission"
           },
           "title": "Array of permissions assigned to the user"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The limit value used for this request"
-        },
-        "offset": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The offset value used for this request"
-        },
-        "total": {
-          "type": "integer",
-          "format": "int32",
-          "title": "Total count of permissions for this user (for pagination)"
         }
       },
-      "title": "Response containing user permissions with pagination metadata"
+      "title": "Response containing user permissions"
     },
     "v1ListUserProfilesResponse": {
       "type": "object",

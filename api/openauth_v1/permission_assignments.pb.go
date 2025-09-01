@@ -591,17 +591,11 @@ func (x *ListGroupPermissionsRequest) GetSearch() string {
 	return ""
 }
 
-// Response containing group permissions with pagination metadata
+// Response containing group permissions
 type ListGroupPermissionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Array of permissions assigned to the group
-	Permissions []*GroupPermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	// The limit value used for this request
-	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	// The offset value used for this request
-	Offset int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	// Total count of permissions for this group (for pagination)
-	Total         int32 `protobuf:"varint,4,opt,name=total,proto3" json:"total,omitempty"`
+	Permissions   []*GroupPermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -641,27 +635,6 @@ func (x *ListGroupPermissionsResponse) GetPermissions() []*GroupPermission {
 		return x.Permissions
 	}
 	return nil
-}
-
-func (x *ListGroupPermissionsResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *ListGroupPermissionsResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListGroupPermissionsResponse) GetTotal() int32 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
 }
 
 // Request to assign a permission directly to a user
@@ -974,17 +947,11 @@ func (x *ListUserPermissionsRequest) GetExpired() bool {
 	return false
 }
 
-// Response containing user permissions with pagination metadata
+// Response containing user permissions
 type ListUserPermissionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Array of permissions assigned to the user
-	Permissions []*UserPermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	// The limit value used for this request
-	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	// The offset value used for this request
-	Offset int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	// Total count of permissions for this user (for pagination)
-	Total         int32 `protobuf:"varint,4,opt,name=total,proto3" json:"total,omitempty"`
+	Permissions   []*UserPermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1024,27 +991,6 @@ func (x *ListUserPermissionsResponse) GetPermissions() []*UserPermission {
 		return x.Permissions
 	}
 	return nil
-}
-
-func (x *ListUserPermissionsResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *ListUserPermissionsResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListUserPermissionsResponse) GetTotal() int32 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
 }
 
 // Request to get all effective permissions for a user (direct + group permissions)
@@ -1255,13 +1201,7 @@ func (x *EffectivePermission) GetGrantedBy() int64 {
 type GetUserEffectivePermissionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Array of effective permissions for the user
-	Permissions []*EffectivePermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	// The limit value used for this request
-	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	// The offset value used for this request
-	Offset int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	// Total count of effective permissions for this user
-	Total         int32 `protobuf:"varint,4,opt,name=total,proto3" json:"total,omitempty"`
+	Permissions   []*EffectivePermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1301,27 +1241,6 @@ func (x *GetUserEffectivePermissionsResponse) GetPermissions() []*EffectivePermi
 		return x.Permissions
 	}
 	return nil
-}
-
-func (x *GetUserEffectivePermissionsResponse) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-func (x *GetUserEffectivePermissionsResponse) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *GetUserEffectivePermissionsResponse) GetTotal() int32 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
 }
 
 var File_proto_openauth_v1_permission_assignments_proto protoreflect.FileDescriptor
@@ -1389,12 +1308,9 @@ const file_proto_openauth_v1_permission_assignments_proto_rawDesc = "" +
 	"\x06search\x18\x04 \x01(\tH\x02R\x06search\x88\x01\x01B\b\n" +
 	"\x06_limitB\t\n" +
 	"\a_offsetB\t\n" +
-	"\a_search\"\x99\x01\n" +
+	"\a_search\"U\n" +
 	"\x1cListGroupPermissionsResponse\x125\n" +
-	"\vpermissions\x18\x01 \x03(\v2\x13.v1.GroupPermissionR\vpermissions\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05total\x18\x04 \x01(\x05R\x05total\"\x90\x01\n" +
+	"\vpermissions\x18\x01 \x03(\v2\x13.v1.GroupPermissionR\vpermissions\"\x90\x01\n" +
 	"\x1dAssignPermissionToUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12#\n" +
 	"\rpermission_id\x18\x02 \x01(\x03R\fpermissionId\x12\"\n" +
@@ -1420,12 +1336,9 @@ const file_proto_openauth_v1_permission_assignments_proto_rawDesc = "" +
 	"\a_offsetB\t\n" +
 	"\a_searchB\n" +
 	"\n" +
-	"\b_expired\"\x97\x01\n" +
+	"\b_expired\"S\n" +
 	"\x1bListUserPermissionsResponse\x124\n" +
-	"\vpermissions\x18\x01 \x03(\v2\x12.v1.UserPermissionR\vpermissions\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05total\x18\x04 \x01(\x05R\x05total\"\xb2\x01\n" +
+	"\vpermissions\x18\x01 \x03(\v2\x12.v1.UserPermissionR\vpermissions\"\xb2\x01\n" +
 	"\"GetUserEffectivePermissionsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
 	"\x05limit\x18\x02 \x01(\x05H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
@@ -1454,12 +1367,9 @@ const file_proto_openauth_v1_permission_assignments_proto_rawDesc = "" +
 	"\x10_source_group_idB\x14\n" +
 	"\x12_source_group_nameB\x1c\n" +
 	"\x1a_source_group_display_nameB\r\n" +
-	"\v_expires_at\"\xa4\x01\n" +
+	"\v_expires_at\"`\n" +
 	"#GetUserEffectivePermissionsResponse\x129\n" +
-	"\vpermissions\x18\x01 \x03(\v2\x17.v1.EffectivePermissionR\vpermissions\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05total\x18\x04 \x01(\x05R\x05totalB\x0fZ\r./openauth_v1b\x06proto3"
+	"\vpermissions\x18\x01 \x03(\v2\x17.v1.EffectivePermissionR\vpermissionsB\x0fZ\r./openauth_v1b\x06proto3"
 
 var (
 	file_proto_openauth_v1_permission_assignments_proto_rawDescOnce sync.Once

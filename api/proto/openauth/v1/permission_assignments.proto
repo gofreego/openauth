@@ -108,19 +108,10 @@ message ListGroupPermissionsRequest {
     optional string search = 4;
 }
 
-// Response containing group permissions with pagination metadata
+// Response containing group permissions
 message ListGroupPermissionsResponse {
     // Array of permissions assigned to the group
     repeated GroupPermission permissions = 1;
-    
-    // The limit value used for this request
-    int32 limit = 2;
-    
-    // The offset value used for this request
-    int32 offset = 3;
-    
-    // Total count of permissions for this group (for pagination)
-    int32 total = 4;
 }
 
 // Request to assign a permission directly to a user
@@ -177,19 +168,10 @@ message ListUserPermissionsRequest {
     optional bool expired = 5;
 }
 
-// Response containing user permissions with pagination metadata
+// Response containing user permissions
 message ListUserPermissionsResponse {
     // Array of permissions assigned to the user
     repeated UserPermission permissions = 1;
-    
-    // The limit value used for this request
-    int32 limit = 2;
-    
-    // The offset value used for this request
-    int32 offset = 3;
-    
-    // Total count of permissions for this user (for pagination)
-    int32 total = 4;
 }
 
 // Request to get all effective permissions for a user (direct + group permissions)
@@ -237,13 +219,4 @@ message EffectivePermission {
 message GetUserEffectivePermissionsResponse {
     // Array of effective permissions for the user
     repeated EffectivePermission permissions = 1;
-    
-    // The limit value used for this request
-    int32 limit = 2;
-    
-    // The offset value used for this request
-    int32 offset = 3;
-    
-    // Total count of effective permissions for this user
-    int32 total = 4;
 }

@@ -99,9 +99,6 @@ func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.Lis
 
 	return &openauth_v1.ListGroupPermissionsResponse{
 		Permissions: protoGroupPermissions,
-		Limit:       filters.Limit,
-		Offset:      filters.Offset,
-		Total:       int32(len(protoGroupPermissions)), // TODO: Implement proper total count
 	}, nil
 }
 
@@ -196,9 +193,6 @@ func (s *Service) ListUserPermissions(ctx context.Context, req *openauth_v1.List
 
 	return &openauth_v1.ListUserPermissionsResponse{
 		Permissions: protoUserPermissions,
-		Limit:       filters.Limit,
-		Offset:      filters.Offset,
-		Total:       int32(len(protoUserPermissions)), // TODO: Implement proper total count
 	}, nil
 }
 
@@ -242,8 +236,5 @@ func (s *Service) GetUserEffectivePermissions(ctx context.Context, req *openauth
 
 	return &openauth_v1.GetUserEffectivePermissionsResponse{
 		Permissions: protoEffectivePermissions,
-		Limit:       filters.Limit,
-		Offset:      filters.Offset,
-		Total:       int32(len(protoEffectivePermissions)), // TODO: Implement proper total count
 	}, nil
 }
