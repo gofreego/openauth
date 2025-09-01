@@ -200,7 +200,7 @@ func (r *Repository) CheckGroupNameExists(ctx context.Context, name string) (boo
 }
 
 // AssignUserToGroup assigns a user to a group
-func (r *Repository) AssignUserToGroup(ctx context.Context, userID, groupID int64, assignedBy *int64, expiresAt *int64) error {
+func (r *Repository) AssignUserToGroup(ctx context.Context, userID, groupID int64, assignedBy int64, expiresAt *int64) error {
 	query := `
 		INSERT INTO user_groups (user_id, group_id, assigned_by, expires_at, created_at)
 		VALUES ($1, $2, $3, $4, $5)`

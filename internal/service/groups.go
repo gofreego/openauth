@@ -212,27 +212,49 @@ func (s *Service) DeleteGroup(ctx context.Context, req *openauth_v1.DeleteGroupR
 
 // AssignUserToGroup adds a user to a group
 func (s *Service) AssignUserToGroup(ctx context.Context, req *openauth_v1.AssignUserToGroupRequest) (*openauth_v1.AssignUserToGroupResponse, error) {
+	logger.Debug(ctx, "AssignUserToGroup request: userID=%d, groupID=%d", req.UserId, req.GroupId)
+
 	if req.UserId == 0 {
+		logger.Warn(ctx, "AssignUserToGroup failed: missing user ID")
 		return nil, status.Error(codes.InvalidArgument, "user id is required")
 	}
 	if req.GroupId == 0 {
+		logger.Warn(ctx, "AssignUserToGroup failed: missing group ID")
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
+
+	// Get the current user from context (who is performing the assignment)
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Error(ctx, "Failed to get current user from context for group assignment: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
+	}
+
+	logger.Debug(ctx, "User %s (userID=%d) assigning user %d to group %d",
+		claims.UserUUID, claims.UserID, req.UserId, req.GroupId)
 
 	// Check if user is already in the group
 	isInGroup, err := s.repo.IsUserInGroup(ctx, req.UserId, req.GroupId)
 	if err != nil {
+		logger.Error(ctx, "Failed to check group membership for userID=%d, groupID=%d: %v",
+			req.UserId, req.GroupId, err)
 		return nil, status.Error(codes.Internal, "failed to check group membership")
 	}
 	if isInGroup {
+		logger.Warn(ctx, "User %d is already in group %d", req.UserId, req.GroupId)
 		return nil, status.Error(codes.AlreadyExists, "user is already in the group")
 	}
 
-	// Assign user to group
-	err = s.repo.AssignUserToGroup(ctx, req.UserId, req.GroupId, nil, req.ExpiresAt)
+	// Assign user to group (using the current user's ID as assignedBy)
+	err = s.repo.AssignUserToGroup(ctx, req.UserId, req.GroupId, claims.UserID, req.ExpiresAt)
 	if err != nil {
+		logger.Error(ctx, "Failed to assign userID=%d to groupID=%d, assignedBy=%d: %v",
+			req.UserId, req.GroupId, claims.UserID, err)
 		return nil, status.Error(codes.Internal, "failed to assign user to group")
 	}
+
+	logger.Info(ctx, "User assignment successful: userID=%d assigned to groupID=%d by userID=%d",
+		req.UserId, req.GroupId, claims.UserID)
 
 	return &openauth_v1.AssignUserToGroupResponse{
 		Success: true,

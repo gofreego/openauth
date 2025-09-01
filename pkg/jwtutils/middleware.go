@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/goutils/logger"
+	"github.com/gofreego/openauth/internal/constants"
 )
 
 // AuthMiddleware provides JWT authentication for gRPC and HTTP requests
@@ -218,7 +218,7 @@ func (a *AuthMiddleware) hasPermission(claims *JWTClaims, requiredPermission str
 		}
 	}
 
-	logger.Warn(context.Background(), "User %s lacks required permission %s. User permissions: %v", 
+	logger.Warn(context.Background(), "User %s lacks required permission %s. User permissions: %v",
 		claims.UserUUID, requiredPermission, claims.Permissions)
 	return false
 }
@@ -230,7 +230,7 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			logger.Debug(ctx, "Auth middleware disabled, skipping authentication for method: %s", info.FullMethod)
 			return handler(ctx, req)
 		}
-		
+
 		// Skip auth for ping and sign-up endpoints
 		if a.skipAuth(info.FullMethod) {
 			logger.Debug(ctx, "Skipping authentication for exempt method: %s", info.FullMethod)
@@ -252,19 +252,19 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Unauthenticated, "invalid token")
 		}
 
-		logger.Debug(ctx, "Token validated for user %s (userID=%d) accessing method: %s", 
+		logger.Debug(ctx, "Token validated for user %s (userID=%d) accessing method: %s",
 			claims.UserUUID, claims.UserID, info.FullMethod)
 
 		// Check permissions for the requested method
 		requiredPermission := a.getRequiredPermissionForMethod(info.FullMethod)
 		if requiredPermission != "" && !a.hasPermission(claims, requiredPermission) {
-			logger.Warn(ctx, "Permission denied for user %s accessing method %s. Required: %s", 
+			logger.Warn(ctx, "Permission denied for user %s accessing method %s. Required: %s",
 				claims.UserUUID, info.FullMethod, requiredPermission)
 			return nil, status.Error(codes.PermissionDenied, "insufficient permissions")
 		}
 
 		if requiredPermission != "" {
-			logger.Debug(ctx, "Permission check passed for user %s accessing method %s", 
+			logger.Debug(ctx, "Permission check passed for user %s accessing method %s",
 				claims.UserUUID, info.FullMethod)
 		}
 
@@ -282,7 +282,7 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 			logger.Debug(ss.Context(), "Auth middleware disabled, skipping authentication for stream method: %s", info.FullMethod)
 			return handler(srv, ss)
 		}
-		
+
 		// Skip auth for ping endpoints
 		if a.skipAuth(info.FullMethod) {
 			logger.Debug(ss.Context(), "Skipping authentication for exempt stream method: %s", info.FullMethod)
@@ -304,19 +304,19 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 			return status.Error(codes.Unauthenticated, "invalid token")
 		}
 
-		logger.Debug(ss.Context(), "Stream token validated for user %s (userID=%d) accessing method: %s", 
+		logger.Debug(ss.Context(), "Stream token validated for user %s (userID=%d) accessing method: %s",
 			claims.UserUUID, claims.UserID, info.FullMethod)
 
 		// Check permissions for the requested method
 		requiredPermission := a.getRequiredPermissionForMethod(info.FullMethod)
 		if requiredPermission != "" && !a.hasPermission(claims, requiredPermission) {
-			logger.Warn(ss.Context(), "Stream permission denied for user %s accessing method %s. Required: %s", 
+			logger.Warn(ss.Context(), "Stream permission denied for user %s accessing method %s. Required: %s",
 				claims.UserUUID, info.FullMethod, requiredPermission)
 			return status.Error(codes.PermissionDenied, "insufficient permissions")
 		}
 
 		if requiredPermission != "" {
-			logger.Debug(ss.Context(), "Stream permission check passed for user %s accessing method %s", 
+			logger.Debug(ss.Context(), "Stream permission check passed for user %s accessing method %s",
 				claims.UserUUID, info.FullMethod)
 		}
 
@@ -371,20 +371,20 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		logger.Debug(r.Context(), "HTTP token validated for user %s (userID=%d) accessing: %s %s", 
+		logger.Debug(r.Context(), "HTTP token validated for user %s (userID=%d) accessing: %s %s",
 			claims.UserUUID, claims.UserID, r.Method, r.URL.Path)
 
 		// Check permissions for the requested path and method
 		requiredPermission := a.getRequiredPermissionForHTTPPath(r.Method, r.URL.Path)
 		if requiredPermission != "" && !a.hasPermission(claims, requiredPermission) {
-			logger.Warn(r.Context(), "HTTP permission denied for user %s accessing %s %s. Required: %s", 
+			logger.Warn(r.Context(), "HTTP permission denied for user %s accessing %s %s. Required: %s",
 				claims.UserUUID, r.Method, r.URL.Path, requiredPermission)
 			http.Error(w, "insufficient permissions", http.StatusForbidden)
 			return
 		}
 
 		if requiredPermission != "" {
-			logger.Debug(r.Context(), "HTTP permission check passed for user %s accessing %s %s", 
+			logger.Debug(r.Context(), "HTTP permission check passed for user %s accessing %s %s",
 				claims.UserUUID, r.Method, r.URL.Path)
 		}
 

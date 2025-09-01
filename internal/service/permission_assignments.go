@@ -8,16 +8,16 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/gofreego/openauth/pkg/jwtutils"
-	"github.com/gofreego/goutils/logger"
 )
 
 // AssignPermissionToGroup assigns a permission to a group
 func (s *Service) AssignPermissionToGroup(ctx context.Context, req *openauth_v1.AssignPermissionToGroupRequest) (*openauth_v1.AssignPermissionToGroupResponse, error) {
 	logger.Info(ctx, "Permission assignment to group requested: groupID=%d, permissionID=%d", req.GroupId, req.PermissionId)
-	
+
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -40,12 +40,12 @@ func (s *Service) AssignPermissionToGroup(ctx context.Context, req *openauth_v1.
 	// Assign permission to group
 	groupPermission, err := s.repo.AssignPermissionToGroup(ctx, req.GroupId, req.PermissionId, claims.UserID)
 	if err != nil {
-		logger.Error(ctx, "Failed to assign permission to group: groupID=%d, permissionID=%d, grantedBy=%d: %v", 
+		logger.Error(ctx, "Failed to assign permission to group: groupID=%d, permissionID=%d, grantedBy=%d: %v",
 			req.GroupId, req.PermissionId, claims.UserID, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to assign permission to group: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully assigned to group: groupID=%d, permissionID=%d, grantedBy=%d", 
+	logger.Info(ctx, "Permission successfully assigned to group: groupID=%d, permissionID=%d, grantedBy=%d",
 		req.GroupId, req.PermissionId, claims.UserID)
 
 	return &openauth_v1.AssignPermissionToGroupResponse{
@@ -57,7 +57,7 @@ func (s *Service) AssignPermissionToGroup(ctx context.Context, req *openauth_v1.
 // RemovePermissionFromGroup removes a permission from a group
 func (s *Service) RemovePermissionFromGroup(ctx context.Context, req *openauth_v1.RemovePermissionFromGroupRequest) (*openauth_v1.RemovePermissionFromGroupResponse, error) {
 	logger.Info(ctx, "Permission removal from group requested: groupID=%d, permissionID=%d", req.GroupId, req.PermissionId)
-	
+
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -80,12 +80,12 @@ func (s *Service) RemovePermissionFromGroup(ctx context.Context, req *openauth_v
 	// Remove permission from group
 	err = s.repo.RemovePermissionFromGroup(ctx, req.GroupId, req.PermissionId)
 	if err != nil {
-		logger.Error(ctx, "Failed to remove permission from group: groupID=%d, permissionID=%d: %v", 
+		logger.Error(ctx, "Failed to remove permission from group: groupID=%d, permissionID=%d: %v",
 			req.GroupId, req.PermissionId, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to remove permission from group: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully removed from group: groupID=%d, permissionID=%d", 
+	logger.Info(ctx, "Permission successfully removed from group: groupID=%d, permissionID=%d",
 		req.GroupId, req.PermissionId)
 
 	return &openauth_v1.RemovePermissionFromGroupResponse{
@@ -97,7 +97,7 @@ func (s *Service) RemovePermissionFromGroup(ctx context.Context, req *openauth_v
 // ListGroupPermissions retrieves permissions assigned to a group
 func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.ListGroupPermissionsRequest) (*openauth_v1.ListGroupPermissionsResponse, error) {
 	logger.Debug(ctx, "List group permissions requested: groupID=%d", req.GroupId)
-	
+
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -139,7 +139,7 @@ func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.Lis
 // AssignPermissionToUser assigns a permission directly to a user
 func (s *Service) AssignPermissionToUser(ctx context.Context, req *openauth_v1.AssignPermissionToUserRequest) (*openauth_v1.AssignPermissionToUserResponse, error) {
 	logger.Info(ctx, "Permission assignment to user requested: userID=%d, permissionID=%d", req.UserId, req.PermissionId)
-	
+
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -161,7 +161,7 @@ func (s *Service) AssignPermissionToUser(ctx context.Context, req *openauth_v1.A
 
 	// Validate expiration time if provided
 	if req.ExpiresAt != nil && *req.ExpiresAt <= time.Now().Unix() {
-		logger.Warn(ctx, "Permission assignment failed: expires_at is in the past: userID=%d, permissionID=%d, expires_at=%d", 
+		logger.Warn(ctx, "Permission assignment failed: expires_at is in the past: userID=%d, permissionID=%d, expires_at=%d",
 			req.UserId, req.PermissionId, *req.ExpiresAt)
 		return nil, status.Error(codes.InvalidArgument, "expires_at must be in the future")
 	}
@@ -169,12 +169,12 @@ func (s *Service) AssignPermissionToUser(ctx context.Context, req *openauth_v1.A
 	// Assign permission to user
 	userPermission, err := s.repo.AssignPermissionToUser(ctx, req.UserId, req.PermissionId, claims.UserID, req.ExpiresAt)
 	if err != nil {
-		logger.Error(ctx, "Failed to assign permission to user: userID=%d, permissionID=%d, grantedBy=%d: %v", 
+		logger.Error(ctx, "Failed to assign permission to user: userID=%d, permissionID=%d, grantedBy=%d: %v",
 			req.UserId, req.PermissionId, claims.UserID, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to assign permission to user: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully assigned to user: userID=%d, permissionID=%d, grantedBy=%d", 
+	logger.Info(ctx, "Permission successfully assigned to user: userID=%d, permissionID=%d, grantedBy=%d",
 		req.UserId, req.PermissionId, claims.UserID)
 
 	return &openauth_v1.AssignPermissionToUserResponse{
@@ -186,7 +186,7 @@ func (s *Service) AssignPermissionToUser(ctx context.Context, req *openauth_v1.A
 // RemovePermissionFromUser removes a permission directly assigned to a user
 func (s *Service) RemovePermissionFromUser(ctx context.Context, req *openauth_v1.RemovePermissionFromUserRequest) (*openauth_v1.RemovePermissionFromUserResponse, error) {
 	logger.Info(ctx, "Permission removal from user requested: userID=%d, permissionID=%d", req.UserId, req.PermissionId)
-	
+
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -209,12 +209,12 @@ func (s *Service) RemovePermissionFromUser(ctx context.Context, req *openauth_v1
 	// Remove permission from user
 	err = s.repo.RemovePermissionFromUser(ctx, req.UserId, req.PermissionId)
 	if err != nil {
-		logger.Error(ctx, "Failed to remove permission from user: userID=%d, permissionID=%d: %v", 
+		logger.Error(ctx, "Failed to remove permission from user: userID=%d, permissionID=%d: %v",
 			req.UserId, req.PermissionId, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to remove permission from user: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully removed from user: userID=%d, permissionID=%d", 
+	logger.Info(ctx, "Permission successfully removed from user: userID=%d, permissionID=%d",
 		req.UserId, req.PermissionId)
 
 	return &openauth_v1.RemovePermissionFromUserResponse{
@@ -226,7 +226,7 @@ func (s *Service) RemovePermissionFromUser(ctx context.Context, req *openauth_v1
 // ListUserPermissions retrieves permissions directly assigned to a user
 func (s *Service) ListUserPermissions(ctx context.Context, req *openauth_v1.ListUserPermissionsRequest) (*openauth_v1.ListUserPermissionsResponse, error) {
 	logger.Debug(ctx, "List user permissions requested: userID=%d", req.UserId)
-	
+
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -268,7 +268,7 @@ func (s *Service) ListUserPermissions(ctx context.Context, req *openauth_v1.List
 // GetUserEffectivePermissions retrieves all effective permissions for a user
 func (s *Service) GetUserEffectivePermissions(ctx context.Context, req *openauth_v1.GetUserEffectivePermissionsRequest) (*openauth_v1.GetUserEffectivePermissionsResponse, error) {
 	logger.Debug(ctx, "Get user effective permissions requested: userID=%d", req.UserId)
-	
+
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {

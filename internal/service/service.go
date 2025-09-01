@@ -138,7 +138,7 @@ type Repository interface {
 	CheckGroupNameExists(ctx context.Context, name string) (bool, error)
 
 	// Group membership methods
-	AssignUserToGroup(ctx context.Context, userID, groupID int64, assignedBy *int64, expiresAt *int64) error
+	AssignUserToGroup(ctx context.Context, userID, groupID int64, assignedBy int64, expiresAt *int64) error
 	RemoveUserFromGroup(ctx context.Context, userID, groupID int64) error
 	ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, error)
 	ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, error)
