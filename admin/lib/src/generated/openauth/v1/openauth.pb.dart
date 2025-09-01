@@ -10,121 +10,188 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../../common/ping.pb.dart' as $0;
-import 'permissions.pb.dart' as $1;
-import 'users.pb.dart' as $2;
+import '../../common/ping.pb.dart' as $2;
+import 'permissions.pb.dart' as $3;
+import 'groups.pb.dart' as $4;
+import 'permission_assignments.pb.dart' as $5;
+import 'users.pb.dart' as $1;
+import 'sessions.pb.dart' as $6;
 
 class OpenAuthApi {
   $pb.RpcClient _client;
   OpenAuthApi(this._client);
 
-  $async.Future<$0.PingResponse> ping($pb.ClientContext? ctx, $0.PingRequest request) {
-    var emptyResponse = $0.PingResponse();
-    return _client.invoke<$0.PingResponse>(ctx, 'OpenAuth', 'Ping', request, emptyResponse);
+  $async.Future<$2.PingResponse> ping($pb.ClientContext? ctx, $2.PingRequest request) {
+    var emptyResponse = $2.PingResponse();
+    return _client.invoke<$2.PingResponse>(ctx, 'OpenAuth', 'Ping', request, emptyResponse);
   }
-  $async.Future<$1.Permission> createPermission($pb.ClientContext? ctx, $1.CreatePermissionRequest request) {
-    var emptyResponse = $1.Permission();
-    return _client.invoke<$1.Permission>(ctx, 'OpenAuth', 'CreatePermission', request, emptyResponse);
+  $async.Future<$3.Permission> createPermission($pb.ClientContext? ctx, $3.CreatePermissionRequest request) {
+    var emptyResponse = $3.Permission();
+    return _client.invoke<$3.Permission>(ctx, 'OpenAuth', 'CreatePermission', request, emptyResponse);
   }
-  $async.Future<$1.Permission> getPermission($pb.ClientContext? ctx, $1.GetPermissionRequest request) {
-    var emptyResponse = $1.Permission();
-    return _client.invoke<$1.Permission>(ctx, 'OpenAuth', 'GetPermission', request, emptyResponse);
+  $async.Future<$3.Permission> getPermission($pb.ClientContext? ctx, $3.GetPermissionRequest request) {
+    var emptyResponse = $3.Permission();
+    return _client.invoke<$3.Permission>(ctx, 'OpenAuth', 'GetPermission', request, emptyResponse);
   }
-  $async.Future<$1.ListPermissionsResponse> listPermissions($pb.ClientContext? ctx, $1.ListPermissionsRequest request) {
-    var emptyResponse = $1.ListPermissionsResponse();
-    return _client.invoke<$1.ListPermissionsResponse>(ctx, 'OpenAuth', 'ListPermissions', request, emptyResponse);
+  $async.Future<$3.ListPermissionsResponse> listPermissions($pb.ClientContext? ctx, $3.ListPermissionsRequest request) {
+    var emptyResponse = $3.ListPermissionsResponse();
+    return _client.invoke<$3.ListPermissionsResponse>(ctx, 'OpenAuth', 'ListPermissions', request, emptyResponse);
   }
-  $async.Future<$1.Permission> updatePermission($pb.ClientContext? ctx, $1.UpdatePermissionRequest request) {
-    var emptyResponse = $1.Permission();
-    return _client.invoke<$1.Permission>(ctx, 'OpenAuth', 'UpdatePermission', request, emptyResponse);
+  $async.Future<$3.Permission> updatePermission($pb.ClientContext? ctx, $3.UpdatePermissionRequest request) {
+    var emptyResponse = $3.Permission();
+    return _client.invoke<$3.Permission>(ctx, 'OpenAuth', 'UpdatePermission', request, emptyResponse);
   }
-  $async.Future<$1.DeletePermissionResponse> deletePermission($pb.ClientContext? ctx, $1.DeletePermissionRequest request) {
-    var emptyResponse = $1.DeletePermissionResponse();
-    return _client.invoke<$1.DeletePermissionResponse>(ctx, 'OpenAuth', 'DeletePermission', request, emptyResponse);
+  $async.Future<$3.DeletePermissionResponse> deletePermission($pb.ClientContext? ctx, $3.DeletePermissionRequest request) {
+    var emptyResponse = $3.DeletePermissionResponse();
+    return _client.invoke<$3.DeletePermissionResponse>(ctx, 'OpenAuth', 'DeletePermission', request, emptyResponse);
   }
-  $async.Future<$2.SignUpResponse> signUp($pb.ClientContext? ctx, $2.SignUpRequest request) {
-    var emptyResponse = $2.SignUpResponse();
-    return _client.invoke<$2.SignUpResponse>(ctx, 'OpenAuth', 'SignUp', request, emptyResponse);
+  $async.Future<$4.CreateGroupResponse> createGroup($pb.ClientContext? ctx, $4.CreateGroupRequest request) {
+    var emptyResponse = $4.CreateGroupResponse();
+    return _client.invoke<$4.CreateGroupResponse>(ctx, 'OpenAuth', 'CreateGroup', request, emptyResponse);
   }
-  $async.Future<$2.VerificationResponse> verifyEmail($pb.ClientContext? ctx, $2.VerifyEmailRequest request) {
-    var emptyResponse = $2.VerificationResponse();
-    return _client.invoke<$2.VerificationResponse>(ctx, 'OpenAuth', 'VerifyEmail', request, emptyResponse);
+  $async.Future<$4.GetGroupResponse> getGroup($pb.ClientContext? ctx, $4.GetGroupRequest request) {
+    var emptyResponse = $4.GetGroupResponse();
+    return _client.invoke<$4.GetGroupResponse>(ctx, 'OpenAuth', 'GetGroup', request, emptyResponse);
   }
-  $async.Future<$2.VerificationResponse> verifyPhone($pb.ClientContext? ctx, $2.VerifyPhoneRequest request) {
-    var emptyResponse = $2.VerificationResponse();
-    return _client.invoke<$2.VerificationResponse>(ctx, 'OpenAuth', 'VerifyPhone', request, emptyResponse);
+  $async.Future<$4.ListGroupsResponse> listGroups($pb.ClientContext? ctx, $4.ListGroupsRequest request) {
+    var emptyResponse = $4.ListGroupsResponse();
+    return _client.invoke<$4.ListGroupsResponse>(ctx, 'OpenAuth', 'ListGroups', request, emptyResponse);
   }
-  $async.Future<$2.ResendVerificationResponse> resendVerification($pb.ClientContext? ctx, $2.ResendVerificationRequest request) {
-    var emptyResponse = $2.ResendVerificationResponse();
-    return _client.invoke<$2.ResendVerificationResponse>(ctx, 'OpenAuth', 'ResendVerification', request, emptyResponse);
+  $async.Future<$4.UpdateGroupResponse> updateGroup($pb.ClientContext? ctx, $4.UpdateGroupRequest request) {
+    var emptyResponse = $4.UpdateGroupResponse();
+    return _client.invoke<$4.UpdateGroupResponse>(ctx, 'OpenAuth', 'UpdateGroup', request, emptyResponse);
   }
-  $async.Future<$2.CheckUsernameResponse> checkUsername($pb.ClientContext? ctx, $2.CheckUsernameRequest request) {
-    var emptyResponse = $2.CheckUsernameResponse();
-    return _client.invoke<$2.CheckUsernameResponse>(ctx, 'OpenAuth', 'CheckUsername', request, emptyResponse);
+  $async.Future<$4.DeleteGroupResponse> deleteGroup($pb.ClientContext? ctx, $4.DeleteGroupRequest request) {
+    var emptyResponse = $4.DeleteGroupResponse();
+    return _client.invoke<$4.DeleteGroupResponse>(ctx, 'OpenAuth', 'DeleteGroup', request, emptyResponse);
   }
-  $async.Future<$2.CheckEmailResponse> checkEmail($pb.ClientContext? ctx, $2.CheckEmailRequest request) {
-    var emptyResponse = $2.CheckEmailResponse();
-    return _client.invoke<$2.CheckEmailResponse>(ctx, 'OpenAuth', 'CheckEmail', request, emptyResponse);
+  $async.Future<$4.AssignUserToGroupResponse> assignUserToGroup($pb.ClientContext? ctx, $4.AssignUserToGroupRequest request) {
+    var emptyResponse = $4.AssignUserToGroupResponse();
+    return _client.invoke<$4.AssignUserToGroupResponse>(ctx, 'OpenAuth', 'AssignUserToGroup', request, emptyResponse);
   }
-  $async.Future<$2.GetUserResponse> getUser($pb.ClientContext? ctx, $2.GetUserRequest request) {
-    var emptyResponse = $2.GetUserResponse();
-    return _client.invoke<$2.GetUserResponse>(ctx, 'OpenAuth', 'GetUser', request, emptyResponse);
+  $async.Future<$4.RemoveUserFromGroupResponse> removeUserFromGroup($pb.ClientContext? ctx, $4.RemoveUserFromGroupRequest request) {
+    var emptyResponse = $4.RemoveUserFromGroupResponse();
+    return _client.invoke<$4.RemoveUserFromGroupResponse>(ctx, 'OpenAuth', 'RemoveUserFromGroup', request, emptyResponse);
   }
-  $async.Future<$2.UpdateUserResponse> updateUser($pb.ClientContext? ctx, $2.UpdateUserRequest request) {
-    var emptyResponse = $2.UpdateUserResponse();
-    return _client.invoke<$2.UpdateUserResponse>(ctx, 'OpenAuth', 'UpdateUser', request, emptyResponse);
+  $async.Future<$4.ListGroupUsersResponse> listGroupUsers($pb.ClientContext? ctx, $4.ListGroupUsersRequest request) {
+    var emptyResponse = $4.ListGroupUsersResponse();
+    return _client.invoke<$4.ListGroupUsersResponse>(ctx, 'OpenAuth', 'ListGroupUsers', request, emptyResponse);
   }
-  $async.Future<$2.ChangePasswordResponse> changePassword($pb.ClientContext? ctx, $2.ChangePasswordRequest request) {
-    var emptyResponse = $2.ChangePasswordResponse();
-    return _client.invoke<$2.ChangePasswordResponse>(ctx, 'OpenAuth', 'ChangePassword', request, emptyResponse);
+  $async.Future<$4.ListUserGroupsResponse> listUserGroups($pb.ClientContext? ctx, $4.ListUserGroupsRequest request) {
+    var emptyResponse = $4.ListUserGroupsResponse();
+    return _client.invoke<$4.ListUserGroupsResponse>(ctx, 'OpenAuth', 'ListUserGroups', request, emptyResponse);
   }
-  $async.Future<$2.ListUsersResponse> listUsers($pb.ClientContext? ctx, $2.ListUsersRequest request) {
-    var emptyResponse = $2.ListUsersResponse();
-    return _client.invoke<$2.ListUsersResponse>(ctx, 'OpenAuth', 'ListUsers', request, emptyResponse);
+  $async.Future<$5.AssignPermissionToGroupResponse> assignPermissionToGroup($pb.ClientContext? ctx, $5.AssignPermissionToGroupRequest request) {
+    var emptyResponse = $5.AssignPermissionToGroupResponse();
+    return _client.invoke<$5.AssignPermissionToGroupResponse>(ctx, 'OpenAuth', 'AssignPermissionToGroup', request, emptyResponse);
   }
-  $async.Future<$2.DeleteUserResponse> deleteUser($pb.ClientContext? ctx, $2.DeleteUserRequest request) {
-    var emptyResponse = $2.DeleteUserResponse();
-    return _client.invoke<$2.DeleteUserResponse>(ctx, 'OpenAuth', 'DeleteUser', request, emptyResponse);
+  $async.Future<$5.RemovePermissionFromGroupResponse> removePermissionFromGroup($pb.ClientContext? ctx, $5.RemovePermissionFromGroupRequest request) {
+    var emptyResponse = $5.RemovePermissionFromGroupResponse();
+    return _client.invoke<$5.RemovePermissionFromGroupResponse>(ctx, 'OpenAuth', 'RemovePermissionFromGroup', request, emptyResponse);
   }
-  $async.Future<$2.CreateProfileResponse> createProfile($pb.ClientContext? ctx, $2.CreateProfileRequest request) {
-    var emptyResponse = $2.CreateProfileResponse();
-    return _client.invoke<$2.CreateProfileResponse>(ctx, 'OpenAuth', 'CreateProfile', request, emptyResponse);
+  $async.Future<$5.ListGroupPermissionsResponse> listGroupPermissions($pb.ClientContext? ctx, $5.ListGroupPermissionsRequest request) {
+    var emptyResponse = $5.ListGroupPermissionsResponse();
+    return _client.invoke<$5.ListGroupPermissionsResponse>(ctx, 'OpenAuth', 'ListGroupPermissions', request, emptyResponse);
   }
-  $async.Future<$2.ListUserProfilesResponse> listUserProfiles($pb.ClientContext? ctx, $2.ListUserProfilesRequest request) {
-    var emptyResponse = $2.ListUserProfilesResponse();
-    return _client.invoke<$2.ListUserProfilesResponse>(ctx, 'OpenAuth', 'ListUserProfiles', request, emptyResponse);
+  $async.Future<$5.AssignPermissionToUserResponse> assignPermissionToUser($pb.ClientContext? ctx, $5.AssignPermissionToUserRequest request) {
+    var emptyResponse = $5.AssignPermissionToUserResponse();
+    return _client.invoke<$5.AssignPermissionToUserResponse>(ctx, 'OpenAuth', 'AssignPermissionToUser', request, emptyResponse);
   }
-  $async.Future<$2.UpdateProfileResponse> updateProfile($pb.ClientContext? ctx, $2.UpdateProfileRequest request) {
-    var emptyResponse = $2.UpdateProfileResponse();
-    return _client.invoke<$2.UpdateProfileResponse>(ctx, 'OpenAuth', 'UpdateProfile', request, emptyResponse);
+  $async.Future<$5.RemovePermissionFromUserResponse> removePermissionFromUser($pb.ClientContext? ctx, $5.RemovePermissionFromUserRequest request) {
+    var emptyResponse = $5.RemovePermissionFromUserResponse();
+    return _client.invoke<$5.RemovePermissionFromUserResponse>(ctx, 'OpenAuth', 'RemovePermissionFromUser', request, emptyResponse);
   }
-  $async.Future<$2.DeleteProfileResponse> deleteProfile($pb.ClientContext? ctx, $2.DeleteProfileRequest request) {
-    var emptyResponse = $2.DeleteProfileResponse();
-    return _client.invoke<$2.DeleteProfileResponse>(ctx, 'OpenAuth', 'DeleteProfile', request, emptyResponse);
+  $async.Future<$5.ListUserPermissionsResponse> listUserPermissions($pb.ClientContext? ctx, $5.ListUserPermissionsRequest request) {
+    var emptyResponse = $5.ListUserPermissionsResponse();
+    return _client.invoke<$5.ListUserPermissionsResponse>(ctx, 'OpenAuth', 'ListUserPermissions', request, emptyResponse);
   }
-  $async.Future<$2.SignInResponse> signIn($pb.ClientContext? ctx, $2.SignInRequest request) {
-    var emptyResponse = $2.SignInResponse();
-    return _client.invoke<$2.SignInResponse>(ctx, 'OpenAuth', 'SignIn', request, emptyResponse);
+  $async.Future<$5.GetUserEffectivePermissionsResponse> getUserEffectivePermissions($pb.ClientContext? ctx, $5.GetUserEffectivePermissionsRequest request) {
+    var emptyResponse = $5.GetUserEffectivePermissionsResponse();
+    return _client.invoke<$5.GetUserEffectivePermissionsResponse>(ctx, 'OpenAuth', 'GetUserEffectivePermissions', request, emptyResponse);
   }
-  $async.Future<$2.RefreshTokenResponse> refreshToken($pb.ClientContext? ctx, $2.RefreshTokenRequest request) {
-    var emptyResponse = $2.RefreshTokenResponse();
-    return _client.invoke<$2.RefreshTokenResponse>(ctx, 'OpenAuth', 'RefreshToken', request, emptyResponse);
+  $async.Future<$1.SignUpResponse> signUp($pb.ClientContext? ctx, $1.SignUpRequest request) {
+    var emptyResponse = $1.SignUpResponse();
+    return _client.invoke<$1.SignUpResponse>(ctx, 'OpenAuth', 'SignUp', request, emptyResponse);
   }
-  $async.Future<$2.LogoutResponse> logout($pb.ClientContext? ctx, $2.LogoutRequest request) {
-    var emptyResponse = $2.LogoutResponse();
-    return _client.invoke<$2.LogoutResponse>(ctx, 'OpenAuth', 'Logout', request, emptyResponse);
+  $async.Future<$1.VerificationResponse> verifyEmail($pb.ClientContext? ctx, $1.VerifyEmailRequest request) {
+    var emptyResponse = $1.VerificationResponse();
+    return _client.invoke<$1.VerificationResponse>(ctx, 'OpenAuth', 'VerifyEmail', request, emptyResponse);
   }
-  $async.Future<$2.ValidateTokenResponse> validateToken($pb.ClientContext? ctx, $2.ValidateTokenRequest request) {
-    var emptyResponse = $2.ValidateTokenResponse();
-    return _client.invoke<$2.ValidateTokenResponse>(ctx, 'OpenAuth', 'ValidateToken', request, emptyResponse);
+  $async.Future<$1.VerificationResponse> verifyPhone($pb.ClientContext? ctx, $1.VerifyPhoneRequest request) {
+    var emptyResponse = $1.VerificationResponse();
+    return _client.invoke<$1.VerificationResponse>(ctx, 'OpenAuth', 'VerifyPhone', request, emptyResponse);
   }
-  $async.Future<$2.ListUserSessionsResponse> listUserSessions($pb.ClientContext? ctx, $2.ListUserSessionsRequest request) {
-    var emptyResponse = $2.ListUserSessionsResponse();
-    return _client.invoke<$2.ListUserSessionsResponse>(ctx, 'OpenAuth', 'ListUserSessions', request, emptyResponse);
+  $async.Future<$1.SendVerificationCodeResponse> resendVerification($pb.ClientContext? ctx, $1.SendVerificationCodeRequest request) {
+    var emptyResponse = $1.SendVerificationCodeResponse();
+    return _client.invoke<$1.SendVerificationCodeResponse>(ctx, 'OpenAuth', 'ResendVerification', request, emptyResponse);
   }
-  $async.Future<$2.TerminateSessionResponse> terminateSession($pb.ClientContext? ctx, $2.TerminateSessionRequest request) {
-    var emptyResponse = $2.TerminateSessionResponse();
-    return _client.invoke<$2.TerminateSessionResponse>(ctx, 'OpenAuth', 'TerminateSession', request, emptyResponse);
+  $async.Future<$1.CheckUsernameResponse> checkUsername($pb.ClientContext? ctx, $1.CheckUsernameRequest request) {
+    var emptyResponse = $1.CheckUsernameResponse();
+    return _client.invoke<$1.CheckUsernameResponse>(ctx, 'OpenAuth', 'CheckUsername', request, emptyResponse);
+  }
+  $async.Future<$1.CheckEmailResponse> checkEmail($pb.ClientContext? ctx, $1.CheckEmailRequest request) {
+    var emptyResponse = $1.CheckEmailResponse();
+    return _client.invoke<$1.CheckEmailResponse>(ctx, 'OpenAuth', 'CheckEmail', request, emptyResponse);
+  }
+  $async.Future<$1.GetUserResponse> getUser($pb.ClientContext? ctx, $1.GetUserRequest request) {
+    var emptyResponse = $1.GetUserResponse();
+    return _client.invoke<$1.GetUserResponse>(ctx, 'OpenAuth', 'GetUser', request, emptyResponse);
+  }
+  $async.Future<$1.UpdateUserResponse> updateUser($pb.ClientContext? ctx, $1.UpdateUserRequest request) {
+    var emptyResponse = $1.UpdateUserResponse();
+    return _client.invoke<$1.UpdateUserResponse>(ctx, 'OpenAuth', 'UpdateUser', request, emptyResponse);
+  }
+  $async.Future<$1.ChangePasswordResponse> changePassword($pb.ClientContext? ctx, $1.ChangePasswordRequest request) {
+    var emptyResponse = $1.ChangePasswordResponse();
+    return _client.invoke<$1.ChangePasswordResponse>(ctx, 'OpenAuth', 'ChangePassword', request, emptyResponse);
+  }
+  $async.Future<$1.ListUsersResponse> listUsers($pb.ClientContext? ctx, $1.ListUsersRequest request) {
+    var emptyResponse = $1.ListUsersResponse();
+    return _client.invoke<$1.ListUsersResponse>(ctx, 'OpenAuth', 'ListUsers', request, emptyResponse);
+  }
+  $async.Future<$1.DeleteUserResponse> deleteUser($pb.ClientContext? ctx, $1.DeleteUserRequest request) {
+    var emptyResponse = $1.DeleteUserResponse();
+    return _client.invoke<$1.DeleteUserResponse>(ctx, 'OpenAuth', 'DeleteUser', request, emptyResponse);
+  }
+  $async.Future<$1.CreateProfileResponse> createProfile($pb.ClientContext? ctx, $1.CreateProfileRequest request) {
+    var emptyResponse = $1.CreateProfileResponse();
+    return _client.invoke<$1.CreateProfileResponse>(ctx, 'OpenAuth', 'CreateProfile', request, emptyResponse);
+  }
+  $async.Future<$1.ListUserProfilesResponse> listUserProfiles($pb.ClientContext? ctx, $1.ListUserProfilesRequest request) {
+    var emptyResponse = $1.ListUserProfilesResponse();
+    return _client.invoke<$1.ListUserProfilesResponse>(ctx, 'OpenAuth', 'ListUserProfiles', request, emptyResponse);
+  }
+  $async.Future<$1.UpdateProfileResponse> updateProfile($pb.ClientContext? ctx, $1.UpdateProfileRequest request) {
+    var emptyResponse = $1.UpdateProfileResponse();
+    return _client.invoke<$1.UpdateProfileResponse>(ctx, 'OpenAuth', 'UpdateProfile', request, emptyResponse);
+  }
+  $async.Future<$1.DeleteProfileResponse> deleteProfile($pb.ClientContext? ctx, $1.DeleteProfileRequest request) {
+    var emptyResponse = $1.DeleteProfileResponse();
+    return _client.invoke<$1.DeleteProfileResponse>(ctx, 'OpenAuth', 'DeleteProfile', request, emptyResponse);
+  }
+  $async.Future<$6.SignInResponse> signIn($pb.ClientContext? ctx, $6.SignInRequest request) {
+    var emptyResponse = $6.SignInResponse();
+    return _client.invoke<$6.SignInResponse>(ctx, 'OpenAuth', 'SignIn', request, emptyResponse);
+  }
+  $async.Future<$6.RefreshTokenResponse> refreshToken($pb.ClientContext? ctx, $6.RefreshTokenRequest request) {
+    var emptyResponse = $6.RefreshTokenResponse();
+    return _client.invoke<$6.RefreshTokenResponse>(ctx, 'OpenAuth', 'RefreshToken', request, emptyResponse);
+  }
+  $async.Future<$6.LogoutResponse> logout($pb.ClientContext? ctx, $6.LogoutRequest request) {
+    var emptyResponse = $6.LogoutResponse();
+    return _client.invoke<$6.LogoutResponse>(ctx, 'OpenAuth', 'Logout', request, emptyResponse);
+  }
+  $async.Future<$6.ValidateTokenResponse> validateToken($pb.ClientContext? ctx, $6.ValidateTokenRequest request) {
+    var emptyResponse = $6.ValidateTokenResponse();
+    return _client.invoke<$6.ValidateTokenResponse>(ctx, 'OpenAuth', 'ValidateToken', request, emptyResponse);
+  }
+  $async.Future<$6.ListUserSessionsResponse> listUserSessions($pb.ClientContext? ctx, $6.ListUserSessionsRequest request) {
+    var emptyResponse = $6.ListUserSessionsResponse();
+    return _client.invoke<$6.ListUserSessionsResponse>(ctx, 'OpenAuth', 'ListUserSessions', request, emptyResponse);
+  }
+  $async.Future<$6.TerminateSessionResponse> terminateSession($pb.ClientContext? ctx, $6.TerminateSessionRequest request) {
+    var emptyResponse = $6.TerminateSessionResponse();
+    return _client.invoke<$6.TerminateSessionResponse>(ctx, 'OpenAuth', 'TerminateSession', request, emptyResponse);
   }
 }
 

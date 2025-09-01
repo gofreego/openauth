@@ -925,6 +925,29 @@
         ]
       }
     },
+    "/openauth/v1/stats": {
+      "get": {
+        "summary": "Stats provides system statistics including user counts, permission counts, etc.",
+        "operationId": "OpenAuth_Stats",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1StatsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/users": {
       "get": {
         "summary": "ListUsers retrieves users with filtering, sorting, and pagination.",
@@ -2937,6 +2960,32 @@
         "DESC"
       ],
       "default": "NONE"
+    },
+    "v1StatsResponse": {
+      "type": "object",
+      "properties": {
+        "totalUsers": {
+          "type": "string",
+          "format": "int64",
+          "title": "Total number of users in the system"
+        },
+        "totalPermissions": {
+          "type": "string",
+          "format": "int64",
+          "title": "Total number of permissions in the system"
+        },
+        "totalGroups": {
+          "type": "string",
+          "format": "int64",
+          "title": "Total number of groups in the system"
+        },
+        "activeUsers": {
+          "type": "string",
+          "format": "int64",
+          "title": "Number of currently active users (users with active sessions)"
+        }
+      },
+      "title": "StatsResponse contains system statistics"
     },
     "v1TerminateSessionResponse": {
       "type": "object",

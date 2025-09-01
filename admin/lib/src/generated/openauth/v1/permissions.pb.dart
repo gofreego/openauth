@@ -16,11 +16,9 @@ class Permission extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resource')
-    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'action')
-    ..aOB(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isSystem')
-    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
-    ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdBy')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
+    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
     ..hasRequiredFields = false
   ;
 
@@ -30,9 +28,7 @@ class Permission extends $pb.GeneratedMessage {
     $core.String? name,
     $core.String? displayName,
     $core.String? description,
-    $core.String? resource,
-    $core.String? action,
-    $core.bool? isSystem,
+    $fixnum.Int64? createdBy,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
   }) {
@@ -49,14 +45,8 @@ class Permission extends $pb.GeneratedMessage {
     if (description != null) {
       _result.description = description;
     }
-    if (resource != null) {
-      _result.resource = resource;
-    }
-    if (action != null) {
-      _result.action = action;
-    }
-    if (isSystem != null) {
-      _result.isSystem = isSystem;
+    if (createdBy != null) {
+      _result.createdBy = createdBy;
     }
     if (createdAt != null) {
       _result.createdAt = createdAt;
@@ -124,49 +114,31 @@ class Permission extends $pb.GeneratedMessage {
   void clearDescription() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.String get resource => $_getSZ(4);
+  $fixnum.Int64 get createdBy => $_getI64(4);
   @$pb.TagNumber(5)
-  set resource($core.String v) { $_setString(4, v); }
+  set createdBy($fixnum.Int64 v) { $_setInt64(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasResource() => $_has(4);
+  $core.bool hasCreatedBy() => $_has(4);
   @$pb.TagNumber(5)
-  void clearResource() => clearField(5);
+  void clearCreatedBy() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.String get action => $_getSZ(5);
+  $fixnum.Int64 get createdAt => $_getI64(5);
   @$pb.TagNumber(6)
-  set action($core.String v) { $_setString(5, v); }
+  set createdAt($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasAction() => $_has(5);
+  $core.bool hasCreatedAt() => $_has(5);
   @$pb.TagNumber(6)
-  void clearAction() => clearField(6);
+  void clearCreatedAt() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.bool get isSystem => $_getBF(6);
+  $fixnum.Int64 get updatedAt => $_getI64(6);
   @$pb.TagNumber(7)
-  set isSystem($core.bool v) { $_setBool(6, v); }
+  set updatedAt($fixnum.Int64 v) { $_setInt64(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasIsSystem() => $_has(6);
+  $core.bool hasUpdatedAt() => $_has(6);
   @$pb.TagNumber(7)
-  void clearIsSystem() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $fixnum.Int64 get createdAt => $_getI64(7);
-  @$pb.TagNumber(8)
-  set createdAt($fixnum.Int64 v) { $_setInt64(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasCreatedAt() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearCreatedAt() => clearField(8);
-
-  @$pb.TagNumber(9)
-  $fixnum.Int64 get updatedAt => $_getI64(8);
-  @$pb.TagNumber(9)
-  set updatedAt($fixnum.Int64 v) { $_setInt64(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasUpdatedAt() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearUpdatedAt() => clearField(9);
+  void clearUpdatedAt() => clearField(7);
 }
 
 class CreatePermissionRequest extends $pb.GeneratedMessage {
@@ -174,8 +146,6 @@ class CreatePermissionRequest extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resource')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'action')
     ..hasRequiredFields = false
   ;
 
@@ -184,8 +154,6 @@ class CreatePermissionRequest extends $pb.GeneratedMessage {
     $core.String? name,
     $core.String? displayName,
     $core.String? description,
-    $core.String? resource,
-    $core.String? action,
   }) {
     final _result = create();
     if (name != null) {
@@ -196,12 +164,6 @@ class CreatePermissionRequest extends $pb.GeneratedMessage {
     }
     if (description != null) {
       _result.description = description;
-    }
-    if (resource != null) {
-      _result.resource = resource;
-    }
-    if (action != null) {
-      _result.action = action;
     }
     return _result;
   }
@@ -252,24 +214,6 @@ class CreatePermissionRequest extends $pb.GeneratedMessage {
   $core.bool hasDescription() => $_has(2);
   @$pb.TagNumber(3)
   void clearDescription() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get resource => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set resource($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasResource() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearResource() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.String get action => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set action($core.String v) { $_setString(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasAction() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearAction() => clearField(5);
 }
 
 class GetPermissionRequest extends $pb.GeneratedMessage {
@@ -324,9 +268,6 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resource')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'action')
-    ..aOB(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isSystem')
     ..hasRequiredFields = false
   ;
 
@@ -335,9 +276,6 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
     $core.int? limit,
     $core.int? offset,
     $core.String? search,
-    $core.String? resource,
-    $core.String? action,
-    $core.bool? isSystem,
   }) {
     final _result = create();
     if (limit != null) {
@@ -348,15 +286,6 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
     }
     if (search != null) {
       _result.search = search;
-    }
-    if (resource != null) {
-      _result.resource = resource;
-    }
-    if (action != null) {
-      _result.action = action;
-    }
-    if (isSystem != null) {
-      _result.isSystem = isSystem;
     }
     return _result;
   }
@@ -407,68 +336,31 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
   $core.bool hasSearch() => $_has(2);
   @$pb.TagNumber(3)
   void clearSearch() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get resource => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set resource($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasResource() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearResource() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.String get action => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set action($core.String v) { $_setString(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasAction() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearAction() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.bool get isSystem => $_getBF(5);
-  @$pb.TagNumber(6)
-  set isSystem($core.bool v) { $_setBool(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasIsSystem() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearIsSystem() => clearField(6);
 }
 
 class ListPermissionsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListPermissionsResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..pc<Permission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.PM, subBuilder: Permission.create)
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalCount', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hasMore')
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
   ListPermissionsResponse._() : super();
   factory ListPermissionsResponse({
     $core.Iterable<Permission>? permissions,
-    $core.int? totalCount,
     $core.int? limit,
     $core.int? offset,
-    $core.bool? hasMore,
   }) {
     final _result = create();
     if (permissions != null) {
       _result.permissions.addAll(permissions);
-    }
-    if (totalCount != null) {
-      _result.totalCount = totalCount;
     }
     if (limit != null) {
       _result.limit = limit;
     }
     if (offset != null) {
       _result.offset = offset;
-    }
-    if (hasMore != null) {
-      _result.hasMore = hasMore;
     }
     return _result;
   }
@@ -497,40 +389,22 @@ class ListPermissionsResponse extends $pb.GeneratedMessage {
   $core.List<Permission> get permissions => $_getList(0);
 
   @$pb.TagNumber(2)
-  $core.int get totalCount => $_getIZ(1);
+  $core.int get limit => $_getIZ(1);
   @$pb.TagNumber(2)
-  set totalCount($core.int v) { $_setSignedInt32(1, v); }
+  set limit($core.int v) { $_setSignedInt32(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasTotalCount() => $_has(1);
+  $core.bool hasLimit() => $_has(1);
   @$pb.TagNumber(2)
-  void clearTotalCount() => clearField(2);
+  void clearLimit() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get limit => $_getIZ(2);
+  $core.int get offset => $_getIZ(2);
   @$pb.TagNumber(3)
-  set limit($core.int v) { $_setSignedInt32(2, v); }
+  set offset($core.int v) { $_setSignedInt32(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasLimit() => $_has(2);
+  $core.bool hasOffset() => $_has(2);
   @$pb.TagNumber(3)
-  void clearLimit() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.int get offset => $_getIZ(3);
-  @$pb.TagNumber(4)
-  set offset($core.int v) { $_setSignedInt32(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasOffset() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearOffset() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.bool get hasMore => $_getBF(4);
-  @$pb.TagNumber(5)
-  set hasMore($core.bool v) { $_setBool(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasHasMore() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearHasMore() => clearField(5);
+  void clearOffset() => clearField(3);
 }
 
 class UpdatePermissionRequest extends $pb.GeneratedMessage {
@@ -539,8 +413,6 @@ class UpdatePermissionRequest extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resource')
-    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'action')
     ..hasRequiredFields = false
   ;
 
@@ -550,8 +422,6 @@ class UpdatePermissionRequest extends $pb.GeneratedMessage {
     $core.String? name,
     $core.String? displayName,
     $core.String? description,
-    $core.String? resource,
-    $core.String? action,
   }) {
     final _result = create();
     if (id != null) {
@@ -565,12 +435,6 @@ class UpdatePermissionRequest extends $pb.GeneratedMessage {
     }
     if (description != null) {
       _result.description = description;
-    }
-    if (resource != null) {
-      _result.resource = resource;
-    }
-    if (action != null) {
-      _result.action = action;
     }
     return _result;
   }
@@ -630,24 +494,6 @@ class UpdatePermissionRequest extends $pb.GeneratedMessage {
   $core.bool hasDescription() => $_has(3);
   @$pb.TagNumber(4)
   void clearDescription() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.String get resource => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set resource($core.String v) { $_setString(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasResource() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearResource() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.String get action => $_getSZ(5);
-  @$pb.TagNumber(6)
-  set action($core.String v) { $_setString(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasAction() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearAction() => clearField(6);
 }
 
 class DeletePermissionRequest extends $pb.GeneratedMessage {

@@ -43,7 +43,7 @@ class UsersRepositoryImpl implements UsersRepository {
       final response = await remoteDataSource.getUser(userIdOrUuid);
       final userEntity = UserEntity(
         user: response.user,
-        profile: response.hasProfile() ? response.profile : null,
+        profile: response.profiles.isNotEmpty ? response.profiles.first : null,
       );
       return Right(userEntity);
     } on ServerException catch (e) {

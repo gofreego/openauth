@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../../shared/services/session_manager.dart';
-import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
 abstract class AuthState extends Equatable {
   const AuthState();

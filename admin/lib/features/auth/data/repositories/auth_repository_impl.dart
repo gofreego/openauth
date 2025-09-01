@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../shared/shared.dart';
-import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
 /// Implementation of AuthRepository using HTTP API calls
 class AuthRepositoryImpl implements AuthRepository {
@@ -34,10 +34,12 @@ class AuthRepositoryImpl implements AuthRepository {
       final request = pb.SignInRequest(
         username: username,
         password: password,
-        deviceId: deviceId ?? deviceSession['deviceId'],
-        deviceName: deviceName ?? deviceSession['deviceName'],
-        deviceType: deviceType ?? deviceSession['deviceType'],
         rememberMe: rememberMe,
+        metadata: pb.SignInMetadata(
+          deviceId: deviceId ?? deviceSession['deviceId'],
+          deviceName: deviceName ?? deviceSession['deviceName'],
+          deviceType: deviceType ?? deviceSession['deviceType'],
+        ),
       );
 
       final response = await _httpClient.post<Map<String, dynamic>>(

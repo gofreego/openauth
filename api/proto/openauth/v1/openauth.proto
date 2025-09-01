@@ -10,6 +10,7 @@ import "proto/openauth/v1/users.proto";
 import "proto/openauth/v1/groups.proto";
 import "proto/openauth/v1/sessions.proto";
 import "proto/openauth/v1/permission_assignments.proto";
+import "proto/openauth/v1/stats.proto";
 
 // OpenAuth service provides authentication and authorization functionality
 // including user management, permissions, groups, and session management.
@@ -19,6 +20,13 @@ service OpenAuth {
     rpc Ping (PingRequest) returns (PingResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/ping"
+        };
+    }
+
+    // Stats provides system statistics including user counts, permission counts, etc.
+    rpc Stats (StatsRequest) returns (StatsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/stats"
         };
     }
 

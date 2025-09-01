@@ -4,7 +4,7 @@ import 'dart:async';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 import 'auth_event.dart';
 import 'auth_state.dart';
 

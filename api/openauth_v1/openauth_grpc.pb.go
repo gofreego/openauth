@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	OpenAuth_Ping_FullMethodName                        = "/v1.OpenAuth/Ping"
+	OpenAuth_Stats_FullMethodName                       = "/v1.OpenAuth/Stats"
 	OpenAuth_CreatePermission_FullMethodName            = "/v1.OpenAuth/CreatePermission"
 	OpenAuth_GetPermission_FullMethodName               = "/v1.OpenAuth/GetPermission"
 	OpenAuth_ListPermissions_FullMethodName             = "/v1.OpenAuth/ListPermissions"
@@ -73,6 +74,8 @@ const (
 type OpenAuthClient interface {
 	// Ping is a simple health check endpoint to verify service availability
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	// Stats provides system statistics including user counts, permission counts, etc.
+	Stats(ctx context.Context, in *StatsRequest, opts ...grpc.CallOption) (*StatsResponse, error)
 	// CreatePermission creates a new permission in the system.
 	//
 	// Permissions follow the pattern: resource.action (e.g., "users.create")
@@ -342,6 +345,16 @@ func (c *openAuthClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PingResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_Ping_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) Stats(ctx context.Context, in *StatsRequest, opts ...grpc.CallOption) (*StatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StatsResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_Stats_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -777,6 +790,8 @@ func (c *openAuthClient) TerminateSession(ctx context.Context, in *TerminateSess
 type OpenAuthServer interface {
 	// Ping is a simple health check endpoint to verify service availability
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	// Stats provides system statistics including user counts, permission counts, etc.
+	Stats(context.Context, *StatsRequest) (*StatsResponse, error)
 	// CreatePermission creates a new permission in the system.
 	//
 	// Permissions follow the pattern: resource.action (e.g., "users.create")
@@ -1045,6 +1060,9 @@ type UnimplementedOpenAuthServer struct{}
 func (UnimplementedOpenAuthServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
+func (UnimplementedOpenAuthServer) Stats(context.Context, *StatsRequest) (*StatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Stats not implemented")
+}
 func (UnimplementedOpenAuthServer) CreatePermission(context.Context, *CreatePermissionRequest) (*Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePermission not implemented")
 }
@@ -1206,6 +1224,24 @@ func _OpenAuth_Ping_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OpenAuthServer).Ping(ctx, req.(*PingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_Stats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).Stats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_Stats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).Stats(ctx, req.(*StatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1976,6 +2012,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _OpenAuth_Ping_Handler,
+		},
+		{
+			MethodName: "Stats",
+			Handler:    _OpenAuth_Stats_Handler,
 		},
 		{
 			MethodName: "CreatePermission",

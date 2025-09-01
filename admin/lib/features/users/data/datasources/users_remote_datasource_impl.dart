@@ -235,57 +235,6 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   }
 
   // Mock data methods for development
-  pb.ListUsersResponse _createMockListUsersResponse() {
-    final mockUsers = [
-      _createMockUser(
-        id: 1,
-        uuid: 'user-1-uuid',
-        username: 'johndoe',
-        email: 'john.doe@example.com',
-        isActive: true,
-        lastLoginAt: DateTime.now().subtract(const Duration(hours: 2)),
-      ),
-      _createMockUser(
-        id: 2,
-        uuid: 'user-2-uuid',
-        username: 'janesmith',
-        email: 'jane.smith@example.com',
-        isActive: true,
-        lastLoginAt: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      _createMockUser(
-        id: 3,
-        uuid: 'user-3-uuid',
-        username: 'bobjohnson',
-        email: 'bob.johnson@example.com',
-        isActive: false,
-        lastLoginAt: DateTime.now().subtract(const Duration(days: 7)),
-      ),
-      _createMockUser(
-        id: 4,
-        uuid: 'user-4-uuid',
-        username: 'alicewilson',
-        email: 'alice.wilson@example.com',
-        isActive: true,
-        lastLoginAt: DateTime.now().subtract(const Duration(minutes: 5)),
-      ),
-      _createMockUser(
-        id: 5,
-        uuid: 'user-5-uuid',
-        username: 'charliebrown',
-        email: 'charlie.brown@example.com',
-        isActive: true,
-        lastLoginAt: DateTime.now().subtract(const Duration(days: 3)),
-      ),
-    ];
-
-    return pb.ListUsersResponse()
-      ..users.addAll(mockUsers)
-      ..totalCount = mockUsers.length
-      ..limit = 50
-      ..offset = 0
-      ..hasMore = false;
-  }
 
   pb.GetUserResponse _createMockGetUserResponse(String userIdOrUuid) {
     final user = _createMockUser(
@@ -312,7 +261,7 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
 
     return pb.GetUserResponse()
       ..user = user
-      ..profile = profile;
+      ..profiles.add(profile);
   }
 
   pb.SignUpResponse _createMockSignUpResponse(pb.SignUpRequest request) {

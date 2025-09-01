@@ -1,4 +1,4 @@
-import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
 /// Repository interface for authentication operations
 abstract class AuthRepository {

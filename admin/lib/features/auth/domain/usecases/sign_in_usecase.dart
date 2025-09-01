@@ -1,7 +1,7 @@
 import '../repositories/auth_repository.dart';
 import '../../../../shared/utils/login_validators.dart';
 import '../../../../shared/utils/device_utils.dart';
-import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
 /// Use case for user sign in
 class SignInUseCase {

@@ -155,6 +155,12 @@ type Repository interface {
 	ListUserPermissions(ctx context.Context, filters *filter.UserPermissionFilter) ([]*dao.UserPermission, error)
 	GetUserEffectivePermissions(ctx context.Context, filters *filter.UserEffectivePermissionFilter) ([]*dao.Permission, error)
 	IsPermissionAssignedToUser(ctx context.Context, userID, permissionID int64) (bool, error)
+
+	// Stats methods
+	GetTotalUsers(ctx context.Context) (int64, error)
+	GetTotalPermissions(ctx context.Context) (int64, error)
+	GetTotalGroups(ctx context.Context) (int64, error)
+	GetActiveUsers(ctx context.Context) (int64, error)
 }
 
 type Service struct {

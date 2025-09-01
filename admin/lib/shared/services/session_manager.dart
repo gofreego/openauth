@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/device_utils.dart';
-import '../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../src/generated/openauth/v1/sessions.pb.dart' as pb_sessions;
+import '../../src/generated/openauth/v1/users.pb.dart' as pb_users;
 
 /// Enhanced session manager with device tracking and security features
 class SessionManager {
@@ -20,7 +21,7 @@ class SessionManager {
 
   /// Create a new authentication session
   Future<void> createSession({
-    required pb.SignInResponse signInResponse,
+    required pb_sessions.SignInResponse signInResponse,
     required String identifier,
     bool rememberMe = false,
   }) async {
@@ -83,7 +84,7 @@ class SessionManager {
   }
 
   /// Update authentication tokens
-  Future<void> updateAuthTokens(pb.RefreshTokenResponse refreshResponse) async {
+  Future<void> updateAuthTokens(pb_sessions.RefreshTokenResponse refreshResponse) async {
     await _prefs.setString(_accessTokenKey, refreshResponse.accessToken);
     
     if (refreshResponse.hasRefreshToken()) {
@@ -100,12 +101,12 @@ class SessionManager {
   }
 
   /// Get stored user data
-  Future<pb.User?> getUserData() async {
+  Future<pb_users.User?> getUserData() async {
     try {
       final userData = _prefs.getString(_userDataKey);
       if (userData != null) {
         final jsonData = jsonDecode(userData) as Map<String, dynamic>;
-        return pb.User()..mergeFromProto3Json(jsonData);
+        return pb_users.User()..mergeFromProto3Json(jsonData);
       }
       return null;
     } catch (e) {
@@ -114,7 +115,7 @@ class SessionManager {
   }
 
   /// Update stored user data
-  Future<void> updateUserData(pb.User user) async {
+  Future<void> updateUserData(pb_users.User user) async {
     final jsonData = user.writeToJson();
     await _prefs.setString(_userDataKey, jsonData);
   }
@@ -232,7 +233,7 @@ class SessionManager {
 
   /// Private helper methods
 
-  Future<void> _storeAuthTokens(pb.SignInResponse response) async {
+  Future<void> _storeAuthTokens(pb_sessions.SignInResponse response) async {
     await _prefs.setString(_accessTokenKey, response.accessToken);
     await _prefs.setString(_refreshTokenKey, response.refreshToken);
     
@@ -241,7 +242,7 @@ class SessionManager {
     }
   }
 
-  Future<void> _storeUserData(pb.User user) async {
+  Future<void> _storeUserData(pb_users.User user) async {
     final jsonData = user.writeToJson();
     await _prefs.setString(_userDataKey, jsonData);
   }

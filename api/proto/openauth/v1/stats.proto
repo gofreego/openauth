@@ -1,0 +1,24 @@
+syntax = "proto3";
+package v1;
+
+option go_package = "./openauth_v1";
+
+// StatsRequest represents a request for system statistics
+message StatsRequest {
+    // No parameters required for basic stats
+}
+
+// StatsResponse contains system statistics
+message StatsResponse {
+    // Total number of users in the system
+    int64 total_users = 1;
+    
+    // Total number of permissions in the system
+    int64 total_permissions = 2;
+    
+    // Total number of groups in the system
+    int64 total_groups = 3;
+    
+    // Number of currently active users (users with active sessions)
+    int64 active_users = 4;
+}

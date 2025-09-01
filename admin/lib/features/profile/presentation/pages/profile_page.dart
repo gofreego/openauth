@@ -22,7 +22,8 @@ class ProfilePage extends StatelessWidget {
           }
 
           final user = state.session.user;
-          final profile = state.session.profile;
+          // TODO: Profile is not part of SignInResponse, need to fetch separately
+          const profile = null; // state.session.profile;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -137,7 +138,7 @@ class ProfilePage extends StatelessWidget {
                           ],
                         ),
                         
-                        if (profile.firstName.isNotEmpty || profile.lastName.isNotEmpty || profile.bio.isNotEmpty) ...[
+                        if (profile != null && (profile.firstName.isNotEmpty || profile.lastName.isNotEmpty || profile.bio.isNotEmpty)) ...[
                           const SizedBox(height: 32),
                           _buildInfoSection(
                             context,

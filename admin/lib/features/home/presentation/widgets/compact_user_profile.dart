@@ -21,7 +21,8 @@ class CompactUserProfile extends StatelessWidget {
         }
 
         final user = state.session.user;
-        final profile = state.session.profile;
+        // TODO: Profile is not part of SignInResponse, need to fetch separately
+        const profile = null; // state.session.profile;
         
         return InkWell(
           onTap: onTap,

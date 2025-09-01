@@ -27,10 +27,8 @@ class UpdateUserUseCase {
     if (email != null) request.email = email;
     if (phone != null) request.phone = phone;
     if (isActive != null) request.isActive = isActive;
-    if (firstName != null) request.firstName = firstName;
-    if (lastName != null) request.lastName = lastName;
-    if (displayName != null) request.displayName = displayName;
-    if (bio != null) request.bio = bio;
+    // Note: firstName, lastName, displayName, and bio are not available in UpdateUserRequest
+    // They might be part of a separate profile update request
     if (avatarUrl != null) request.avatarUrl = avatarUrl;
 
     return await repository.updateUser(request);
