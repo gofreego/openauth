@@ -2494,16 +2494,9 @@
       },
       "title": "Session information"
     },
-    "v1SignInRequest": {
+    "v1SignInMetadata": {
       "type": "object",
       "properties": {
-        "username": {
-          "type": "string",
-          "title": "Can be username, email, or phone - determined by backend"
-        },
-        "password": {
-          "type": "string"
-        },
         "deviceId": {
           "type": "string",
           "title": "Unique device identifier"
@@ -2516,9 +2509,33 @@
           "type": "string",
           "title": "web, mobile, desktop, tablet"
         },
+        "lat": {
+          "type": "number",
+          "format": "double"
+        },
+        "long": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "v1SignInRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "title": "Can be username, email, or phone - determined by backend"
+        },
+        "password": {
+          "type": "string"
+        },
         "rememberMe": {
           "type": "boolean",
           "title": "Extend session duration"
+        },
+        "metadata": {
+          "$ref": "#/definitions/v1SignInMetadata",
+          "title": "Optional device metadata"
         }
       },
       "title": "SignInRequest for user authentication"
@@ -2544,10 +2561,6 @@
         },
         "user": {
           "$ref": "#/definitions/v1User"
-        },
-        "profile": {
-          "$ref": "#/definitions/v1UserProfile",
-          "title": "Primary profile"
         },
         "sessionId": {
           "type": "string",

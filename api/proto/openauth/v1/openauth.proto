@@ -8,6 +8,7 @@ import "proto/common/ping.proto";
 import "proto/openauth/v1/permissions.proto";
 import "proto/openauth/v1/users.proto";
 import "proto/openauth/v1/groups.proto";
+import "proto/openauth/v1/sessions.proto";
 
 // OpenAuth service provides authentication and authorization functionality
 // including user management, permissions, groups, and session management.
