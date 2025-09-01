@@ -23,9 +23,11 @@ type Session struct {
 	Lat              *float64  `db:"lat" json:"lat,omitempty"`
 	Lon              *float64  `db:"lon" json:"lon,omitempty"`
 	IsActive         bool      `db:"is_active" json:"isActive"`
+	Status           string    `db:"status" json:"status"` // active, expired, revoked, logged_out
 	ExpiresAt        int64     `db:"expires_at" json:"expiresAt"`
 	RefreshExpiresAt *int64    `db:"refresh_expires_at" json:"refreshExpiresAt,omitempty"`
 	LastActivityAt   int64     `db:"last_activity_at" json:"lastActivityAt"`
+	RevokedAt        *int64    `db:"revoked_at" json:"revokedAt,omitempty"`
 	CreatedAt        int64     `db:"created_at" json:"createdAt"`
 }
 
@@ -46,6 +48,7 @@ func (s *Session) FromSignInRequest(
 	s.SessionToken = sessionToken
 	s.RefreshToken = &refreshToken
 	s.IsActive = true
+	s.Status = "active"
 	s.ExpiresAt = expiresAt
 	s.RefreshExpiresAt = &refreshExpiresAt
 	s.LastActivityAt = time.Now().Unix()
@@ -96,6 +99,33 @@ func (s *Session) ToProtoSession() *openauth_v1.Session {
 	}
 
 	return session
+}
+
+// SessionArchive represents an archived session record
+type SessionArchive struct {
+	ID               int64     `db:"id" json:"id"`
+	OriginalID       int64     `db:"original_id" json:"originalId"`
+	UUID             uuid.UUID `db:"uuid" json:"uuid"`
+	UserID           int64     `db:"user_id" json:"userId"`
+	UserUUID         uuid.UUID `db:"user_uuid" json:"userUuid"`
+	SessionToken     *string   `db:"session_token" json:"sessionToken,omitempty"`
+	RefreshToken     *string   `db:"refresh_token" json:"refreshToken,omitempty"`
+	DeviceID         *string   `db:"device_id" json:"deviceId,omitempty"`
+	DeviceName       *string   `db:"device_name" json:"deviceName,omitempty"`
+	DeviceType       *string   `db:"device_type" json:"deviceType,omitempty"`
+	UserAgent        *string   `db:"user_agent" json:"userAgent,omitempty"`
+	IPAddress        *string   `db:"ip_address" json:"ipAddress,omitempty"`
+	Location         *string   `db:"location" json:"location,omitempty"`
+	Lat              *float64  `db:"lat" json:"lat,omitempty"`
+	Lon              *float64  `db:"lon" json:"lon,omitempty"`
+	IsActive         bool      `db:"is_active" json:"isActive"`
+	Status           string    `db:"status" json:"status"` // archived, deleted
+	ExpiresAt        int64     `db:"expires_at" json:"expiresAt"`
+	RefreshExpiresAt *int64    `db:"refresh_expires_at" json:"refreshExpiresAt,omitempty"`
+	LastActivityAt   int64     `db:"last_activity_at" json:"lastActivityAt"`
+	RevokedAt        *int64    `db:"revoked_at" json:"revokedAt,omitempty"`
+	CreatedAt        int64     `db:"created_at" json:"createdAt"`
+	ArchivedAt       int64     `db:"archived_at" json:"archivedAt"`
 }
 
 type SessionActivity struct {

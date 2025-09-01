@@ -4,10 +4,10 @@ package filter
 type GroupUsersFilter struct {
 	// GroupID is the ID of the group to list users for
 	GroupID int64 `json:"group_id"`
-	
+
 	// Limit for pagination (number of records to return)
 	Limit int32 `json:"limit,omitempty"`
-	
+
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
 }
@@ -16,10 +16,10 @@ type GroupUsersFilter struct {
 type UserGroupsFilter struct {
 	// UserID is the ID of the user to list groups for
 	UserID int64 `json:"user_id"`
-	
+
 	// Limit for pagination (number of records to return)
 	Limit int32 `json:"limit,omitempty"`
-	
+
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
 }
@@ -28,13 +28,13 @@ type UserGroupsFilter struct {
 type UserSessionsFilter struct {
 	// UserUUID is the UUID of the user to list sessions for
 	UserUUID string `json:"user_uuid"`
-	
+
 	// ActiveOnly filters to only active sessions
 	ActiveOnly bool `json:"active_only,omitempty"`
-	
+
 	// Limit for pagination (number of records to return)
 	Limit int32 `json:"limit,omitempty"`
-	
+
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
 }
@@ -43,10 +43,10 @@ type UserSessionsFilter struct {
 type UserProfilesFilter struct {
 	// UserUUID is the UUID of the user to list profiles for
 	UserUUID string `json:"user_uuid"`
-	
+
 	// Limit for pagination (number of records to return)
 	Limit int32 `json:"limit,omitempty"`
-	
+
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
 }
@@ -59,7 +59,7 @@ func NewGroupUsersFilter(groupID int64, limit, offset int32) *GroupUsersFilter {
 	if offset < 0 {
 		offset = 0
 	}
-	
+
 	return &GroupUsersFilter{
 		GroupID: groupID,
 		Limit:   limit,
@@ -75,7 +75,7 @@ func NewUserGroupsFilter(userID int64, limit, offset int32) *UserGroupsFilter {
 	if offset < 0 {
 		offset = 0
 	}
-	
+
 	return &UserGroupsFilter{
 		UserID: userID,
 		Limit:  limit,
@@ -91,7 +91,7 @@ func NewUserSessionsFilter(userUUID string, limit, offset int32, activeOnly bool
 	if offset < 0 {
 		offset = 0
 	}
-	
+
 	return &UserSessionsFilter{
 		UserUUID:   userUUID,
 		ActiveOnly: activeOnly,
@@ -108,7 +108,7 @@ func NewUserProfilesFilter(userUUID string, limit, offset int32) *UserProfilesFi
 	if offset < 0 {
 		offset = 0
 	}
-	
+
 	return &UserProfilesFilter{
 		UserUUID: userUUID,
 		Limit:    limit,

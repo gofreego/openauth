@@ -440,7 +440,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 		Limit:  limit,
 		Offset: offset,
 	}
-	
+
 	if req.Search != nil {
 		filters.Search = req.Search
 	}

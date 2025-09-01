@@ -1,14 +1,37 @@
 -- Drop session tables and related objects
+
+-- Drop constraints
+ALTER TABLE user_sessions DROP CONSTRAINT IF EXISTS chk_session_status;
+ALTER TABLE user_sessions_archive DROP CONSTRAINT IF EXISTS chk_archive_session_status;
+
+-- Drop archive table indexes
+DROP INDEX IF EXISTS idx_user_sessions_archive_user_id;
+DROP INDEX IF EXISTS idx_user_sessions_archive_original_id;
+DROP INDEX IF EXISTS idx_user_sessions_archive_archived_at;
+DROP INDEX IF EXISTS idx_user_sessions_archive_status;
+DROP INDEX IF EXISTS idx_user_sessions_archive_user_uuid;
+
+-- Drop session activities indexes
 DROP INDEX IF EXISTS idx_session_activities_ip_address;
 DROP INDEX IF EXISTS idx_session_activities_created_at;
 DROP INDEX IF EXISTS idx_session_activities_activity_type;
 DROP INDEX IF EXISTS idx_session_activities_session_id;
+
+-- Drop user sessions indexes
+DROP INDEX IF EXISTS idx_user_sessions_revoked_at;
 DROP INDEX IF EXISTS idx_user_sessions_last_activity_at;
 DROP INDEX IF EXISTS idx_user_sessions_expires_at;
+DROP INDEX IF EXISTS idx_user_sessions_status_last_activity;
+DROP INDEX IF EXISTS idx_user_sessions_status;
 DROP INDEX IF EXISTS idx_user_sessions_is_active;
 DROP INDEX IF EXISTS idx_user_sessions_device_id;
 DROP INDEX IF EXISTS idx_user_sessions_refresh_token;
 DROP INDEX IF EXISTS idx_user_sessions_session_token;
+DROP INDEX IF EXISTS idx_user_sessions_user_uuid;
 DROP INDEX IF EXISTS idx_user_sessions_user_id;
+DROP INDEX IF EXISTS idx_user_sessions_uuid;
+
+-- Drop tables
+DROP TABLE IF EXISTS user_sessions_archive;
 DROP TABLE IF EXISTS session_activities;
 DROP TABLE IF EXISTS user_sessions;

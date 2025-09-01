@@ -16,17 +16,17 @@ func (r *Repository) CreateSession(ctx context.Context, session *dao.Session) (*
 	query := `
 		INSERT INTO user_sessions (uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, expires_at, refresh_expires_at, last_activity_at, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
 		RETURNING id, uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, expires_at, refresh_expires_at, last_activity_at, created_at`
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at`
 
 	row := r.connManager.Primary().QueryRowContext(ctx, query,
 		session.UUID, session.UserID, session.UserUUID, session.SessionToken,
 		session.RefreshToken, session.DeviceID, session.DeviceName, session.DeviceType,
 		session.UserAgent, session.IPAddress, session.Location, session.IsActive,
-		session.ExpiresAt, session.RefreshExpiresAt, session.LastActivityAt, session.CreatedAt)
+		session.Status, session.ExpiresAt, session.RefreshExpiresAt, session.LastActivityAt, session.CreatedAt)
 
 	var createdSession dao.Session
 	err := row.Scan(
@@ -34,9 +34,8 @@ func (r *Repository) CreateSession(ctx context.Context, session *dao.Session) (*
 		&createdSession.SessionToken, &createdSession.RefreshToken, &createdSession.DeviceID,
 		&createdSession.DeviceName, &createdSession.DeviceType, &createdSession.UserAgent,
 		&createdSession.IPAddress, &createdSession.Location, &createdSession.IsActive,
-		&createdSession.ExpiresAt, &createdSession.RefreshExpiresAt, &createdSession.LastActivityAt,
-		&createdSession.CreatedAt)
-
+		&createdSession.Status, &createdSession.ExpiresAt, &createdSession.RefreshExpiresAt,
+		&createdSession.LastActivityAt, &createdSession.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +48,7 @@ func (r *Repository) GetSessionByToken(ctx context.Context, sessionToken string)
 	query := `
 		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, expires_at, refresh_expires_at, last_activity_at, created_at
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
 		FROM user_sessions 
 		WHERE session_token = $1`
 
@@ -62,7 +61,7 @@ func (r *Repository) GetSessionByUUID(ctx context.Context, sessionUUID string) (
 	query := `
 		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, expires_at, refresh_expires_at, last_activity_at, created_at
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
 		FROM user_sessions 
 		WHERE uuid = $1`
 
@@ -75,7 +74,7 @@ func (r *Repository) GetSessionByRefreshToken(ctx context.Context, refreshToken 
 	query := `
 		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, expires_at, refresh_expires_at, last_activity_at, created_at
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
 		FROM user_sessions 
 		WHERE refresh_token = $1`
 
@@ -108,7 +107,7 @@ func (r *Repository) UpdateSession(ctx context.Context, sessionUUID string, upda
 		WHERE uuid = $%d
 		RETURNING id, uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, expires_at, refresh_expires_at, last_activity_at, created_at`,
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at`,
 		strings.Join(setParts, ", "), argIndex)
 
 	row := r.connManager.Primary().QueryRowContext(ctx, query, args...)
@@ -149,7 +148,7 @@ func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserS
 	listQuery := `
 		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, expires_at, refresh_expires_at, last_activity_at, created_at
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
 		FROM user_sessions 
 		WHERE user_uuid = $1`
 
@@ -213,8 +212,8 @@ func (r *Repository) scanSession(row *sql.Row) (*dao.Session, error) {
 		&session.SessionToken, &session.RefreshToken, &session.DeviceID,
 		&session.DeviceName, &session.DeviceType, &session.UserAgent,
 		&session.IPAddress, &session.Location, &session.IsActive,
-		&session.ExpiresAt, &session.RefreshExpiresAt, &session.LastActivityAt,
-		&session.CreatedAt)
+		&session.Status, &session.ExpiresAt, &session.RefreshExpiresAt,
+		&session.LastActivityAt, &session.CreatedAt)
 
 	if err != nil {
 		return nil, err
@@ -231,8 +230,8 @@ func (r *Repository) scanSessionFromRows(rows *sql.Rows) (*dao.Session, error) {
 		&session.SessionToken, &session.RefreshToken, &session.DeviceID,
 		&session.DeviceName, &session.DeviceType, &session.UserAgent,
 		&session.IPAddress, &session.Location, &session.IsActive,
-		&session.ExpiresAt, &session.RefreshExpiresAt, &session.LastActivityAt,
-		&session.CreatedAt)
+		&session.Status, &session.ExpiresAt, &session.RefreshExpiresAt,
+		&session.LastActivityAt, &session.CreatedAt)
 
 	if err != nil {
 		return nil, err

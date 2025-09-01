@@ -9,19 +9,19 @@ import (
 type PermissionFilter struct {
 	// Search term to filter by name, display_name, or description
 	Search *string `json:"search,omitempty"`
-	
+
 	// Resource filters permissions by resource name (e.g., "user", "group")
 	Resource *string `json:"resource,omitempty"`
-	
+
 	// Action filters permissions by action (e.g., "create", "read", "update", "delete")
 	Action *string `json:"action,omitempty"`
-	
+
 	// IsSystem filters permissions by system status
 	IsSystem *bool `json:"is_system,omitempty"`
-	
+
 	// Limit for pagination (number of records to return)
 	Limit int32 `json:"limit,omitempty"`
-	
+
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
 }
@@ -29,7 +29,7 @@ type PermissionFilter struct {
 // FromListPermissionsRequest creates a PermissionFilter from a ListPermissionsRequest
 func FromListPermissionsRequest(req *openauth_v1.ListPermissionsRequest) *PermissionFilter {
 	filter := &PermissionFilter{}
-	
+
 	// Set pagination with defaults
 	if req.Limit != nil {
 		filter.Limit = *req.Limit
@@ -37,22 +37,22 @@ func FromListPermissionsRequest(req *openauth_v1.ListPermissionsRequest) *Permis
 	if filter.Limit <= 0 || filter.Limit > constants.MaxPageSize {
 		filter.Limit = constants.DefaultPageSize
 	}
-	
+
 	if req.Offset != nil {
 		filter.Offset = *req.Offset
 	}
 	if filter.Offset < 0 {
 		filter.Offset = 0
 	}
-	
+
 	// Set search filter if provided
 	if req.Search != nil && *req.Search != "" {
 		filter.Search = req.Search
 	}
-	
+
 	// Note: Resource, Action, and IsSystem fields don't exist in ListPermissionsRequest
 	// They can be set separately if needed
-	
+
 	return filter
 }
 
