@@ -5,7 +5,7 @@ CREATE TABLE permissions (
     display_name VARCHAR(255) NOT NULL,
     description TEXT,
     is_system BOOLEAN DEFAULT FALSE, -- System permissions cannot be deleted
-    created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
@@ -13,11 +13,13 @@ CREATE TABLE permissions (
 -- Create groups/roles table
 CREATE TABLE groups (
     id SERIAL PRIMARY KEY,
+    uuid UUID UNIQUE DEFAULT gen_random_uuid(),
     name VARCHAR(255) UNIQUE NOT NULL,
     display_name VARCHAR(255) NOT NULL,
     description TEXT,
     is_system BOOLEAN DEFAULT FALSE, -- System groups cannot be deleted
-    created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    is_default BOOLEAN DEFAULT FALSE, -- Default group for new users
+    created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
@@ -27,7 +29,7 @@ CREATE TABLE group_permissions (
     id SERIAL PRIMARY KEY,
     group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
     permission_id INTEGER NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
-    granted_by INTEGER NOT NULL REFERENCES users(id), -- Who granted this permission
+    granted_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT, -- Who granted this permission
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(group_id, permission_id)
 );
@@ -37,7 +39,7 @@ CREATE TABLE user_groups (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
-    assigned_by INTEGER NOT NULL REFERENCES users(id), -- Who assigned this group
+    assigned_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT, -- Who assigned this group
     expires_at BIGINT, -- Optional expiration date
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(user_id, group_id)
@@ -48,7 +50,7 @@ CREATE TABLE user_permissions (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     permission_id INTEGER NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
-    granted_by INTEGER NOT NULL REFERENCES users(id), -- Who granted this permission
+    granted_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT, -- Who granted this permission
     expires_at BIGINT, -- Optional expiration date
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     UNIQUE(user_id, permission_id)
@@ -56,8 +58,6 @@ CREATE TABLE user_permissions (
 
 -- Create indexes
 CREATE INDEX idx_permissions_name ON permissions(name);
-CREATE INDEX idx_permissions_resource ON permissions(resource);
-CREATE INDEX idx_permissions_action ON permissions(action);
 CREATE INDEX idx_permissions_system ON permissions(is_system);
 
 CREATE INDEX idx_groups_uuid ON groups(uuid);

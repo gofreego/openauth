@@ -76,8 +76,12 @@ DECLARE
     new_data JSONB;
 BEGIN
     -- Get current user ID from session (you may need to set this in your application)
-    -- For now, we'll use a placeholder approach
-    current_user_id := current_setting('app.current_user_id', true)::INTEGER;
+    -- For now, we'll use a placeholder approach with error handling
+    BEGIN
+        current_user_id := current_setting('app.current_user_id', true)::INTEGER;
+    EXCEPTION WHEN OTHERS THEN
+        current_user_id := NULL;
+    END;
     
     IF TG_TABLE_NAME = 'group_permissions' THEN
         entity_name := 'group_permissions';

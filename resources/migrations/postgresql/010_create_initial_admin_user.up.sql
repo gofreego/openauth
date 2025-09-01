@@ -20,7 +20,7 @@ INSERT INTO security_events (
 ) VALUES (
     'ADMIN_USER_CREATED',
     (SELECT id FROM users WHERE username = 'admin'),
-    '{"action": "initial_admin_user_created", "username": "admin", "source": "migration"}',
+    'Initial admin user created via database migration',
     '127.0.0.1',
     'Database Migration',
     EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000

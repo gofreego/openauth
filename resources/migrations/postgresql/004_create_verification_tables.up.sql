@@ -35,8 +35,7 @@ CREATE TABLE email_verification_tokens (
 
 -- Create indexes
 CREATE INDEX idx_otp_verifications_user_id ON otp_verifications(user_id);
-CREATE INDEX idx_otp_verifications_email ON otp_verifications(email);
-CREATE INDEX idx_otp_verifications_phone ON otp_verifications(phone);
+CREATE INDEX idx_otp_verifications_identifier ON otp_verifications(identifier);
 CREATE INDEX idx_otp_verifications_otp_code ON otp_verifications(otp_code);
 CREATE INDEX idx_otp_verifications_expires_at ON otp_verifications(expires_at);
 CREATE INDEX idx_otp_verifications_type ON otp_verifications(otp_type);
