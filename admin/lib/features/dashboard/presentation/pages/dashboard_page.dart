@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/stat_card.dart';
-import '../widgets/dashboard_welcome.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_event.dart';
 import '../bloc/dashboard_state.dart';
@@ -166,19 +165,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               );
             },
-          ),
-          const SizedBox(height: 32),
-
-          // Welcome section
-          Expanded(
-            child: DashboardWelcome(
-              onAddUser: () {
-                // TODO: Navigate to add user page
-              },
-              onManagePermissions: () {
-                // TODO: Navigate to permissions page
-              },
-            ),
           ),
         ],
       ),

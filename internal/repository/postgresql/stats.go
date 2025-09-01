@@ -46,12 +46,15 @@ func (r *Repository) GetTotalGroups(ctx context.Context) (int64, error) {
 
 // GetActiveUsers returns the number of users with active sessions
 func (r *Repository) GetActiveUsers(ctx context.Context) (int64, error) {
+	// Let's use a more practical definition of "active users"
+	// Users who have sessions that are marked as active and not revoked
+	// regardless of expiration time (since sessions might be auto-renewed)
 	query := `
 		SELECT COUNT(DISTINCT s.user_id) 
 		FROM user_sessions s 
-		WHERE s.expires_at > EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
-		AND s.is_active = true
+		WHERE s.is_active = true
 		AND s.status = 'active'
+		AND s.revoked_at IS NULL
 	`
 
 	var count int64
