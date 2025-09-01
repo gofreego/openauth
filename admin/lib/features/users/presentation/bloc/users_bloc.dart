@@ -80,7 +80,9 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
       (user) {
         emit(UserCreated(user));
         // Refresh the users list
-        add(const RefreshUsersEvent());
+        if (!isClosed) {
+          add(const RefreshUsersEvent());
+        }
       },
     );
   }
@@ -94,6 +96,8 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
       email: event.email,
       phone: event.phone,
       isActive: event.isActive,
+      name: event.name,
+      avatarUrl: event.avatarUrl,
     );
 
     result.fold(
@@ -101,7 +105,9 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
       (user) {
         emit(UserUpdated(user));
         // Refresh the users list
-        add(const RefreshUsersEvent());
+        if (!isClosed) {
+          add(const RefreshUsersEvent());
+        }
       },
     );
   }
@@ -116,7 +122,9 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
       (_) {
         emit(UserDeleted(event.userIdOrUuid));
         // Refresh the users list
-        add(const RefreshUsersEvent());
+        if (!isClosed) {
+          add(const RefreshUsersEvent());
+        }
       },
     );
   }

@@ -5,6 +5,7 @@ import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
 import '../bloc/users_event.dart';
 import 'user_row.dart';
+import 'edit_user_dialog.dart';
 
 class UsersTable extends StatelessWidget {
   final String searchQuery;
@@ -193,9 +194,7 @@ class UsersTable extends StatelessWidget {
   void _handleUserAction(String action, UserEntity user, BuildContext context) {
     switch (action) {
       case 'edit':
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Edit ${user.displayName}')),
-        );
+        _showEditUserDialog(user, context);
         break;
       case 'permissions':
         ScaffoldMessenger.of(context).showSnackBar(
@@ -206,6 +205,10 @@ class UsersTable extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('View sessions for ${user.displayName}')),
         );
+        break;
+      case 'activate':
+      case 'deactivate':
+        _toggleUserActiveStatus(user, context);
         break;
       case 'delete':
         _showDeleteUserDialog(user, context);
@@ -227,7 +230,10 @@ class UsersTable extends StatelessWidget {
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
-              context.read<UsersBloc>().add(DeleteUserEvent(user.uuid));
+              final bloc = context.read<UsersBloc>();
+              if (!bloc.isClosed) {
+                bloc.add(DeleteUserEvent(user.uuid));
+              }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('${user.displayName} deleted successfully')),
               );
@@ -236,6 +242,57 @@ class UsersTable extends StatelessWidget {
               backgroundColor: Colors.red,
             ),
             child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditUserDialog(UserEntity user, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BlocProvider.value(
+        value: context.read<UsersBloc>(),
+        child: EditUserDialog(
+          user: user,
+          onUserUpdated: () {
+            // The BlocConsumer in the dialog will handle the success message
+          },
+        ),
+      ),
+    );
+  }
+
+  void _toggleUserActiveStatus(UserEntity user, BuildContext context) {
+    final newStatus = !user.isActive;
+    final action = newStatus ? 'activate' : 'deactivate';
+    final capitalizedAction = action[0].toUpperCase() + action.substring(1);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('$capitalizedAction User'),
+        content: Text('Are you sure you want to $action ${user.displayName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              final bloc = context.read<UsersBloc>();
+              if (!bloc.isClosed) {
+                bloc.add(UpdateUserEvent(
+                  uuid: user.uuid,
+                  isActive: newStatus,
+                ));
+              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('${user.displayName} ${action}d successfully')),
+              );
+            },
+            child: Text(capitalizedAction),
           ),
         ],
       ),

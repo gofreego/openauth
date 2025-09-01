@@ -15,10 +15,7 @@ class UpdateUserUseCase {
     String? email,
     String? phone,
     bool? isActive,
-    String? firstName,
-    String? lastName,
-    String? displayName,
-    String? bio,
+    String? name,
     String? avatarUrl,
   }) async {
     final request = pb.UpdateUserRequest()..uuid = uuid;
@@ -27,8 +24,7 @@ class UpdateUserUseCase {
     if (email != null) request.email = email;
     if (phone != null) request.phone = phone;
     if (isActive != null) request.isActive = isActive;
-    // Note: firstName, lastName, displayName, and bio are not available in UpdateUserRequest
-    // They might be part of a separate profile update request
+    if (name != null) request.name = name;
     if (avatarUrl != null) request.avatarUrl = avatarUrl;
 
     return await repository.updateUser(request);
