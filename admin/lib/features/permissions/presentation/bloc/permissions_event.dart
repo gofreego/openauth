@@ -71,3 +71,7 @@ class SearchPermissions extends PermissionsEvent {
   @override
   List<Object?> get props => [query, limit];
 }
+
+class LoadMorePermissions extends PermissionsEvent {
+  const LoadMorePermissions();
+}

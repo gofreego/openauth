@@ -38,17 +38,21 @@ const SignInRequest$json = const {
     const {'1': 'otp', '3': 3, '4': 1, '5': 9, '9': 1, '10': 'otp', '17': true},
     const {'1': 'remember_me', '3': 4, '4': 1, '5': 8, '9': 2, '10': 'rememberMe', '17': true},
     const {'1': 'metadata', '3': 5, '4': 1, '5': 11, '6': '.v1.SignInMetadata', '9': 3, '10': 'metadata', '17': true},
+    const {'1': 'profiles', '3': 6, '4': 1, '5': 8, '9': 4, '10': 'profiles', '17': true},
+    const {'1': 'include_permissions', '3': 7, '4': 1, '5': 8, '9': 5, '10': 'includePermissions', '17': true},
   ],
   '8': const [
     const {'1': '_password'},
     const {'1': '_otp'},
     const {'1': '_remember_me'},
     const {'1': '_metadata'},
+    const {'1': '_profiles'},
+    const {'1': '_include_permissions'},
   ],
 };
 
 /// Descriptor for `SignInRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signInRequestDescriptor = $convert.base64Decode('Cg1TaWduSW5SZXF1ZXN0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIfCghwYXNzd29yZBgCIAEoCUgAUghwYXNzd29yZIgBARIVCgNvdHAYAyABKAlIAVIDb3RwiAEBEiQKC3JlbWVtYmVyX21lGAQgASgISAJSCnJlbWVtYmVyTWWIAQESMwoIbWV0YWRhdGEYBSABKAsyEi52MS5TaWduSW5NZXRhZGF0YUgDUghtZXRhZGF0YYgBAUILCglfcGFzc3dvcmRCBgoEX290cEIOCgxfcmVtZW1iZXJfbWVCCwoJX21ldGFkYXRh');
+final $typed_data.Uint8List signInRequestDescriptor = $convert.base64Decode('Cg1TaWduSW5SZXF1ZXN0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIfCghwYXNzd29yZBgCIAEoCUgAUghwYXNzd29yZIgBARIVCgNvdHAYAyABKAlIAVIDb3RwiAEBEiQKC3JlbWVtYmVyX21lGAQgASgISAJSCnJlbWVtYmVyTWWIAQESMwoIbWV0YWRhdGEYBSABKAsyEi52MS5TaWduSW5NZXRhZGF0YUgDUghtZXRhZGF0YYgBARIfCghwcm9maWxlcxgGIAEoCEgEUghwcm9maWxlc4gBARI0ChNpbmNsdWRlX3Blcm1pc3Npb25zGAcgASgISAVSEmluY2x1ZGVQZXJtaXNzaW9uc4gBAUILCglfcGFzc3dvcmRCBgoEX290cEIOCgxfcmVtZW1iZXJfbWVCCwoJX21ldGFkYXRhQgsKCV9wcm9maWxlc0IWChRfaW5jbHVkZV9wZXJtaXNzaW9ucw==');
 @$core.Deprecated('Use signInResponseDescriptor instead')
 const SignInResponse$json = const {
   '1': 'SignInResponse',
@@ -71,14 +75,18 @@ const RefreshTokenRequest$json = const {
   '2': const [
     const {'1': 'refresh_token', '3': 1, '4': 1, '5': 9, '10': 'refreshToken'},
     const {'1': 'device_id', '3': 2, '4': 1, '5': 9, '9': 0, '10': 'deviceId', '17': true},
+    const {'1': 'profiles', '3': 3, '4': 1, '5': 8, '9': 1, '10': 'profiles', '17': true},
+    const {'1': 'include_permissions', '3': 4, '4': 1, '5': 8, '9': 2, '10': 'includePermissions', '17': true},
   ],
   '8': const [
     const {'1': '_device_id'},
+    const {'1': '_profiles'},
+    const {'1': '_include_permissions'},
   ],
 };
 
 /// Descriptor for `RefreshTokenRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List refreshTokenRequestDescriptor = $convert.base64Decode('ChNSZWZyZXNoVG9rZW5SZXF1ZXN0EiMKDXJlZnJlc2hfdG9rZW4YASABKAlSDHJlZnJlc2hUb2tlbhIgCglkZXZpY2VfaWQYAiABKAlIAFIIZGV2aWNlSWSIAQFCDAoKX2RldmljZV9pZA==');
+final $typed_data.Uint8List refreshTokenRequestDescriptor = $convert.base64Decode('ChNSZWZyZXNoVG9rZW5SZXF1ZXN0EiMKDXJlZnJlc2hfdG9rZW4YASABKAlSDHJlZnJlc2hUb2tlbhIgCglkZXZpY2VfaWQYAiABKAlIAFIIZGV2aWNlSWSIAQESHwoIcHJvZmlsZXMYAyABKAhIAVIIcHJvZmlsZXOIAQESNAoTaW5jbHVkZV9wZXJtaXNzaW9ucxgEIAEoCEgCUhJpbmNsdWRlUGVybWlzc2lvbnOIAQFCDAoKX2RldmljZV9pZEILCglfcHJvZmlsZXNCFgoUX2luY2x1ZGVfcGVybWlzc2lvbnM=');
 @$core.Deprecated('Use refreshTokenResponseDescriptor instead')
 const RefreshTokenResponse$json = const {
   '1': 'RefreshTokenResponse',

@@ -10,8 +10,16 @@ class PermissionsPageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => serviceLocator<PermissionsBloc>()
-        ..add(const LoadPermissions()),
+      create: (context) {
+        final bloc = serviceLocator<PermissionsBloc>();
+        // Add initial load event only if bloc is open, with slight delay for stability
+        Future.microtask(() {
+          if (!bloc.isClosed) {
+            bloc.add(const LoadPermissions());
+          }
+        });
+        return bloc;
+      },
       child: const PermissionsPage(),
     );
   }

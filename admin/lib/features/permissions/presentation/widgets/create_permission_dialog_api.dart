@@ -140,7 +140,12 @@ class _CreatePermissionDialogAPIState extends State<CreatePermissionDialogAPI> {
         ..displayName = _displayNameController.text.trim()
         ..description = _descriptionController.text.trim();
 
-      context.read<PermissionsBloc>().add(CreatePermission(request));
+      if (mounted) {
+        final bloc = context.read<PermissionsBloc>();
+        if (!bloc.isClosed) {
+          bloc.add(CreatePermission(request));
+        }
+      }
     }
   }
 }

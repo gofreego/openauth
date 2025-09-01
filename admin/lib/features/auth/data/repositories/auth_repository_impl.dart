@@ -35,6 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
         username: username,
         password: password,
         rememberMe: rememberMe,
+        includePermissions: true,
         metadata: pb.SignInMetadata(
           deviceId: deviceId ?? deviceSession['deviceId'],
           deviceName: deviceName ?? deviceSession['deviceName'],

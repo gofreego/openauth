@@ -122,6 +122,8 @@ class SignInRequest extends $pb.GeneratedMessage {
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'otp')
     ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'rememberMe')
     ..aOM<SignInMetadata>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata', subBuilder: SignInMetadata.create)
+    ..aOB(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'profiles')
+    ..aOB(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'includePermissions')
     ..hasRequiredFields = false
   ;
 
@@ -132,6 +134,8 @@ class SignInRequest extends $pb.GeneratedMessage {
     $core.String? otp,
     $core.bool? rememberMe,
     SignInMetadata? metadata,
+    $core.bool? profiles,
+    $core.bool? includePermissions,
   }) {
     final _result = create();
     if (username != null) {
@@ -148,6 +152,12 @@ class SignInRequest extends $pb.GeneratedMessage {
     }
     if (metadata != null) {
       _result.metadata = metadata;
+    }
+    if (profiles != null) {
+      _result.profiles = profiles;
+    }
+    if (includePermissions != null) {
+      _result.includePermissions = includePermissions;
     }
     return _result;
   }
@@ -218,6 +228,24 @@ class SignInRequest extends $pb.GeneratedMessage {
   void clearMetadata() => clearField(5);
   @$pb.TagNumber(5)
   SignInMetadata ensureMetadata() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  $core.bool get profiles => $_getBF(5);
+  @$pb.TagNumber(6)
+  set profiles($core.bool v) { $_setBool(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasProfiles() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearProfiles() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.bool get includePermissions => $_getBF(6);
+  @$pb.TagNumber(7)
+  set includePermissions($core.bool v) { $_setBool(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasIncludePermissions() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearIncludePermissions() => clearField(7);
 }
 
 class SignInResponse extends $pb.GeneratedMessage {
@@ -357,6 +385,8 @@ class RefreshTokenRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RefreshTokenRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'refreshToken')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deviceId')
+    ..aOB(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'profiles')
+    ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'includePermissions')
     ..hasRequiredFields = false
   ;
 
@@ -364,6 +394,8 @@ class RefreshTokenRequest extends $pb.GeneratedMessage {
   factory RefreshTokenRequest({
     $core.String? refreshToken,
     $core.String? deviceId,
+    $core.bool? profiles,
+    $core.bool? includePermissions,
   }) {
     final _result = create();
     if (refreshToken != null) {
@@ -371,6 +403,12 @@ class RefreshTokenRequest extends $pb.GeneratedMessage {
     }
     if (deviceId != null) {
       _result.deviceId = deviceId;
+    }
+    if (profiles != null) {
+      _result.profiles = profiles;
+    }
+    if (includePermissions != null) {
+      _result.includePermissions = includePermissions;
     }
     return _result;
   }
@@ -412,6 +450,24 @@ class RefreshTokenRequest extends $pb.GeneratedMessage {
   $core.bool hasDeviceId() => $_has(1);
   @$pb.TagNumber(2)
   void clearDeviceId() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.bool get profiles => $_getBF(2);
+  @$pb.TagNumber(3)
+  set profiles($core.bool v) { $_setBool(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasProfiles() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearProfiles() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.bool get includePermissions => $_getBF(3);
+  @$pb.TagNumber(4)
+  set includePermissions($core.bool v) { $_setBool(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasIncludePermissions() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearIncludePermissions() => clearField(4);
 }
 
 class RefreshTokenResponse extends $pb.GeneratedMessage {

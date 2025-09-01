@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/permissions_bloc.dart';
 import '../widgets/permissions_header.dart';
 import '../widgets/permissions_search_bar.dart';
-import '../widgets/permissions_grid_api.dart';
+import '../widgets/permissions_grid.dart';
 import '../widgets/create_permission_dialog_api.dart';
 
 class PermissionsPage extends StatefulWidget {
@@ -44,8 +44,18 @@ class _PermissionsPageState extends State<PermissionsPage> {
                 setState(() {
                   _searchQuery = query;
                 });
-                // Trigger search with new query
-                context.read<PermissionsBloc>().add(SearchPermissions(query));
+                // Trigger search with new query, but only if bloc is still available
+                if (mounted) {
+                  final bloc = context.read<PermissionsBloc>();
+                  if (!bloc.isClosed) {
+                    // Use a small debounce to prevent too many requests while typing
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      if (mounted && _searchQuery == query) {
+                        bloc.add(SearchPermissions(query));
+                      }
+                    });
+                  }
+                }
               },
               onSystemFilterChanged: (value) {
                 setState(() {
@@ -100,11 +110,21 @@ class _PermissionsPageState extends State<PermissionsPage> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (state is PermissionsLoaded) {
-                    return PermissionsGridAPI(
+                    return PermissionsGrid(
                       permissions: state.permissions,
                       searchQuery: _searchQuery,
                       showSystemOnly: _showSystemOnly,
                       showCustomOnly: _showCustomOnly,
+                      hasReachedMax: state.hasReachedMax,
+                      isLoadingMore: state.isLoadingMore,
+                      onLoadMore: () {
+                        if (mounted) {
+                          final bloc = context.read<PermissionsBloc>();
+                          if (!bloc.isClosed) {
+                            bloc.add(const LoadMorePermissions());
+                          }
+                        }
+                      },
                     );
                   } else if (state is PermissionsError) {
                     return Center(
@@ -130,7 +150,12 @@ class _PermissionsPageState extends State<PermissionsPage> {
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
-                              context.read<PermissionsBloc>().add(const LoadPermissions());
+                              if (mounted) {
+                                final bloc = context.read<PermissionsBloc>();
+                                if (!bloc.isClosed) {
+                                  bloc.add(const LoadPermissions());
+                                }
+                              }
                             },
                             child: const Text('Retry'),
                           ),

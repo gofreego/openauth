@@ -365,10 +365,11 @@ func (a *AuthMiddleware) skipHTTPAuth(path string) bool {
 		"/v1/auth/signin",
 		"/v1/auth/refresh",
 		"/v1/auth/validate",
+		"/openauth/v1/swagger",
 	}
 
 	for _, skipPath := range skipPaths {
-		if strings.HasSuffix(path, skipPath) {
+		if strings.HasSuffix(path, skipPath) || strings.HasPrefix(path, skipPath) {
 			return true
 		}
 	}

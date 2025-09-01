@@ -13,11 +13,33 @@ class PermissionsLoading extends PermissionsState {}
 
 class PermissionsLoaded extends PermissionsState {
   final List<PermissionEntity> permissions;
+  final bool hasReachedMax;
+  final int currentPage;
+  final bool isLoadingMore;
 
-  const PermissionsLoaded(this.permissions);
+  const PermissionsLoaded(
+    this.permissions, {
+    this.hasReachedMax = false,
+    this.currentPage = 0,
+    this.isLoadingMore = false,
+  });
+
+  PermissionsLoaded copyWith({
+    List<PermissionEntity>? permissions,
+    bool? hasReachedMax,
+    int? currentPage,
+    bool? isLoadingMore,
+  }) {
+    return PermissionsLoaded(
+      permissions ?? this.permissions,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      currentPage: currentPage ?? this.currentPage,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    );
+  }
 
   @override
-  List<Object> get props => [permissions];
+  List<Object> get props => [permissions, hasReachedMax, currentPage, isLoadingMore];
 }
 
 class PermissionsError extends PermissionsState {
