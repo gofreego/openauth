@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -435,28 +436,26 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	}
 
 	// Prepare filters
-	filters := make(map[string]interface{})
+	filters := &filter.UserFilter{
+		Limit:  limit,
+		Offset: offset,
+	}
+	
 	if req.Search != nil {
-		filters["search"] = *req.Search
+		filters.Search = req.Search
 	}
 	if req.IsActive != nil {
-		filters["is_active"] = *req.IsActive
+		filters.IsActive = req.IsActive
 	}
 	if req.EmailVerified != nil {
-		filters["email_verified"] = *req.EmailVerified
+		filters.EmailVerified = req.EmailVerified
 	}
 	if req.PhoneVerified != nil {
-		filters["phone_verified"] = *req.PhoneVerified
-	}
-	if req.SortBy != nil {
-		filters["sort_by"] = *req.SortBy
-	}
-	if req.SortOrder != nil {
-		filters["sort_order"] = *req.SortOrder
+		filters.PhoneVerified = req.PhoneVerified
 	}
 
 	// Get users from repository
-	users, _, err := s.repo.ListUsers(ctx, limit, offset, filters)
+	users, _, err := s.repo.ListUsers(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list users")
 	}
@@ -668,7 +667,8 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 	}
 
 	// Get profiles for user
-	profiles, totalCount, err := s.repo.ListUserProfiles(ctx, user.UUID.String(), limit, offset)
+	filters := filter.NewUserProfilesFilter(user.UUID.String(), limit, offset)
+	profiles, totalCount, err := s.repo.ListUserProfiles(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list profiles")
 	}

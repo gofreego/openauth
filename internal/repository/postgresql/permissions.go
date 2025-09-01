@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 )
 
 // CreatePermission creates a new permission in the database
@@ -94,36 +95,36 @@ func (r *Repository) GetPermissionByName(ctx context.Context, name string) (*dao
 }
 
 // ListPermissions retrieves permissions with filtering and pagination
-func (r *Repository) ListPermissions(ctx context.Context, limit, offset int32, filters map[string]interface{}) ([]*dao.Permission, int32, error) {
+func (r *Repository) ListPermissions(ctx context.Context, filters *filter.PermissionFilter) ([]*dao.Permission, int32, error) {
 	// Build WHERE clause
 	var whereConditions []string
 	var args []interface{}
 	argIndex := 1
 
-	if search, ok := filters["search"]; ok {
+	if filters.HasSearch() {
 		whereConditions = append(whereConditions, fmt.Sprintf("(name ILIKE $%d OR display_name ILIKE $%d OR description ILIKE $%d)", argIndex, argIndex+1, argIndex+2))
-		searchPattern := fmt.Sprintf("%%%s%%", search)
+		searchPattern := fmt.Sprintf("%%%s%%", *filters.Search)
 		args = append(args, searchPattern, searchPattern, searchPattern)
 		argIndex += 3
 	}
 
-	if resource, ok := filters["resource"]; ok {
+	if filters.HasResource() {
 		// Parse resource from name field (format: "resource.action")
 		whereConditions = append(whereConditions, fmt.Sprintf("name LIKE $%d", argIndex))
-		args = append(args, fmt.Sprintf("%s.%%", resource))
+		args = append(args, fmt.Sprintf("%s.%%", *filters.Resource))
 		argIndex++
 	}
 
-	if action, ok := filters["action"]; ok {
+	if filters.HasAction() {
 		// Parse action from name field (format: "resource.action")
 		whereConditions = append(whereConditions, fmt.Sprintf("name LIKE $%d", argIndex))
-		args = append(args, fmt.Sprintf("%%.%s", action))
+		args = append(args, fmt.Sprintf("%%.%s", *filters.Action))
 		argIndex++
 	}
 
-	if isSystem, ok := filters["is_system"]; ok {
+	if filters.HasIsSystem() {
 		whereConditions = append(whereConditions, fmt.Sprintf("is_system = $%d", argIndex))
-		args = append(args, isSystem)
+		args = append(args, *filters.IsSystem)
 		argIndex++
 	}
 
@@ -148,7 +149,7 @@ func (r *Repository) ListPermissions(ctx context.Context, limit, offset int32, f
 		ORDER BY created_at DESC
 		LIMIT $%d OFFSET $%d`, whereClause, argIndex, argIndex+1)
 
-	args = append(args, limit, offset)
+	args = append(args, filters.Limit, filters.Offset)
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, dataQuery, args...)
 	if err != nil {

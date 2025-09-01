@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 )
 
 // CreateUser creates a new user in the database
@@ -227,33 +228,58 @@ func (r *Repository) DeleteUser(ctx context.Context, id int64, softDelete bool) 
 }
 
 // ListUsers retrieves users with filtering and pagination
-func (r *Repository) ListUsers(ctx context.Context, limit, offset int32, filters map[string]interface{}) ([]*dao.User, int32, error) {
+func (r *Repository) ListUsers(ctx context.Context, filters *filter.UserFilter) ([]*dao.User, int32, error) {
 	whereConditions := []string{}
 	args := []interface{}{}
 	argIndex := 1
 
 	// Build WHERE conditions
-	if search, ok := filters["search"].(string); ok && search != "" {
-		whereConditions = append(whereConditions, fmt.Sprintf("(username ILIKE $%d OR email ILIKE $%d)", argIndex, argIndex))
-		args = append(args, "%"+search+"%")
+	if filters.HasSearch() {
+		whereConditions = append(whereConditions, fmt.Sprintf("(username ILIKE $%d OR email ILIKE $%d OR phone ILIKE $%d OR name ILIKE $%d)", argIndex, argIndex+1, argIndex+2, argIndex+3))
+		searchPattern := "%" + *filters.Search + "%"
+		args = append(args, searchPattern, searchPattern, searchPattern, searchPattern)
+		argIndex += 4
+	}
+
+	if filters.HasEmail() {
+		whereConditions = append(whereConditions, fmt.Sprintf("email ILIKE $%d", argIndex))
+		args = append(args, "%"+*filters.Email+"%")
 		argIndex++
 	}
 
-	if isActive, ok := filters["is_active"].(bool); ok {
+	if filters.HasUsername() {
+		whereConditions = append(whereConditions, fmt.Sprintf("username ILIKE $%d", argIndex))
+		args = append(args, "%"+*filters.Username+"%")
+		argIndex++
+	}
+
+	if filters.HasPhone() {
+		whereConditions = append(whereConditions, fmt.Sprintf("phone ILIKE $%d", argIndex))
+		args = append(args, "%"+*filters.Phone+"%")
+		argIndex++
+	}
+
+	if filters.HasIsActive() {
 		whereConditions = append(whereConditions, fmt.Sprintf("is_active = $%d", argIndex))
-		args = append(args, isActive)
+		args = append(args, *filters.IsActive)
 		argIndex++
 	}
 
-	if emailVerified, ok := filters["email_verified"].(bool); ok {
+	if filters.HasIsLocked() {
+		whereConditions = append(whereConditions, fmt.Sprintf("is_locked = $%d", argIndex))
+		args = append(args, *filters.IsLocked)
+		argIndex++
+	}
+
+	if filters.HasEmailVerified() {
 		whereConditions = append(whereConditions, fmt.Sprintf("email_verified = $%d", argIndex))
-		args = append(args, emailVerified)
+		args = append(args, *filters.EmailVerified)
 		argIndex++
 	}
 
-	if phoneVerified, ok := filters["phone_verified"].(bool); ok {
+	if filters.HasPhoneVerified() {
 		whereConditions = append(whereConditions, fmt.Sprintf("phone_verified = $%d", argIndex))
-		args = append(args, phoneVerified)
+		args = append(args, *filters.PhoneVerified)
 		argIndex++
 	}
 
@@ -262,15 +288,8 @@ func (r *Repository) ListUsers(ctx context.Context, limit, offset int32, filters
 		whereClause = "WHERE " + strings.Join(whereConditions, " AND ")
 	}
 
-	// Build ORDER BY clause
+	// Build ORDER BY clause - simplified to default ordering for now
 	orderBy := "ORDER BY created_at DESC"
-	if sortBy, ok := filters["sort_by"].(string); ok && sortBy != "" {
-		sortOrder := "ASC"
-		if order, ok := filters["sort_order"].(string); ok && strings.ToUpper(order) == "DESC" {
-			sortOrder = "DESC"
-		}
-		orderBy = fmt.Sprintf("ORDER BY %s %s", sortBy, sortOrder)
-	}
 
 	// Count total records
 	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM users %s", whereClause)
@@ -288,7 +307,7 @@ func (r *Repository) ListUsers(ctx context.Context, limit, offset int32, filters
 		FROM users %s %s LIMIT $%d OFFSET $%d`,
 		whereClause, orderBy, argIndex, argIndex+1)
 
-	args = append(args, limit, offset)
+	args = append(args, filters.Limit, filters.Offset)
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
 	if err != nil {
@@ -427,7 +446,7 @@ func (r *Repository) scanProfile(row *sql.Row) (*dao.Profile, error) {
 }
 
 // ListUserProfiles retrieves all profiles for a specific user with pagination
-func (r *Repository) ListUserProfiles(ctx context.Context, userUUID string, limit, offset int32) ([]*dao.Profile, int32, error) {
+func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, int32, error) {
 	// First get the total count
 	countQuery := `
 		SELECT COUNT(*) 
@@ -436,7 +455,7 @@ func (r *Repository) ListUserProfiles(ctx context.Context, userUUID string, limi
 		WHERE u.uuid = $1`
 
 	var total int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, userUUID).Scan(&total)
+	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, filters.UserUUID).Scan(&total)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -453,7 +472,7 @@ func (r *Repository) ListUserProfiles(ctx context.Context, userUUID string, limi
 		ORDER BY p.created_at DESC 
 		LIMIT $2 OFFSET $3`
 
-	rows, err := r.connManager.Primary().QueryContext(ctx, query, userUUID, limit, offset)
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.UserUUID, filters.Limit, filters.Offset)
 	if err != nil {
 		return nil, 0, err
 	}

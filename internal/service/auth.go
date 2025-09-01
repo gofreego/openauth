@@ -15,6 +15,7 @@ import (
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/gofreego/openauth/pkg/jwtutils"
 	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
@@ -308,7 +309,8 @@ func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUse
 
 	activeOnly := req.ActiveOnly != nil && *req.ActiveOnly
 
-	sessions, _, err := s.repo.ListUserSessions(ctx, req.UserUuid, limit, offset, activeOnly)
+	filters := filter.NewUserSessionsFilter(req.UserUuid, limit, offset, activeOnly)
+	sessions, _, err := s.repo.ListUserSessions(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list sessions")
 	}

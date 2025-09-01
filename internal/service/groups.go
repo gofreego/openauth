@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/gofreego/openauth/pkg/jwtutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -78,25 +79,11 @@ func (s *Service) GetGroup(ctx context.Context, req *openauth_v1.GetGroupRequest
 
 // ListGroups retrieves groups with filtering and pagination
 func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsRequest) (*openauth_v1.ListGroupsResponse, error) {
-	// Set default pagination
-	limit := req.Limit
-	if limit <= 0 || limit > 100 {
-		limit = 10
-	}
-	offset := req.Offset
-	if offset < 0 {
-		offset = 0
-	}
-
-	// Build filters
-	filters := make(map[string]interface{})
-	if req.Search != nil && *req.Search != "" {
-		filters["search"] = *req.Search
-	}
-	// Note: IsSystem and IsDefault fields don't exist in ListGroupsRequest
+	// Build filters from request
+	filters := filter.FromListGroupsRequest(req)
 
 	// Get groups from repository
-	groups, _, err := s.repo.ListGroups(ctx, limit, offset, filters)
+	groups, _, err := s.repo.ListGroups(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list groups")
 	}
@@ -284,7 +271,8 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 	}
 
 	// Get users from repository
-	users, _, err := s.repo.ListGroupUsers(ctx, req.GroupId, limit, offset)
+	filters := filter.NewGroupUsersFilter(req.GroupId, limit, offset)
+	users, _, err := s.repo.ListGroupUsers(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list group users")
 	}
@@ -318,7 +306,8 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 	}
 
 	// Get groups from repository
-	groups, _, err := s.repo.ListUserGroups(ctx, req.UserId, limit, offset)
+	filters := filter.NewUserGroupsFilter(req.UserId, limit, offset)
+	groups, _, err := s.repo.ListUserGroups(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list user groups")
 	}

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 )
 
 // CreateGroup creates a new group in the database
@@ -63,28 +64,28 @@ func (r *Repository) GetGroupByName(ctx context.Context, name string) (*dao.Grou
 }
 
 // ListGroups retrieves groups with filtering and pagination
-func (r *Repository) ListGroups(ctx context.Context, limit, offset int32, filters map[string]interface{}) ([]*dao.Group, int32, error) {
+func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter) ([]*dao.Group, int32, error) {
 	// Build the WHERE clause
 	var conditions []string
 	var args []interface{}
 	argIndex := 1
 
-	if search, ok := filters["search"].(string); ok && search != "" {
+	if filters.HasSearch() {
 		conditions = append(conditions, fmt.Sprintf("(name ILIKE $%d OR display_name ILIKE $%d OR description ILIKE $%d)", argIndex, argIndex+1, argIndex+2))
-		searchPattern := "%" + search + "%"
+		searchPattern := "%" + *filters.Search + "%"
 		args = append(args, searchPattern, searchPattern, searchPattern)
 		argIndex += 3
 	}
 
-	if isSystem, ok := filters["is_system"].(bool); ok {
+	if filters.HasIsSystem() {
 		conditions = append(conditions, fmt.Sprintf("is_system = $%d", argIndex))
-		args = append(args, isSystem)
+		args = append(args, *filters.IsSystem)
 		argIndex++
 	}
 
-	if isDefault, ok := filters["is_default"].(bool); ok {
+	if filters.HasIsDefault() {
 		conditions = append(conditions, fmt.Sprintf("is_default = $%d", argIndex))
-		args = append(args, isDefault)
+		args = append(args, *filters.IsDefault)
 		argIndex++
 	}
 
@@ -109,7 +110,7 @@ func (r *Repository) ListGroups(ctx context.Context, limit, offset int32, filter
 		ORDER BY created_at DESC
 		LIMIT $%d OFFSET $%d`, whereClause, argIndex, argIndex+1)
 
-	args = append(args, limit, offset)
+	args = append(args, filters.Limit, filters.Offset)
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
 	if err != nil {
@@ -240,7 +241,7 @@ func (r *Repository) RemoveUserFromGroup(ctx context.Context, userID, groupID in
 }
 
 // ListGroupUsers retrieves all users in a specific group
-func (r *Repository) ListGroupUsers(ctx context.Context, groupID int64, limit, offset int32) ([]*dao.User, int32, error) {
+func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, int32, error) {
 	// Count total users in group
 	countQuery := `
 		SELECT COUNT(*)
@@ -249,7 +250,7 @@ func (r *Repository) ListGroupUsers(ctx context.Context, groupID int64, limit, o
 		WHERE ug.group_id = $1`
 
 	var totalCount int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, groupID).Scan(&totalCount)
+	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, filters.GroupID).Scan(&totalCount)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to count group users: %w", err)
 	}
@@ -265,7 +266,7 @@ func (r *Repository) ListGroupUsers(ctx context.Context, groupID int64, limit, o
 		ORDER BY u.created_at DESC
 		LIMIT $2 OFFSET $3`
 
-	rows, err := r.connManager.Primary().QueryContext(ctx, query, groupID, limit, offset)
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.GroupID, filters.Limit, filters.Offset)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to list group users: %w", err)
 	}
@@ -288,7 +289,7 @@ func (r *Repository) ListGroupUsers(ctx context.Context, groupID int64, limit, o
 }
 
 // ListUserGroups retrieves all groups for a specific user
-func (r *Repository) ListUserGroups(ctx context.Context, userID int64, limit, offset int32) ([]*dao.Group, int32, error) {
+func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, int32, error) {
 	// Count total groups for user
 	countQuery := `
 		SELECT COUNT(*)
@@ -297,7 +298,7 @@ func (r *Repository) ListUserGroups(ctx context.Context, userID int64, limit, of
 		WHERE ug.user_id = $1`
 
 	var totalCount int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, userID).Scan(&totalCount)
+	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, filters.UserID).Scan(&totalCount)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to count user groups: %w", err)
 	}
@@ -311,7 +312,7 @@ func (r *Repository) ListUserGroups(ctx context.Context, userID int64, limit, of
 		ORDER BY g.created_at DESC
 		LIMIT $2 OFFSET $3`
 
-	rows, err := r.connManager.Primary().QueryContext(ctx, query, userID, limit, offset)
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.UserID, filters.Limit, filters.Offset)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to list user groups: %w", err)
 	}

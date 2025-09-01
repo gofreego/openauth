@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/gofreego/openauth/pkg/jwtutils"
 )
 
@@ -78,36 +78,11 @@ func (s *Service) GetPermission(ctx context.Context, req *openauth_v1.GetPermiss
 
 // ListPermissions retrieves permissions with filtering and pagination
 func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPermissionsRequest) (*openauth_v1.ListPermissionsResponse, error) {
-	// Set default values
-	limit := int32(constants.DefaultPageSize)
-	offset := int32(0)
-
-	if req.Limit != nil {
-		if *req.Limit <= 0 {
-			return nil, status.Error(codes.InvalidArgument, "limit must be greater than 0")
-		}
-		if *req.Limit > constants.MaxPageSize {
-			return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("limit cannot exceed %d", constants.MaxPageSize))
-		}
-		limit = *req.Limit
-	}
-
-	if req.Offset != nil {
-		if *req.Offset < 0 {
-			return nil, status.Error(codes.InvalidArgument, "offset cannot be negative")
-		}
-		offset = *req.Offset
-	}
-
-	// Build filters
-	filters := make(map[string]interface{})
-	if req.Search != nil && *req.Search != "" {
-		filters["search"] = *req.Search
-	}
-	// Note: Resource, Action, and IsSystem fields don't exist in ListPermissionsRequest
+	// Build filters from request
+	filters := filter.FromListPermissionsRequest(req)
 
 	// Get permissions from repository
-	permissions, _, err := s.repo.ListPermissions(ctx, limit, offset, filters)
+	permissions, _, err := s.repo.ListPermissions(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to list permissions: %v", err))
 	}
@@ -120,8 +95,8 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 
 	return &openauth_v1.ListPermissionsResponse{
 		Permissions: protoPermissions,
-		Limit:       limit,
-		Offset:      offset,
+		Limit:       filters.Limit,
+		Offset:      filters.Offset,
 	}, nil
 }
 

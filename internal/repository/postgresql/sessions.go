@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
 )
 
 // CreateSession creates a new session in the database
@@ -142,7 +143,7 @@ func (r *Repository) DeleteUserSessions(ctx context.Context, userUUID string) er
 }
 
 // ListUserSessions retrieves sessions for a user with pagination
-func (r *Repository) ListUserSessions(ctx context.Context, userUUID string, limit, offset int32, activeOnly bool) ([]*dao.Session, int32, error) {
+func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserSessionsFilter) ([]*dao.Session, int32, error) {
 	// Build the base query
 	countQuery := `SELECT COUNT(*) FROM user_sessions WHERE user_uuid = $1`
 	listQuery := `
@@ -152,11 +153,11 @@ func (r *Repository) ListUserSessions(ctx context.Context, userUUID string, limi
 		FROM user_sessions 
 		WHERE user_uuid = $1`
 
-	args := []interface{}{userUUID}
+	args := []interface{}{filters.UserUUID}
 	argIndex := 2
 
 	// Add active filter if requested
-	if activeOnly {
+	if filters.ActiveOnly {
 		countQuery += " AND is_active = $2"
 		listQuery += " AND is_active = $2"
 		args = append(args, true)
@@ -172,7 +173,7 @@ func (r *Repository) ListUserSessions(ctx context.Context, userUUID string, limi
 
 	// Add ordering and pagination to list query
 	listQuery += fmt.Sprintf(" ORDER BY last_activity_at DESC LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
-	args = append(args, limit, offset)
+	args = append(args, filters.Limit, filters.Offset)
 
 	// Execute list query
 	rows, err := r.connManager.Primary().QueryContext(ctx, listQuery, args...)
