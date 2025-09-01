@@ -10,7 +10,7 @@ import (
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
-	"github.com/gofreego/openauth/pkg/middleware"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 	"google.golang.org/grpc"
 
 	"github.com/gofreego/goutils/logger"
@@ -46,7 +46,7 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 	service := service.NewService(ctx, &a.cfg.Service, repository)
 
 	// Create authentication middleware
-	authMiddleware := middleware.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.GRPC.AuthenticationEnabled)
+	authMiddleware := jwtutils.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.GRPC.AuthenticationEnabled)
 
 	// Create a new gRPC server with interceptors
 	a.server = grpc.NewServer(

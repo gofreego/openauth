@@ -10,7 +10,7 @@ import (
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/repository"
 	"github.com/gofreego/openauth/internal/service"
-	"github.com/gofreego/openauth/pkg/middleware"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 
 	"github.com/gofreego/goutils/api"
 	"github.com/gofreego/goutils/api/debug"
@@ -48,7 +48,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 	service := service.NewService(ctx, &a.cfg.Service, repository.GetInstance(ctx, &a.cfg.Repository))
 
 	// Create authentication middleware
-	authMiddleware := middleware.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.HTTP.AuthenticationEnabled)
+	authMiddleware := jwtutils.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.HTTP.AuthenticationEnabled)
 
 	mux := runtime.NewServeMux()
 

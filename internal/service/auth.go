@@ -14,8 +14,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"github.com/gofreego/openauth/internal/models"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -366,8 +366,8 @@ func generateRefreshToken() (string, error) {
 
 // generateAccessToken creates a JWT access token
 func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, duration time.Duration) (string, error) {
-	claims := models.JWTClaims{
-		UserID:      fmt.Sprintf("%d", user.ID),
+	claims := jwtutils.JWTClaims{
+		UserID:      user.ID,
 		UserUUID:    user.UUID.String(),
 		SessionUUID: session.UUID.String(),
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -387,8 +387,8 @@ func (s *Service) generateAccessToken(user *dao.User, session *dao.Session, dura
 }
 
 // ValidateAccessToken parses and validates a JWT access token
-func (s *Service) ValidateAccessToken(tokenString string) (*models.JWTClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &models.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (s *Service) ValidateAccessToken(tokenString string) (*jwtutils.JWTClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &jwtutils.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -399,7 +399,7 @@ func (s *Service) ValidateAccessToken(tokenString string) (*models.JWTClaims, er
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(*models.JWTClaims); ok && token.Valid {
+	if claims, ok := token.Claims.(*jwtutils.JWTClaims); ok && token.Valid {
 		return claims, nil
 	}
 

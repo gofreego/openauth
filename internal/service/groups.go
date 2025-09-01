@@ -2,13 +2,12 @@ package service
 
 import (
 	"context"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
-	"github.com/gofreego/openauth/pkg/auth"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -36,20 +35,14 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 	}
 
 	// Get current user ID from context
-	claims, err := auth.GetUserFromContext(ctx)
+	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 
-	// Convert string user ID to int64
-	createdBy, err := strconv.ParseInt(claims.UserID, 10, 64)
-	if err != nil {
-		return nil, status.Error(codes.Internal, "invalid user ID format")
-	}
-
 	// Create group DAO using the FromCreateGroupRequest method
 	group := &dao.Group{}
-	group.FromCreateGroupRequest(req, createdBy)
+	group.FromCreateGroupRequest(req, claims.UserID)
 
 	// Create group in repository
 	createdGroup, err := s.repo.CreateGroup(ctx, group)

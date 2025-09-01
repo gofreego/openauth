@@ -1,4 +1,4 @@
-package auth
+package jwtutils
 
 import (
 	"context"
@@ -11,11 +11,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Claims represents JWT claims structure
-type Claims struct {
-	UserID string `json:"user_id"`
-	Email  string `json:"email"`
-	Role   string `json:"role"`
+// Token claims structure
+type JWTClaims struct {
+	UserID      int64    `json:"userId"`
+	UserUUID    string   `json:"userUUID"`
+	SessionUUID string   `json:"sessionUUID"`
+	DeviceID    string   `json:"deviceId,omitempty"`
+	ProfileIds  []string `json:"profileIds,omitempty"`
+	Permissions []string `json:"permissions,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -40,8 +43,8 @@ func ExtractTokenFromMetadata(ctx context.Context) (string, error) {
 }
 
 // ParseAndValidateToken parses and validates a JWT token
-func ParseAndValidateToken(tokenString, jwtSecret string) (*Claims, error) {
-	claims := &Claims{}
+func ParseAndValidateToken(tokenString, jwtSecret string) (*JWTClaims, error) {
+	claims := &JWTClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -61,14 +64,20 @@ func ParseAndValidateToken(tokenString, jwtSecret string) (*Claims, error) {
 	return claims, nil
 }
 
+type JWT_CLAIM_KEY string
+
+const (
+	JWT_CLAIM_KEY_USER JWT_CLAIM_KEY = "user_claims"
+)
+
 // SetUserInContext sets user claims in context
-func SetUserInContext(ctx context.Context, claims *Claims) context.Context {
-	return context.WithValue(ctx, "user_claims", claims)
+func SetUserInContext(ctx context.Context, claims *JWTClaims) context.Context {
+	return context.WithValue(ctx, JWT_CLAIM_KEY_USER, claims)
 }
 
 // GetUserFromContext extracts user claims from context
-func GetUserFromContext(ctx context.Context) (*Claims, error) {
-	claims, ok := ctx.Value("user_claims").(*Claims)
+func GetUserFromContext(ctx context.Context) (*JWTClaims, error) {
+	claims, ok := ctx.Value(JWT_CLAIM_KEY_USER).(*JWTClaims)
 	if !ok {
 		return nil, fmt.Errorf("user claims not found in context")
 	}

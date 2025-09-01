@@ -19,7 +19,7 @@ type Permission struct {
 	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
 }
 
-func (p *Permission) FromCreatePermissionRequest(req *openauth_v1.CreatePermissionRequest, createdBy int64) {
+func (p *Permission) FromCreatePermissionRequest(req *openauth_v1.CreatePermissionRequest, createdBy int64) *Permission {
 	p.Name = req.Name
 	p.DisplayName = req.DisplayName
 	p.Description = req.Description
@@ -27,6 +27,7 @@ func (p *Permission) FromCreatePermissionRequest(req *openauth_v1.CreatePermissi
 	p.CreatedBy = createdBy
 	p.CreatedAt = time.Now().Unix()
 	p.UpdatedAt = time.Now().Unix()
+	return p
 }
 
 // ToProtoPermission converts a Permission DAO to protobuf Permission
@@ -61,7 +62,7 @@ type Group struct {
 	UpdatedAt   int64     `db:"updated_at" json:"updatedAt"`
 }
 
-func (g *Group) FromCreateGroupRequest(req *openauth_v1.CreateGroupRequest, createdBy int64) {
+func (g *Group) FromCreateGroupRequest(req *openauth_v1.CreateGroupRequest, createdBy int64) *Group {
 	g.Name = req.Name
 	g.DisplayName = req.DisplayName
 	g.Description = req.Description
@@ -70,6 +71,7 @@ func (g *Group) FromCreateGroupRequest(req *openauth_v1.CreateGroupRequest, crea
 	g.CreatedBy = createdBy
 	g.CreatedAt = time.Now().Unix()
 	g.UpdatedAt = time.Now().Unix()
+	return g
 }
 
 // ToProtoGroup converts a Group DAO to protobuf Group

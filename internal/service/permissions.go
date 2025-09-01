@@ -11,6 +11,7 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 )
 
 // CreatePermission creates a new permission
@@ -21,6 +22,11 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	}
 	if req.DisplayName == "" {
 		return nil, status.Error(codes.InvalidArgument, "display_name is required")
+	}
+
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
 	}
 
 	// Check if permission with same name already exists
@@ -44,7 +50,7 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	}
 
 	// Save to repository
-	createdPermission, err := s.repo.CreatePermission(ctx, permission)
+	createdPermission, err := s.repo.CreatePermission(ctx, new(dao.Permission).FromCreatePermissionRequest(req, claims.UserID))
 	if err != nil {
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create permission: %v", err))
 	}

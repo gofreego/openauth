@@ -1,11 +1,10 @@
-package middleware
+package jwtutils
 
 import (
 	"context"
 	"net/http"
 	"strings"
 
-	"github.com/gofreego/openauth/pkg/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -37,18 +36,18 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		}
 
 		// Extract and validate token
-		token, err := auth.ExtractTokenFromMetadata(ctx)
+		token, err := ExtractTokenFromMetadata(ctx)
 		if err != nil {
 			return nil, err
 		}
 
-		claims, err := auth.ParseAndValidateToken(token, a.jwtSecret)
+		claims, err := ParseAndValidateToken(token, a.jwtSecret)
 		if err != nil {
 			return nil, status.Error(codes.Unauthenticated, "invalid token")
 		}
 
 		// Add claims to context
-		ctx = auth.SetUserInContext(ctx, claims)
+		ctx = SetUserInContext(ctx, claims)
 
 		return handler(ctx, req)
 	}
@@ -66,18 +65,18 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 		}
 
 		// Extract and validate token
-		token, err := auth.ExtractTokenFromMetadata(ss.Context())
+		token, err := ExtractTokenFromMetadata(ss.Context())
 		if err != nil {
 			return err
 		}
 
-		claims, err := auth.ParseAndValidateToken(token, a.jwtSecret)
+		claims, err := ParseAndValidateToken(token, a.jwtSecret)
 		if err != nil {
 			return status.Error(codes.Unauthenticated, "invalid token")
 		}
 
 		// Add claims to context
-		ctx := auth.SetUserInContext(ss.Context(), claims)
+		ctx := SetUserInContext(ss.Context(), claims)
 
 		// Create a new server stream with the updated context
 		wrappedStream := &wrappedServerStream{
@@ -114,14 +113,14 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-		claims, err := auth.ParseAndValidateToken(token, a.jwtSecret)
+		claims, err := ParseAndValidateToken(token, a.jwtSecret)
 		if err != nil {
 			http.Error(w, "invalid token", http.StatusUnauthorized)
 			return
 		}
 
 		// Add claims to request context
-		ctx := auth.SetUserInContext(r.Context(), claims)
+		ctx := SetUserInContext(r.Context(), claims)
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
