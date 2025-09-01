@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
       case NavigationSection.users:
         return const UsersPage();
       case NavigationSection.permissions:
-        return const PermissionsPage();
+        return const PermissionsPageWrapper();
       case NavigationSection.groups:
         return GroupsPage(
           onBackToDashboard: () {

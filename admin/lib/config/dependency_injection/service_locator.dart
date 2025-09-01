@@ -22,6 +22,17 @@ import '../../features/users/domain/usecases/update_user_usecase.dart';
 import '../../features/users/domain/usecases/delete_user_usecase.dart';
 import '../../features/users/presentation/bloc/users_bloc.dart';
 
+// Permissions feature dependencies
+import '../../features/permissions/data/datasources/permissions_remote_datasource_impl.dart';
+import '../../features/permissions/data/repositories/permissions_repository_impl.dart';
+import '../../features/permissions/domain/repositories/permissions_repository.dart';
+import '../../features/permissions/domain/usecases/get_permissions_usecase.dart';
+import '../../features/permissions/domain/usecases/get_permission_usecase.dart';
+import '../../features/permissions/domain/usecases/create_permission_usecase.dart';
+import '../../features/permissions/domain/usecases/update_permission_usecase.dart';
+import '../../features/permissions/domain/usecases/delete_permission_usecase.dart';
+import '../../features/permissions/presentation/bloc/permissions_bloc.dart';
+
 // Dashboard feature dependencies
 import '../../features/dashboard/data/datasources/stats_remote_datasource.dart';
 import '../../features/dashboard/data/repositories/stats_repository_impl.dart';
@@ -104,6 +115,39 @@ Future<void> initializeDependencies({
     () => DeleteUserUseCase(serviceLocator<UsersRepository>()),
   );
 
+  // Permissions data sources
+  serviceLocator.registerLazySingleton<PermissionsRemoteDataSource>(
+    () => PermissionsRemoteDataSourceImpl(serviceLocator<ApiService>()),
+  );
+
+  // Permissions repositories
+  serviceLocator.registerLazySingleton<PermissionsRepository>(
+    () => PermissionsRepositoryImpl(
+      remoteDataSource: serviceLocator<PermissionsRemoteDataSource>(),
+    ),
+  );
+
+  // Permissions use cases
+  serviceLocator.registerLazySingleton<GetPermissionsUseCase>(
+    () => GetPermissionsUseCase(serviceLocator<PermissionsRepository>()),
+  );
+
+  serviceLocator.registerLazySingleton<GetPermissionUseCase>(
+    () => GetPermissionUseCase(serviceLocator<PermissionsRepository>()),
+  );
+
+  serviceLocator.registerLazySingleton<CreatePermissionUseCase>(
+    () => CreatePermissionUseCase(serviceLocator<PermissionsRepository>()),
+  );
+
+  serviceLocator.registerLazySingleton<UpdatePermissionUseCase>(
+    () => UpdatePermissionUseCase(serviceLocator<PermissionsRepository>()),
+  );
+
+  serviceLocator.registerLazySingleton<DeletePermissionUseCase>(
+    () => DeletePermissionUseCase(serviceLocator<PermissionsRepository>()),
+  );
+
   // Dashboard data sources
   serviceLocator.registerLazySingleton<StatsRemoteDataSource>(
     () => StatsRemoteDataSourceImpl(serviceLocator<ApiService>()),
@@ -136,6 +180,16 @@ Future<void> initializeDependencies({
       createUserUseCase: serviceLocator<CreateUserUseCase>(),
       updateUserUseCase: serviceLocator<UpdateUserUseCase>(),
       deleteUserUseCase: serviceLocator<DeleteUserUseCase>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<PermissionsBloc>(
+    () => PermissionsBloc(
+      getPermissionsUseCase: serviceLocator<GetPermissionsUseCase>(),
+      getPermissionUseCase: serviceLocator<GetPermissionUseCase>(),
+      createPermissionUseCase: serviceLocator<CreatePermissionUseCase>(),
+      updatePermissionUseCase: serviceLocator<UpdatePermissionUseCase>(),
+      deletePermissionUseCase: serviceLocator<DeletePermissionUseCase>(),
     ),
   );
 

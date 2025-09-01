@@ -17,10 +17,10 @@ AppNames:
 Server:
   HTTP:
     Port: 8085
-    AuthenticationEnabled: false
+    AuthenticationEnabled: true
   GRPC:
     Port: 8086
-    AuthenticationEnabled: false
+    AuthenticationEnabled: true
 Repository:
   Name: Postgres
   Postgres:
