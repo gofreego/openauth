@@ -23,6 +23,7 @@ func (p *Permission) ToProto() *openauth_v1.Permission {
 		Id:          p.ID,
 		Name:        p.Name,
 		DisplayName: p.DisplayName,
+		CreatedBy:   p.CreatedBy,
 		CreatedAt:   p.CreatedAt,
 		UpdatedAt:   p.UpdatedAt,
 	}
@@ -54,6 +55,7 @@ func (g *Group) ToProto() *openauth_v1.Group {
 		Id:          g.ID,
 		Name:        g.Name,
 		DisplayName: g.DisplayName,
+		CreatedBy:   g.CreatedBy,
 		CreatedAt:   g.CreatedAt,
 		UpdatedAt:   g.UpdatedAt,
 	}
