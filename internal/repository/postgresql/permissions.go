@@ -95,7 +95,7 @@ func (r *Repository) GetPermissionByName(ctx context.Context, name string) (*dao
 }
 
 // ListPermissions retrieves permissions with filtering and pagination
-func (r *Repository) ListPermissions(ctx context.Context, filters *filter.PermissionFilter) ([]*dao.Permission, int32, error) {
+func (r *Repository) ListPermissions(ctx context.Context, filters *filter.PermissionFilter) ([]*dao.Permission, error) {
 	// Build WHERE clause
 	var whereConditions []string
 	var args []interface{}
@@ -133,14 +133,6 @@ func (r *Repository) ListPermissions(ctx context.Context, filters *filter.Permis
 		whereClause = "WHERE " + strings.Join(whereConditions, " AND ")
 	}
 
-	// Count query
-	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM permissions %s", whereClause)
-	var totalCount int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, args...).Scan(&totalCount)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count permissions: %w", err)
-	}
-
 	// Data query
 	dataQuery := fmt.Sprintf(`
 		SELECT id, name, display_name, description, is_system, created_by, created_at, updated_at
@@ -153,7 +145,7 @@ func (r *Repository) ListPermissions(ctx context.Context, filters *filter.Permis
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, dataQuery, args...)
 	if err != nil {
-		return nil, 0, fmt.Errorf("failed to query permissions: %w", err)
+		return nil, fmt.Errorf("failed to query permissions: %w", err)
 	}
 	defer rows.Close()
 
@@ -171,16 +163,16 @@ func (r *Repository) ListPermissions(ctx context.Context, filters *filter.Permis
 			&permission.UpdatedAt,
 		)
 		if err != nil {
-			return nil, 0, fmt.Errorf("failed to scan permission: %w", err)
+			return nil, fmt.Errorf("failed to scan permission: %w", err)
 		}
 		permissions = append(permissions, permission)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, 0, fmt.Errorf("error iterating permissions: %w", err)
+		return nil, fmt.Errorf("error iterating permissions: %w", err)
 	}
 
-	return permissions, totalCount, nil
+	return permissions, nil
 }
 
 // UpdatePermission updates an existing permission

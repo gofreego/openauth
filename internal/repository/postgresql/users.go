@@ -228,7 +228,7 @@ func (r *Repository) DeleteUser(ctx context.Context, id int64, softDelete bool) 
 }
 
 // ListUsers retrieves users with filtering and pagination
-func (r *Repository) ListUsers(ctx context.Context, filters *filter.UserFilter) ([]*dao.User, int32, error) {
+func (r *Repository) ListUsers(ctx context.Context, filters *filter.UserFilter) ([]*dao.User, error) {
 	whereConditions := []string{}
 	args := []interface{}{}
 	argIndex := 1
@@ -291,14 +291,6 @@ func (r *Repository) ListUsers(ctx context.Context, filters *filter.UserFilter) 
 	// Build ORDER BY clause - simplified to default ordering for now
 	orderBy := "ORDER BY created_at DESC"
 
-	// Count total records
-	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM users %s", whereClause)
-	var totalCount int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, args...).Scan(&totalCount)
-	if err != nil {
-		return nil, 0, err
-	}
-
 	// Get paginated results
 	query := fmt.Sprintf(`
 		SELECT id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
@@ -311,7 +303,7 @@ func (r *Repository) ListUsers(ctx context.Context, filters *filter.UserFilter) 
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -319,12 +311,12 @@ func (r *Repository) ListUsers(ctx context.Context, filters *filter.UserFilter) 
 	for rows.Next() {
 		user, err := r.scanUserFromRows(rows)
 		if err != nil {
-			return nil, 0, err
+			return nil, err
 		}
 		users = append(users, user)
 	}
 
-	return users, totalCount, rows.Err()
+	return users, rows.Err()
 }
 
 // CheckUsernameExists checks if a username already exists
@@ -446,20 +438,7 @@ func (r *Repository) scanProfile(row *sql.Row) (*dao.Profile, error) {
 }
 
 // ListUserProfiles retrieves all profiles for a specific user with pagination
-func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, int32, error) {
-	// First get the total count
-	countQuery := `
-		SELECT COUNT(*) 
-		FROM user_profiles p 
-		JOIN users u ON p.user_id = u.id 
-		WHERE u.uuid = $1`
-
-	var total int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, filters.UserUUID).Scan(&total)
-	if err != nil {
-		return nil, 0, err
-	}
-
+func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, error) {
 	// Get the profiles with pagination
 	query := `
 		SELECT p.id, p.uuid, p.user_id, p.first_name, p.last_name, p.display_name, 
@@ -474,7 +453,7 @@ func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserP
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.UserUUID, filters.Limit, filters.Offset)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -482,16 +461,16 @@ func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserP
 	for rows.Next() {
 		profile, err := r.scanProfileFromRows(rows)
 		if err != nil {
-			return nil, 0, err
+			return nil, err
 		}
 		profiles = append(profiles, profile)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return profiles, total, nil
+	return profiles, nil
 }
 
 // GetProfileByUUID retrieves a profile by its UUID

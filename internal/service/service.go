@@ -82,7 +82,7 @@ type Repository interface {
 	// Permission methods
 	CreatePermission(ctx context.Context, permission *dao.Permission) (*dao.Permission, error)
 	GetPermissionByID(ctx context.Context, id int64) (*dao.Permission, error)
-	ListPermissions(ctx context.Context, filters *filter.PermissionFilter) ([]*dao.Permission, int32, error)
+	ListPermissions(ctx context.Context, filters *filter.PermissionFilter) ([]*dao.Permission, error)
 	UpdatePermission(ctx context.Context, id int64, updates map[string]interface{}) (*dao.Permission, error)
 	DeletePermission(ctx context.Context, id int64) error
 	GetPermissionByName(ctx context.Context, name string) (*dao.Permission, error)
@@ -98,12 +98,12 @@ type Repository interface {
 	UpdateUser(ctx context.Context, id int64, updates map[string]interface{}) (*dao.User, error)
 	UpdateUserProfile(ctx context.Context, userID int64, updates map[string]interface{}) (*dao.Profile, error)
 	DeleteUser(ctx context.Context, id int64, softDelete bool) error
-	ListUsers(ctx context.Context, filters *filter.UserFilter) ([]*dao.User, int32, error)
+	ListUsers(ctx context.Context, filters *filter.UserFilter) ([]*dao.User, error)
 	CheckUsernameExists(ctx context.Context, username string) (bool, error)
 	CheckEmailExists(ctx context.Context, email string) (bool, error)
 
 	// Profile management methods
-	ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, int32, error)
+	ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, error)
 	GetProfileByUUID(ctx context.Context, uuid string) (*dao.Profile, error)
 	UpdateProfileByUUID(ctx context.Context, uuid string, updates map[string]interface{}) (*dao.Profile, error)
 	CountUserProfiles(ctx context.Context, userUUID string) (int32, error)
@@ -123,7 +123,7 @@ type Repository interface {
 	UpdateSession(ctx context.Context, sessionUUID string, updates map[string]interface{}) (*dao.Session, error)
 	DeleteSession(ctx context.Context, sessionUUID string) error
 	DeleteUserSessions(ctx context.Context, userUUID string) error
-	ListUserSessions(ctx context.Context, filters *filter.UserSessionsFilter) ([]*dao.Session, int32, error)
+	ListUserSessions(ctx context.Context, filters *filter.UserSessionsFilter) ([]*dao.Session, error)
 	UpdateLastActivity(ctx context.Context, sessionUUID string) error
 
 	// Group methods
@@ -131,7 +131,7 @@ type Repository interface {
 	GetGroupByID(ctx context.Context, id int64) (*dao.Group, error)
 	GetGroupByUUID(ctx context.Context, uuid string) (*dao.Group, error)
 	GetGroupByName(ctx context.Context, name string) (*dao.Group, error)
-	ListGroups(ctx context.Context, filters *filter.GroupFilter) ([]*dao.Group, int32, error)
+	ListGroups(ctx context.Context, filters *filter.GroupFilter) ([]*dao.Group, error)
 	UpdateGroup(ctx context.Context, id int64, updates map[string]interface{}) (*dao.Group, error)
 	DeleteGroup(ctx context.Context, id int64) error
 	CheckGroupNameExists(ctx context.Context, name string) (bool, error)
@@ -139,8 +139,8 @@ type Repository interface {
 	// Group membership methods
 	AssignUserToGroup(ctx context.Context, userID, groupID int64, assignedBy *int64, expiresAt *int64) error
 	RemoveUserFromGroup(ctx context.Context, userID, groupID int64) error
-	ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, int32, error)
-	ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, int32, error)
+	ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, error)
+	ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, error)
 	IsUserInGroup(ctx context.Context, userID, groupID int64) (bool, error)
 }
 

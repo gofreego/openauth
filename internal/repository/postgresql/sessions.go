@@ -142,9 +142,8 @@ func (r *Repository) DeleteUserSessions(ctx context.Context, userUUID string) er
 }
 
 // ListUserSessions retrieves sessions for a user with pagination
-func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserSessionsFilter) ([]*dao.Session, int32, error) {
+func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserSessionsFilter) ([]*dao.Session, error) {
 	// Build the base query
-	countQuery := `SELECT COUNT(*) FROM user_sessions WHERE user_uuid = $1`
 	listQuery := `
 		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
 			device_id, device_name, device_type, user_agent, ip_address, location, 
@@ -157,17 +156,9 @@ func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserS
 
 	// Add active filter if requested
 	if filters.ActiveOnly {
-		countQuery += " AND is_active = $2"
 		listQuery += " AND is_active = $2"
 		args = append(args, true)
 		argIndex++
-	}
-
-	// Get total count
-	var total int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, args...).Scan(&total)
-	if err != nil {
-		return nil, 0, err
 	}
 
 	// Add ordering and pagination to list query
@@ -177,7 +168,7 @@ func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserS
 	// Execute list query
 	rows, err := r.connManager.Primary().QueryContext(ctx, listQuery, args...)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -185,16 +176,16 @@ func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserS
 	for rows.Next() {
 		session, err := r.scanSessionFromRows(rows)
 		if err != nil {
-			return nil, 0, err
+			return nil, err
 		}
 		sessions = append(sessions, session)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return sessions, total, nil
+	return sessions, nil
 }
 
 // UpdateLastActivity updates the last activity timestamp for a session

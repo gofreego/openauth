@@ -310,7 +310,7 @@ func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUse
 	activeOnly := req.ActiveOnly != nil && *req.ActiveOnly
 
 	filters := filter.NewUserSessionsFilter(req.UserUuid, limit, offset, activeOnly)
-	sessions, _, err := s.repo.ListUserSessions(ctx, filters)
+	sessions, err := s.repo.ListUserSessions(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list sessions")
 	}

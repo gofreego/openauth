@@ -82,7 +82,7 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 	filters := filter.FromListPermissionsRequest(req)
 
 	// Get permissions from repository
-	permissions, _, err := s.repo.ListPermissions(ctx, filters)
+	permissions, err := s.repo.ListPermissions(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to list permissions: %v", err))
 	}

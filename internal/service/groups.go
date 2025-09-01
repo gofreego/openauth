@@ -83,7 +83,7 @@ func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsReq
 	filters := filter.FromListGroupsRequest(req)
 
 	// Get groups from repository
-	groups, _, err := s.repo.ListGroups(ctx, filters)
+	groups, err := s.repo.ListGroups(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list groups")
 	}
@@ -272,7 +272,7 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 
 	// Get users from repository
 	filters := filter.NewGroupUsersFilter(req.GroupId, limit, offset)
-	users, _, err := s.repo.ListGroupUsers(ctx, filters)
+	users, err := s.repo.ListGroupUsers(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list group users")
 	}
@@ -307,7 +307,7 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 
 	// Get groups from repository
 	filters := filter.NewUserGroupsFilter(req.UserId, limit, offset)
-	groups, _, err := s.repo.ListUserGroups(ctx, filters)
+	groups, err := s.repo.ListUserGroups(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list user groups")
 	}

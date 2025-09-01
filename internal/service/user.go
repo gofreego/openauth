@@ -455,7 +455,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	}
 
 	// Get users from repository
-	users, _, err := s.repo.ListUsers(ctx, filters)
+	users, err := s.repo.ListUsers(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list users")
 	}
@@ -668,7 +668,7 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 
 	// Get profiles for user
 	filters := filter.NewUserProfilesFilter(user.UUID.String(), limit, offset)
-	profiles, totalCount, err := s.repo.ListUserProfiles(ctx, filters)
+	profiles, err := s.repo.ListUserProfiles(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list profiles")
 	}
@@ -680,11 +680,9 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 	}
 
 	return &openauth_v1.ListUserProfilesResponse{
-		Profiles:   protoProfiles,
-		TotalCount: totalCount,
-		Limit:      limit,
-		Offset:     offset,
-		HasMore:    offset+limit < totalCount,
+		Profiles: protoProfiles,
+		Limit:    limit,
+		Offset:   offset,
 	}, nil
 }
 

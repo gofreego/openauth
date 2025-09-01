@@ -64,7 +64,7 @@ func (r *Repository) GetGroupByName(ctx context.Context, name string) (*dao.Grou
 }
 
 // ListGroups retrieves groups with filtering and pagination
-func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter) ([]*dao.Group, int32, error) {
+func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter) ([]*dao.Group, error) {
 	// Build the WHERE clause
 	var conditions []string
 	var args []interface{}
@@ -94,14 +94,6 @@ func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter
 		whereClause = "WHERE " + strings.Join(conditions, " AND ")
 	}
 
-	// Count total records
-	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM groups %s", whereClause)
-	var totalCount int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, args...).Scan(&totalCount)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count groups: %w", err)
-	}
-
 	// Get groups with pagination
 	query := fmt.Sprintf(`
 		SELECT id, uuid, name, display_name, description, is_system, is_default, created_at, updated_at
@@ -114,7 +106,7 @@ func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, 0, fmt.Errorf("failed to list groups: %w", err)
+		return nil, fmt.Errorf("failed to list groups: %w", err)
 	}
 	defer rows.Close()
 
@@ -122,16 +114,16 @@ func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter
 	for rows.Next() {
 		group, err := r.scanGroupFromRows(rows)
 		if err != nil {
-			return nil, 0, fmt.Errorf("failed to scan group: %w", err)
+			return nil, fmt.Errorf("failed to scan group: %w", err)
 		}
 		groups = append(groups, group)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, 0, fmt.Errorf("rows iteration error: %w", err)
+		return nil, fmt.Errorf("rows iteration error: %w", err)
 	}
 
-	return groups, totalCount, nil
+	return groups, nil
 }
 
 // UpdateGroup updates a group in the database
@@ -241,20 +233,7 @@ func (r *Repository) RemoveUserFromGroup(ctx context.Context, userID, groupID in
 }
 
 // ListGroupUsers retrieves all users in a specific group
-func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, int32, error) {
-	// Count total users in group
-	countQuery := `
-		SELECT COUNT(*)
-		FROM users u
-		INNER JOIN user_groups ug ON u.id = ug.user_id
-		WHERE ug.group_id = $1`
-
-	var totalCount int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, filters.GroupID).Scan(&totalCount)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count group users: %w", err)
-	}
-
+func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, error) {
 	// Get users with pagination
 	query := `
 		SELECT u.id, u.uuid, u.username, u.email, u.phone, u.name, u.avatar_url,
@@ -268,7 +247,7 @@ func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUs
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.GroupID, filters.Limit, filters.Offset)
 	if err != nil {
-		return nil, 0, fmt.Errorf("failed to list group users: %w", err)
+		return nil, fmt.Errorf("failed to list group users: %w", err)
 	}
 	defer rows.Close()
 
@@ -276,33 +255,20 @@ func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUs
 	for rows.Next() {
 		user, err := r.scanUserFromRows(rows)
 		if err != nil {
-			return nil, 0, fmt.Errorf("failed to scan user: %w", err)
+			return nil, fmt.Errorf("failed to scan user: %w", err)
 		}
 		users = append(users, user)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, 0, fmt.Errorf("rows iteration error: %w", err)
+		return nil, fmt.Errorf("rows iteration error: %w", err)
 	}
 
-	return users, totalCount, nil
+	return users, nil
 }
 
 // ListUserGroups retrieves all groups for a specific user
-func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, int32, error) {
-	// Count total groups for user
-	countQuery := `
-		SELECT COUNT(*)
-		FROM groups g
-		INNER JOIN user_groups ug ON g.id = ug.group_id
-		WHERE ug.user_id = $1`
-
-	var totalCount int32
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, filters.UserID).Scan(&totalCount)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count user groups: %w", err)
-	}
-
+func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, error) {
 	// Get groups with pagination
 	query := `
 		SELECT g.id, g.uuid, g.name, g.display_name, g.description, g.is_system, g.is_default, g.created_at, g.updated_at
@@ -314,7 +280,7 @@ func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGro
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.UserID, filters.Limit, filters.Offset)
 	if err != nil {
-		return nil, 0, fmt.Errorf("failed to list user groups: %w", err)
+		return nil, fmt.Errorf("failed to list user groups: %w", err)
 	}
 	defer rows.Close()
 
@@ -322,16 +288,16 @@ func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGro
 	for rows.Next() {
 		group, err := r.scanGroupFromRows(rows)
 		if err != nil {
-			return nil, 0, fmt.Errorf("failed to scan group: %w", err)
+			return nil, fmt.Errorf("failed to scan group: %w", err)
 		}
 		groups = append(groups, group)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, 0, fmt.Errorf("rows iteration error: %w", err)
+		return nil, fmt.Errorf("rows iteration error: %w", err)
 	}
 
-	return groups, totalCount, nil
+	return groups, nil
 }
 
 // IsUserInGroup checks if a user is in a specific group
