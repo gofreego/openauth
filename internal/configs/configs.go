@@ -25,9 +25,13 @@ type Configuration struct {
 	Migrator     migrator.Config    `yaml:"Migrator"`
 }
 
+type ServerConfig struct {
+	Port                  int  `yaml:"Port"`
+	AuthenticationEnabled bool `yaml:"AuthenticationEnabled"`
+}
 type Server struct {
-	GRPCPort int `yaml:"GRPCPort"`
-	HTTPPort int `yaml:"HTTPPort"`
+	GRPC ServerConfig `yaml:"GRPC"`
+	HTTP ServerConfig `yaml:"HTTP"`
 }
 
 func LoadConfig(ctx context.Context, path string, env string) *Configuration {

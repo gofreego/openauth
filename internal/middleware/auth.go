@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/gofreego/openauth/internal/auth"
-	"github.com/gofreego/openauth/internal/configs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -15,18 +14,23 @@ import (
 // AuthMiddleware provides JWT authentication for gRPC and HTTP requests
 type AuthMiddleware struct {
 	jwtSecret string
+	enabled   bool
 }
 
 // NewAuthMiddleware creates a new auth middleware instance
-func NewAuthMiddleware(jwtSecret string) *AuthMiddleware {
+func NewAuthMiddleware(jwtSecret string, enabled bool) *AuthMiddleware {
 	return &AuthMiddleware{
 		jwtSecret: jwtSecret,
+		enabled:   enabled,
 	}
 }
 
 // UnaryServerInterceptor provides JWT authentication for unary gRPC calls
 func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		if !a.enabled {
+			return handler(ctx, req)
+		}
 		// Skip auth for ping and sign-up endpoints
 		if a.skipAuth(info.FullMethod) {
 			return handler(ctx, req)
@@ -53,6 +57,9 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 // StreamServerInterceptor provides JWT authentication for streaming gRPC calls
 func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		if !a.enabled {
+			return handler(srv, ss)
+		}
 		// Skip auth for ping endpoints
 		if a.skipAuth(info.FullMethod) {
 			return handler(srv, ss)
@@ -84,6 +91,9 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 
 // HTTPMiddleware provides JWT authentication for HTTP requests
 func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
+	if !a.enabled {
+		return next
+	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Skip auth for ping and sign-up endpoints
 		if a.skipHTTPAuth(r.URL.Path) {
@@ -165,6 +175,6 @@ func (w *wrappedServerStream) Context() context.Context {
 }
 
 // InitAuthMiddleware initializes auth middleware with config
-func InitAuthMiddleware(cfg *configs.Configuration) *AuthMiddleware {
-	return NewAuthMiddleware(cfg.Service.JWT.SecretKey)
+func InitAuthMiddleware(secretKey string, enabled bool) *AuthMiddleware {
+	return NewAuthMiddleware(secretKey, enabled)
 }

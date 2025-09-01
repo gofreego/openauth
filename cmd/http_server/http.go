@@ -41,14 +41,14 @@ func NewHTTPServer(cfg *configs.Configuration) *HTTPServer {
 
 func (a *HTTPServer) Run(ctx context.Context) error {
 
-	if a.cfg.Server.HTTPPort == 0 {
+	if a.cfg.Server.HTTP.Port == 0 {
 		logger.Panic(ctx, "http port is not provided")
 	}
 
 	service := service.NewService(ctx, &a.cfg.Service, repository.GetInstance(ctx, &a.cfg.Repository))
 
 	// Create authentication middleware
-	authMiddleware := middleware.InitAuthMiddleware(a.cfg)
+	authMiddleware := middleware.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.HTTP.AuthenticationEnabled)
 
 	mux := runtime.NewServeMux()
 
@@ -64,15 +64,15 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 	}
 
 	a.server = &http.Server{
-		Addr:    fmt.Sprintf(":%d", a.cfg.Server.HTTPPort),
+		Addr:    fmt.Sprintf(":%d", a.cfg.Server.HTTP.Port),
 		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(api.CORSMiddleware(authMiddleware.HTTPMiddleware(mux)))),
 	}
 
-	logger.Info(ctx, "Starting HTTP server on port %d", a.cfg.Server.HTTPPort)
-	logger.Info(ctx, "Swagger UI is available at `http://localhost:%d/openauth/v1/swagger`", a.cfg.Server.HTTPPort)
+	logger.Info(ctx, "Starting HTTP server on port %d", a.cfg.Server.HTTP.Port)
+	logger.Info(ctx, "Swagger UI is available at `http://localhost:%d/openauth/v1/swagger`", a.cfg.Server.HTTP.Port)
 
 	if a.cfg.Debug.Enabled {
-		logger.Info(ctx, "Debug dashboard available at `http://localhost:%d/openauth/v1/debug`", a.cfg.Server.HTTPPort)
+		logger.Info(ctx, "Debug dashboard available at `http://localhost:%d/openauth/v1/debug`", a.cfg.Server.HTTP.Port)
 	}
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
 	err = a.server.ListenAndServe()

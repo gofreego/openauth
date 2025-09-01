@@ -37,7 +37,7 @@ func NewGRPCServer(cfg *configs.Configuration) *GRPCServer {
 
 func (a *GRPCServer) Run(ctx context.Context) error {
 
-	if a.cfg.Server.GRPCPort == 0 {
+	if a.cfg.Server.GRPC.Port == 0 {
 		logger.Panic(ctx, "grpc port is not provided")
 	}
 
@@ -46,7 +46,7 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 	service := service.NewService(ctx, &a.cfg.Service, repository)
 
 	// Create authentication middleware
-	authMiddleware := middleware.InitAuthMiddleware(a.cfg)
+	authMiddleware := middleware.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.GRPC.AuthenticationEnabled)
 
 	// Create a new gRPC server with interceptors
 	a.server = grpc.NewServer(
@@ -56,10 +56,10 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 
 	openauth_v1.RegisterOpenAuthServer(a.server, service)
 
-	logger.Info(ctx, "Starting gRPC server on port %d", a.cfg.Server.GRPCPort)
+	logger.Info(ctx, "Starting gRPC server on port %d", a.cfg.Server.GRPC.Port)
 
 	// Listen on a TCP port
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.cfg.Server.GRPCPort))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.cfg.Server.GRPC.Port))
 	if err != nil {
 		logger.Panic(ctx, "failed to listen for grpc server: %v", err)
 	}
