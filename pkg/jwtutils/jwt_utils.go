@@ -83,3 +83,41 @@ func GetUserFromContext(ctx context.Context) (*JWTClaims, error) {
 	}
 	return claims, nil
 }
+
+// HasPermission checks if the user in the context has the specified permission
+func HasPermission(ctx context.Context, permission string) (bool, error) {
+	claims, err := GetUserFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	// Check if user has system admin permission (grants all permissions)
+	for _, userPermission := range claims.Permissions {
+		if userPermission == "system.admin" {
+			return true, nil
+		}
+	}
+
+	// Check for specific permission
+	for _, userPermission := range claims.Permissions {
+		if userPermission == permission {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+// RequirePermission checks if the user has the required permission and returns an error if not
+func RequirePermission(ctx context.Context, permission string) error {
+	hasPerms, err := HasPermission(ctx, permission)
+	if err != nil {
+		return fmt.Errorf("failed to check permissions: %w", err)
+	}
+
+	if !hasPerms {
+		return fmt.Errorf("insufficient permissions: %s required", permission)
+	}
+
+	return nil
+}

@@ -5,62 +5,47 @@ const (
 	MaxPermissionNameLength        = 100
 	MaxPermissionDisplayNameLength = 200
 	MaxPermissionDescriptionLength = 500
-	MaxResourceNameLength          = 50
-	MaxActionNameLength            = 50
 
-	// Common permission actions
-	// These represent the operations that can be performed on resources
-	ActionCreate = "create" // Create new instances of a resource
-	ActionRead   = "read"   // View/retrieve a resource
-	ActionUpdate = "update" // Modify existing resource
-	ActionDelete = "delete" // Remove a resource
-	ActionList   = "list"   // Browse/list multiple resources
+	// System Permissions (from migrations)
+	// User management permissions
+	PermissionUsersCreate = "users.create"
+	PermissionUsersRead   = "users.read"
+	PermissionUsersUpdate = "users.update"
+	PermissionUsersDelete = "users.delete"
+	PermissionUsersList   = "users.list"
 
-	// Additional common actions
-	ActionPublish = "publish" // Publish content (for content management)
-	ActionApprove = "approve" // Approve requests (for workflow systems)
-	ActionArchive = "archive" // Archive/deactivate resources
-	ActionExport  = "export"  // Export data from resources
+	// User profile permissions
+	PermissionProfilesCreate = "profiles.create"
+	PermissionProfilesRead   = "profiles.read"
+	PermissionProfilesUpdate = "profiles.update"
+	PermissionProfilesDelete = "profiles.delete"
+	PermissionProfilesList   = "profiles.list"
 
-	// Common resources
-	// These represent the entities/domain objects in the system
-	ResourceUsers       = "users"       // User account management
-	ResourceGroups      = "groups"      // Group/role management
-	ResourcePermissions = "permissions" // Permission management
-	ResourceSessions    = "sessions"    // Session management
+	// Group management permissions
+	PermissionGroupsCreate = "groups.create"
+	PermissionGroupsRead   = "groups.read"
+	PermissionGroupsUpdate = "groups.update"
+	PermissionGroupsDelete = "groups.delete"
+	PermissionGroupsAssign = "groups.assign"
+	PermissionGroupsRevoke = "groups.revoke"
 
-	// Additional common resources (examples for extension)
-	ResourcePosts    = "posts"    // Blog posts or content management
-	ResourceOrders   = "orders"   // Order management (e-commerce)
-	ResourceReports  = "reports"  // Report generation and viewing
-	ResourceSettings = "settings" // System configuration
+	// Permission management permissions
+	PermissionPermissionsCreate = "permissions.create"
+	PermissionPermissionsRead   = "permissions.read"
+	PermissionPermissionsUpdate = "permissions.update"
+	PermissionPermissionsDelete = "permissions.delete"
+	PermissionPermissionsAssign = "permissions.assign"
+	PermissionPermissionsRevoke = "permissions.revoke"
+
+	// Session management permissions
+	PermissionSessionsRead      = "sessions.read"
+	PermissionSessionsTerminate = "sessions.terminate"
+
+	// Audit and security permissions
+	PermissionAuditRead      = "audit.read"
+	PermissionSecurityManage = "security.manage"
+
+	// System administration permissions
+	PermissionSystemAdmin  = "system.admin"
+	PermissionSystemConfig = "system.config"
 )
-
-// Example permission combinations:
-//
-// User Management:
-// - "users.create" -> Create new user accounts
-// - "users.read" -> View user profiles
-// - "users.update" -> Modify user information
-// - "users.delete" -> Remove user accounts
-// - "users.list" -> Browse all users
-//
-// Group Management:
-// - "groups.create" -> Create new groups/roles
-// - "groups.read" -> View group details
-// - "groups.update" -> Modify group settings
-// - "groups.delete" -> Remove groups
-// - "groups.list" -> Browse all groups
-//
-// Permission Management:
-// - "permissions.create" -> Create new permissions
-// - "permissions.read" -> View permission details
-// - "permissions.update" -> Modify permissions
-// - "permissions.delete" -> Remove permissions (non-system only)
-// - "permissions.list" -> Browse all permissions
-//
-// Content Management (example):
-// - "posts.create" -> Create new posts
-// - "posts.publish" -> Publish posts to make them public
-// - "posts.archive" -> Archive old posts
-// - "posts.export" -> Export posts to external formats
