@@ -12,6 +12,8 @@ CREATE TABLE user_sessions (
     user_agent TEXT,
     ip_address INET,
     location VARCHAR(255),
+    lat DECIMAL(9,6),
+    lon DECIMAL(9,6),
     is_active BOOLEAN DEFAULT TRUE,
     expires_at BIGINT NOT NULL,
     refresh_expires_at BIGINT,

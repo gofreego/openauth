@@ -40,3 +40,34 @@ $$ language 'plpgsql';
 CREATE TRIGGER update_users_updated_at 
     BEFORE UPDATE ON users 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Create initial root/admin user for system bootstrap
+INSERT INTO users (
+    uuid,
+    name, 
+    username, 
+    email, 
+    password_hash, 
+    email_verified, 
+    phone_verified, 
+    is_active, 
+    is_locked, 
+    failed_login_attempts, 
+    password_changed_at, 
+    created_at, 
+    updated_at
+) VALUES (
+    gen_random_uuid(),
+    'Administrator',
+    'admin',
+    'admin@openauth.local',
+    '$2a$12$bMavjNGg74RQJdNa.n1VpeZgcTjtEcuGi7Pkg1JLP2MFg0qL0PmFi', -- bcrypt hash of 'admin123'
+    true,
+    false,
+    true,
+    false,
+    0,
+    EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
+);

@@ -2,8 +2,7 @@
 CREATE TABLE otp_verifications (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    email VARCHAR(255),
-    phone VARCHAR(20),
+    identifier VARCHAR(255), -- email / phone
     otp_code VARCHAR(10) NOT NULL,
     otp_type VARCHAR(50) NOT NULL, -- email_verification, phone_verification, password_reset, login
     is_used BOOLEAN DEFAULT FALSE,
