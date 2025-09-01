@@ -74,6 +74,23 @@ type Repository interface {
 	DeleteUserSessions(ctx context.Context, userUUID string) error
 	ListUserSessions(ctx context.Context, userUUID string, limit, offset int32, activeOnly bool) ([]*dao.Session, int32, error)
 	UpdateLastActivity(ctx context.Context, sessionUUID string) error
+
+	// Group methods
+	CreateGroup(ctx context.Context, group *dao.Group) (*dao.Group, error)
+	GetGroupByID(ctx context.Context, id int64) (*dao.Group, error)
+	GetGroupByUUID(ctx context.Context, uuid string) (*dao.Group, error)
+	GetGroupByName(ctx context.Context, name string) (*dao.Group, error)
+	ListGroups(ctx context.Context, limit, offset int32, filters map[string]interface{}) ([]*dao.Group, int32, error)
+	UpdateGroup(ctx context.Context, id int64, updates map[string]interface{}) (*dao.Group, error)
+	DeleteGroup(ctx context.Context, id int64) error
+	CheckGroupNameExists(ctx context.Context, name string) (bool, error)
+
+	// Group membership methods
+	AssignUserToGroup(ctx context.Context, userID, groupID int64, assignedBy *int64, expiresAt *int64) error
+	RemoveUserFromGroup(ctx context.Context, userID, groupID int64) error
+	ListGroupUsers(ctx context.Context, groupID int64, limit, offset int32) ([]*dao.User, int32, error)
+	ListUserGroups(ctx context.Context, userID int64, limit, offset int32) ([]*dao.Group, int32, error)
+	IsUserInGroup(ctx context.Context, userID, groupID int64) (bool, error)
 }
 
 type Service struct {

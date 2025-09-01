@@ -51,6 +51,26 @@ type Group struct {
 	UpdatedAt   int64     `db:"updated_at" json:"updatedAt"`
 }
 
+// ToProto converts a Group DAO to protobuf Group
+func (g *Group) ToProto() *openauth_v1.Group {
+	proto := &openauth_v1.Group{
+		Id:          g.ID,
+		Uuid:        g.UUID.String(),
+		Name:        g.Name,
+		DisplayName: g.DisplayName,
+		IsSystem:    g.IsSystem,
+		IsDefault:   g.IsDefault,
+		CreatedAt:   g.CreatedAt,
+		UpdatedAt:   g.UpdatedAt,
+	}
+
+	if g.Description != nil {
+		proto.Description = g.Description
+	}
+
+	return proto
+}
+
 // Group ↔ Permission junction
 type GroupPermission struct {
 	ID           int64  `db:"id" json:"id"`

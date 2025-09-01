@@ -19,33 +19,42 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OpenAuth_Ping_FullMethodName               = "/v1.OpenAuth/Ping"
-	OpenAuth_CreatePermission_FullMethodName   = "/v1.OpenAuth/CreatePermission"
-	OpenAuth_GetPermission_FullMethodName      = "/v1.OpenAuth/GetPermission"
-	OpenAuth_ListPermissions_FullMethodName    = "/v1.OpenAuth/ListPermissions"
-	OpenAuth_UpdatePermission_FullMethodName   = "/v1.OpenAuth/UpdatePermission"
-	OpenAuth_DeletePermission_FullMethodName   = "/v1.OpenAuth/DeletePermission"
-	OpenAuth_SignUp_FullMethodName             = "/v1.OpenAuth/SignUp"
-	OpenAuth_VerifyEmail_FullMethodName        = "/v1.OpenAuth/VerifyEmail"
-	OpenAuth_VerifyPhone_FullMethodName        = "/v1.OpenAuth/VerifyPhone"
-	OpenAuth_ResendVerification_FullMethodName = "/v1.OpenAuth/ResendVerification"
-	OpenAuth_CheckUsername_FullMethodName      = "/v1.OpenAuth/CheckUsername"
-	OpenAuth_CheckEmail_FullMethodName         = "/v1.OpenAuth/CheckEmail"
-	OpenAuth_GetUser_FullMethodName            = "/v1.OpenAuth/GetUser"
-	OpenAuth_UpdateUser_FullMethodName         = "/v1.OpenAuth/UpdateUser"
-	OpenAuth_ChangePassword_FullMethodName     = "/v1.OpenAuth/ChangePassword"
-	OpenAuth_ListUsers_FullMethodName          = "/v1.OpenAuth/ListUsers"
-	OpenAuth_DeleteUser_FullMethodName         = "/v1.OpenAuth/DeleteUser"
-	OpenAuth_CreateProfile_FullMethodName      = "/v1.OpenAuth/CreateProfile"
-	OpenAuth_ListUserProfiles_FullMethodName   = "/v1.OpenAuth/ListUserProfiles"
-	OpenAuth_UpdateProfile_FullMethodName      = "/v1.OpenAuth/UpdateProfile"
-	OpenAuth_DeleteProfile_FullMethodName      = "/v1.OpenAuth/DeleteProfile"
-	OpenAuth_SignIn_FullMethodName             = "/v1.OpenAuth/SignIn"
-	OpenAuth_RefreshToken_FullMethodName       = "/v1.OpenAuth/RefreshToken"
-	OpenAuth_Logout_FullMethodName             = "/v1.OpenAuth/Logout"
-	OpenAuth_ValidateToken_FullMethodName      = "/v1.OpenAuth/ValidateToken"
-	OpenAuth_ListUserSessions_FullMethodName   = "/v1.OpenAuth/ListUserSessions"
-	OpenAuth_TerminateSession_FullMethodName   = "/v1.OpenAuth/TerminateSession"
+	OpenAuth_Ping_FullMethodName                = "/v1.OpenAuth/Ping"
+	OpenAuth_CreatePermission_FullMethodName    = "/v1.OpenAuth/CreatePermission"
+	OpenAuth_GetPermission_FullMethodName       = "/v1.OpenAuth/GetPermission"
+	OpenAuth_ListPermissions_FullMethodName     = "/v1.OpenAuth/ListPermissions"
+	OpenAuth_UpdatePermission_FullMethodName    = "/v1.OpenAuth/UpdatePermission"
+	OpenAuth_DeletePermission_FullMethodName    = "/v1.OpenAuth/DeletePermission"
+	OpenAuth_CreateGroup_FullMethodName         = "/v1.OpenAuth/CreateGroup"
+	OpenAuth_GetGroup_FullMethodName            = "/v1.OpenAuth/GetGroup"
+	OpenAuth_ListGroups_FullMethodName          = "/v1.OpenAuth/ListGroups"
+	OpenAuth_UpdateGroup_FullMethodName         = "/v1.OpenAuth/UpdateGroup"
+	OpenAuth_DeleteGroup_FullMethodName         = "/v1.OpenAuth/DeleteGroup"
+	OpenAuth_AssignUserToGroup_FullMethodName   = "/v1.OpenAuth/AssignUserToGroup"
+	OpenAuth_RemoveUserFromGroup_FullMethodName = "/v1.OpenAuth/RemoveUserFromGroup"
+	OpenAuth_ListGroupUsers_FullMethodName      = "/v1.OpenAuth/ListGroupUsers"
+	OpenAuth_ListUserGroups_FullMethodName      = "/v1.OpenAuth/ListUserGroups"
+	OpenAuth_SignUp_FullMethodName              = "/v1.OpenAuth/SignUp"
+	OpenAuth_VerifyEmail_FullMethodName         = "/v1.OpenAuth/VerifyEmail"
+	OpenAuth_VerifyPhone_FullMethodName         = "/v1.OpenAuth/VerifyPhone"
+	OpenAuth_ResendVerification_FullMethodName  = "/v1.OpenAuth/ResendVerification"
+	OpenAuth_CheckUsername_FullMethodName       = "/v1.OpenAuth/CheckUsername"
+	OpenAuth_CheckEmail_FullMethodName          = "/v1.OpenAuth/CheckEmail"
+	OpenAuth_GetUser_FullMethodName             = "/v1.OpenAuth/GetUser"
+	OpenAuth_UpdateUser_FullMethodName          = "/v1.OpenAuth/UpdateUser"
+	OpenAuth_ChangePassword_FullMethodName      = "/v1.OpenAuth/ChangePassword"
+	OpenAuth_ListUsers_FullMethodName           = "/v1.OpenAuth/ListUsers"
+	OpenAuth_DeleteUser_FullMethodName          = "/v1.OpenAuth/DeleteUser"
+	OpenAuth_CreateProfile_FullMethodName       = "/v1.OpenAuth/CreateProfile"
+	OpenAuth_ListUserProfiles_FullMethodName    = "/v1.OpenAuth/ListUserProfiles"
+	OpenAuth_UpdateProfile_FullMethodName       = "/v1.OpenAuth/UpdateProfile"
+	OpenAuth_DeleteProfile_FullMethodName       = "/v1.OpenAuth/DeleteProfile"
+	OpenAuth_SignIn_FullMethodName              = "/v1.OpenAuth/SignIn"
+	OpenAuth_RefreshToken_FullMethodName        = "/v1.OpenAuth/RefreshToken"
+	OpenAuth_Logout_FullMethodName              = "/v1.OpenAuth/Logout"
+	OpenAuth_ValidateToken_FullMethodName       = "/v1.OpenAuth/ValidateToken"
+	OpenAuth_ListUserSessions_FullMethodName    = "/v1.OpenAuth/ListUserSessions"
+	OpenAuth_TerminateSession_FullMethodName    = "/v1.OpenAuth/TerminateSession"
 )
 
 // OpenAuthClient is the client API for OpenAuth service.
@@ -108,6 +117,50 @@ type OpenAuthClient interface {
 	// Warning: Deleting a permission will affect all users and groups
 	// that currently have this permission assigned.
 	DeletePermission(ctx context.Context, in *DeletePermissionRequest, opts ...grpc.CallOption) (*DeletePermissionResponse, error)
+	// CreateGroup creates a new group in the system.
+	//
+	// Groups are used to organize users and assign permissions collectively.
+	// Each group has a unique name and can have multiple users and permissions assigned.
+	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
+	// GetGroup retrieves a specific group by ID, UUID, or name.
+	//
+	// Returns complete group information including metadata and system status.
+	GetGroup(ctx context.Context, in *GetGroupRequest, opts ...grpc.CallOption) (*GetGroupResponse, error)
+	// ListGroups retrieves groups with optional filtering and pagination.
+	//
+	// Supports filtering by:
+	// - search: Searches across name, display_name, and description fields
+	// - is_system: Filter by system vs user-created groups
+	// - is_default: Filter by default groups for new users
+	ListGroups(ctx context.Context, in *ListGroupsRequest, opts ...grpc.CallOption) (*ListGroupsResponse, error)
+	// UpdateGroup modifies an existing group.
+	//
+	// All fields in the request are optional - only provided fields will be updated.
+	// System groups (is_system=true) cannot be modified to prevent breaking core functionality.
+	UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*UpdateGroupResponse, error)
+	// DeleteGroup removes a group from the system.
+	//
+	// System groups (is_system=true) cannot be deleted as they are critical for application functionality.
+	// Warning: Deleting a group will remove all user assignments and group permissions.
+	DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*DeleteGroupResponse, error)
+	// AssignUserToGroup adds a user to a group.
+	//
+	// Grants the user all permissions associated with the group.
+	// Supports optional expiration time for temporary group membership.
+	AssignUserToGroup(ctx context.Context, in *AssignUserToGroupRequest, opts ...grpc.CallOption) (*AssignUserToGroupResponse, error)
+	// RemoveUserFromGroup removes a user from a group.
+	//
+	// Revokes all group-based permissions from the user.
+	// Direct user permissions are not affected.
+	RemoveUserFromGroup(ctx context.Context, in *RemoveUserFromGroupRequest, opts ...grpc.CallOption) (*RemoveUserFromGroupResponse, error)
+	// ListGroupUsers retrieves all users in a specific group.
+	//
+	// Returns paginated list of users with their group membership details.
+	ListGroupUsers(ctx context.Context, in *ListGroupUsersRequest, opts ...grpc.CallOption) (*ListGroupUsersResponse, error)
+	// ListUserGroups retrieves all groups for a specific user.
+	//
+	// Returns paginated list of groups the user belongs to.
+	ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*ListUserGroupsResponse, error)
 	// SignUp creates a new user account in the system.
 	//
 	// Supports multiple registration methods:
@@ -299,6 +352,96 @@ func (c *openAuthClient) DeletePermission(ctx context.Context, in *DeletePermiss
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeletePermissionResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_DeletePermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateGroupResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_CreateGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) GetGroup(ctx context.Context, in *GetGroupRequest, opts ...grpc.CallOption) (*GetGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetGroupResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_GetGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ListGroups(ctx context.Context, in *ListGroupsRequest, opts ...grpc.CallOption) (*ListGroupsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListGroupsResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ListGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*UpdateGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateGroupResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_UpdateGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*DeleteGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteGroupResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_DeleteGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) AssignUserToGroup(ctx context.Context, in *AssignUserToGroupRequest, opts ...grpc.CallOption) (*AssignUserToGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AssignUserToGroupResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_AssignUserToGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) RemoveUserFromGroup(ctx context.Context, in *RemoveUserFromGroupRequest, opts ...grpc.CallOption) (*RemoveUserFromGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveUserFromGroupResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_RemoveUserFromGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ListGroupUsers(ctx context.Context, in *ListGroupUsersRequest, opts ...grpc.CallOption) (*ListGroupUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListGroupUsersResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ListGroupUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*ListUserGroupsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserGroupsResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_ListUserGroups_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -575,6 +718,50 @@ type OpenAuthServer interface {
 	// Warning: Deleting a permission will affect all users and groups
 	// that currently have this permission assigned.
 	DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error)
+	// CreateGroup creates a new group in the system.
+	//
+	// Groups are used to organize users and assign permissions collectively.
+	// Each group has a unique name and can have multiple users and permissions assigned.
+	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
+	// GetGroup retrieves a specific group by ID, UUID, or name.
+	//
+	// Returns complete group information including metadata and system status.
+	GetGroup(context.Context, *GetGroupRequest) (*GetGroupResponse, error)
+	// ListGroups retrieves groups with optional filtering and pagination.
+	//
+	// Supports filtering by:
+	// - search: Searches across name, display_name, and description fields
+	// - is_system: Filter by system vs user-created groups
+	// - is_default: Filter by default groups for new users
+	ListGroups(context.Context, *ListGroupsRequest) (*ListGroupsResponse, error)
+	// UpdateGroup modifies an existing group.
+	//
+	// All fields in the request are optional - only provided fields will be updated.
+	// System groups (is_system=true) cannot be modified to prevent breaking core functionality.
+	UpdateGroup(context.Context, *UpdateGroupRequest) (*UpdateGroupResponse, error)
+	// DeleteGroup removes a group from the system.
+	//
+	// System groups (is_system=true) cannot be deleted as they are critical for application functionality.
+	// Warning: Deleting a group will remove all user assignments and group permissions.
+	DeleteGroup(context.Context, *DeleteGroupRequest) (*DeleteGroupResponse, error)
+	// AssignUserToGroup adds a user to a group.
+	//
+	// Grants the user all permissions associated with the group.
+	// Supports optional expiration time for temporary group membership.
+	AssignUserToGroup(context.Context, *AssignUserToGroupRequest) (*AssignUserToGroupResponse, error)
+	// RemoveUserFromGroup removes a user from a group.
+	//
+	// Revokes all group-based permissions from the user.
+	// Direct user permissions are not affected.
+	RemoveUserFromGroup(context.Context, *RemoveUserFromGroupRequest) (*RemoveUserFromGroupResponse, error)
+	// ListGroupUsers retrieves all users in a specific group.
+	//
+	// Returns paginated list of users with their group membership details.
+	ListGroupUsers(context.Context, *ListGroupUsersRequest) (*ListGroupUsersResponse, error)
+	// ListUserGroups retrieves all groups for a specific user.
+	//
+	// Returns paginated list of groups the user belongs to.
+	ListUserGroups(context.Context, *ListUserGroupsRequest) (*ListUserGroupsResponse, error)
 	// SignUp creates a new user account in the system.
 	//
 	// Supports multiple registration methods:
@@ -729,6 +916,33 @@ func (UnimplementedOpenAuthServer) UpdatePermission(context.Context, *UpdatePerm
 }
 func (UnimplementedOpenAuthServer) DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePermission not implemented")
+}
+func (UnimplementedOpenAuthServer) CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
+}
+func (UnimplementedOpenAuthServer) GetGroup(context.Context, *GetGroupRequest) (*GetGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroup not implemented")
+}
+func (UnimplementedOpenAuthServer) ListGroups(context.Context, *ListGroupsRequest) (*ListGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListGroups not implemented")
+}
+func (UnimplementedOpenAuthServer) UpdateGroup(context.Context, *UpdateGroupRequest) (*UpdateGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
+}
+func (UnimplementedOpenAuthServer) DeleteGroup(context.Context, *DeleteGroupRequest) (*DeleteGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
+}
+func (UnimplementedOpenAuthServer) AssignUserToGroup(context.Context, *AssignUserToGroupRequest) (*AssignUserToGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignUserToGroup not implemented")
+}
+func (UnimplementedOpenAuthServer) RemoveUserFromGroup(context.Context, *RemoveUserFromGroupRequest) (*RemoveUserFromGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveUserFromGroup not implemented")
+}
+func (UnimplementedOpenAuthServer) ListGroupUsers(context.Context, *ListGroupUsersRequest) (*ListGroupUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListGroupUsers not implemented")
+}
+func (UnimplementedOpenAuthServer) ListUserGroups(context.Context, *ListUserGroupsRequest) (*ListUserGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserGroups not implemented")
 }
 func (UnimplementedOpenAuthServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
@@ -918,6 +1132,168 @@ func _OpenAuth_DeletePermission_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OpenAuthServer).DeletePermission(ctx, req.(*DeletePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).CreateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_CreateGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).CreateGroup(ctx, req.(*CreateGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_GetGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).GetGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_GetGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).GetGroup(ctx, req.(*GetGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ListGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGroupsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ListGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ListGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ListGroups(ctx, req.(*ListGroupsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).UpdateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_UpdateGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).UpdateGroup(ctx, req.(*UpdateGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).DeleteGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_DeleteGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).DeleteGroup(ctx, req.(*DeleteGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_AssignUserToGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignUserToGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).AssignUserToGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_AssignUserToGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).AssignUserToGroup(ctx, req.(*AssignUserToGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_RemoveUserFromGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveUserFromGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).RemoveUserFromGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_RemoveUserFromGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).RemoveUserFromGroup(ctx, req.(*RemoveUserFromGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ListGroupUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGroupUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ListGroupUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ListGroupUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ListGroupUsers(ctx, req.(*ListGroupUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_ListUserGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserGroupsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).ListUserGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_ListUserGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).ListUserGroups(ctx, req.(*ListUserGroupsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1330,6 +1706,42 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePermission",
 			Handler:    _OpenAuth_DeletePermission_Handler,
+		},
+		{
+			MethodName: "CreateGroup",
+			Handler:    _OpenAuth_CreateGroup_Handler,
+		},
+		{
+			MethodName: "GetGroup",
+			Handler:    _OpenAuth_GetGroup_Handler,
+		},
+		{
+			MethodName: "ListGroups",
+			Handler:    _OpenAuth_ListGroups_Handler,
+		},
+		{
+			MethodName: "UpdateGroup",
+			Handler:    _OpenAuth_UpdateGroup_Handler,
+		},
+		{
+			MethodName: "DeleteGroup",
+			Handler:    _OpenAuth_DeleteGroup_Handler,
+		},
+		{
+			MethodName: "AssignUserToGroup",
+			Handler:    _OpenAuth_AssignUserToGroup_Handler,
+		},
+		{
+			MethodName: "RemoveUserFromGroup",
+			Handler:    _OpenAuth_RemoveUserFromGroup_Handler,
+		},
+		{
+			MethodName: "ListGroupUsers",
+			Handler:    _OpenAuth_ListGroupUsers_Handler,
+		},
+		{
+			MethodName: "ListUserGroups",
+			Handler:    _OpenAuth_ListUserGroups_Handler,
 		},
 		{
 			MethodName: "SignUp",

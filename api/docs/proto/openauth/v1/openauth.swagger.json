@@ -152,6 +152,389 @@
         ]
       }
     },
+    "/openauth/v1/groups": {
+      "get": {
+        "summary": "ListGroups retrieves groups with optional filtering and pagination.",
+        "description": "Supports filtering by:\n- search: Searches across name, display_name, and description fields\n- is_system: Filter by system vs user-created groups\n- is_default: Filter by default groups for new users",
+        "operationId": "OpenAuth_ListGroups",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListGroupsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Maximum number of groups to return (default: 10, max: 100)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Number of groups to skip (for pagination)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Optional search query (searches name, display_name, description)",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "isSystem",
+            "description": "Optional filter by system groups",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "isDefault",
+            "description": "Optional filter by default groups",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "post": {
+        "summary": "CreateGroup creates a new group in the system.",
+        "description": "Groups are used to organize users and assign permissions collectively.\nEach group has a unique name and can have multiple users and permissions assigned.",
+        "operationId": "OpenAuth_CreateGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateGroupRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/groups/{groupUuid}/users": {
+      "get": {
+        "summary": "ListGroupUsers retrieves all users in a specific group.",
+        "description": "Returns paginated list of users with their group membership details.",
+        "operationId": "OpenAuth_ListGroupUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListGroupUsersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "groupId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "groupName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "Pagination",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/groups/{groupUuid}/users/{userUuid}": {
+      "delete": {
+        "summary": "RemoveUserFromGroup removes a user from a group.",
+        "description": "Revokes all group-based permissions from the user.\nDirect user permissions are not affected.",
+        "operationId": "OpenAuth_RemoveUserFromGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RemoveUserFromGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "groupId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "groupName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "post": {
+        "summary": "AssignUserToGroup adds a user to a group.",
+        "description": "Grants the user all permissions associated with the group.\nSupports optional expiration time for temporary group membership.",
+        "operationId": "OpenAuth_AssignUserToGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssignUserToGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthAssignUserToGroupBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/groups/{uuid}": {
+      "get": {
+        "summary": "GetGroup retrieves a specific group by ID, UUID, or name.",
+        "description": "Returns complete group information including metadata and system status.",
+        "operationId": "OpenAuth_GetGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "delete": {
+        "summary": "DeleteGroup removes a group from the system.",
+        "description": "System groups (is_system=true) cannot be deleted as they are critical for application functionality.\nWarning: Deleting a group will remove all user assignments and group permissions.",
+        "operationId": "OpenAuth_DeleteGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "put": {
+        "summary": "UpdateGroup modifies an existing group.",
+        "description": "All fields in the request are optional - only provided fields will be updated.\nSystem groups (is_system=true) cannot be modified to prevent breaking core functionality.",
+        "operationId": "OpenAuth_UpdateGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUpdateGroupBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/permissions": {
       "get": {
         "summary": "ListPermissions retrieves permissions with optional filtering and pagination.",
@@ -776,6 +1159,60 @@
         ]
       }
     },
+    "/openauth/v1/users/{userUuid}/groups": {
+      "get": {
+        "summary": "ListUserGroups retrieves all groups for a specific user.",
+        "description": "Returns paginated list of groups the user belongs to.",
+        "operationId": "OpenAuth_ListUserGroups",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserGroupsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Pagination",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/users/{userUuid}/profiles": {
       "get": {
         "summary": "ListUserProfiles retrieves all profiles for a specific user.",
@@ -1088,6 +1525,28 @@
     }
   },
   "definitions": {
+    "OpenAuthAssignUserToGroupBody": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "groupId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "groupName": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Optional expiration time for the group membership"
+        }
+      },
+      "title": "AssignUserToGroupRequest to add a user to a group"
+    },
     "OpenAuthChangePasswordBody": {
       "type": "object",
       "properties": {
@@ -1158,6 +1617,35 @@
         }
       },
       "title": "CreateProfileRequest to create a new profile for a user"
+    },
+    "OpenAuthUpdateGroupBody": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "newName": {
+          "type": "string",
+          "title": "Optional new name for the group"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Optional new display name"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional new description"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "title": "Optional new default status"
+        }
+      },
+      "title": "UpdateGroupRequest to update group information"
     },
     "OpenAuthUpdatePermissionBody": {
       "type": "object",
@@ -1328,6 +1816,18 @@
         }
       }
     },
+    "v1AssignUserToGroupResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "AssignUserToGroupResponse"
+    },
     "v1ChangePasswordResponse": {
       "type": "object",
       "properties": {
@@ -1371,6 +1871,40 @@
       },
       "title": "CheckUsernameResponse"
     },
+    "v1CreateGroupRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Unique name for the group"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name for the group"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional detailed description of the group"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "title": "Whether this is the default group for new users (optional, defaults to false)"
+        }
+      },
+      "title": "CreateGroupRequest to create a new group"
+    },
+    "v1CreateGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/v1Group"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "CreateGroupResponse after successful group creation"
+    },
     "v1CreatePermissionRequest": {
       "type": "object",
       "properties": {
@@ -1408,6 +1942,18 @@
         }
       },
       "title": "CreateProfileResponse"
+    },
+    "v1DeleteGroupResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "DeleteGroupResponse"
     },
     "v1DeletePermissionResponse": {
       "type": "object",
@@ -1447,6 +1993,15 @@
       },
       "title": "DeleteUserResponse"
     },
+    "v1GetGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/v1Group"
+        }
+      },
+      "title": "GetGroupResponse"
+    },
     "v1GetUserResponse": {
       "type": "object",
       "properties": {
@@ -1458,6 +2013,137 @@
         }
       },
       "title": "GetUserResponse"
+    },
+    "v1Group": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unique identifier for the group"
+        },
+        "uuid": {
+          "type": "string",
+          "title": "Unique UUID for the group"
+        },
+        "name": {
+          "type": "string",
+          "title": "Unique name for the group"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name for the group"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional detailed description of the group"
+        },
+        "isSystem": {
+          "type": "boolean",
+          "title": "Whether this is a system group (cannot be deleted)"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "title": "Whether this is the default group for new users"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Timestamp when the group was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Timestamp when the group was last updated"
+        }
+      },
+      "title": "Group represents a group/role in the system for organizing users and permissions"
+    },
+    "v1GroupUser": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "userUuid": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "assignedAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "GroupUser represents a user's membership in a group"
+    },
+    "v1ListGroupUsersResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1GroupUser"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hasMore": {
+          "type": "boolean"
+        }
+      },
+      "title": "ListGroupUsersResponse"
+    },
+    "v1ListGroupsResponse": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Group"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hasMore": {
+          "type": "boolean"
+        }
+      },
+      "title": "ListGroupsResponse"
     },
     "v1ListPermissionsResponse": {
       "type": "object",
@@ -1491,6 +2177,34 @@
         }
       },
       "title": "Response containing a list of permissions with pagination metadata"
+    },
+    "v1ListUserGroupsResponse": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserGroup"
+          }
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hasMore": {
+          "type": "boolean"
+        }
+      },
+      "title": "ListUserGroupsResponse"
     },
     "v1ListUserProfilesResponse": {
       "type": "object",
@@ -1694,6 +2408,18 @@
       },
       "title": "RefreshTokenResponse with new tokens"
     },
+    "v1RemoveUserFromGroupResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "RemoveUserFromGroupResponse"
+    },
     "v1ResendVerificationRequest": {
       "type": "object",
       "properties": {
@@ -1889,6 +2615,18 @@
       },
       "title": "TerminateSessionResponse"
     },
+    "v1UpdateGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/v1Group"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "UpdateGroupResponse"
+    },
     "v1UpdateProfileResponse": {
       "type": "object",
       "properties": {
@@ -1974,6 +2712,42 @@
         }
       },
       "title": "User represents a user account in the system"
+    },
+    "v1UserGroup": {
+      "type": "object",
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "groupUuid": {
+          "type": "string"
+        },
+        "groupName": {
+          "type": "string"
+        },
+        "groupDisplayName": {
+          "type": "string"
+        },
+        "groupDescription": {
+          "type": "string"
+        },
+        "isSystem": {
+          "type": "boolean"
+        },
+        "isDefault": {
+          "type": "boolean"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "assignedAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "UserGroup represents a group membership for a user"
     },
     "v1UserProfile": {
       "type": "object",

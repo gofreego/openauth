@@ -7,6 +7,7 @@ import "google/api/annotations.proto";
 import "proto/common/ping.proto";
 import "proto/openauth/v1/permissions.proto";
 import "proto/openauth/v1/users.proto";
+import "proto/openauth/v1/groups.proto";
 
 // OpenAuth service provides authentication and authorization functionality
 // including user management, permissions, groups, and session management.
@@ -98,6 +99,101 @@ service OpenAuth {
     rpc DeletePermission (DeletePermissionRequest) returns (DeletePermissionResponse) {
         option (google.api.http) = {
             delete: "/openauth/v1/permissions/{id}"
+        };
+    }
+
+    // Group Management APIs
+    // These endpoints manage groups (roles) in the system for organizing users and permissions.
+
+    // CreateGroup creates a new group in the system.
+    // 
+    // Groups are used to organize users and assign permissions collectively.
+    // Each group has a unique name and can have multiple users and permissions assigned.
+    rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/groups"
+            body: "*"
+        };
+    }
+
+    // GetGroup retrieves a specific group by ID, UUID, or name.
+    // 
+    // Returns complete group information including metadata and system status.
+    rpc GetGroup (GetGroupRequest) returns (GetGroupResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/groups/{uuid}"
+        };
+    }
+
+    // ListGroups retrieves groups with optional filtering and pagination.
+    // 
+    // Supports filtering by:
+    // - search: Searches across name, display_name, and description fields
+    // - is_system: Filter by system vs user-created groups
+    // - is_default: Filter by default groups for new users
+    rpc ListGroups (ListGroupsRequest) returns (ListGroupsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/groups"
+        };
+    }
+
+    // UpdateGroup modifies an existing group.
+    // 
+    // All fields in the request are optional - only provided fields will be updated.
+    // System groups (is_system=true) cannot be modified to prevent breaking core functionality.
+    rpc UpdateGroup (UpdateGroupRequest) returns (UpdateGroupResponse) {
+        option (google.api.http) = {
+            put: "/openauth/v1/groups/{uuid}"
+            body: "*"
+        };
+    }
+
+    // DeleteGroup removes a group from the system.
+    // 
+    // System groups (is_system=true) cannot be deleted as they are critical for application functionality.
+    // Warning: Deleting a group will remove all user assignments and group permissions.
+    rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/groups/{uuid}"
+        };
+    }
+
+    // AssignUserToGroup adds a user to a group.
+    // 
+    // Grants the user all permissions associated with the group.
+    // Supports optional expiration time for temporary group membership.
+    rpc AssignUserToGroup (AssignUserToGroupRequest) returns (AssignUserToGroupResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/groups/{group_uuid}/users/{user_uuid}"
+            body: "*"
+        };
+    }
+
+    // RemoveUserFromGroup removes a user from a group.
+    // 
+    // Revokes all group-based permissions from the user.
+    // Direct user permissions are not affected.
+    rpc RemoveUserFromGroup (RemoveUserFromGroupRequest) returns (RemoveUserFromGroupResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/groups/{group_uuid}/users/{user_uuid}"
+        };
+    }
+
+    // ListGroupUsers retrieves all users in a specific group.
+    // 
+    // Returns paginated list of users with their group membership details.
+    rpc ListGroupUsers (ListGroupUsersRequest) returns (ListGroupUsersResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/groups/{group_uuid}/users"
+        };
+    }
+
+    // ListUserGroups retrieves all groups for a specific user.
+    // 
+    // Returns paginated list of groups the user belongs to.
+    rpc ListUserGroups (ListUserGroupsRequest) returns (ListUserGroupsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/{user_uuid}/groups"
         };
     }
 
