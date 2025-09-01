@@ -22,6 +22,13 @@ import '../../features/users/domain/usecases/update_user_usecase.dart';
 import '../../features/users/domain/usecases/delete_user_usecase.dart';
 import '../../features/users/presentation/bloc/users_bloc.dart';
 
+// Dashboard feature dependencies
+import '../../features/dashboard/data/datasources/stats_remote_datasource.dart';
+import '../../features/dashboard/data/repositories/stats_repository_impl.dart';
+import '../../features/dashboard/domain/repositories/stats_repository.dart';
+import '../../features/dashboard/domain/usecases/get_stats_usecase.dart';
+import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
+
 final serviceLocator = GetIt.instance;
 
 Future<void> initializeDependencies({
@@ -97,6 +104,23 @@ Future<void> initializeDependencies({
     () => DeleteUserUseCase(serviceLocator<UsersRepository>()),
   );
 
+  // Dashboard data sources
+  serviceLocator.registerLazySingleton<StatsRemoteDataSource>(
+    () => StatsRemoteDataSourceImpl(serviceLocator<ApiService>()),
+  );
+
+  // Dashboard repositories
+  serviceLocator.registerLazySingleton<StatsRepository>(
+    () => StatsRepositoryImpl(
+      remoteDataSource: serviceLocator<StatsRemoteDataSource>(),
+    ),
+  );
+
+  // Dashboard use cases
+  serviceLocator.registerLazySingleton<GetStatsUseCase>(
+    () => GetStatsUseCase(serviceLocator<StatsRepository>()),
+  );
+
   // Register BLoCs
   serviceLocator.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
@@ -112,6 +136,12 @@ Future<void> initializeDependencies({
       createUserUseCase: serviceLocator<CreateUserUseCase>(),
       updateUserUseCase: serviceLocator<UpdateUserUseCase>(),
       deleteUserUseCase: serviceLocator<DeleteUserUseCase>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<DashboardBloc>(
+    () => DashboardBloc(
+      getStatsUseCase: serviceLocator<GetStatsUseCase>(),
     ),
   );
 
