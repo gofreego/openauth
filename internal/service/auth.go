@@ -165,14 +165,14 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	}
 
 	// Set device information if provided
-	if req.DeviceId != nil {
-		session.DeviceID = req.DeviceId
+	if req.Metadata.DeviceId != nil {
+		session.DeviceID = req.Metadata.DeviceId
 	}
-	if req.DeviceName != nil {
-		session.DeviceName = req.DeviceName
+	if req.Metadata.DeviceName != nil {
+		session.DeviceName = req.Metadata.DeviceName
 	}
-	if req.DeviceType != nil {
-		session.DeviceType = req.DeviceType
+	if req.Metadata.DeviceType != nil {
+		session.DeviceType = req.Metadata.DeviceType
 	}
 
 	// Save session to database
