@@ -142,6 +142,19 @@ type Repository interface {
 	ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, error)
 	ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, error)
 	IsUserInGroup(ctx context.Context, userID, groupID int64) (bool, error)
+
+	// Group permission methods
+	AssignPermissionToGroup(ctx context.Context, groupID, permissionID, grantedBy int64) (*dao.GroupPermission, error)
+	RemovePermissionFromGroup(ctx context.Context, groupID, permissionID int64) error
+	ListGroupPermissions(ctx context.Context, filters *filter.GroupPermissionFilter) ([]*dao.GroupPermission, error)
+	IsPermissionAssignedToGroup(ctx context.Context, groupID, permissionID int64) (bool, error)
+
+	// User permission methods
+	AssignPermissionToUser(ctx context.Context, userID, permissionID, grantedBy int64, expiresAt *int64) (*dao.UserPermission, error)
+	RemovePermissionFromUser(ctx context.Context, userID, permissionID int64) error
+	ListUserPermissions(ctx context.Context, filters *filter.UserPermissionFilter) ([]*dao.UserPermission, error)
+	GetUserEffectivePermissions(ctx context.Context, filters *filter.UserEffectivePermissionFilter) ([]*dao.Permission, error)
+	IsPermissionAssignedToUser(ctx context.Context, userID, permissionID int64) (bool, error)
 }
 
 type Service struct {

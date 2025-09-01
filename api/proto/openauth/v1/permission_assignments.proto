@@ -1,0 +1,249 @@
+syntax = "proto3";
+package v1;
+
+option go_package = "./openauth_v1";
+
+// GroupPermission represents a permission assigned to a group
+message GroupPermission {
+    // Unique identifier for the group permission assignment
+    int64 id = 1;
+    
+    // ID of the group this permission is assigned to
+    int64 group_id = 2;
+    
+    // ID of the permission being assigned
+    int64 permission_id = 3;
+    
+    // Permission details (populated when needed)
+    string permission_name = 4;
+    string permission_display_name = 5;
+    optional string permission_description = 6;
+    
+    // Group details (populated when needed)
+    string group_name = 7;
+    string group_display_name = 8;
+    optional string group_description = 9;
+    
+    // ID of the user who granted this permission
+    int64 granted_by = 10;
+    
+    // Unix timestamp when the permission was granted
+    int64 created_at = 11;
+}
+
+// UserPermission represents a permission assigned directly to a user
+message UserPermission {
+    // Unique identifier for the user permission assignment
+    int64 id = 1;
+    
+    // ID of the user this permission is assigned to
+    int64 user_id = 2;
+    
+    // ID of the permission being assigned
+    int64 permission_id = 3;
+    
+    // Permission details (populated when needed)
+    string permission_name = 4;
+    string permission_display_name = 5;
+    optional string permission_description = 6;
+    
+    // User details (populated when needed)
+    string user_uuid = 7;
+    string username = 8;
+    optional string user_email = 9;
+    optional string user_display_name = 10;
+    
+    // ID of the user who granted this permission
+    int64 granted_by = 11;
+    
+    // Optional expiration timestamp (null means no expiration)
+    optional int64 expires_at = 12;
+    
+    // Unix timestamp when the permission was granted
+    int64 created_at = 13;
+}
+
+// Request to assign a permission to a group
+message AssignPermissionToGroupRequest {
+    // ID of the group to assign the permission to
+    int64 group_id = 1;
+    
+    // ID of the permission to assign
+    int64 permission_id = 2;
+}
+
+// Response after assigning a permission to a group
+message AssignPermissionToGroupResponse {
+    GroupPermission group_permission = 1;
+    string message = 2;
+}
+
+// Request to remove a permission from a group
+message RemovePermissionFromGroupRequest {
+    // ID of the group to remove the permission from
+    int64 group_id = 1;
+    
+    // ID of the permission to remove
+    int64 permission_id = 2;
+}
+
+// Response after removing a permission from a group
+message RemovePermissionFromGroupResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Request to list permissions assigned to a group
+message ListGroupPermissionsRequest {
+    // ID of the group to list permissions for
+    int64 group_id = 1;
+    
+    // Maximum number of permissions to return (default: 10, max: 100)
+    optional int32 limit = 2;
+    
+    // Number of permissions to skip for pagination (default: 0)
+    optional int32 offset = 3;
+    
+    // Search term to filter permissions by name, display_name, or description
+    optional string search = 4;
+}
+
+// Response containing group permissions with pagination metadata
+message ListGroupPermissionsResponse {
+    // Array of permissions assigned to the group
+    repeated GroupPermission permissions = 1;
+    
+    // The limit value used for this request
+    int32 limit = 2;
+    
+    // The offset value used for this request
+    int32 offset = 3;
+    
+    // Total count of permissions for this group (for pagination)
+    int32 total = 4;
+}
+
+// Request to assign a permission directly to a user
+message AssignPermissionToUserRequest {
+    // ID of the user to assign the permission to
+    int64 user_id = 1;
+    
+    // ID of the permission to assign
+    int64 permission_id = 2;
+    
+    // Optional expiration timestamp (null means no expiration)
+    optional int64 expires_at = 3;
+}
+
+// Response after assigning a permission to a user
+message AssignPermissionToUserResponse {
+    UserPermission user_permission = 1;
+    string message = 2;
+}
+
+// Request to remove a permission from a user
+message RemovePermissionFromUserRequest {
+    // ID of the user to remove the permission from
+    int64 user_id = 1;
+    
+    // ID of the permission to remove
+    int64 permission_id = 2;
+}
+
+// Response after removing a permission from a user
+message RemovePermissionFromUserResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Request to list permissions assigned directly to a user
+message ListUserPermissionsRequest {
+    // ID of the user to list permissions for
+    int64 user_id = 1;
+    
+    // Maximum number of permissions to return (default: 10, max: 100)
+    optional int32 limit = 2;
+    
+    // Number of permissions to skip for pagination (default: 0)
+    optional int32 offset = 3;
+    
+    // Search term to filter permissions by name, display_name, or description
+    optional string search = 4;
+    
+    // Filter by expiration status
+    // true: only show expired permissions
+    // false: only show non-expired permissions
+    // null: show all permissions
+    optional bool expired = 5;
+}
+
+// Response containing user permissions with pagination metadata
+message ListUserPermissionsResponse {
+    // Array of permissions assigned to the user
+    repeated UserPermission permissions = 1;
+    
+    // The limit value used for this request
+    int32 limit = 2;
+    
+    // The offset value used for this request
+    int32 offset = 3;
+    
+    // Total count of permissions for this user (for pagination)
+    int32 total = 4;
+}
+
+// Request to get all effective permissions for a user (direct + group permissions)
+message GetUserEffectivePermissionsRequest {
+    // ID of the user to get effective permissions for
+    int64 user_id = 1;
+    
+    // Maximum number of permissions to return (default: 10, max: 100)
+    optional int32 limit = 2;
+    
+    // Number of permissions to skip for pagination (default: 0)
+    optional int32 offset = 3;
+    
+    // Search term to filter permissions by name, display_name, or description
+    optional string search = 4;
+}
+
+// EffectivePermission represents a permission that a user has either directly or through group membership
+message EffectivePermission {
+    // Permission details
+    int64 permission_id = 1;
+    string permission_name = 2;
+    string permission_display_name = 3;
+    optional string permission_description = 4;
+    
+    // Source of the permission: "direct" or "group"
+    string source = 5;
+    
+    // If source is "group", this contains the group details
+    optional int64 source_group_id = 6;
+    optional string source_group_name = 7;
+    optional string source_group_display_name = 8;
+    
+    // If source is "direct", this may contain expiration info
+    optional int64 expires_at = 9;
+    
+    // When this permission was granted
+    int64 granted_at = 10;
+    
+    // Who granted this permission
+    int64 granted_by = 11;
+}
+
+// Response containing effective permissions for a user
+message GetUserEffectivePermissionsResponse {
+    // Array of effective permissions for the user
+    repeated EffectivePermission permissions = 1;
+    
+    // The limit value used for this request
+    int32 limit = 2;
+    
+    // The offset value used for this request
+    int32 offset = 3;
+    
+    // Total count of effective permissions for this user
+    int32 total = 4;
+}

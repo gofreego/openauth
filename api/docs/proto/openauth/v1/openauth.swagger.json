@@ -274,6 +274,145 @@
         ]
       }
     },
+    "/openauth/v1/groups/{groupId}/permissions": {
+      "get": {
+        "summary": "ListGroupPermissions retrieves all permissions assigned to a specific group.",
+        "description": "Returns paginated list of permissions with optional search filtering.",
+        "operationId": "OpenAuth_ListGroupPermissions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListGroupPermissionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "description": "ID of the group to list permissions for",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Maximum number of permissions to return (default: 10, max: 100)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Number of permissions to skip for pagination (default: 0)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Search term to filter permissions by name, display_name, or description",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "post": {
+        "summary": "AssignPermissionToGroup assigns a permission to a group.",
+        "description": "This allows all users in the group to inherit this permission.\nThe permission will be available to all current and future group members.",
+        "operationId": "OpenAuth_AssignPermissionToGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssignPermissionToGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "description": "ID of the group to assign the permission to",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthAssignPermissionToGroupBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/groups/{groupId}/permissions/{permissionId}": {
+      "delete": {
+        "summary": "RemovePermissionFromGroup removes a permission from a group.",
+        "description": "This will remove the permission from all users who had it through group membership.\nUsers who have the same permission assigned directly will retain it.",
+        "operationId": "OpenAuth_RemovePermissionFromGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RemovePermissionFromGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "description": "ID of the group to remove the permission from",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "permissionId",
+            "description": "ID of the permission to remove",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/groups/{groupId}/users": {
       "get": {
         "summary": "ListGroupUsers retrieves all users in a specific group.",
@@ -1074,6 +1213,63 @@
         ]
       }
     },
+    "/openauth/v1/users/{userId}/effective-permissions": {
+      "get": {
+        "summary": "GetUserEffectivePermissions retrieves all effective permissions for a user.",
+        "description": "This includes both directly assigned permissions and permissions inherited from group membership.\nEach permission includes information about its source (direct assignment or group inheritance).",
+        "operationId": "OpenAuth_GetUserEffectivePermissions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserEffectivePermissionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "ID of the user to get effective permissions for",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Maximum number of permissions to return (default: 10, max: 100)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Number of permissions to skip for pagination (default: 0)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Search term to filter permissions by name, display_name, or description",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
     "/openauth/v1/users/{userId}/groups": {
       "get": {
         "summary": "ListUserGroups retrieves all groups for a specific user.",
@@ -1115,6 +1311,152 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/{userId}/permissions": {
+      "get": {
+        "summary": "ListUserPermissions retrieves all permissions directly assigned to a user.",
+        "description": "This does not include permissions inherited from group membership.\nUse GetUserEffectivePermissions to get all permissions including group-inherited ones.",
+        "operationId": "OpenAuth_ListUserPermissions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserPermissionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "ID of the user to list permissions for",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Maximum number of permissions to return (default: 10, max: 100)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Number of permissions to skip for pagination (default: 0)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Search term to filter permissions by name, display_name, or description",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "expired",
+            "description": "Filter by expiration status\ntrue: only show expired permissions\nfalse: only show non-expired permissions\nnull: show all permissions",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      },
+      "post": {
+        "summary": "AssignPermissionToUser assigns a permission directly to a user.",
+        "description": "This creates a direct permission assignment that bypasses group membership.\nCan include an optional expiration time for temporary permissions.",
+        "operationId": "OpenAuth_AssignPermissionToUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssignPermissionToUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "ID of the user to assign the permission to",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthAssignPermissionToUserBody"
+            }
+          }
+        ],
+        "tags": [
+          "OpenAuth"
+        ]
+      }
+    },
+    "/openauth/v1/users/{userId}/permissions/{permissionId}": {
+      "delete": {
+        "summary": "RemovePermissionFromUser removes a permission directly assigned to a user.",
+        "description": "This only removes direct permission assignments, not permissions inherited from groups.",
+        "operationId": "OpenAuth_RemovePermissionFromUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RemovePermissionFromUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "ID of the user to remove the permission from",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "permissionId",
+            "description": "ID of the permission to remove",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -1422,6 +1764,33 @@
     }
   },
   "definitions": {
+    "OpenAuthAssignPermissionToGroupBody": {
+      "type": "object",
+      "properties": {
+        "permissionId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the permission to assign"
+        }
+      },
+      "title": "Request to assign a permission to a group"
+    },
+    "OpenAuthAssignPermissionToUserBody": {
+      "type": "object",
+      "properties": {
+        "permissionId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the permission to assign"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Optional expiration timestamp (null means no expiration)"
+        }
+      },
+      "title": "Request to assign a permission directly to a user"
+    },
     "OpenAuthChangePasswordBody": {
       "type": "object",
       "properties": {
@@ -1639,6 +2008,30 @@
         }
       }
     },
+    "v1AssignPermissionToGroupResponse": {
+      "type": "object",
+      "properties": {
+        "groupPermission": {
+          "$ref": "#/definitions/v1GroupPermission"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "Response after assigning a permission to a group"
+    },
+    "v1AssignPermissionToUserResponse": {
+      "type": "object",
+      "properties": {
+        "userPermission": {
+          "$ref": "#/definitions/v1UserPermission"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "Response after assigning a permission to a user"
+    },
     "v1AssignUserToGroupRequest": {
       "type": "object",
       "properties": {
@@ -1826,6 +2219,56 @@
       },
       "title": "DeleteUserResponse"
     },
+    "v1EffectivePermission": {
+      "type": "object",
+      "properties": {
+        "permissionId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Permission details"
+        },
+        "permissionName": {
+          "type": "string"
+        },
+        "permissionDisplayName": {
+          "type": "string"
+        },
+        "permissionDescription": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string",
+          "title": "Source of the permission: \"direct\" or \"group\""
+        },
+        "sourceGroupId": {
+          "type": "string",
+          "format": "int64",
+          "title": "If source is \"group\", this contains the group details"
+        },
+        "sourceGroupName": {
+          "type": "string"
+        },
+        "sourceGroupDisplayName": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "If source is \"direct\", this may contain expiration info"
+        },
+        "grantedAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "When this permission was granted"
+        },
+        "grantedBy": {
+          "type": "string",
+          "format": "int64",
+          "title": "Who granted this permission"
+        }
+      },
+      "title": "EffectivePermission represents a permission that a user has either directly or through group membership"
+    },
     "v1GetGroupResponse": {
       "type": "object",
       "properties": {
@@ -1834,6 +2277,35 @@
         }
       },
       "title": "GetGroupResponse"
+    },
+    "v1GetUserEffectivePermissionsResponse": {
+      "type": "object",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1EffectivePermission"
+          },
+          "title": "Array of effective permissions for the user"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The limit value used for this request"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The offset value used for this request"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Total count of effective permissions for this user"
+        }
+      },
+      "title": "Response containing effective permissions for a user"
     },
     "v1GetUserResponse": {
       "type": "object",
@@ -1888,6 +2360,57 @@
       },
       "title": "Group represents a group/role in the system for organizing users and permissions"
     },
+    "v1GroupPermission": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unique identifier for the group permission assignment"
+        },
+        "groupId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the group this permission is assigned to"
+        },
+        "permissionId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the permission being assigned"
+        },
+        "permissionName": {
+          "type": "string",
+          "title": "Permission details (populated when needed)"
+        },
+        "permissionDisplayName": {
+          "type": "string"
+        },
+        "permissionDescription": {
+          "type": "string"
+        },
+        "groupName": {
+          "type": "string",
+          "title": "Group details (populated when needed)"
+        },
+        "groupDisplayName": {
+          "type": "string"
+        },
+        "groupDescription": {
+          "type": "string"
+        },
+        "grantedBy": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the user who granted this permission"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the permission was granted"
+        }
+      },
+      "title": "GroupPermission represents a permission assigned to a group"
+    },
     "v1GroupUser": {
       "type": "object",
       "properties": {
@@ -1924,6 +2447,35 @@
         }
       },
       "title": "GroupUser represents a user's membership in a group"
+    },
+    "v1ListGroupPermissionsResponse": {
+      "type": "object",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1GroupPermission"
+          },
+          "title": "Array of permissions assigned to the group"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The limit value used for this request"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The offset value used for this request"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Total count of permissions for this group (for pagination)"
+        }
+      },
+      "title": "Response containing group permissions with pagination metadata"
     },
     "v1ListGroupUsersResponse": {
       "type": "object",
@@ -1987,6 +2539,35 @@
         }
       },
       "title": "ListUserGroupsResponse"
+    },
+    "v1ListUserPermissionsResponse": {
+      "type": "object",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserPermission"
+          },
+          "title": "Array of permissions assigned to the user"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The limit value used for this request"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The offset value used for this request"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Total count of permissions for this user (for pagination)"
+        }
+      },
+      "title": "Response containing user permissions with pagination metadata"
     },
     "v1ListUserProfilesResponse": {
       "type": "object",
@@ -2155,6 +2736,30 @@
         }
       },
       "title": "RefreshTokenResponse with new tokens"
+    },
+    "v1RemovePermissionFromGroupResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "Response after removing a permission from a group"
+    },
+    "v1RemovePermissionFromUserResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "Response after removing a permission from a user"
     },
     "v1RemoveUserFromGroupResponse": {
       "type": "object",
@@ -2524,6 +3129,65 @@
         }
       },
       "title": "UserGroup represents a group membership for a user"
+    },
+    "v1UserPermission": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unique identifier for the user permission assignment"
+        },
+        "userId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the user this permission is assigned to"
+        },
+        "permissionId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the permission being assigned"
+        },
+        "permissionName": {
+          "type": "string",
+          "title": "Permission details (populated when needed)"
+        },
+        "permissionDisplayName": {
+          "type": "string"
+        },
+        "permissionDescription": {
+          "type": "string"
+        },
+        "userUuid": {
+          "type": "string",
+          "title": "User details (populated when needed)"
+        },
+        "username": {
+          "type": "string"
+        },
+        "userEmail": {
+          "type": "string"
+        },
+        "userDisplayName": {
+          "type": "string"
+        },
+        "grantedBy": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the user who granted this permission"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Optional expiration timestamp (null means no expiration)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the permission was granted"
+        }
+      },
+      "title": "UserPermission represents a permission assigned directly to a user"
     },
     "v1UserProfile": {
       "type": "object",

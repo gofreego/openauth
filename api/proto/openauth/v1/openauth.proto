@@ -9,6 +9,7 @@ import "proto/openauth/v1/permissions.proto";
 import "proto/openauth/v1/users.proto";
 import "proto/openauth/v1/groups.proto";
 import "proto/openauth/v1/sessions.proto";
+import "proto/openauth/v1/permission_assignments.proto";
 
 // OpenAuth service provides authentication and authorization functionality
 // including user management, permissions, groups, and session management.
@@ -195,6 +196,79 @@ service OpenAuth {
     rpc ListUserGroups (ListUserGroupsRequest) returns (ListUserGroupsResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/users/{user_id}/groups"
+        };
+    }
+
+    // Permission Assignment APIs
+    // These endpoints manage the assignment of permissions to groups and users.
+
+    // AssignPermissionToGroup assigns a permission to a group.
+    // 
+    // This allows all users in the group to inherit this permission.
+    // The permission will be available to all current and future group members.
+    rpc AssignPermissionToGroup (AssignPermissionToGroupRequest) returns (AssignPermissionToGroupResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/groups/{group_id}/permissions"
+            body: "*"
+        };
+    }
+
+    // RemovePermissionFromGroup removes a permission from a group.
+    // 
+    // This will remove the permission from all users who had it through group membership.
+    // Users who have the same permission assigned directly will retain it.
+    rpc RemovePermissionFromGroup (RemovePermissionFromGroupRequest) returns (RemovePermissionFromGroupResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/groups/{group_id}/permissions/{permission_id}"
+        };
+    }
+
+    // ListGroupPermissions retrieves all permissions assigned to a specific group.
+    // 
+    // Returns paginated list of permissions with optional search filtering.
+    rpc ListGroupPermissions (ListGroupPermissionsRequest) returns (ListGroupPermissionsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/groups/{group_id}/permissions"
+        };
+    }
+
+    // AssignPermissionToUser assigns a permission directly to a user.
+    // 
+    // This creates a direct permission assignment that bypasses group membership.
+    // Can include an optional expiration time for temporary permissions.
+    rpc AssignPermissionToUser (AssignPermissionToUserRequest) returns (AssignPermissionToUserResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/{user_id}/permissions"
+            body: "*"
+        };
+    }
+
+    // RemovePermissionFromUser removes a permission directly assigned to a user.
+    // 
+    // This only removes direct permission assignments, not permissions inherited from groups.
+    rpc RemovePermissionFromUser (RemovePermissionFromUserRequest) returns (RemovePermissionFromUserResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/users/{user_id}/permissions/{permission_id}"
+        };
+    }
+
+    // ListUserPermissions retrieves all permissions directly assigned to a user.
+    // 
+    // This does not include permissions inherited from group membership.
+    // Use GetUserEffectivePermissions to get all permissions including group-inherited ones.
+    rpc ListUserPermissions (ListUserPermissionsRequest) returns (ListUserPermissionsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/{user_id}/permissions"
+        };
+    }
+
+    // GetUserEffectivePermissions retrieves all effective permissions for a user.
+    // 
+    // This includes both directly assigned permissions and permissions inherited from group membership.
+    // Each permission includes information about its source (direct assignment or group inheritance).
+    rpc GetUserEffectivePermissions (GetUserEffectivePermissionsRequest) returns (GetUserEffectivePermissionsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/{user_id}/effective-permissions"
         };
     }
 
