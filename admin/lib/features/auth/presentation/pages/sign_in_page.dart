@@ -76,7 +76,7 @@ class _SignInPageState extends State<SignInPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         // Logo and title
-                        const Center(child: AppLogo.large(withBackground: true)),
+                        const Center(child: AppLogo.large(withBackground: false)),
                         const SizedBox(height: 24),
                         Text(
                           'Admin Sign In',

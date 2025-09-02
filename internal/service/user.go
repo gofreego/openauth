@@ -506,9 +506,15 @@ func (s *Service) DeleteUser(ctx context.Context, req *openauth_v1.DeleteUserReq
 		return nil, status.Error(codes.NotFound, "user not found")
 	}
 
+	// check if user is admin user
+	if user.Username == "admin" {
+		return nil, status.Error(codes.PermissionDenied, "admin user cannot be deleted")
+	}
+
 	// Delete user
 	err = s.repo.DeleteUser(ctx, user.ID, req.SoftDelete)
 	if err != nil {
+		logger.Error(ctx, "Failed to delete userID=%d: %v", user.ID, err)
 		return nil, status.Error(codes.Internal, "failed to delete user")
 	}
 
