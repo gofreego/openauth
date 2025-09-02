@@ -105,6 +105,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             CustomSearchBar(
               hintText: 'Search permissions...',
               initialQuery: _searchQuery,
+              onKeyStroke: true,
               onSearch: (value) {
                 setState(() {
                   _searchQuery = value;

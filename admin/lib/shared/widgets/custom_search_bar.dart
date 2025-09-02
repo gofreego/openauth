@@ -19,6 +19,9 @@ class CustomSearchBar extends StatefulWidget {
   
   /// Custom width for the search bar
   final double? width;
+  
+  /// Whether to call onSearch on each keystroke
+  final bool onKeyStroke;
 
   const CustomSearchBar({
     super.key,
@@ -28,6 +31,7 @@ class CustomSearchBar extends StatefulWidget {
     this.controller,
     this.showSearchIcon = true,
     this.width,
+    this.onKeyStroke = false,
   });
 
   @override
@@ -92,6 +96,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             : null,
       ),
       onSubmitted: (_) => _performSearch(),
+      onChanged: widget.onKeyStroke ? (value) => widget.onSearch?.call(value) : null,
     );
 
     return widget.width != null 

@@ -63,7 +63,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     {
       name: "Session Management"
       description: "User session management"
-    }``
+    }
   ]
 };
 
