@@ -116,185 +116,195 @@ class _EditUserDialogState extends State<EditUserDialog> {
         ),
         content: SizedBox(
           width: 500,
+          height: 600, // Set a fixed height to enable scrolling
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person_outline),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    height: 16,
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Username is required';
-                    }
-                    if (value.length < 3) {
-                      return 'Username must be at least 3 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Display Name',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.badge_outlined),
-                    helperText: 'The name shown to other users',
-                  ),
-                  validator: (value) {
-                    if (value != null &&
-                        value.trim().isNotEmpty &&
-                        value.trim().length < 2) {
-                      return 'Display name must be at least 2 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email_outlined),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Email is required';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone (optional)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.phone_outlined),
-                  ),
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value != null && value.isNotEmpty) {
-                      if (!RegExp(r'^\+?[\d\s\-\(\)]+$').hasMatch(value)) {
-                        return 'Please enter a valid phone number';
-                      }
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _avatarUrlController,
-                  decoration: InputDecoration(
-                    labelText: 'Avatar URL (optional)',
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.image_outlined),
-                    helperText: 'URL to the user\'s profile picture',
-                    suffixIcon: _avatarUrlController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.visibility),
-                            onPressed: () => _showAvatarPreview(),
-                            tooltip: 'Preview avatar',
-                          )
-                        : null,
-                  ),
-                  keyboardType: TextInputType.url,
-                  onChanged: (value) {
-                    setState(() {}); // Rebuild to show/hide preview button
-                  },
-                  validator: (value) {
-                    if (value != null && value.isNotEmpty) {
-                      final uri = Uri.tryParse(value);
-                      if (uri == null || !uri.hasAbsolutePath) {
-                        return 'Please enter a valid URL';
-                      }
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Switch(
-                      value: _isActive,
-                      onChanged: (value) {
-                        setState(() {
-                          _isActive = value;
-                        });
-                      },
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person_outline),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Active Status',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          Text(
-                            _isActive
-                                ? 'User is active and can log in'
-                                : 'User is inactive and cannot log in',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // User info card
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Username is required';
+                      }
+                      if (value.length < 3) {
+                        return 'Username must be at least 3 characters';
+                      }
+                      return null;
+                    },
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Display Name',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.badge_outlined),
+                      helperText: 'The name shown to other users',
+                    ),
+                    validator: (value) {
+                      if (value != null &&
+                          value.trim().isNotEmpty &&
+                          value.trim().length < 2) {
+                        return 'Display name must be at least 2 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email_outlined),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Email is required';
+                      }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _phoneController,
+                    decoration: const InputDecoration(
+                      labelText: 'Phone (optional)',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.phone_outlined),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        if (!RegExp(r'^\+?[\d\s\-\(\)]+$').hasMatch(value)) {
+                          return 'Please enter a valid phone number';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _avatarUrlController,
+                    decoration: InputDecoration(
+                      labelText: 'Avatar URL (optional)',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.image_outlined),
+                      helperText: 'URL to the user\'s profile picture',
+                      suffixIcon: _avatarUrlController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.visibility),
+                              onPressed: () => _showAvatarPreview(),
+                              tooltip: 'Preview avatar',
+                            )
+                          : null,
+                    ),
+                    keyboardType: TextInputType.url,
+                    onChanged: (value) {
+                      setState(() {}); // Rebuild to show/hide preview button
+                    },
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        final uri = Uri.tryParse(value);
+                        if (uri == null || !uri.hasAbsolutePath) {
+                          return 'Please enter a valid URL';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline,
-                              size: 16, color: Colors.grey[600]),
-                          const SizedBox(width: 8),
-                          Text(
-                            'User Information',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
+                      Switch(
+                        value: _isActive,
+                        onChanged: (value) {
+                          setState(() {
+                            _isActive = value;
+                          });
+                        },
                       ),
-                      const SizedBox(height: 8),
-                      _buildInfoRow('UUID', widget.user.uuid),
-                      _buildInfoRow('Created', widget.user.formattedCreatedAt),
-                      _buildInfoRow(
-                          'Last Login', widget.user.lastLoginFormatted),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Active Status',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            Text(
+                              _isActive
+                                  ? 'User is active and can log in'
+                                  : 'User is inactive and cannot log in',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  // User info card
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.info_outline,
+                                size: 16, color: Colors.grey[600]),
+                            const SizedBox(width: 8),
+                            Text(
+                              'User Information',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        _buildInfoRow('UUID', widget.user.uuid),
+                        _buildInfoRow(
+                            'Created', widget.user.formattedCreatedAt),
+                        _buildInfoRow(
+                            'Last Login', widget.user.lastLoginFormatted),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
         ),
