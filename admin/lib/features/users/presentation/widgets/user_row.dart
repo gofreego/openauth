@@ -97,9 +97,10 @@ class UserRow extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(width: 16),
           Expanded(
             child: Text(
-              user.formattedCreatedAt,
+              user.lastLoginFormatted,
               style: theme.textTheme.bodyMedium,
               overflow: TextOverflow.ellipsis,
             ),
