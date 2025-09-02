@@ -83,6 +83,15 @@ class SessionManager {
     }
   }
 
+  /// Get current session ID
+  Future<String?> getCurrentSessionId() async {
+    try {
+      return _prefs.getString(_sessionIdKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Update authentication tokens
   Future<void> updateAuthTokens(pb_sessions.RefreshTokenResponse refreshResponse) async {
     await _prefs.setString(_accessTokenKey, refreshResponse.accessToken);

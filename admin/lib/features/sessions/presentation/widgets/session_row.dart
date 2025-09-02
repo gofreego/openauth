@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
+import '../../../../config/dependency_injection/service_locator.dart';
+import '../../../../shared/services/session_manager.dart';
 import '../../domain/extensions/session_extensions.dart';
 import '../../domain/utils/session_utils.dart';
 
-class SessionRow extends StatelessWidget {
+class SessionRow extends StatefulWidget {
   final pb.Session session;
   final int index;
   final VoidCallback onTerminate;
@@ -16,10 +18,37 @@ class SessionRow extends StatelessWidget {
   });
 
   @override
+  State<SessionRow> createState() => _SessionRowState();
+}
+
+class _SessionRowState extends State<SessionRow> {
+  String? _currentSessionId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentSessionId();
+  }
+
+  Future<void> _loadCurrentSessionId() async {
+    try {
+      final sessionManager = serviceLocator<SessionManager>();
+      final sessionId = await sessionManager.getCurrentSessionId();
+      if (mounted) {
+        setState(() {
+          _currentSessionId = sessionId;
+        });
+      }
+    } catch (e) {
+      // Handle error silently, fallback to heuristic method
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isEven = index % 2 == 0;
-    final statusColor = SessionUtils.getStatusColor(session);
+    final isEven = widget.index % 2 == 0;
+    final statusColor = SessionUtils.getStatusColor(widget.session);
     
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -40,7 +69,7 @@ class SessionRow extends StatelessWidget {
             child: Row(
               children: [
                 Icon(
-                  SessionUtils.getDeviceIconData(session.deviceType),
+                  SessionUtils.getDeviceIconData(widget.session.deviceType),
                   size: 24,
                   color: statusColor,
                 ),
@@ -51,14 +80,14 @@ class SessionRow extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        session.deviceInfo,
+                        widget.session.deviceInfo,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        session.shortIpAddress,
+                        widget.session.shortIpAddress,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurface.withOpacity(0.6),
                         ),
@@ -75,7 +104,7 @@ class SessionRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              session.formattedLocation,
+              widget.session.formattedLocation,
               style: theme.textTheme.bodyMedium,
               overflow: TextOverflow.ellipsis,
             ),
@@ -85,7 +114,7 @@ class SessionRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              session.lastActivityFormatted,
+              widget.session.lastActivityFormatted,
               style: theme.textTheme.bodyMedium,
               overflow: TextOverflow.ellipsis,
             ),
@@ -111,15 +140,15 @@ class SessionRow extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        session.status,
+                        widget.session.status,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: statusColor,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      if (session.hasExpiresAt())
+                      if (widget.session.hasExpiresAt())
                         Text(
-                          session.formattedExpiresAt,
+                          widget.session.formattedExpiresAt,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.6),
                           ),
@@ -137,7 +166,7 @@ class SessionRow extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (SessionUtils.isCurrentSession(session))
+                if (SessionUtils.isCurrentSession(widget.session, currentSessionId: _currentSessionId))
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
@@ -155,8 +184,8 @@ class SessionRow extends StatelessWidget {
                 else
                   IconButton(
                     icon: const Icon(Icons.logout_outlined, size: 20),
-                    onPressed: session.isActive ? onTerminate : null,
-                    tooltip: session.isActive ? 'Terminate session' : 'Session already terminated',
+                    onPressed: widget.session.isActive ? widget.onTerminate : null,
+                    tooltip: widget.session.isActive ? 'Terminate session' : 'Session already terminated',
                     color: Colors.red,
                   ),
               ],

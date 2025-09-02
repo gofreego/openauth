@@ -76,10 +76,34 @@ class SessionUtils {
     }
   }
 
-  static bool isCurrentSession(pb.Session session) {
-    // This would typically be determined by comparing with current session ID
-    // For now, we'll check if it's the most recent active session
-    return session.isActive && session.hasLastActivityAt();
+  static bool isCurrentSession(pb.Session session, {String? currentSessionId}) {
+    // If we have the current session ID, compare directly
+    if (currentSessionId != null && currentSessionId.isNotEmpty) {
+      return session.id == currentSessionId;
+    }
+    
+    // Fallback: Check if it's an active web session with recent activity
+    // This is a heuristic approach for when we don't have the exact session ID
+    if (!session.isActive) return false;
+    
+    // Check if it's a web/browser session (admin is typically web-based)
+    final isWebSession = session.deviceType.toLowerCase().contains('web') || 
+                        session.deviceType.toLowerCase().contains('browser') ||
+                        session.userAgent.toLowerCase().contains('mozilla');
+    
+    if (!isWebSession) return false;
+    
+    // Check if it has very recent activity (within the last 5 minutes)
+    if (session.hasLastActivityAt()) {
+      final lastActivity = DateTime.fromMillisecondsSinceEpoch(session.lastActivityAt.toInt() * 1000);
+      final now = DateTime.now();
+      final timeDiff = now.difference(lastActivity);
+      
+      // Consider it current if activity is within 5 minutes
+      return timeDiff.inMinutes <= 5;
+    }
+    
+    return false;
   }
 
   static List<pb.Session> sortSessionsByActivity(List<pb.Session> sessions) {
