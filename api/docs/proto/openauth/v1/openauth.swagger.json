@@ -1,11 +1,55 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "OpenAuth",
+    "title": "OpenAuth API",
     "description": "OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.",
     "version": "1.0.0"
   },
   "tags": [
+    {
+      "name": "Ping",
+      "description": "Health check endpoints"
+    },
+    {
+      "name": "Statistics",
+      "description": "System statistics and metrics"
+    },
+    {
+      "name": "Permissions",
+      "description": "Permission management in RBAC system"
+    },
+    {
+      "name": "Groups",
+      "description": "Group management for organizing users"
+    },
+    {
+      "name": "Group Users",
+      "description": "User-group relationship management"
+    },
+    {
+      "name": "Permission Assignments",
+      "description": "Permission assignment to users and groups"
+    },
+    {
+      "name": "User Registration",
+      "description": "User signup and verification"
+    },
+    {
+      "name": "User Management",
+      "description": "User account management"
+    },
+    {
+      "name": "Profile Management",
+      "description": "User profile management"
+    },
+    {
+      "name": "Authentication",
+      "description": "User authentication and token management"
+    },
+    {
+      "name": "Session Management",
+      "description": "User session management"
+    },
     {
       "name": "OpenAuth"
     }

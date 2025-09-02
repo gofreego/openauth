@@ -121,8 +121,20 @@ const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\x10ListUserSessions\x12\x1b.v1.ListUserSessionsRequest\x1a\x1c.v1.ListUserSessionsResponse\"\x80\x01\x92AN\n" +
 	"\x12Session Management\x12\x12List user sessions\x1a$Retrieve active sessions for a user.\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/sessions\x12\xc6\x01\n" +
 	"\x10TerminateSession\x12\x1b.v1.TerminateSessionRequest\x1a\x1c.v1.TerminateSessionResponse\"w\x92AJ\n" +
-	"\x12Session Management\x12\x16Terminate user session\x1a\x1cEnd a specific user session.\x82\xd3\xe4\x93\x02$*\"/openauth/v1/sessions/{session_id}B\xba\x01\x92A\xa7\x01\x12\xa4\x01\n" +
-	"\bOpenAuth\x12\x90\x01OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.2\x051.0.0Z\r./openauth_v1b\x06proto3"
+	"\x12Session Management\x12\x16Terminate user session\x1a\x1cEnd a specific user session.\x82\xd3\xe4\x93\x02$*\"/openauth/v1/sessions/{session_id}B\xe2\x05\x92A\xcf\x05\x12\xa8\x01\n" +
+	"\fOpenAuth API\x12\x90\x01OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.2\x051.0.0j\x1e\n" +
+	"\x04Ping\x12\x16Health check endpointsj+\n" +
+	"\n" +
+	"Statistics\x12\x1dSystem statistics and metricsj3\n" +
+	"\vPermissions\x12$Permission management in RBAC systemj/\n" +
+	"\x06Groups\x12%Group management for organizing usersj1\n" +
+	"\vGroup Users\x12\"User-group relationship managementjC\n" +
+	"\x16Permission Assignments\x12)Permission assignment to users and groupsj1\n" +
+	"\x11User Registration\x12\x1cUser signup and verificationj*\n" +
+	"\x0fUser Management\x12\x17User account managementj-\n" +
+	"\x12Profile Management\x12\x17User profile managementj:\n" +
+	"\x0eAuthentication\x12(User authentication and token managementj-\n" +
+	"\x12Session Management\x12\x17User session managementZ\r./openauth_v1b\x06proto3"
 
 var file_proto_openauth_v1_openauth_proto_goTypes = []any{
 	(*PingRequest)(nil),                         // 0: v1.PingRequest
