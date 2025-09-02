@@ -39,22 +39,14 @@ class RefreshUsersEvent extends UsersEvent {
 }
 
 class CreateUserEvent extends UsersEvent {
-  final String username;
-  final String email;
-  final String password;
-  final String? phone;
-  final String name;
+  final SignUpRequest request;
 
   const CreateUserEvent({
-    required this.username,
-    required this.email,
-    required this.password,
-    this.phone,
-    required this.name,
+    required this.request,
   });
 
   @override
-  List<Object?> get props => [username, email, password, phone, name];
+  List<Object?> get props => [request];
 }
 
 class UpdateUserEvent extends UsersEvent {

@@ -123,6 +123,24 @@ class _EditUserDialogState extends State<EditUserDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const SizedBox(height: 16),
+                   TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.badge_outlined),
+                      helperText: 'The name shown to other users',
+                    ),
+                    validator: (value) {
+                      if (value != null &&
+                          value.trim().isNotEmpty &&
+                          value.trim().length < 3) {
+                        return 'Display name must be at least 3 characters';
+                      }
+                      return null;
+                    },
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -144,24 +162,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Display Name',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.badge_outlined),
-                      helperText: 'The name shown to other users',
-                    ),
-                    validator: (value) {
-                      if (value != null &&
-                          value.trim().isNotEmpty &&
-                          value.trim().length < 2) {
-                        return 'Display name must be at least 2 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                 
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(

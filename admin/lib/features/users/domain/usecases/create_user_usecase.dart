@@ -9,20 +9,8 @@ class CreateUserUseCase {
   CreateUserUseCase(this.repository);
 
   Future<Either<Failure, pb.User>> call({
-    required String username,
-    required String email,
-    required String password,
-    String? phone,
+    required pb.SignUpRequest request,
   }) async {
-    final request = pb.SignUpRequest()
-      ..username = username
-      ..email = email
-      ..password = password;
-
-    if (phone != null && phone.isNotEmpty) {
-      request.phone = phone;
-    }
-
     return await repository.createUser(request);
   }
 }

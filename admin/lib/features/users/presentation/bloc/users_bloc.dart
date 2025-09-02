@@ -69,10 +69,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     emit(UserCreating());
 
     final result = await createUserUseCase(
-      username: event.username,
-      email: event.email,
-      password: event.password,
-      phone: event.phone,
+      request: event.request,
     );
 
     result.fold(

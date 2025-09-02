@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
@@ -189,11 +190,13 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
       
       context.read<UsersBloc>().add(
         CreateUserEvent(
-          username: _usernameController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          phone: phone.isEmpty ? null : phone,
-          name: _nameController.text,
+          request: SignUpRequest(
+            username: _usernameController.text.trim(),
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+            phone: phone.isEmpty ? null : phone,
+            name: _nameController.text,
+          ),
         ),
       );
     }
