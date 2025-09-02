@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/custom_search_bar.dart';
 
-class UsersSearchBar extends StatelessWidget {
+class UsersSearchBar extends StatefulWidget {
   final String searchQuery;
   final bool showActiveOnly;
   final bool showInactiveOnly;
@@ -19,29 +20,55 @@ class UsersSearchBar extends StatelessWidget {
   });
 
   @override
+  State<UsersSearchBar> createState() => _UsersSearchBarState();
+}
+
+class _UsersSearchBarState extends State<UsersSearchBar> {
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController(text: widget.searchQuery);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _performSearch(String query) {
+    widget.onSearchChanged?.call(query);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: SearchBar(
-            hintText: 'Search users...',
-            leading: const Icon(Icons.search),
-            onChanged: onSearchChanged,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: CustomSearchBar(
+              controller: _searchController,
+              hintText: 'Search users...',
+              onSearch: _performSearch,
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        FilterChip(
-          label: const Text('Active'),
-          selected: showActiveOnly,
-          onSelected: onActiveFilterChanged,
-        ),
-        const SizedBox(width: 8),
-        FilterChip(
-          label: const Text('Inactive'),
-          selected: showInactiveOnly,
-          onSelected: onInactiveFilterChanged,
-        ),
-      ],
+          const SizedBox(width: 16),
+          FilterChip(
+            label: const Text('Active'),
+            selected: widget.showActiveOnly,
+            onSelected: widget.onActiveFilterChanged,
+          ),
+          const SizedBox(width: 8),
+          FilterChip(
+            label: const Text('Inactive'),
+            selected: widget.showInactiveOnly,
+            onSelected: widget.onInactiveFilterChanged,
+          ),
+        ],
+      ),
     );
   }
 }
