@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:fixnum/fixnum.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_service.dart';
@@ -75,10 +74,10 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   @override
   Future<pb.GetUserResponse> getUser(String userIdOrUuid) async {
     try {
-      // For now, return mock data until backend is ready
-      await _apiService.get('/openauth/v1/users/$userIdOrUuid');
-      
-      return _createMockGetUserResponse(userIdOrUuid);
+      var response = await _apiService.get('/openauth/v1/users/$userIdOrUuid');
+      var result = pb.GetUserResponse();
+      result.mergeFromProto3Json(response.data);
+      return result;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to fetch user',
@@ -94,13 +93,7 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
     try {
       var response = await _apiService.post(
         '/openauth/v1/users/signup',
-        data: {
-          'name': request.name,
-          'username': request.username,
-          'email': request.email,
-          'password': request.password,
-          'phone': request.phone,
-        },
+        data: request.toProto3Json(),
       );
       var result = pb.SignUpResponse();
       result.mergeFromProto3Json(response.data);
@@ -121,17 +114,13 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
       final userUuid = request.uuid;
       
       // For now, return mock data until backend is ready
-      await _apiService.put(
+      var response = await _apiService.put(
         '/openauth/v1/users/$userUuid',
-        data: {
-          'username': request.username,
-          'email': request.email,
-          'phone': request.phone,
-          'is_active': request.isActive,
-        },
+        data: request.toProto3Json() ,
       );
-
-      return _createMockUpdateUserResponse(request);
+      var result = pb.UpdateUserResponse();
+      result.mergeFromProto3Json(response.data);
+      return result;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to update user',
@@ -163,21 +152,14 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   @override
   Future<pb.CreateProfileResponse> createProfile(pb.CreateProfileRequest request) async {
     try {
-      // For now, return mock data until backend is ready
-      await _apiService.post(
+      var response = await _apiService.post(
         '/openauth/v1/profiles',
-        data: {
-          'user_uuid': request.userUuid,
-          'profile_name': request.profileName,
-          'first_name': request.firstName,
-          'last_name': request.lastName,
-          'display_name': request.displayName,
-          'bio': request.bio,
-          'avatar_url': request.avatarUrl,
-        },
+        data: request.toProto3Json(),
       );
 
-      return _createMockCreateProfileResponse(request);
+      var result = pb.CreateProfileResponse();
+      result.mergeFromProto3Json(response.data);
+      return result;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to create profile',
@@ -196,17 +178,17 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
       // For now, return mock data until backend is ready
       await _apiService.put(
         '/openauth/v1/profiles/$profileUuid',
-        data: {
-          'profile_name': request.profileName,
-          'first_name': request.firstName,
-          'last_name': request.lastName,
-          'display_name': request.displayName,
-          'bio': request.bio,
-          'avatar_url': request.avatarUrl,
-        },
+        data: request.toProto3Json(),
       );
 
-      return _createMockUpdateProfileResponse(request);
+      var response = await _apiService.put(
+        '/openauth/v1/profiles/$profileUuid',
+        data: request.toProto3Json(),
+      );
+
+      var result = pb.UpdateProfileResponse();
+      result.mergeFromProto3Json(response.data);
+      return result;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to update profile',
@@ -233,133 +215,5 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
     } catch (e) {
       throw NetworkException(message: 'Network error: ${e.toString()}');
     }
-  }
-
-  // Mock data methods for development
-
-  pb.GetUserResponse _createMockGetUserResponse(String userIdOrUuid) {
-    final user = _createMockUser(
-      id: 1,
-      uuid: userIdOrUuid.contains('-') ? userIdOrUuid : 'user-$userIdOrUuid-uuid',
-      username: 'johndoe',
-      email: 'john.doe@example.com',
-      isActive: true,
-      lastLoginAt: DateTime.now().subtract(const Duration(hours: 2)),
-    );
-
-    final profile = pb.UserProfile()
-      ..id = Int64(1)
-      ..uuid = 'profile-1-uuid'
-      ..userId = user.id
-      ..profileName = 'johndoe'
-      ..firstName = 'John'
-      ..lastName = 'Doe'
-      ..displayName = 'John Doe'
-      ..bio = 'Software Engineer'
-      ..avatarUrl = 'https://via.placeholder.com/150'
-      ..createdAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000)
-      ..updatedAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000);
-
-    return pb.GetUserResponse()
-      ..user = user
-      ..profiles.add(profile);
-  }
-
-  pb.SignUpResponse _createMockSignUpResponse(pb.SignUpRequest request) {
-    final user = pb.User()
-      ..id = Int64(DateTime.now().millisecondsSinceEpoch)
-      ..uuid = 'user-${DateTime.now().millisecondsSinceEpoch}-uuid'
-      ..username = request.username
-      ..email = request.email
-      ..phone = request.phone
-      ..emailVerified = false
-      ..phoneVerified = false
-      ..isActive = true
-      ..isLocked = false
-      ..failedLoginAttempts = 0
-      ..createdAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000)
-      ..updatedAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000);
-
-    return pb.SignUpResponse()
-      ..user = user
-      ..message = 'User created successfully'
-      ..emailVerificationRequired = true
-      ..phoneVerificationRequired = false;
-  }
-
-  pb.UpdateUserResponse _createMockUpdateUserResponse(pb.UpdateUserRequest request) {
-    final user = pb.User()
-      ..id = Int64(1)
-      ..uuid = request.uuid
-      ..username = request.username
-      ..email = request.email
-      ..phone = request.phone
-      ..emailVerified = true
-      ..phoneVerified = true
-      ..isActive = request.isActive
-      ..isLocked = false
-      ..failedLoginAttempts = 0
-      ..createdAt = Int64(DateTime.now().subtract(const Duration(days: 30)).millisecondsSinceEpoch ~/ 1000)
-      ..updatedAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000);
-
-    return pb.UpdateUserResponse()..user = user;
-  }
-
-  pb.CreateProfileResponse _createMockCreateProfileResponse(pb.CreateProfileRequest request) {
-    final profile = pb.UserProfile()
-      ..id = Int64(DateTime.now().millisecondsSinceEpoch)
-      ..uuid = 'profile-${DateTime.now().millisecondsSinceEpoch}-uuid'
-      ..userId = Int64(1)
-      ..profileName = request.profileName
-      ..firstName = request.firstName
-      ..lastName = request.lastName
-      ..displayName = request.displayName
-      ..bio = request.bio
-      ..avatarUrl = request.avatarUrl
-      ..createdAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000)
-      ..updatedAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000);
-
-    return pb.CreateProfileResponse()..profile = profile;
-  }
-
-  pb.UpdateProfileResponse _createMockUpdateProfileResponse(pb.UpdateProfileRequest request) {
-    final profile = pb.UserProfile()
-      ..id = Int64(1)
-      ..uuid = request.profileUuid
-      ..userId = Int64(1)
-      ..profileName = request.profileName
-      ..firstName = request.firstName
-      ..lastName = request.lastName
-      ..displayName = request.displayName
-      ..bio = request.bio
-      ..avatarUrl = request.avatarUrl
-      ..createdAt = Int64(DateTime.now().subtract(const Duration(days: 30)).millisecondsSinceEpoch ~/ 1000)
-      ..updatedAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000);
-
-    return pb.UpdateProfileResponse()..profile = profile;
-  }
-
-  pb.User _createMockUser({
-    required int id,
-    required String uuid,
-    required String username,
-    required String email,
-    required bool isActive,
-    required DateTime lastLoginAt,
-  }) {
-    return pb.User()
-      ..id = Int64(id)
-      ..uuid = uuid
-      ..username = username
-      ..email = email
-      ..phone = '+1234567890'
-      ..emailVerified = true
-      ..phoneVerified = true
-      ..isActive = isActive
-      ..isLocked = false
-      ..failedLoginAttempts = 0
-      ..lastLoginAt = Int64(lastLoginAt.millisecondsSinceEpoch ~/ 1000)
-      ..createdAt = Int64(DateTime.now().subtract(const Duration(days: 30)).millisecondsSinceEpoch ~/ 1000)
-      ..updatedAt = Int64(DateTime.now().millisecondsSinceEpoch ~/ 1000);
   }
 }
