@@ -136,8 +136,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	refreshExpiresAt := time.Now().Add(refreshTokenDuration).Unix()
 
 	// Create session record using FromSignInRequest method
-	session := &dao.Session{}
-	session.FromSignInRequest(
+	session := new(dao.Session).FromSignInRequest(
 		sessionUUID,
 		user.ID,
 		user.UUID,

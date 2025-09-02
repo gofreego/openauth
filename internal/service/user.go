@@ -62,29 +62,11 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 		return nil, status.Error(codes.Internal, "failed to hash password")
 	}
 
-	// Create user
-	now := time.Now().Unix()
 	userUUID := uuid.New()
 
 	logger.Debug(ctx, "Creating user record for username: %s, userUUID: %s", req.Username, userUUID.String())
 
-	user := &dao.User{
-		UUID:              userUUID,
-		Username:          req.Username,
-		Email:             req.Email,
-		Phone:             req.Phone,
-		Name:              req.Name,
-		AvatarURL:         nil, // Not available in SignUpRequest
-		PasswordHash:      string(hashedPassword),
-		EmailVerified:     false,
-		PhoneVerified:     false,
-		IsActive:          true,
-		IsLocked:          false,
-		FailedLoginCount:  0,
-		PasswordChangedAt: now,
-		CreatedAt:         now,
-		UpdatedAt:         now,
-	}
+	user := new(dao.User).FromSignUpRequest(req, string(hashedPassword))
 
 	// Create user in database
 	createdUser, err := s.repo.CreateUser(ctx, user)
@@ -241,51 +223,6 @@ func (s *Service) VerifyPhone(ctx context.Context, req *openauth_v1.VerifyPhoneR
 	}, nil
 }
 
-// ResendVerification resends verification codes for email or phone
-// TODO: Implement once ResendVerificationRequest and ResendVerificationResponse are defined in protobuf
-/*
-func (s *Service) ResendVerification(ctx context.Context, req *openauth_v1.ResendVerificationRequest) (*openauth_v1.ResendVerificationResponse, error) {
-	if req.Identifier == "" {
-		return nil, status.Error(codes.InvalidArgument, "identifier is required")
-	}
-
-	var err error
-	var expiresAt int64
-
-	// Detect identifier type using utility function
-	identifier := strings.TrimSpace(req.Identifier)
-	identifierType := utils.DetectIdentifierType(identifier)
-
-	switch identifierType {
-	case utils.IdentifierTypeEmail:
-		// Find user by email
-		user, getUserErr := s.repo.GetUserByEmail(ctx, identifier)
-		if getUserErr != nil {
-			return nil, status.Error(codes.NotFound, "user not found")
-		}
-		err = s.sendEmailVerification(ctx, user.ID, identifier)
-		expiresAt = time.Now().Add(15 * time.Minute).Unix() // 15 minutes expiry
-	case utils.IdentifierTypePhone:
-		// Find user by phone (assuming you add this method)
-		// For now, we'll implement a basic version
-		err = s.sendPhoneVerification(ctx, 0, identifier)   // 0 for unknown user ID
-		expiresAt = time.Now().Add(15 * time.Minute).Unix() // 15 minutes expiry
-	default:
-		return nil, status.Error(codes.InvalidArgument, "identifier must be email or phone number")
-	}
-
-	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to send verification code")
-	}
-
-	return &openauth_v1.ResendVerificationResponse{
-		Sent:      true,
-		Message:   "Verification code sent successfully",
-		ExpiresAt: expiresAt,
-	}, nil
-}
-*/
-
 // CheckUsername checks if a username is available for registration
 func (s *Service) CheckUsername(ctx context.Context, req *openauth_v1.CheckUsernameRequest) (*openauth_v1.CheckUsernameResponse, error) {
 	if req.Username == "" {
@@ -368,24 +305,64 @@ func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) 
 
 // UpdateUser modifies user account and profile information
 func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserRequest) (*openauth_v1.UpdateUserResponse, error) {
+	logger.Debug(ctx, "UpdateUser request initiated for UUID: %s", req.Uuid)
+
 	if req.Uuid == "" {
+		logger.Warn(ctx, "UpdateUser failed: missing UUID")
 		return nil, status.Error(codes.InvalidArgument, "uuid is required")
 	}
 
 	// Get existing user
 	user, err := s.repo.GetUserByUUID(ctx, req.Uuid)
 	if err != nil {
+		logger.Error(ctx, "Failed to get user by UUID %s: %v", req.Uuid, err)
 		return nil, status.Error(codes.NotFound, "user not found")
 	}
 
+	logger.Debug(ctx, "Found user for update: userID=%d, username=%s", user.ID, user.Username)
+
 	// Prepare user updates
 	userUpdates := make(map[string]interface{})
-	if req.Username != nil {
+
+	// Check if username is being updated and validate uniqueness
+	if req.Username != nil && *req.Username != user.Username {
+		logger.Debug(ctx, "Username change requested for userID=%d: from '%s' to '%s'",
+			user.ID, user.Username, *req.Username)
+
+		// Check if new username already exists
+		exists, err := s.repo.CheckUsernameExists(ctx, *req.Username)
+		if err != nil {
+			logger.Error(ctx, "Failed to check username availability for userID=%d, username='%s': %v",
+				user.ID, *req.Username, err)
+			return nil, status.Error(codes.Internal, "failed to validate username availability")
+		}
+		if exists {
+			logger.Warn(ctx, "Username update denied for userID=%d: username '%s' already exists",
+				user.ID, *req.Username)
+			return nil, status.Error(codes.AlreadyExists, "username already exists")
+		}
 		userUpdates["username"] = *req.Username
 	}
-	if req.Email != nil {
+
+	// Check if email is being updated and validate uniqueness
+	if req.Email != nil && (user.Email == nil || *req.Email != *user.Email) {
+		logger.Debug(ctx, "Email change requested for userID=%d: to '%s'", user.ID, *req.Email)
+
+		// Check if new email already exists
+		exists, err := s.repo.CheckEmailExists(ctx, *req.Email)
+		if err != nil {
+			logger.Error(ctx, "Failed to check email availability for userID=%d, email='%s': %v",
+				user.ID, *req.Email, err)
+			return nil, status.Error(codes.Internal, "failed to validate email availability")
+		}
+		if exists {
+			logger.Warn(ctx, "Email update denied for userID=%d: email '%s' already exists",
+				user.ID, *req.Email)
+			return nil, status.Error(codes.AlreadyExists, "email already exists")
+		}
 		userUpdates["email"] = *req.Email
 	}
+
 	if req.Phone != nil {
 		userUpdates["phone"] = *req.Phone
 	}
@@ -402,12 +379,17 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 	// Update user if there are changes
 	var updatedUser *dao.User
 	if len(userUpdates) > 0 {
+		logger.Debug(ctx, "Updating user fields: %v for userID=%d", userUpdates, user.ID)
 		userUpdates["updated_at"] = time.Now().Unix()
 		updatedUser, err = s.repo.UpdateUser(ctx, user.ID, userUpdates)
 		if err != nil {
+			logger.Error(ctx, "Failed to update userID=%d: %v", user.ID, err)
 			return nil, status.Error(codes.Internal, "failed to update user")
 		}
+		logger.Info(ctx, "User updated successfully: userID=%d, username=%s",
+			updatedUser.ID, updatedUser.Username)
 	} else {
+		logger.Debug(ctx, "No user updates requested for userID=%d", user.ID)
 		updatedUser = user
 	}
 

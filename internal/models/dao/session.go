@@ -41,7 +41,7 @@ func (s *Session) FromSignInRequest(
 	expiresAt int64,
 	refreshExpiresAt int64,
 	req *openauth_v1.SignInRequest,
-) {
+) *Session {
 	s.UUID = sessionUUID
 	s.UserID = userID
 	s.UserUUID = userUUID
@@ -66,6 +66,7 @@ func (s *Session) FromSignInRequest(
 			s.DeviceType = req.Metadata.DeviceType
 		}
 	}
+	return s
 }
 
 // ToProtoSession converts Session DAO to protobuf Session

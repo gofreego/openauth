@@ -38,9 +38,7 @@ class UserRow extends StatelessWidget {
                       : null,
                   child: user.avatarUrl.isEmpty 
                       ? Text(
-                          user.displayName.isNotEmpty 
-                              ? user.displayName[0].toUpperCase()
-                              : user.username[0].toUpperCase(),
+                          _getInitial(),
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -171,5 +169,17 @@ class UserRow extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getInitial() {
+    if (user.displayName.isNotEmpty) {
+      return user.displayName[0].toUpperCase();
+    } else if (user.username.isNotEmpty) {
+      return user.username[0].toUpperCase();
+    } else if (user.email.isNotEmpty) {
+      return user.email[0].toUpperCase();
+    } else {
+      return '?';
+    }
   }
 }
