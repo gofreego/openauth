@@ -80,7 +80,7 @@ func (r *Repository) RemovePermissionFromGroup(ctx context.Context, groupID, per
 // ListGroupPermissions retrieves permissions assigned to a group with filtering and pagination
 func (r *Repository) ListGroupPermissions(ctx context.Context, groupId int64) ([]*dao.EffectivePermission, error) {
 	baseQuery := `
-		SELECT p.id, p.name, p.display_name, p.description, p.is_system, "group", gp.expires_at, gp.granted_by, gp.created_at
+		SELECT p.id, p.name, p.display_name, p.description, 'group' as source, gp.granted_by, gp.created_at
 		FROM group_permissions gp
 		JOIN permissions p ON gp.permission_id = p.id
 		WHERE gp.group_id = $1
@@ -96,7 +96,15 @@ func (r *Repository) ListGroupPermissions(ctx context.Context, groupId int64) ([
 	var groupPermissions []*dao.EffectivePermission
 	for rows.Next() {
 		gp := &dao.EffectivePermission{}
-		err := rows.Scan(&gp.GroupId, &gp.GroupName)
+		err := rows.Scan(
+			&gp.PermissionId,
+			&gp.PermissionName,
+			&gp.PermissionDisplayName,
+			&gp.PermissionDescription,
+			&gp.Source,
+			&gp.GrantedBy,
+			&gp.GrantedAt,
+		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan group permission: %w", err)
 		}
@@ -195,7 +203,7 @@ func (r *Repository) RemovePermissionFromUser(ctx context.Context, userID, permi
 // ListUserPermissions retrieves permissions directly assigned to a user with filtering and pagination
 func (r *Repository) ListUserPermissions(ctx context.Context, userId int64) ([]*dao.EffectivePermission, error) {
 	baseQuery := `
-		SELECT up.id, up.user_id, up.permission_id, up.granted_by, up.expires_at, up.created_at
+		SELECT p.id, p.name, p.display_name, p.description, 'direct' as source, up.granted_by, up.expires_at, up.created_at
 		FROM user_permissions up
 		JOIN permissions p ON up.permission_id = p.id
 		WHERE up.user_id = $1
@@ -212,7 +220,16 @@ func (r *Repository) ListUserPermissions(ctx context.Context, userId int64) ([]*
 	var userPermissions []*dao.EffectivePermission
 	for rows.Next() {
 		p := &dao.EffectivePermission{}
-		err := rows.Scan(&p.PermissionId, &p.PermissionName, &p.PermissionDisplayName, &p.PermissionDescription, &p.GrantedBy, &p.GrantedAt)
+		err := rows.Scan(
+			&p.PermissionId,
+			&p.PermissionName,
+			&p.PermissionDisplayName,
+			&p.PermissionDescription,
+			&p.Source,
+			&p.GrantedBy,
+			&p.ExpiresAt,
+			&p.GrantedAt,
+		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan user permission: %w", err)
 		}
@@ -229,26 +246,51 @@ func (r *Repository) ListUserPermissions(ctx context.Context, userId int64) ([]*
 // GetUserEffectivePermissions retrieves all effective permissions for a user (direct + group permissions)
 func (r *Repository) GetUserEffectivePermissions(ctx context.Context, userId int64) ([]*dao.EffectivePermission, error) {
 	baseQuery := `
-		SELECT DISTINCT p.id, p.name, p.display_name, p.description, p.is_system, p.created_by, p.created_at, p.updated_at
-		FROM permissions p
-		WHERE p.id IN (
-			-- Direct user permissions
-			SELECT up.permission_id 
-			FROM user_permissions up 
-			WHERE up.user_id = $1 
-			AND (up.expires_at IS NULL OR up.expires_at >= $2)
-			
-			UNION
-			
-			-- Group permissions through user's group memberships
-			SELECT gp.permission_id 
-			FROM group_permissions gp
-			JOIN user_groups ug ON gp.group_id = ug.group_id
-			WHERE ug.user_id = $1
-			AND (ug.expires_at IS NULL OR ug.expires_at >= $2)
-		)
+		-- Direct user permissions
+		SELECT 
+			p.id as permission_id,
+			p.name as permission_name,
+			p.display_name as permission_display_name,
+			p.description as permission_description,
+			'direct' as source,
+			NULL as group_id,
+			NULL as group_name,
+			NULL as group_display_name,
+			up.expires_at,
+			up.granted_by,
+			up.created_at as granted_at
+		FROM user_permissions up
+		JOIN permissions p ON up.permission_id = p.id
+		WHERE up.user_id = $1
+		AND (up.expires_at IS NULL OR up.expires_at >= $2)
+		
+		UNION ALL
+		
+		-- Group permissions through user's group memberships
+		SELECT 
+			p.id as permission_id,
+			p.name as permission_name,
+			p.display_name as permission_display_name,
+			p.description as permission_description,
+			'group' as source,
+			g.id as group_id,
+			g.name as group_name,
+			g.display_name as group_display_name,
+			ug.expires_at,
+			gp.granted_by,
+			gp.created_at as granted_at
+		FROM group_permissions gp
+		JOIN permissions p ON gp.permission_id = p.id
+		JOIN groups g ON gp.group_id = g.id
+		JOIN user_groups ug ON g.id = ug.group_id
+		WHERE ug.user_id = $1
+		AND (ug.expires_at IS NULL OR ug.expires_at >= $2)
+		
+		ORDER BY granted_at DESC
 	`
-	rows, err := r.connManager.Primary().QueryContext(ctx, baseQuery, userId, time.Now().UnixMilli())
+
+	currentTime := time.Now().Unix()
+	rows, err := r.connManager.Primary().QueryContext(ctx, baseQuery, userId, currentTime)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user effective permissions: %w", err)
 	}
@@ -262,6 +304,11 @@ func (r *Repository) GetUserEffectivePermissions(ctx context.Context, userId int
 			&p.PermissionName,
 			&p.PermissionDisplayName,
 			&p.PermissionDescription,
+			&p.Source,
+			&p.GroupId,
+			&p.GroupName,
+			&p.GroupDisplayName,
+			&p.ExpiresAt,
 			&p.GrantedBy,
 			&p.GrantedAt,
 		)
@@ -293,5 +340,48 @@ func (r *Repository) IsPermissionAssignedToUser(ctx context.Context, userID, per
 
 // GetUserEffectivePermissionNames implements service.Repository.
 func (r *Repository) GetUserEffectivePermissionNames(ctx context.Context, userId int64) ([]string, error) {
-	panic("unimplemented")
+	baseQuery := `
+		SELECT DISTINCT p.name
+		FROM permissions p
+		WHERE p.id IN (
+			-- Direct user permissions
+			SELECT up.permission_id 
+			FROM user_permissions up 
+			WHERE up.user_id = $1 
+			AND (up.expires_at IS NULL OR up.expires_at >= $2)
+			
+			UNION
+			
+			-- Group permissions through user's group memberships
+			SELECT gp.permission_id 
+			FROM group_permissions gp
+			JOIN user_groups ug ON gp.group_id = ug.group_id
+			WHERE ug.user_id = $1
+			AND (ug.expires_at IS NULL OR ug.expires_at >= $2)
+		)
+		ORDER BY p.name
+	`
+
+	currentTime := time.Now().Unix()
+	rows, err := r.connManager.Primary().QueryContext(ctx, baseQuery, userId, currentTime)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user effective permission names: %w", err)
+	}
+	defer rows.Close()
+
+	var permissionNames []string
+	for rows.Next() {
+		var name string
+		err := rows.Scan(&name)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan permission name: %w", err)
+		}
+		permissionNames = append(permissionNames, name)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating permission names: %w", err)
+	}
+
+	return permissionNames, nil
 }
