@@ -2129,21 +2129,8 @@ func request_OpenAuth_TerminateSession_0(ctx context.Context, marshaler runtime.
 	var protoReq TerminateSessionRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["session_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "session_id")
-	}
-
-	protoReq.SessionId, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "session_id", err)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.TerminateSession(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2155,21 +2142,8 @@ func local_request_OpenAuth_TerminateSession_0(ctx context.Context, marshaler ru
 	var protoReq TerminateSessionRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["session_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "session_id")
-	}
-
-	protoReq.SessionId, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "session_id", err)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.TerminateSession(ctx, &protoReq)
@@ -3259,7 +3233,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_TerminateSession_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_TerminateSession_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3267,7 +3241,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/TerminateSession", runtime.WithHTTPPathPattern("/openauth/v1/sessions/{session_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/TerminateSession", runtime.WithHTTPPathPattern("/openauth/v1/sessions/terminate"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4271,13 +4245,13 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_TerminateSession_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_TerminateSession_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/TerminateSession", runtime.WithHTTPPathPattern("/openauth/v1/sessions/{session_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/TerminateSession", runtime.WithHTTPPathPattern("/openauth/v1/sessions/terminate"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4383,7 +4357,7 @@ var (
 
 	pattern_OpenAuth_ListUserSessions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_uuid", "sessions"}, ""))
 
-	pattern_OpenAuth_TerminateSession_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "sessions", "session_id"}, ""))
+	pattern_OpenAuth_TerminateSession_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "sessions", "terminate"}, ""))
 )
 
 var (

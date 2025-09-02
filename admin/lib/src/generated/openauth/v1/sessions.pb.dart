@@ -1181,16 +1181,21 @@ class ListUserSessionsResponse extends $pb.GeneratedMessage {
 class TerminateSessionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'TerminateSessionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sessionId')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
     ..hasRequiredFields = false
   ;
 
   TerminateSessionRequest._() : super();
   factory TerminateSessionRequest({
     $core.String? sessionId,
+    $core.String? userId,
   }) {
     final _result = create();
     if (sessionId != null) {
       _result.sessionId = sessionId;
+    }
+    if (userId != null) {
+      _result.userId = userId;
     }
     return _result;
   }
@@ -1223,6 +1228,15 @@ class TerminateSessionRequest extends $pb.GeneratedMessage {
   $core.bool hasSessionId() => $_has(0);
   @$pb.TagNumber(1)
   void clearSessionId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get userId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set userId($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUserId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUserId() => clearField(2);
 }
 
 class TerminateSessionResponse extends $pb.GeneratedMessage {

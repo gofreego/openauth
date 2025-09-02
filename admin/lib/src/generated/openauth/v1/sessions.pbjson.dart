@@ -207,11 +207,15 @@ const TerminateSessionRequest$json = const {
   '1': 'TerminateSessionRequest',
   '2': const [
     const {'1': 'session_id', '3': 1, '4': 1, '5': 9, '10': 'sessionId'},
+    const {'1': 'user_id', '3': 2, '4': 1, '5': 9, '9': 0, '10': 'userId', '17': true},
+  ],
+  '8': const [
+    const {'1': '_user_id'},
   ],
 };
 
 /// Descriptor for `TerminateSessionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List terminateSessionRequestDescriptor = $convert.base64Decode('ChdUZXJtaW5hdGVTZXNzaW9uUmVxdWVzdBIdCgpzZXNzaW9uX2lkGAEgASgJUglzZXNzaW9uSWQ=');
+final $typed_data.Uint8List terminateSessionRequestDescriptor = $convert.base64Decode('ChdUZXJtaW5hdGVTZXNzaW9uUmVxdWVzdBIdCgpzZXNzaW9uX2lkGAEgASgJUglzZXNzaW9uSWQSHAoHdXNlcl9pZBgCIAEoCUgAUgZ1c2VySWSIAQFCCgoIX3VzZXJfaWQ=');
 @$core.Deprecated('Use terminateSessionResponseDescriptor instead')
 const TerminateSessionResponse$json = const {
   '1': 'TerminateSessionResponse',

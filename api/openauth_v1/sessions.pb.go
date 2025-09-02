@@ -905,9 +905,12 @@ func (x *ListUserSessionsResponse) GetSessions() []*Session {
 }
 
 // TerminateSessionRequest to end specific session
+// If user_id is provided, terminate all sessions for the user and keep the specified session
+// If user_id is not provided then, terminate session provided.
 type TerminateSessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	UserId        *string                `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"` // if user_id is provided, terminate all sessions for the user and keep the specified session
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -945,6 +948,13 @@ func (*TerminateSessionRequest) Descriptor() ([]byte, []int) {
 func (x *TerminateSessionRequest) GetSessionId() string {
 	if x != nil {
 		return x.SessionId
+	}
+	return ""
+}
+
+func (x *TerminateSessionRequest) GetUserId() string {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
 	}
 	return ""
 }
@@ -1110,10 +1120,13 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"activeOnly\x88\x01\x01B\x0e\n" +
 	"\f_active_only\"C\n" +
 	"\x18ListUserSessionsResponse\x12'\n" +
-	"\bsessions\x18\x01 \x03(\v2\v.v1.SessionR\bsessions\"8\n" +
+	"\bsessions\x18\x01 \x03(\v2\v.v1.SessionR\bsessions\"b\n" +
 	"\x17TerminateSessionRequest\x12\x1d\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\"N\n" +
+	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1c\n" +
+	"\auser_id\x18\x02 \x01(\tH\x00R\x06userId\x88\x01\x01B\n" +
+	"\n" +
+	"\b_user_id\"N\n" +
 	"\x18TerminateSessionResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessageB\x0fZ\r./openauth_v1b\x06proto3"
@@ -1172,6 +1185,7 @@ func file_proto_openauth_v1_sessions_proto_init() {
 	file_proto_openauth_v1_sessions_proto_msgTypes[5].OneofWrappers = []any{}
 	file_proto_openauth_v1_sessions_proto_msgTypes[8].OneofWrappers = []any{}
 	file_proto_openauth_v1_sessions_proto_msgTypes[10].OneofWrappers = []any{}
+	file_proto_openauth_v1_sessions_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

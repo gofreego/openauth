@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
-import '../../../users/domain/repositories/users_repository.dart';
+import 'users_repository.dart';
 import '../datasources/users_remote_datasource_impl.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 

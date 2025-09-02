@@ -121,8 +121,8 @@ const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\x10ListUserSessions\x12\x1b.v1.ListUserSessionsRequest\x1a\x1c.v1.ListUserSessionsResponse\"\x80\x01\x92AN\n" +
 	"\x12Session Management\x12\x12List user sessions\x1a$Retrieve active sessions for a user.\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/sessions\x12\xc6\x01\n" +
 	"\x10TerminateSession\x12\x1b.v1.TerminateSessionRequest\x1a\x1c.v1.TerminateSessionResponse\"w\x92AJ\n" +
-	"\x12Session Management\x12\x16Terminate user session\x1a\x1cEnd a specific user session.\x82\xd3\xe4\x93\x02$*\"/openauth/v1/sessions/{session_id}B\xe2\x05\x92A\xcf\x05\x12\xa8\x01\n" +
-	"\fOpenAuth API\x12\x90\x01OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.2\x051.0.0j\x1e\n" +
+	"\x12Session Management\x12\x16Terminate user session\x1a\x1cEnd a specific user session.\x82\xd3\xe4\x93\x02$:\x01*\x1a\x1f/openauth/v1/sessions/terminateB\xe3\x05\x92A\xd0\x05\x12\xa9\x01\n" +
+	"\fOpenAuth API\x12\x90\x01OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.2\x06v1.0.0j\x1e\n" +
 	"\x04Ping\x12\x16Health check endpointsj+\n" +
 	"\n" +
 	"Statistics\x12\x1dSystem statistics and metricsj3\n" +

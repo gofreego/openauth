@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../repositories/users_repository.dart';
+import '../../data/repositories/users_repository.dart';
 
 class DeleteUserUseCase {
   final UsersRepository repository;

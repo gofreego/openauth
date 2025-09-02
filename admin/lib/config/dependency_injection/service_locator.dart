@@ -15,7 +15,7 @@ import '../../features/auth/presentation/bloc/auth_bloc.dart';
 // Users feature dependencies
 import '../../features/users/data/datasources/users_remote_datasource_impl.dart';
 import '../../features/users/data/repositories/users_repository_impl.dart';
-import '../../features/users/domain/repositories/users_repository.dart';
+import '../../features/users/data/repositories/users_repository.dart';
 import '../../features/users/domain/usecases/get_users_usecase.dart';
 import '../../features/users/domain/usecases/create_user_usecase.dart';
 import '../../features/users/domain/usecases/update_user_usecase.dart';
@@ -40,6 +40,12 @@ import '../../features/dashboard/data/repositories/stats_repository_impl.dart';
 import '../../features/dashboard/domain/repositories/stats_repository.dart';
 import '../../features/dashboard/domain/usecases/get_stats_usecase.dart';
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
+
+// Sessions feature dependencies
+import '../../features/sessions/data/datasources/sessions_remote_datasource_impl.dart';
+import '../../features/sessions/data/repositories/sessions_repository_impl.dart';
+import '../../features/sessions/data/repositories/sessions_repository.dart';
+import '../../features/sessions/presentation/bloc/sessions_bloc.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -166,6 +172,18 @@ Future<void> initializeDependencies({
     () => GetStatsUseCase(serviceLocator<StatsRepository>()),
   );
 
+  // Sessions data sources
+  serviceLocator.registerLazySingleton<SessionsRemoteDataSource>(
+    () => SessionsRemoteDataSourceImpl(serviceLocator<ApiService>()),
+  );
+
+  // Sessions repositories
+  serviceLocator.registerLazySingleton<SessionsRepository>(
+    () => SessionsRepositoryImpl(
+      remoteDataSource: serviceLocator<SessionsRemoteDataSource>(),
+    ),
+  );
+
   // Register BLoCs
   serviceLocator.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
@@ -203,6 +221,12 @@ Future<void> initializeDependencies({
   serviceLocator.registerLazySingleton<DashboardBloc>(
     () => DashboardBloc(
       getStatsUseCase: serviceLocator<GetStatsUseCase>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<SessionsBloc>(
+    () => SessionsBloc(
+      sessionsRepository: serviceLocator<SessionsRepository>(),
     ),
   );
 

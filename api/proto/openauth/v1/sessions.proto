@@ -106,8 +106,11 @@ message ListUserSessionsResponse {
 }
 
 // TerminateSessionRequest to end specific session
+// If user_id is provided, terminate all sessions for the user and keep the specified session
+// If user_id is not provided then, terminate session provided.
 message TerminateSessionRequest {
     string session_id = 1;
+    optional string user_id = 2; // if user_id is provided, terminate all sessions for the user and keep the specified session
 }
 
 // TerminateSessionResponse

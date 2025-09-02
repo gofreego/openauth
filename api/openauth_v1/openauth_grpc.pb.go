@@ -327,6 +327,8 @@ type OpenAuthClient interface {
 	//
 	// Allows users to logout from specific devices remotely.
 	// Useful for security when a device is lost or compromised.
+	// Terminates the specified session.
+	// If userId is provided, it keeps the specified session active and terminates other sessions
 	TerminateSession(ctx context.Context, in *TerminateSessionRequest, opts ...grpc.CallOption) (*TerminateSessionResponse, error)
 }
 
@@ -1040,6 +1042,8 @@ type OpenAuthServer interface {
 	//
 	// Allows users to logout from specific devices remotely.
 	// Useful for security when a device is lost or compromised.
+	// Terminates the specified session.
+	// If userId is provided, it keeps the specified session active and terminates other sessions
 	TerminateSession(context.Context, *TerminateSessionRequest) (*TerminateSessionResponse, error)
 	mustEmbedUnimplementedOpenAuthServer()
 }

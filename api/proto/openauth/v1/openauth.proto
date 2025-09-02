@@ -16,7 +16,7 @@ import "proto/openauth/v1/stats.proto";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
     title: "OpenAuth API"
-    version: "1.0.0"
+    version: "v1.0.0"
     description: "OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications."
   }
   tags: [
@@ -795,9 +795,12 @@ service OpenAuth {
     //
     // Allows users to logout from specific devices remotely.
     // Useful for security when a device is lost or compromised.
+    // Terminates the specified session.
+    // If userId is provided, it keeps the specified session active and terminates other sessions
     rpc TerminateSession (TerminateSessionRequest) returns (TerminateSessionResponse) {
         option (google.api.http) = {
-            delete: "/openauth/v1/sessions/{session_id}"
+            put: "/openauth/v1/sessions/terminate"
+            body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "Session Management"

@@ -9,6 +9,7 @@ import '../bloc/users_event.dart';
 import 'user_row.dart';
 import 'edit_user_dialog.dart';
 import 'user_permissions_dialog.dart';
+import '../../../sessions/presentation/widgets/user_sessions_dialog.dart';
 import '../../../../shared/widgets/error_widget.dart' as shared;
 
 class UsersTable extends StatelessWidget {
@@ -178,9 +179,7 @@ class UsersTable extends StatelessWidget {
         _showUserPermissionsDialog(user, context);
         break;
       case 'sessions':
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('View sessions for ${user.displayName}')),
-        );
+        _showUserSessionsDialog(user, context);
         break;
       case 'activate':
       case 'deactivate':
@@ -274,6 +273,13 @@ class UsersTable extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showUserSessionsDialog(pb.User user, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => UserSessionsDialog(user: user),
     );
   }
 

@@ -3,7 +3,7 @@
   "info": {
     "title": "OpenAuth API",
     "description": "OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.",
-    "version": "1.0.0"
+    "version": "v1.0.0"
   },
   "tags": [
     {
@@ -916,8 +916,8 @@
         ]
       }
     },
-    "/openauth/v1/sessions/{sessionId}": {
-      "delete": {
+    "/openauth/v1/sessions/terminate": {
+      "put": {
         "summary": "Terminate user session",
         "description": "End a specific user session.",
         "operationId": "OpenAuth_TerminateSession",
@@ -937,10 +937,13 @@
         },
         "parameters": [
           {
-            "name": "sessionId",
-            "in": "path",
+            "name": "body",
+            "description": "TerminateSessionRequest to end specific session\nIf user_id is provided, terminate all sessions for the user and keep the specified session\nIf user_id is not provided then, terminate session provided.",
+            "in": "body",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/v1TerminateSessionRequest"
+            }
           }
         ],
         "tags": [
@@ -2916,6 +2919,19 @@
         }
       },
       "title": "StatsResponse contains system statistics"
+    },
+    "v1TerminateSessionRequest": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string",
+          "title": "if user_id is provided, terminate all sessions for the user and keep the specified session"
+        }
+      },
+      "description": "TerminateSessionRequest to end specific session\nIf user_id is provided, terminate all sessions for the user and keep the specified session\nIf user_id is not provided then, terminate session provided."
     },
     "v1TerminateSessionResponse": {
       "type": "object",
