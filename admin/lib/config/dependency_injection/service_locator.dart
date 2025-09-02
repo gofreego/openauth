@@ -21,6 +21,7 @@ import '../../features/users/domain/usecases/create_user_usecase.dart';
 import '../../features/users/domain/usecases/update_user_usecase.dart';
 import '../../features/users/domain/usecases/delete_user_usecase.dart';
 import '../../features/users/presentation/bloc/users_bloc.dart';
+import '../../features/users/presentation/bloc/user_permissions_bloc.dart';
 
 // Permissions feature dependencies
 import '../../features/permissions/data/datasources/permissions_remote_datasource_impl.dart';
@@ -180,6 +181,12 @@ Future<void> initializeDependencies({
       createUserUseCase: serviceLocator<CreateUserUseCase>(),
       updateUserUseCase: serviceLocator<UpdateUserUseCase>(),
       deleteUserUseCase: serviceLocator<DeleteUserUseCase>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<UserPermissionsBloc>(
+    () => UserPermissionsBloc(
+      apiService: serviceLocator<ApiService>(),
     ),
   );
 

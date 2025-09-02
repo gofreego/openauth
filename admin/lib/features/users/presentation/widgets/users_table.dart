@@ -8,6 +8,7 @@ import '../bloc/users_state.dart';
 import '../bloc/users_event.dart';
 import 'user_row.dart';
 import 'edit_user_dialog.dart';
+import 'user_permissions_dialog.dart';
 import '../../../../shared/widgets/error_widget.dart' as shared;
 
 class UsersTable extends StatelessWidget {
@@ -174,9 +175,7 @@ class UsersTable extends StatelessWidget {
         _showEditUserDialog(user, context);
         break;
       case 'permissions':
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Manage permissions for ${user.displayName}')),
-        );
+        _showUserPermissionsDialog(user, context);
         break;
       case 'sessions':
         ScaffoldMessenger.of(context).showSnackBar(
@@ -275,6 +274,13 @@ class UsersTable extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showUserPermissionsDialog(pb.User user, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => UserPermissionsDialog(user: user),
     );
   }
 }
