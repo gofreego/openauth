@@ -42,7 +42,7 @@ Service:
     # Should be at least 32 characters long for HS256 algorithm
     SecretKey: "dev-jwt-secret-key-256-bits-long-for-development-environment-only-change-in-prod"
     AccessTokenTTL: "15m"   # Access token expiration time (15 minutes)
-    RefreshTokenTTL: "168h"   # Refresh token expiration time (7 days)
+    RefreshTokenTTL: "168h"   # Refresh token expiration time in hours (7 days)
   Security:
     BcryptCost: 12         # Password hashing cost (higher = more secure but slower)
     MaxLoginAttempts: 5    # Maximum failed login attempts before account lockout
