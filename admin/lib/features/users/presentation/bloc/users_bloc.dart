@@ -91,13 +91,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     emit(UserUpdating());
 
     final result = await updateUserUseCase(
-      uuid: event.uuid,
-      username: event.username,
-      email: event.email,
-      phone: event.phone,
-      isActive: event.isActive,
-      name: event.name,
-      avatarUrl: event.avatarUrl,
+      request: event.request,
     );
 
     result.fold(

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 
 abstract class UsersEvent extends Equatable {
   const UsersEvent();
@@ -57,26 +58,14 @@ class CreateUserEvent extends UsersEvent {
 }
 
 class UpdateUserEvent extends UsersEvent {
-  final String uuid;
-  final String? username;
-  final String? email;
-  final String? phone;
-  final bool? isActive;
-  final String? name;
-  final String? avatarUrl;
+  final UpdateUserRequest request;
 
   const UpdateUserEvent({
-    required this.uuid,
-    this.username,
-    this.email,
-    this.phone,
-    this.isActive,
-    this.name,
-    this.avatarUrl,
+    required this.request,
   });
 
   @override
-  List<Object?> get props => [uuid, username, email, phone, isActive, name, avatarUrl];
+  List<Object?> get props => [request];
 }
 
 class DeleteUserEvent extends UsersEvent {

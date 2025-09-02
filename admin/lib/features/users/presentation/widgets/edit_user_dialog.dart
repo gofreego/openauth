@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
@@ -58,7 +59,9 @@ class _EditUserDialogState extends State<EditUserDialog> {
           Navigator.of(context).pop();
           widget.onUserUpdated?.call();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('User ${state.user.username} updated successfully')),
+            SnackBar(
+                content:
+                    Text('User ${state.user.username} updated successfully')),
           );
         } else if (state is UsersError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -75,15 +78,16 @@ class _EditUserDialogState extends State<EditUserDialog> {
             CircleAvatar(
               radius: 20,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              backgroundImage: widget.user.avatarUrl.isNotEmpty 
-                  ? NetworkImage(widget.user.avatarUrl) 
+              backgroundImage: widget.user.avatarUrl.isNotEmpty
+                  ? NetworkImage(widget.user.avatarUrl)
                   : null,
-              child: widget.user.avatarUrl.isEmpty 
+              child: widget.user.avatarUrl.isEmpty
                   ? Text(
-                      widget.user.name.isNotEmpty 
+                      widget.user.name.isNotEmpty
                           ? widget.user.name[0].toUpperCase()
                           : widget.user.username[0].toUpperCase(),
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     )
                   : null,
             ),
@@ -93,12 +97,13 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Edit User', style: Theme.of(context).textTheme.headlineSmall),
+                  Text('Edit User',
+                      style: Theme.of(context).textTheme.headlineSmall),
                   Text(
                     widget.user.displayName,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                          color: Colors.grey[600],
+                        ),
                   ),
                 ],
               ),
@@ -139,7 +144,9 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     helperText: 'The name shown to other users',
                   ),
                   validator: (value) {
-                    if (value != null && value.trim().isNotEmpty && value.trim().length < 2) {
+                    if (value != null &&
+                        value.trim().isNotEmpty &&
+                        value.trim().length < 2) {
                       return 'Display name must be at least 2 characters';
                     }
                     return null;
@@ -158,7 +165,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Email is required';
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
                       return 'Please enter a valid email';
                     }
                     return null;
@@ -190,7 +198,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     border: const OutlineInputBorder(),
                     prefixIcon: const Icon(Icons.image_outlined),
                     helperText: 'URL to the user\'s profile picture',
-                    suffixIcon: _avatarUrlController.text.isNotEmpty 
+                    suffixIcon: _avatarUrlController.text.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.visibility),
                             onPressed: () => _showAvatarPreview(),
@@ -233,10 +241,13 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           Text(
-                            _isActive ? 'User is active and can log in' : 'User is inactive and cannot log in',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                            _isActive
+                                ? 'User is active and can log in'
+                                : 'User is inactive and cannot log in',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[600],
+                                    ),
                           ),
                         ],
                       ),
@@ -248,7 +259,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -256,20 +268,25 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info_outline, size: 16, color: Colors.grey[600]),
+                          Icon(Icons.info_outline,
+                              size: 16, color: Colors.grey[600]),
                           const SizedBox(width: 8),
                           Text(
                             'User Information',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
                       _buildInfoRow('UUID', widget.user.uuid),
                       _buildInfoRow('Created', widget.user.formattedCreatedAt),
-                      _buildInfoRow('Last Login', widget.user.lastLoginFormatted),
+                      _buildInfoRow(
+                          'Last Login', widget.user.lastLoginFormatted),
                     ],
                   ),
                 ),
@@ -313,9 +330,9 @@ class _EditUserDialogState extends State<EditUserDialog> {
             child: Text(
               '$label:',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
-              ),
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
             ),
           ),
           Expanded(
@@ -331,12 +348,13 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
   void _handleUpdateUser() {
     if (_formKey.currentState!.validate()) {
-      final hasChanges = _usernameController.text.trim() != widget.user.username ||
-          _emailController.text.trim() != widget.user.email ||
-          _phoneController.text.trim() != widget.user.phone ||
-          _nameController.text.trim() != widget.user.name ||
-          _avatarUrlController.text.trim() != widget.user.avatarUrl ||
-          _isActive != widget.user.isActive;
+      final hasChanges =
+          _usernameController.text.trim() != widget.user.username ||
+              _emailController.text.trim() != widget.user.email ||
+              _phoneController.text.trim() != widget.user.phone ||
+              _nameController.text.trim() != widget.user.name ||
+              _avatarUrlController.text.trim() != widget.user.avatarUrl ||
+              _isActive != widget.user.isActive;
 
       if (!hasChanges) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -349,26 +367,25 @@ class _EditUserDialogState extends State<EditUserDialog> {
         final bloc = context.read<UsersBloc>();
         if (!bloc.isClosed) {
           bloc.add(UpdateUserEvent(
+              request: UpdateUserRequest(
             uuid: widget.user.uuid,
-            username: _usernameController.text.trim() != widget.user.username 
-                ? _usernameController.text.trim() 
+            username: _usernameController.text.trim() != widget.user.username
+                ? _usernameController.text.trim()
                 : null,
-            email: _emailController.text.trim() != widget.user.email 
-                ? _emailController.text.trim() 
+            email: _emailController.text.trim() != widget.user.email
+                ? _emailController.text.trim()
                 : null,
-            phone: _phoneController.text.trim() != widget.user.phone 
-                ? _phoneController.text.trim() 
+            phone: _phoneController.text.trim() != widget.user.phone
+                ? _phoneController.text.trim()
                 : null,
-            name: _nameController.text.trim() != widget.user.name 
-                ? _nameController.text.trim() 
+            name: _nameController.text.trim() != widget.user.name
+                ? _nameController.text.trim()
                 : null,
-            avatarUrl: _avatarUrlController.text.trim() != widget.user.avatarUrl 
-                ? _avatarUrlController.text.trim() 
+            avatarUrl: _avatarUrlController.text.trim() != widget.user.avatarUrl
+                ? _avatarUrlController.text.trim()
                 : null,
-            isActive: _isActive != widget.user.isActive 
-                ? _isActive 
-                : null,
-          ));
+            isActive: _isActive != widget.user.isActive ? _isActive : null,
+          )));
         }
       }
     }

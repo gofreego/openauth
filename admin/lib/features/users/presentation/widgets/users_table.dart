@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../domain/extensions/user_extensions.dart';
 import '../bloc/users_bloc.dart';
@@ -285,8 +286,10 @@ class UsersTable extends StatelessWidget {
               final bloc = context.read<UsersBloc>();
               if (!bloc.isClosed) {
                 bloc.add(UpdateUserEvent(
-                  uuid: user.uuid,
-                  isActive: newStatus,
+                  request: UpdateUserRequest(
+                    uuid: user.uuid,
+                    isActive: newStatus,
+                  ),
                 ));
               }
               ScaffoldMessenger.of(context).showSnackBar(
