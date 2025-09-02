@@ -26,7 +26,7 @@ class UserPermissionsDialog extends StatefulWidget {
 class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   String _searchQuery = '';
   List<permissions_pb.Permission> _availablePermissions = [];
-  List<perm_pb.UserPermission> _userPermissions = [];
+  List<perm_pb.EffectivePermission> _userPermissions = [];
 
   @override
   void initState() {
@@ -316,7 +316,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     );
   }
 
-  Widget _buildCurrentPermissionCard(perm_pb.UserPermission permission) {
+  Widget _buildCurrentPermissionCard(perm_pb.EffectivePermission permission) {
     final theme = Theme.of(context);
     
     return Card(
@@ -355,7 +355,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Granted ${_formatDate(permission.createdAt.toInt())}',
+                  'Granted ${_formatDate(permission.grantedAt.toInt())}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
@@ -454,7 +454,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     );
   }
 
-  void _removePermission(perm_pb.UserPermission permission) {
+  void _removePermission(perm_pb.EffectivePermission permission) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

@@ -54,15 +54,11 @@ class UserPermissionsBloc extends Bloc<UserPermissionsEvent, UserPermissionsStat
         permissionId: Int64(event.permissionId),
       );
 
-      final response = await _apiService.post(
+      await _apiService.post(
         '/openauth/v1/users/${event.userId}/permissions',
         data: request.toProto3Json(),
       );
-
-      final assignResponse = pb.AssignPermissionToUserResponse()
-        ..mergeFromProto3Json(response.data);
-      
-      emit(UserPermissionAssigned(assignResponse.userPermission));
+      emit(const UserPermissionAssigned());
       
       // Refresh the permissions list
       if (!isClosed) {

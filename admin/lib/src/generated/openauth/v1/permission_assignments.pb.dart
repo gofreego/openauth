@@ -10,408 +10,6 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class GroupPermission extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GroupPermission', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionId')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionName')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionDisplayName')
-    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionDescription')
-    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupName')
-    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupDisplayName')
-    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupDescription')
-    ..aInt64(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'grantedBy')
-    ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
-    ..hasRequiredFields = false
-  ;
-
-  GroupPermission._() : super();
-  factory GroupPermission({
-    $fixnum.Int64? id,
-    $fixnum.Int64? groupId,
-    $fixnum.Int64? permissionId,
-    $core.String? permissionName,
-    $core.String? permissionDisplayName,
-    $core.String? permissionDescription,
-    $core.String? groupName,
-    $core.String? groupDisplayName,
-    $core.String? groupDescription,
-    $fixnum.Int64? grantedBy,
-    $fixnum.Int64? createdAt,
-  }) {
-    final _result = create();
-    if (id != null) {
-      _result.id = id;
-    }
-    if (groupId != null) {
-      _result.groupId = groupId;
-    }
-    if (permissionId != null) {
-      _result.permissionId = permissionId;
-    }
-    if (permissionName != null) {
-      _result.permissionName = permissionName;
-    }
-    if (permissionDisplayName != null) {
-      _result.permissionDisplayName = permissionDisplayName;
-    }
-    if (permissionDescription != null) {
-      _result.permissionDescription = permissionDescription;
-    }
-    if (groupName != null) {
-      _result.groupName = groupName;
-    }
-    if (groupDisplayName != null) {
-      _result.groupDisplayName = groupDisplayName;
-    }
-    if (groupDescription != null) {
-      _result.groupDescription = groupDescription;
-    }
-    if (grantedBy != null) {
-      _result.grantedBy = grantedBy;
-    }
-    if (createdAt != null) {
-      _result.createdAt = createdAt;
-    }
-    return _result;
-  }
-  factory GroupPermission.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GroupPermission.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GroupPermission clone() => GroupPermission()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GroupPermission copyWith(void Function(GroupPermission) updates) => super.copyWith((message) => updates(message as GroupPermission)) as GroupPermission; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static GroupPermission create() => GroupPermission._();
-  GroupPermission createEmptyInstance() => create();
-  static $pb.PbList<GroupPermission> createRepeated() => $pb.PbList<GroupPermission>();
-  @$core.pragma('dart2js:noInline')
-  static GroupPermission getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GroupPermission>(create);
-  static GroupPermission? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get id => $_getI64(0);
-  @$pb.TagNumber(1)
-  set id($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $fixnum.Int64 get groupId => $_getI64(1);
-  @$pb.TagNumber(2)
-  set groupId($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasGroupId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearGroupId() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get permissionId => $_getI64(2);
-  @$pb.TagNumber(3)
-  set permissionId($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasPermissionId() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearPermissionId() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get permissionName => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set permissionName($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasPermissionName() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearPermissionName() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.String get permissionDisplayName => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set permissionDisplayName($core.String v) { $_setString(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasPermissionDisplayName() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearPermissionDisplayName() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.String get permissionDescription => $_getSZ(5);
-  @$pb.TagNumber(6)
-  set permissionDescription($core.String v) { $_setString(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasPermissionDescription() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearPermissionDescription() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.String get groupName => $_getSZ(6);
-  @$pb.TagNumber(7)
-  set groupName($core.String v) { $_setString(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasGroupName() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearGroupName() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $core.String get groupDisplayName => $_getSZ(7);
-  @$pb.TagNumber(8)
-  set groupDisplayName($core.String v) { $_setString(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasGroupDisplayName() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearGroupDisplayName() => clearField(8);
-
-  @$pb.TagNumber(9)
-  $core.String get groupDescription => $_getSZ(8);
-  @$pb.TagNumber(9)
-  set groupDescription($core.String v) { $_setString(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasGroupDescription() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearGroupDescription() => clearField(9);
-
-  @$pb.TagNumber(10)
-  $fixnum.Int64 get grantedBy => $_getI64(9);
-  @$pb.TagNumber(10)
-  set grantedBy($fixnum.Int64 v) { $_setInt64(9, v); }
-  @$pb.TagNumber(10)
-  $core.bool hasGrantedBy() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearGrantedBy() => clearField(10);
-
-  @$pb.TagNumber(11)
-  $fixnum.Int64 get createdAt => $_getI64(10);
-  @$pb.TagNumber(11)
-  set createdAt($fixnum.Int64 v) { $_setInt64(10, v); }
-  @$pb.TagNumber(11)
-  $core.bool hasCreatedAt() => $_has(10);
-  @$pb.TagNumber(11)
-  void clearCreatedAt() => clearField(11);
-}
-
-class UserPermission extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserPermission', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionId')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionName')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionDisplayName')
-    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionDescription')
-    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userUuid')
-    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
-    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userEmail')
-    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userDisplayName')
-    ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'grantedBy')
-    ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt')
-    ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
-    ..hasRequiredFields = false
-  ;
-
-  UserPermission._() : super();
-  factory UserPermission({
-    $fixnum.Int64? id,
-    $fixnum.Int64? userId,
-    $fixnum.Int64? permissionId,
-    $core.String? permissionName,
-    $core.String? permissionDisplayName,
-    $core.String? permissionDescription,
-    $core.String? userUuid,
-    $core.String? username,
-    $core.String? userEmail,
-    $core.String? userDisplayName,
-    $fixnum.Int64? grantedBy,
-    $fixnum.Int64? expiresAt,
-    $fixnum.Int64? createdAt,
-  }) {
-    final _result = create();
-    if (id != null) {
-      _result.id = id;
-    }
-    if (userId != null) {
-      _result.userId = userId;
-    }
-    if (permissionId != null) {
-      _result.permissionId = permissionId;
-    }
-    if (permissionName != null) {
-      _result.permissionName = permissionName;
-    }
-    if (permissionDisplayName != null) {
-      _result.permissionDisplayName = permissionDisplayName;
-    }
-    if (permissionDescription != null) {
-      _result.permissionDescription = permissionDescription;
-    }
-    if (userUuid != null) {
-      _result.userUuid = userUuid;
-    }
-    if (username != null) {
-      _result.username = username;
-    }
-    if (userEmail != null) {
-      _result.userEmail = userEmail;
-    }
-    if (userDisplayName != null) {
-      _result.userDisplayName = userDisplayName;
-    }
-    if (grantedBy != null) {
-      _result.grantedBy = grantedBy;
-    }
-    if (expiresAt != null) {
-      _result.expiresAt = expiresAt;
-    }
-    if (createdAt != null) {
-      _result.createdAt = createdAt;
-    }
-    return _result;
-  }
-  factory UserPermission.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserPermission.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  UserPermission clone() => UserPermission()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  UserPermission copyWith(void Function(UserPermission) updates) => super.copyWith((message) => updates(message as UserPermission)) as UserPermission; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static UserPermission create() => UserPermission._();
-  UserPermission createEmptyInstance() => create();
-  static $pb.PbList<UserPermission> createRepeated() => $pb.PbList<UserPermission>();
-  @$core.pragma('dart2js:noInline')
-  static UserPermission getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UserPermission>(create);
-  static UserPermission? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get id => $_getI64(0);
-  @$pb.TagNumber(1)
-  set id($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $fixnum.Int64 get userId => $_getI64(1);
-  @$pb.TagNumber(2)
-  set userId($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasUserId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearUserId() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get permissionId => $_getI64(2);
-  @$pb.TagNumber(3)
-  set permissionId($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasPermissionId() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearPermissionId() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get permissionName => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set permissionName($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasPermissionName() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearPermissionName() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.String get permissionDisplayName => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set permissionDisplayName($core.String v) { $_setString(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasPermissionDisplayName() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearPermissionDisplayName() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.String get permissionDescription => $_getSZ(5);
-  @$pb.TagNumber(6)
-  set permissionDescription($core.String v) { $_setString(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasPermissionDescription() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearPermissionDescription() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.String get userUuid => $_getSZ(6);
-  @$pb.TagNumber(7)
-  set userUuid($core.String v) { $_setString(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasUserUuid() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearUserUuid() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $core.String get username => $_getSZ(7);
-  @$pb.TagNumber(8)
-  set username($core.String v) { $_setString(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasUsername() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearUsername() => clearField(8);
-
-  @$pb.TagNumber(9)
-  $core.String get userEmail => $_getSZ(8);
-  @$pb.TagNumber(9)
-  set userEmail($core.String v) { $_setString(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasUserEmail() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearUserEmail() => clearField(9);
-
-  @$pb.TagNumber(10)
-  $core.String get userDisplayName => $_getSZ(9);
-  @$pb.TagNumber(10)
-  set userDisplayName($core.String v) { $_setString(9, v); }
-  @$pb.TagNumber(10)
-  $core.bool hasUserDisplayName() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearUserDisplayName() => clearField(10);
-
-  @$pb.TagNumber(11)
-  $fixnum.Int64 get grantedBy => $_getI64(10);
-  @$pb.TagNumber(11)
-  set grantedBy($fixnum.Int64 v) { $_setInt64(10, v); }
-  @$pb.TagNumber(11)
-  $core.bool hasGrantedBy() => $_has(10);
-  @$pb.TagNumber(11)
-  void clearGrantedBy() => clearField(11);
-
-  @$pb.TagNumber(12)
-  $fixnum.Int64 get expiresAt => $_getI64(11);
-  @$pb.TagNumber(12)
-  set expiresAt($fixnum.Int64 v) { $_setInt64(11, v); }
-  @$pb.TagNumber(12)
-  $core.bool hasExpiresAt() => $_has(11);
-  @$pb.TagNumber(12)
-  void clearExpiresAt() => clearField(12);
-
-  @$pb.TagNumber(13)
-  $fixnum.Int64 get createdAt => $_getI64(12);
-  @$pb.TagNumber(13)
-  set createdAt($fixnum.Int64 v) { $_setInt64(12, v); }
-  @$pb.TagNumber(13)
-  $core.bool hasCreatedAt() => $_has(12);
-  @$pb.TagNumber(13)
-  void clearCreatedAt() => clearField(13);
-}
-
 class AssignPermissionToGroupRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionToGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
@@ -475,20 +73,15 @@ class AssignPermissionToGroupRequest extends $pb.GeneratedMessage {
 
 class AssignPermissionToGroupResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionToGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aOM<GroupPermission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupPermission', subBuilder: GroupPermission.create)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
   AssignPermissionToGroupResponse._() : super();
   factory AssignPermissionToGroupResponse({
-    GroupPermission? groupPermission,
     $core.String? message,
   }) {
     final _result = create();
-    if (groupPermission != null) {
-      _result.groupPermission = groupPermission;
-    }
     if (message != null) {
       _result.message = message;
     }
@@ -515,23 +108,12 @@ class AssignPermissionToGroupResponse extends $pb.GeneratedMessage {
   static AssignPermissionToGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionToGroupResponse>(create);
   static AssignPermissionToGroupResponse? _defaultInstance;
 
-  @$pb.TagNumber(1)
-  GroupPermission get groupPermission => $_getN(0);
-  @$pb.TagNumber(1)
-  set groupPermission(GroupPermission v) { setField(1, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasGroupPermission() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearGroupPermission() => clearField(1);
-  @$pb.TagNumber(1)
-  GroupPermission ensureGroupPermission() => $_ensure(0);
-
   @$pb.TagNumber(2)
-  $core.String get message => $_getSZ(1);
+  $core.String get message => $_getSZ(0);
   @$pb.TagNumber(2)
-  set message($core.String v) { $_setString(1, v); }
+  set message($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(2)
-  $core.bool hasMessage() => $_has(1);
+  $core.bool hasMessage() => $_has(0);
   @$pb.TagNumber(2)
   void clearMessage() => clearField(2);
 }
@@ -661,31 +243,16 @@ class RemovePermissionFromGroupResponse extends $pb.GeneratedMessage {
 class ListGroupPermissionsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListGroupPermissionsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
     ..hasRequiredFields = false
   ;
 
   ListGroupPermissionsRequest._() : super();
   factory ListGroupPermissionsRequest({
     $fixnum.Int64? groupId,
-    $core.int? limit,
-    $core.int? offset,
-    $core.String? search,
   }) {
     final _result = create();
     if (groupId != null) {
       _result.groupId = groupId;
-    }
-    if (limit != null) {
-      _result.limit = limit;
-    }
-    if (offset != null) {
-      _result.offset = offset;
-    }
-    if (search != null) {
-      _result.search = search;
     }
     return _result;
   }
@@ -718,44 +285,17 @@ class ListGroupPermissionsRequest extends $pb.GeneratedMessage {
   $core.bool hasGroupId() => $_has(0);
   @$pb.TagNumber(1)
   void clearGroupId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.int get limit => $_getIZ(1);
-  @$pb.TagNumber(2)
-  set limit($core.int v) { $_setSignedInt32(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasLimit() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearLimit() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.int get offset => $_getIZ(2);
-  @$pb.TagNumber(3)
-  set offset($core.int v) { $_setSignedInt32(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasOffset() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearOffset() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get search => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set search($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasSearch() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearSearch() => clearField(4);
 }
 
 class ListGroupPermissionsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListGroupPermissionsResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..pc<GroupPermission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.PM, subBuilder: GroupPermission.create)
+    ..pc<EffectivePermission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.PM, subBuilder: EffectivePermission.create)
     ..hasRequiredFields = false
   ;
 
   ListGroupPermissionsResponse._() : super();
   factory ListGroupPermissionsResponse({
-    $core.Iterable<GroupPermission>? permissions,
+    $core.Iterable<EffectivePermission>? permissions,
   }) {
     final _result = create();
     if (permissions != null) {
@@ -785,7 +325,7 @@ class ListGroupPermissionsResponse extends $pb.GeneratedMessage {
   static ListGroupPermissionsResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<GroupPermission> get permissions => $_getList(0);
+  $core.List<EffectivePermission> get permissions => $_getList(0);
 }
 
 class AssignPermissionToUserRequest extends $pb.GeneratedMessage {
@@ -865,20 +405,15 @@ class AssignPermissionToUserRequest extends $pb.GeneratedMessage {
 
 class AssignPermissionToUserResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionToUserResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aOM<UserPermission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userPermission', subBuilder: UserPermission.create)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
   AssignPermissionToUserResponse._() : super();
   factory AssignPermissionToUserResponse({
-    UserPermission? userPermission,
     $core.String? message,
   }) {
     final _result = create();
-    if (userPermission != null) {
-      _result.userPermission = userPermission;
-    }
     if (message != null) {
       _result.message = message;
     }
@@ -905,23 +440,12 @@ class AssignPermissionToUserResponse extends $pb.GeneratedMessage {
   static AssignPermissionToUserResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionToUserResponse>(create);
   static AssignPermissionToUserResponse? _defaultInstance;
 
-  @$pb.TagNumber(1)
-  UserPermission get userPermission => $_getN(0);
-  @$pb.TagNumber(1)
-  set userPermission(UserPermission v) { setField(1, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasUserPermission() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearUserPermission() => clearField(1);
-  @$pb.TagNumber(1)
-  UserPermission ensureUserPermission() => $_ensure(0);
-
   @$pb.TagNumber(2)
-  $core.String get message => $_getSZ(1);
+  $core.String get message => $_getSZ(0);
   @$pb.TagNumber(2)
-  set message($core.String v) { $_setString(1, v); }
+  set message($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(2)
-  $core.bool hasMessage() => $_has(1);
+  $core.bool hasMessage() => $_has(0);
   @$pb.TagNumber(2)
   void clearMessage() => clearField(2);
 }
@@ -1051,36 +575,16 @@ class RemovePermissionFromUserResponse extends $pb.GeneratedMessage {
 class ListUserPermissionsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListUserPermissionsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
-    ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expired')
     ..hasRequiredFields = false
   ;
 
   ListUserPermissionsRequest._() : super();
   factory ListUserPermissionsRequest({
     $fixnum.Int64? userId,
-    $core.int? limit,
-    $core.int? offset,
-    $core.String? search,
-    $core.bool? expired,
   }) {
     final _result = create();
     if (userId != null) {
       _result.userId = userId;
-    }
-    if (limit != null) {
-      _result.limit = limit;
-    }
-    if (offset != null) {
-      _result.offset = offset;
-    }
-    if (search != null) {
-      _result.search = search;
-    }
-    if (expired != null) {
-      _result.expired = expired;
     }
     return _result;
   }
@@ -1113,53 +617,17 @@ class ListUserPermissionsRequest extends $pb.GeneratedMessage {
   $core.bool hasUserId() => $_has(0);
   @$pb.TagNumber(1)
   void clearUserId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.int get limit => $_getIZ(1);
-  @$pb.TagNumber(2)
-  set limit($core.int v) { $_setSignedInt32(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasLimit() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearLimit() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.int get offset => $_getIZ(2);
-  @$pb.TagNumber(3)
-  set offset($core.int v) { $_setSignedInt32(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasOffset() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearOffset() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get search => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set search($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasSearch() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearSearch() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.bool get expired => $_getBF(4);
-  @$pb.TagNumber(5)
-  set expired($core.bool v) { $_setBool(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasExpired() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearExpired() => clearField(5);
 }
 
 class ListUserPermissionsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListUserPermissionsResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..pc<UserPermission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.PM, subBuilder: UserPermission.create)
+    ..pc<EffectivePermission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.PM, subBuilder: EffectivePermission.create)
     ..hasRequiredFields = false
   ;
 
   ListUserPermissionsResponse._() : super();
   factory ListUserPermissionsResponse({
-    $core.Iterable<UserPermission>? permissions,
+    $core.Iterable<EffectivePermission>? permissions,
   }) {
     final _result = create();
     if (permissions != null) {
@@ -1189,37 +657,22 @@ class ListUserPermissionsResponse extends $pb.GeneratedMessage {
   static ListUserPermissionsResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<UserPermission> get permissions => $_getList(0);
+  $core.List<EffectivePermission> get permissions => $_getList(0);
 }
 
 class GetUserEffectivePermissionsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetUserEffectivePermissionsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
     ..hasRequiredFields = false
   ;
 
   GetUserEffectivePermissionsRequest._() : super();
   factory GetUserEffectivePermissionsRequest({
     $fixnum.Int64? userId,
-    $core.int? limit,
-    $core.int? offset,
-    $core.String? search,
   }) {
     final _result = create();
     if (userId != null) {
       _result.userId = userId;
-    }
-    if (limit != null) {
-      _result.limit = limit;
-    }
-    if (offset != null) {
-      _result.offset = offset;
-    }
-    if (search != null) {
-      _result.search = search;
     }
     return _result;
   }
@@ -1252,33 +705,6 @@ class GetUserEffectivePermissionsRequest extends $pb.GeneratedMessage {
   $core.bool hasUserId() => $_has(0);
   @$pb.TagNumber(1)
   void clearUserId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.int get limit => $_getIZ(1);
-  @$pb.TagNumber(2)
-  set limit($core.int v) { $_setSignedInt32(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasLimit() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearLimit() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.int get offset => $_getIZ(2);
-  @$pb.TagNumber(3)
-  set offset($core.int v) { $_setSignedInt32(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasOffset() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearOffset() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get search => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set search($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasSearch() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearSearch() => clearField(4);
 }
 
 class EffectivePermission extends $pb.GeneratedMessage {
@@ -1288,9 +714,9 @@ class EffectivePermission extends $pb.GeneratedMessage {
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionDisplayName')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionDescription')
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'source')
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sourceGroupId')
-    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sourceGroupName')
-    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sourceGroupDisplayName')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupName')
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupDisplayName')
     ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt')
     ..aInt64(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'grantedAt')
     ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'grantedBy')
@@ -1304,9 +730,9 @@ class EffectivePermission extends $pb.GeneratedMessage {
     $core.String? permissionDisplayName,
     $core.String? permissionDescription,
     $core.String? source,
-    $fixnum.Int64? sourceGroupId,
-    $core.String? sourceGroupName,
-    $core.String? sourceGroupDisplayName,
+    $fixnum.Int64? groupId,
+    $core.String? groupName,
+    $core.String? groupDisplayName,
     $fixnum.Int64? expiresAt,
     $fixnum.Int64? grantedAt,
     $fixnum.Int64? grantedBy,
@@ -1327,14 +753,14 @@ class EffectivePermission extends $pb.GeneratedMessage {
     if (source != null) {
       _result.source = source;
     }
-    if (sourceGroupId != null) {
-      _result.sourceGroupId = sourceGroupId;
+    if (groupId != null) {
+      _result.groupId = groupId;
     }
-    if (sourceGroupName != null) {
-      _result.sourceGroupName = sourceGroupName;
+    if (groupName != null) {
+      _result.groupName = groupName;
     }
-    if (sourceGroupDisplayName != null) {
-      _result.sourceGroupDisplayName = sourceGroupDisplayName;
+    if (groupDisplayName != null) {
+      _result.groupDisplayName = groupDisplayName;
     }
     if (expiresAt != null) {
       _result.expiresAt = expiresAt;
@@ -1414,31 +840,31 @@ class EffectivePermission extends $pb.GeneratedMessage {
   void clearSource() => clearField(5);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get sourceGroupId => $_getI64(5);
+  $fixnum.Int64 get groupId => $_getI64(5);
   @$pb.TagNumber(6)
-  set sourceGroupId($fixnum.Int64 v) { $_setInt64(5, v); }
+  set groupId($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasSourceGroupId() => $_has(5);
+  $core.bool hasGroupId() => $_has(5);
   @$pb.TagNumber(6)
-  void clearSourceGroupId() => clearField(6);
+  void clearGroupId() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.String get sourceGroupName => $_getSZ(6);
+  $core.String get groupName => $_getSZ(6);
   @$pb.TagNumber(7)
-  set sourceGroupName($core.String v) { $_setString(6, v); }
+  set groupName($core.String v) { $_setString(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasSourceGroupName() => $_has(6);
+  $core.bool hasGroupName() => $_has(6);
   @$pb.TagNumber(7)
-  void clearSourceGroupName() => clearField(7);
+  void clearGroupName() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.String get sourceGroupDisplayName => $_getSZ(7);
+  $core.String get groupDisplayName => $_getSZ(7);
   @$pb.TagNumber(8)
-  set sourceGroupDisplayName($core.String v) { $_setString(7, v); }
+  set groupDisplayName($core.String v) { $_setString(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasSourceGroupDisplayName() => $_has(7);
+  $core.bool hasGroupDisplayName() => $_has(7);
   @$pb.TagNumber(8)
-  void clearSourceGroupDisplayName() => clearField(8);
+  void clearGroupDisplayName() => clearField(8);
 
   @$pb.TagNumber(9)
   $fixnum.Int64 get expiresAt => $_getI64(8);

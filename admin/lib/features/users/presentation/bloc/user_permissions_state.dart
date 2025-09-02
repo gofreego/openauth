@@ -13,7 +13,7 @@ class UserPermissionsInitial extends UserPermissionsState {}
 class UserPermissionsLoading extends UserPermissionsState {}
 
 class UserPermissionsLoaded extends UserPermissionsState {
-  final List<pb.UserPermission> permissions;
+  final List<pb.EffectivePermission> permissions;
 
   const UserPermissionsLoaded(this.permissions);
 
@@ -33,12 +33,11 @@ class UserPermissionsError extends UserPermissionsState {
 class UserPermissionAssigning extends UserPermissionsState {}
 
 class UserPermissionAssigned extends UserPermissionsState {
-  final pb.UserPermission userPermission;
 
-  const UserPermissionAssigned(this.userPermission);
+  const UserPermissionAssigned();
 
   @override
-  List<Object?> get props => [userPermission];
+  List<Object?> get props => [];
 }
 
 class UserPermissionRemoving extends UserPermissionsState {}

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart' as pb;
 
 abstract class UserPermissionsEvent extends Equatable {
   const UserPermissionsEvent();

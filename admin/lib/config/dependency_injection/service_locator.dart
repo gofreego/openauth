@@ -5,7 +5,7 @@ import '../environment/environment_config.dart';
 import '../../core/network/api_service.dart';
 import '../../core/bloc/theme_bloc.dart';
 import '../../core/bloc/app_bloc.dart';
-import '../../shared/catalog.dart';
+import '../../shared/shared.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/usecases/sign_in_usecase.dart';
