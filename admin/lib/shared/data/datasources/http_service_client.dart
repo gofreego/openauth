@@ -1,15 +1,29 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/environment/environment_config.dart';
+import '../../services/session_manager.dart';
 
 /// A shared client for the Catalog Service that provides common functionality
 /// for all catalog-related operations (topics, questions, grades)
 class HTTPServiceClient {
-  const HTTPServiceClient();
+  SessionManager? _sessionManager;
+  
+  HTTPServiceClient();
+
+  /// Initialize session manager for authentication
+  Future<void> initializeAuth() async {
+    if (_sessionManager == null) {
+      final prefs = await SharedPreferences.getInstance();
+      _sessionManager = SessionManager(prefs);
+    }
+  }
 
   /// Creates a configured Dio instance for catalog service requests
-  Dio _createDioInstance() {
+  Future<Dio> _createDioInstance() async {
+    await initializeAuth();
+    
     final environment = EnvironmentConfig.current;
-    return Dio(BaseOptions(
+    final dio = Dio(BaseOptions(
       baseUrl: environment.apiBaseUrl,
       connectTimeout: environment.connectTimeout,
       receiveTimeout: environment.receiveTimeout,
@@ -18,6 +32,23 @@ class HTTPServiceClient {
         'Accept': 'application/json',
       },
     ));
+
+    // Add auth interceptor
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          if (_sessionManager != null) {
+            final token = await _sessionManager!.getAccessToken();
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+          }
+          handler.next(options);
+        },
+      ),
+    );
+
+    return dio;
   }
 
   /// Performs a GET request to the catalog service
@@ -27,7 +58,7 @@ class HTTPServiceClient {
     Options? options,
   }) async {
     try {
-      final dio = _createDioInstance();
+      final dio = await _createDioInstance();
       final response = await dio.get<T>(
         path,
         queryParameters: queryParameters,
@@ -54,7 +85,7 @@ class HTTPServiceClient {
     Options? options,
   }) async {
     try {
-      final dio = _createDioInstance();
+      final dio = await _createDioInstance();
       final response = await dio.post<T>(
         path,
         data: data,
@@ -82,7 +113,7 @@ class HTTPServiceClient {
     Options? options,
   }) async {
     try {
-      final dio = _createDioInstance();
+      final dio = await _createDioInstance();
       final response = await dio.put<T>(
         path,
         data: data,
@@ -110,7 +141,7 @@ class HTTPServiceClient {
     Options? options,
   }) async {
     try {
-      final dio = _createDioInstance();
+      final dio = await _createDioInstance();
       final response = await dio.delete<T>(
         path,
         data: data,

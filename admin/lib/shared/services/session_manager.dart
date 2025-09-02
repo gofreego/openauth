@@ -166,9 +166,10 @@ class SessionManager {
       final loginTime = DateTime.parse(loginTimeStr);
       final now = DateTime.now();
       
-      // Check if session is older than 30 days (configurable)
+      // Check if session is older than configured timeout (default 30 days)
+      final maxSessionDays = int.tryParse(metadata['maxSessionDays'] ?? '30') ?? 30;
       final sessionAge = now.difference(loginTime);
-      return sessionAge.inDays > 30;
+      return sessionAge.inDays > maxSessionDays;
     } catch (e) {
       return true;
     }
@@ -212,7 +213,7 @@ class SessionManager {
 
     // Check for excessive refresh attempts
     final refreshCount = int.tryParse(metadata['refreshCount'] ?? '0') ?? 0;
-    if (refreshCount > 50) { // Configurable threshold
+    if (refreshCount > 100) { // Increased threshold from 50 to 100
       return SessionSecurityStatus.suspicious;
     }
 

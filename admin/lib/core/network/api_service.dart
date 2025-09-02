@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'dart:async';
 import '../../config/environment/environment_config.dart';
 import '../../shared/services/session_manager.dart';
+import '../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
 class ApiService {
   late final Dio _dio;
@@ -35,15 +36,58 @@ class ApiService {
           }
           handler.next(options);
         },
-        onError: (error, handler) {
-          // Handle common errors
-          if (error.response?.statusCode == 401) {
-            // Token expired, redirect to login
+        onError: (error, handler) async {
+          // Handle 401 errors by attempting token refresh
+          if (error.response?.statusCode == 401 && _sessionManager != null) {
+            try {
+              final tokens = await _sessionManager.getAuthTokens();
+              if (tokens != null && tokens['refreshToken'] != null) {
+                // Attempt to refresh token
+                final refreshResponse = await _attemptTokenRefresh(tokens['refreshToken']!);
+                if (refreshResponse != null && refreshResponse['accessToken'] != null) {
+                  // Convert response to RefreshTokenResponse protobuf
+                  final pbResponse = pb.RefreshTokenResponse()..mergeFromProto3Json(refreshResponse);
+                  await _sessionManager.updateAuthTokens(pbResponse);
+                  
+                  // Retry original request with new token
+                  final clonedRequest = await _dio.request(
+                    error.requestOptions.path,
+                    options: Options(
+                      method: error.requestOptions.method,
+                      headers: {
+                        ...error.requestOptions.headers,
+                        'Authorization': 'Bearer ${refreshResponse['accessToken']}',
+                      },
+                    ),
+                    data: error.requestOptions.data,
+                    queryParameters: error.requestOptions.queryParameters,
+                  );
+                  return handler.resolve(clonedRequest);
+                }
+              }
+              // If refresh fails, clear session and let error propagate
+              await _sessionManager.clearSession();
+            } catch (e) {
+              // Refresh failed, clear session
+              await _sessionManager.clearSession();
+            }
           }
           handler.next(error);
         },
       ),
     );
+  }
+
+  Future<Map<String, dynamic>?> _attemptTokenRefresh(String refreshToken) async {
+    try {
+      final response = await _dio.post(
+        '/openauth/v1/auth/refresh',
+        data: {'refreshToken': refreshToken},
+      );
+      return response.data as Map<String, dynamic>?;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<Response<T>> get<T>(

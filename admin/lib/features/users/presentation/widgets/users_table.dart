@@ -8,6 +8,7 @@ import '../bloc/users_state.dart';
 import '../bloc/users_event.dart';
 import 'user_row.dart';
 import 'edit_user_dialog.dart';
+import '../../../../shared/widgets/error_widget.dart' as shared;
 
 class UsersTable extends StatelessWidget {
   final String searchQuery;
@@ -87,37 +88,11 @@ class UsersTable extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is UsersError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 64,
-                          color: theme.colorScheme.error,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Error loading users',
-                          style: theme.textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          state.message,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        FilledButton(
-                          onPressed: () {
-                            context.read<UsersBloc>().add(const RefreshUsersEvent());
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
+                  return shared.ErrorWidget(
+                    failure: state.failure,
+                    onRetry: () {
+                      context.read<UsersBloc>().add(const RefreshUsersEvent());
+                    },
                   );
                 } else if (state is UsersLoaded) {
                   final filteredUsers = _getFilteredUsers(state.users);

@@ -65,7 +65,7 @@ Future<void> initializeDependencies({
 
   // Shared Catalog Service
   serviceLocator.registerLazySingleton<HTTPServiceClient>(
-    () => const HTTPServiceClient(),
+    () => HTTPServiceClient(),
   );
 
   // Auth Repository

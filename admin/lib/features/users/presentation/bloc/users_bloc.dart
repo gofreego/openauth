@@ -38,7 +38,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     );
 
     result.fold(
-      (failure) => emit(UsersError(failure.message)),
+      (failure) => emit(UsersError(failure)),
       (users) => emit(UsersLoaded(
         users: users,
         currentSearch: event.search,
@@ -56,7 +56,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     );
 
     result.fold(
-      (failure) => emit(UsersError(failure.message)),
+      (failure) => emit(UsersError(failure)),
       (users) => emit(UsersLoaded(
         users: users,
         currentSearch: event.search,
@@ -76,7 +76,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     );
 
     result.fold(
-      (failure) => emit(UsersError(failure.message)),
+      (failure) => emit(UsersError(failure)),
       (user) {
         emit(UserCreated(user));
         // Refresh the users list
@@ -95,7 +95,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     );
 
     result.fold(
-      (failure) => emit(UsersError(failure.message)),
+      (failure) => emit(UsersError(failure)),
       (user) {
         emit(UserUpdated(user));
         // Refresh the users list
@@ -112,7 +112,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     final result = await deleteUserUseCase(event.userIdOrUuid);
 
     result.fold(
-      (failure) => emit(UsersError(failure.message)),
+      (failure) => emit(UsersError(failure)),
       (_) {
         emit(UserDeleted(event.userIdOrUuid));
         // Refresh the users list
@@ -133,7 +133,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     );
 
     result.fold(
-      (failure) => emit(UsersError(failure.message)),
+      (failure) => emit(UsersError(failure)),
       (users) => emit(UsersLoaded(
         users: users,
         currentSearch: event.query.isEmpty ? null : event.query,
@@ -152,7 +152,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     );
 
     result.fold(
-      (failure) => emit(UsersError(failure.message)),
+      (failure) => emit(UsersError(failure)),
       (users) => emit(UsersLoaded(
         users: users,
         currentSearch: currentSearch,

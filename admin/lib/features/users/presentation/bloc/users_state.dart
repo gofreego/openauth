@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../core/errors/failures.dart';
 
 abstract class UsersState extends Equatable {
   const UsersState();
@@ -44,12 +45,15 @@ class UsersLoaded extends UsersState {
 }
 
 class UsersError extends UsersState {
-  final String message;
+  final Failure failure;
 
-  const UsersError(this.message);
+  const UsersError(this.failure);
+
+  // Keep message getter for backward compatibility
+  String get message => failure.message;
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [failure];
 }
 
 class UserCreating extends UsersState {}

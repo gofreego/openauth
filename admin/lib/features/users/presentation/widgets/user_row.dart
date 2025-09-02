@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../domain/extensions/user_extensions.dart';
+import '../../domain/utils/user_utils.dart';
 
 class UserRow extends StatelessWidget {
   final pb.User user;
@@ -172,14 +173,6 @@ class UserRow extends StatelessWidget {
   }
 
   String _getInitial() {
-    if (user.displayName.isNotEmpty) {
-      return user.displayName[0].toUpperCase();
-    } else if (user.username.isNotEmpty) {
-      return user.username[0].toUpperCase();
-    } else if (user.email.isNotEmpty) {
-      return user.email[0].toUpperCase();
-    } else {
-      return '?';
-    }
+    return UserUtils.getInitials(user);
   }
 }
