@@ -95,17 +95,17 @@ class ErrorWidget extends StatelessWidget {
   /// Get appropriate icon based on failure type
   IconData _getErrorIcon() {
     switch (failure.runtimeType) {
-      case NetworkFailure:
+      case NetworkFailure _:
         return Icons.wifi_off;
-      case ServerFailure:
+      case ServerFailure _:
         return Icons.dns;
-      case CacheFailure:
+      case CacheFailure _:
         return Icons.storage;
-      case ValidationFailure:
+      case ValidationFailure _:
         return Icons.error_outline;
-      case AuthenticationFailure:
+      case AuthenticationFailure _:
         return Icons.lock;
-      case ServiceUnavailableFailure:
+      case ServiceUnavailableFailure _:
         return Icons.cloud_off;
       default:
         return Icons.error;
@@ -115,17 +115,17 @@ class ErrorWidget extends StatelessWidget {
   /// Get appropriate title based on failure type
   String _getErrorTitle() {
     switch (failure.runtimeType) {
-      case NetworkFailure:
+      case NetworkFailure _:
         return 'Connection Problem';
-      case ServerFailure:
+      case ServerFailure _:
         return 'Server Error';
-      case CacheFailure:
+      case CacheFailure _:
         return 'Storage Error';
-      case ValidationFailure:
+      case ValidationFailure _:
         return 'Invalid Input';
-      case AuthenticationFailure:
+      case AuthenticationFailure _:
         return 'Authentication Required';
-      case ServiceUnavailableFailure:
+      case ServiceUnavailableFailure _:
         return 'Service Unavailable';
       default:
         return 'Something Went Wrong';
@@ -135,17 +135,17 @@ class ErrorWidget extends StatelessWidget {
   /// Get appropriate color based on failure type
   Color _getErrorColor(ColorScheme colorScheme) {
     switch (failure.runtimeType) {
-      case NetworkFailure:
+      case NetworkFailure _:
         return Colors.orange;
-      case ServerFailure:
+      case ServerFailure _:
         return colorScheme.error;
-      case CacheFailure:
+      case CacheFailure _:
         return Colors.purple;
-      case ValidationFailure:
+      case ValidationFailure _:
         return Colors.amber;
-      case AuthenticationFailure:
+      case AuthenticationFailure _:
         return Colors.red;
-      case ServiceUnavailableFailure:
+      case ServiceUnavailableFailure _:
         return Colors.grey;
       default:
         return colorScheme.error;

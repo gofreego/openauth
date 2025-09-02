@@ -176,7 +176,7 @@ class HttpClient {
         await _retryRequest(request, newToken);
       } catch (e) {
         // Log error but continue processing other requests
-        print('Failed to retry pending request: $e');
+        debugPrint('Failed to retry pending request: $e');
       }
     }
   }
