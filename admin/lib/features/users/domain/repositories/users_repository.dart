@@ -1,21 +1,20 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../entities/user.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 
 abstract class UsersRepository {
-  Future<Either<Failure, List<UserEntity>>> getUsers({
+  Future<Either<Failure, List<pb.User>>> getUsers({
     int page = 1,
     int limit = 50,
     String? search,
     bool? isActive,
   });
 
-  Future<Either<Failure, UserEntity>> getUser(String userIdOrUuid);
+  Future<Either<Failure, pb.User>> getUser(String userIdOrUuid);
 
-  Future<Either<Failure, UserEntity>> createUser(pb.SignUpRequest request);
+  Future<Either<Failure, pb.User>> createUser(pb.SignUpRequest request);
 
-  Future<Either<Failure, UserEntity>> updateUser(pb.UpdateUserRequest request);
+  Future<Either<Failure, pb.User>> updateUser(pb.UpdateUserRequest request);
 
   Future<Either<Failure, void>> deleteUser(String userIdOrUuid);
 

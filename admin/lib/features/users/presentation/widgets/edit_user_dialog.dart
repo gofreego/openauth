@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
-import '../../domain/entities/user.dart';
+import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../domain/extensions/user_extensions.dart';
 
 class EditUserDialog extends StatefulWidget {
-  final UserEntity user;
+  final pb.User user;
   final VoidCallback? onUserUpdated;
 
   const EditUserDialog({
@@ -34,7 +35,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     _usernameController = TextEditingController(text: widget.user.username);
     _emailController = TextEditingController(text: widget.user.email);
     _phoneController = TextEditingController(text: widget.user.phone);
-    _nameController = TextEditingController(text: widget.user.displayName);
+    _nameController = TextEditingController(text: widget.user.name);
     _avatarUrlController = TextEditingController(text: widget.user.avatarUrl);
     _isActive = widget.user.isActive;
   }
@@ -79,8 +80,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   : null,
               child: widget.user.avatarUrl.isEmpty 
                   ? Text(
-                      widget.user.displayName.isNotEmpty 
-                          ? widget.user.displayName[0].toUpperCase()
+                      widget.user.name.isNotEmpty 
+                          ? widget.user.name[0].toUpperCase()
                           : widget.user.username[0].toUpperCase(),
                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     )
@@ -94,9 +95,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 children: [
                   Text('Edit User', style: Theme.of(context).textTheme.headlineSmall),
                   Text(
-                    widget.user.displayName.isNotEmpty 
-                        ? widget.user.displayName 
-                        : widget.user.username,
+                    widget.user.displayName,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey[600],
                     ),
@@ -335,7 +334,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
       final hasChanges = _usernameController.text.trim() != widget.user.username ||
           _emailController.text.trim() != widget.user.email ||
           _phoneController.text.trim() != widget.user.phone ||
-          _nameController.text.trim() != widget.user.displayName ||
+          _nameController.text.trim() != widget.user.name ||
           _avatarUrlController.text.trim() != widget.user.avatarUrl ||
           _isActive != widget.user.isActive;
 
@@ -360,7 +359,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
             phone: _phoneController.text.trim() != widget.user.phone 
                 ? _phoneController.text.trim() 
                 : null,
-            name: _nameController.text.trim() != widget.user.displayName 
+            name: _nameController.text.trim() != widget.user.name 
                 ? _nameController.text.trim() 
                 : null,
             avatarUrl: _avatarUrlController.text.trim() != widget.user.avatarUrl 

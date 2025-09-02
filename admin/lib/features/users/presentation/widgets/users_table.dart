@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/user.dart';
+import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../domain/extensions/user_extensions.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
 import '../bloc/users_event.dart';
@@ -169,8 +170,8 @@ class UsersTable extends StatelessWidget {
     );
   }
 
-  List<UserEntity> _getFilteredUsers(List<UserEntity> users) {
-    List<UserEntity> filtered = users;
+  List<pb.User> _getFilteredUsers(List<pb.User> users) {
+    List<pb.User> filtered = users;
     
     // Apply search filter
     if (searchQuery.isNotEmpty) {
@@ -191,7 +192,7 @@ class UsersTable extends StatelessWidget {
     return filtered;
   }
 
-  void _handleUserAction(String action, UserEntity user, BuildContext context) {
+  void _handleUserAction(String action, pb.User user, BuildContext context) {
     switch (action) {
       case 'edit':
         _showEditUserDialog(user, context);
@@ -216,7 +217,7 @@ class UsersTable extends StatelessWidget {
     }
   }
 
-  void _showDeleteUserDialog(UserEntity user, BuildContext context) {
+  void _showDeleteUserDialog(pb.User user, BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -248,7 +249,7 @@ class UsersTable extends StatelessWidget {
     );
   }
 
-  void _showEditUserDialog(UserEntity user, BuildContext context) {
+  void _showEditUserDialog(pb.User user, BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogContext) => BlocProvider.value(
@@ -263,7 +264,7 @@ class UsersTable extends StatelessWidget {
     );
   }
 
-  void _toggleUserActiveStatus(UserEntity user, BuildContext context) {
+  void _toggleUserActiveStatus(pb.User user, BuildContext context) {
     final newStatus = !user.isActive;
     final action = newStatus ? 'activate' : 'deactivate';
     final capitalizedAction = action[0].toUpperCase() + action.substring(1);

@@ -1,7 +1,7 @@
 // Users Feature Exports
 
 // Domain
-export 'domain/entities/user.dart';
+export 'domain/extensions/user_extensions.dart';
 export 'domain/repositories/users_repository.dart';
 export 'domain/usecases/get_users_usecase.dart';
 export 'domain/usecases/create_user_usecase.dart';

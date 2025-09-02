@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/user.dart';
+import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../domain/extensions/user_extensions.dart';
 
 class UserRow extends StatelessWidget {
-  final UserEntity user;
+  final pb.User user;
   final int index;
-  final Function(String action, UserEntity user, BuildContext context) onUserAction;
+  final Function(String action, pb.User user, BuildContext context) onUserAction;
 
   const UserRow({
     super.key,

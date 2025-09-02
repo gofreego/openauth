@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/user.dart';
+import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 
 abstract class UsersState extends Equatable {
   const UsersState();
@@ -13,7 +13,7 @@ class UsersInitial extends UsersState {}
 class UsersLoading extends UsersState {}
 
 class UsersLoaded extends UsersState {
-  final List<UserEntity> users;
+  final List<pb.User> users;
   final String? currentSearch;
   final bool? currentFilter;
   final bool hasReachedMax;
@@ -26,7 +26,7 @@ class UsersLoaded extends UsersState {
   });
 
   UsersLoaded copyWith({
-    List<UserEntity>? users,
+    List<pb.User>? users,
     String? currentSearch,
     bool? currentFilter,
     bool? hasReachedMax,
@@ -55,7 +55,7 @@ class UsersError extends UsersState {
 class UserCreating extends UsersState {}
 
 class UserCreated extends UsersState {
-  final UserEntity user;
+  final pb.User user;
 
   const UserCreated(this.user);
 
@@ -66,7 +66,7 @@ class UserCreated extends UsersState {
 class UserUpdating extends UsersState {}
 
 class UserUpdated extends UsersState {
-  final UserEntity user;
+  final pb.User user;
 
   const UserUpdated(this.user);
 

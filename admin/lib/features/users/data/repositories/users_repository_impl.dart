@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
-import '../../../users/domain/entities/user.dart';
 import '../../../users/domain/repositories/users_repository.dart';
 import '../datasources/users_remote_datasource_impl.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
@@ -12,7 +11,7 @@ class UsersRepositoryImpl implements UsersRepository {
   UsersRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<UserEntity>>> getUsers({
+  Future<Either<Failure, List<pb.User>>> getUsers({
     int page = 1,
     int limit = 50,
     String? search,
@@ -26,8 +25,7 @@ class UsersRepositoryImpl implements UsersRepository {
         isActive: isActive,
       );
 
-      final userEntities = response.users.map((user) => UserEntity(user: user)).toList();
-      return Right(userEntities);
+      return Right(response.users);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on NetworkException catch (e) {
@@ -38,14 +36,10 @@ class UsersRepositoryImpl implements UsersRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> getUser(String userIdOrUuid) async {
+  Future<Either<Failure, pb.User>> getUser(String userIdOrUuid) async {
     try {
       final response = await remoteDataSource.getUser(userIdOrUuid);
-      final userEntity = UserEntity(
-        user: response.user,
-        profile: response.profiles.isNotEmpty ? response.profiles.first : null,
-      );
-      return Right(userEntity);
+      return Right(response.user);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on NetworkException catch (e) {
@@ -56,11 +50,10 @@ class UsersRepositoryImpl implements UsersRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> createUser(pb.SignUpRequest request) async {
+  Future<Either<Failure, pb.User>> createUser(pb.SignUpRequest request) async {
     try {
       final response = await remoteDataSource.createUser(request);
-      final userEntity = UserEntity(user: response.user);
-      return Right(userEntity);
+      return Right(response.user);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on NetworkException catch (e) {
@@ -71,11 +64,10 @@ class UsersRepositoryImpl implements UsersRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> updateUser(pb.UpdateUserRequest request) async {
+  Future<Either<Failure, pb.User>> updateUser(pb.UpdateUserRequest request) async {
     try {
       final response = await remoteDataSource.updateUser(request);
-      final userEntity = UserEntity(user: response.user);
-      return Right(userEntity);
+      return Right(response.user);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on NetworkException catch (e) {
