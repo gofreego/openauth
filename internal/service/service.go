@@ -9,6 +9,7 @@ import (
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
+	"github.com/google/uuid"
 )
 
 type Config struct {
@@ -105,6 +106,7 @@ type Repository interface {
 
 	// Profile management methods
 	ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, error)
+	ListUserProfileUUIDs(ctx context.Context, userID int64) ([]uuid.UUID, error)
 	GetProfileByUUID(ctx context.Context, uuid string) (*dao.Profile, error)
 	UpdateProfileByUUID(ctx context.Context, uuid string, updates map[string]interface{}) (*dao.Profile, error)
 	CountUserProfiles(ctx context.Context, userUUID string) (int32, error)
@@ -145,18 +147,18 @@ type Repository interface {
 	IsUserInGroup(ctx context.Context, userID, groupID int64) (bool, error)
 
 	// Group permission methods
-	AssignPermissionToGroup(ctx context.Context, groupID, permissionID, grantedBy int64) (*dao.GroupPermission, error)
+	AssignPermissionToGroup(ctx context.Context, groupID, permissionID, grantedBy int64) error
 	RemovePermissionFromGroup(ctx context.Context, groupID, permissionID int64) error
-	ListGroupPermissions(ctx context.Context, filters *filter.GroupPermissionFilter) ([]*dao.GroupPermission, error)
+	ListGroupPermissions(ctx context.Context, groupId int64) ([]*dao.EffectivePermission, error)
 	IsPermissionAssignedToGroup(ctx context.Context, groupID, permissionID int64) (bool, error)
 
 	// User permission methods
-	AssignPermissionToUser(ctx context.Context, userID, permissionID, grantedBy int64, expiresAt *int64) (*dao.UserPermission, error)
+	AssignPermissionToUser(ctx context.Context, userID, permissionID, grantedBy int64, expiresAt *int64) error
 	RemovePermissionFromUser(ctx context.Context, userID, permissionID int64) error
-	ListUserPermissions(ctx context.Context, filters *filter.UserPermissionFilter) ([]*dao.UserPermission, error)
-	GetUserEffectivePermissions(ctx context.Context, filters *filter.UserEffectivePermissionFilter) ([]*dao.Permission, error)
+	ListUserPermissions(ctx context.Context, userId int64) ([]*dao.EffectivePermission, error)
+	GetUserEffectivePermissions(ctx context.Context, userId int64) ([]*dao.EffectivePermission, error)
 	IsPermissionAssignedToUser(ctx context.Context, userID, permissionID int64) (bool, error)
-
+	GetUserEffectivePermissionNames(ctx context.Context, userId int64) ([]string, error)
 	// Stats methods
 	GetTotalUsers(ctx context.Context) (int64, error)
 	GetTotalPermissions(ctx context.Context) (int64, error)

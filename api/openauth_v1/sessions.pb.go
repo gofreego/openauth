@@ -285,11 +285,13 @@ func (x *SignInResponse) GetMessage() string {
 
 // RefreshTokenRequest to refresh access token
 type RefreshTokenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RefreshToken  string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	DeviceId      *string                `protobuf:"bytes,2,opt,name=device_id,json=deviceId,proto3,oneof" json:"device_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	RefreshToken       string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	DeviceId           *string                `protobuf:"bytes,2,opt,name=device_id,json=deviceId,proto3,oneof" json:"device_id,omitempty"`
+	Profiles           *bool                  `protobuf:"varint,3,opt,name=profiles,proto3,oneof" json:"profiles,omitempty"`                                               // Include user profile ids in access token
+	IncludePermissions *bool                  `protobuf:"varint,4,opt,name=include_permissions,json=includePermissions,proto3,oneof" json:"include_permissions,omitempty"` // Include user permissions in access token
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *RefreshTokenRequest) Reset() {
@@ -334,6 +336,20 @@ func (x *RefreshTokenRequest) GetDeviceId() string {
 		return *x.DeviceId
 	}
 	return ""
+}
+
+func (x *RefreshTokenRequest) GetProfiles() bool {
+	if x != nil && x.Profiles != nil {
+		return *x.Profiles
+	}
+	return false
+}
+
+func (x *RefreshTokenRequest) GetIncludePermissions() bool {
+	if x != nil && x.IncludePermissions != nil {
+		return *x.IncludePermissions
+	}
+	return false
 }
 
 // RefreshTokenResponse with new tokens
@@ -1029,12 +1045,16 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"\x04user\x18\x05 \x01(\v2\b.v1.UserR\x04user\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x06 \x01(\tR\tsessionId\x12\x18\n" +
-	"\amessage\x18\a \x01(\tR\amessage\"j\n" +
+	"\amessage\x18\a \x01(\tR\amessage\"\xe6\x01\n" +
 	"\x13RefreshTokenRequest\x12#\n" +
 	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\x12 \n" +
-	"\tdevice_id\x18\x02 \x01(\tH\x00R\bdeviceId\x88\x01\x01B\f\n" +
+	"\tdevice_id\x18\x02 \x01(\tH\x00R\bdeviceId\x88\x01\x01\x12\x1f\n" +
+	"\bprofiles\x18\x03 \x01(\bH\x01R\bprofiles\x88\x01\x01\x124\n" +
+	"\x13include_permissions\x18\x04 \x01(\bH\x02R\x12includePermissions\x88\x01\x01B\f\n" +
 	"\n" +
-	"_device_id\"\xc5\x01\n" +
+	"_device_idB\v\n" +
+	"\t_profilesB\x16\n" +
+	"\x14_include_permissions\"\xc5\x01\n" +
 	"\x14RefreshTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1d\n" +

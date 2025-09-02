@@ -134,98 +134,38 @@ type UserPermission struct {
 	CreatedAt    int64  `db:"created_at" json:"createdAt"`
 }
 
-// ToProtoGroupPermission converts a GroupPermission DAO to protobuf GroupPermission
-func (gp *GroupPermission) ToProtoGroupPermission() *openauth_v1.GroupPermission {
-	return &openauth_v1.GroupPermission{
-		Id:           gp.ID,
-		GroupId:      gp.GroupID,
-		PermissionId: gp.PermissionID,
-		GrantedBy:    gp.GrantedBy,
-		CreatedAt:    gp.CreatedAt,
-	}
+type EffectivePermission struct {
+	// Permission details
+	PermissionId          int64   `db:"permission_id" json:"permissionId,omitempty"`
+	PermissionName        string  `db:"permission_name" json:"permissionName,omitempty"`
+	PermissionDisplayName string  `db:"permission_display_name" json:"permissionDisplayName,omitempty"`
+	PermissionDescription *string `db:"permission_description" json:"permissionDescription,omitempty"`
+	// Source of the permission: "direct" or "group"
+	Source string `db:"source" json:"source,omitempty"`
+	// If source is "group", this contains the group details
+	GroupId          *int64  `db:"group_id" json:"groupId,omitempty"`
+	GroupName        *string `db:"group_name" json:"groupName,omitempty"`
+	GroupDisplayName *string `db:"group_display_name" json:"groupDisplayName,omitempty"`
+	// If source is "direct", this may contain expiration info
+	ExpiresAt *int64 `db:"expires_at" json:"expiresAt,omitempty"`
+	// When this permission was granted
+	GrantedAt int64 `db:"granted_at" json:"grantedAt,omitempty"`
+	// Who granted this permission
+	GrantedBy int64 `db:"granted_by" json:"grantedBy,omitempty"`
 }
 
-// ToProtoGroupPermissionWithDetails converts a GroupPermission DAO to protobuf GroupPermission with additional details
-func (gp *GroupPermission) ToProtoGroupPermissionWithDetails(
-	permissionName, permissionDisplayName string,
-	permissionDescription *string,
-	groupName, groupDisplayName string,
-	groupDescription *string,
-) *openauth_v1.GroupPermission {
-	proto := &openauth_v1.GroupPermission{
-		Id:                    gp.ID,
-		GroupId:               gp.GroupID,
-		PermissionId:          gp.PermissionID,
-		PermissionName:        permissionName,
-		PermissionDisplayName: permissionDisplayName,
-		GroupName:             groupName,
-		GroupDisplayName:      groupDisplayName,
-		GrantedBy:             gp.GrantedBy,
-		CreatedAt:             gp.CreatedAt,
+func (p *EffectivePermission) ToProtoUserEffectivePermission() *openauth_v1.EffectivePermission {
+	return &openauth_v1.EffectivePermission{
+		PermissionId:          p.PermissionId,
+		PermissionName:        p.PermissionName,
+		PermissionDisplayName: p.PermissionDisplayName,
+		PermissionDescription: p.PermissionDescription,
+		Source:                p.Source,
+		GroupId:               p.GroupId,
+		GroupName:             p.GroupName,
+		GroupDisplayName:      p.GroupDisplayName,
+		ExpiresAt:             p.ExpiresAt,
+		GrantedAt:             p.GrantedAt,
+		GrantedBy:             p.GrantedBy,
 	}
-
-	if permissionDescription != nil {
-		proto.PermissionDescription = permissionDescription
-	}
-
-	if groupDescription != nil {
-		proto.GroupDescription = groupDescription
-	}
-
-	return proto
-}
-
-// ToProtoUserPermission converts a UserPermission DAO to protobuf UserPermission
-func (up *UserPermission) ToProtoUserPermission() *openauth_v1.UserPermission {
-	proto := &openauth_v1.UserPermission{
-		Id:           up.ID,
-		UserId:       up.UserID,
-		PermissionId: up.PermissionID,
-		GrantedBy:    up.GrantedBy,
-		CreatedAt:    up.CreatedAt,
-	}
-
-	if up.ExpiresAt != nil {
-		proto.ExpiresAt = up.ExpiresAt
-	}
-
-	return proto
-}
-
-// ToProtoUserPermissionWithDetails converts a UserPermission DAO to protobuf UserPermission with additional details
-func (up *UserPermission) ToProtoUserPermissionWithDetails(
-	permissionName, permissionDisplayName string,
-	permissionDescription *string,
-	userUuid, username string,
-	userEmail, userDisplayName *string,
-) *openauth_v1.UserPermission {
-	proto := &openauth_v1.UserPermission{
-		Id:                    up.ID,
-		UserId:                up.UserID,
-		PermissionId:          up.PermissionID,
-		PermissionName:        permissionName,
-		PermissionDisplayName: permissionDisplayName,
-		UserUuid:              userUuid,
-		Username:              username,
-		GrantedBy:             up.GrantedBy,
-		CreatedAt:             up.CreatedAt,
-	}
-
-	if permissionDescription != nil {
-		proto.PermissionDescription = permissionDescription
-	}
-
-	if userEmail != nil {
-		proto.UserEmail = userEmail
-	}
-
-	if userDisplayName != nil {
-		proto.UserDisplayName = userDisplayName
-	}
-
-	if up.ExpiresAt != nil {
-		proto.ExpiresAt = up.ExpiresAt
-	}
-
-	return proto
 }

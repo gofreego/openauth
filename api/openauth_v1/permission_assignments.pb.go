@@ -21,287 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// GroupPermission represents a permission assigned to a group
-type GroupPermission struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Unique identifier for the group permission assignment
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	// ID of the group this permission is assigned to
-	GroupId int64 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	// ID of the permission being assigned
-	PermissionId int64 `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
-	// Permission details (populated when needed)
-	PermissionName        string  `protobuf:"bytes,4,opt,name=permission_name,json=permissionName,proto3" json:"permission_name,omitempty"`
-	PermissionDisplayName string  `protobuf:"bytes,5,opt,name=permission_display_name,json=permissionDisplayName,proto3" json:"permission_display_name,omitempty"`
-	PermissionDescription *string `protobuf:"bytes,6,opt,name=permission_description,json=permissionDescription,proto3,oneof" json:"permission_description,omitempty"`
-	// Group details (populated when needed)
-	GroupName        string  `protobuf:"bytes,7,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
-	GroupDisplayName string  `protobuf:"bytes,8,opt,name=group_display_name,json=groupDisplayName,proto3" json:"group_display_name,omitempty"`
-	GroupDescription *string `protobuf:"bytes,9,opt,name=group_description,json=groupDescription,proto3,oneof" json:"group_description,omitempty"`
-	// ID of the user who granted this permission
-	GrantedBy int64 `protobuf:"varint,10,opt,name=granted_by,json=grantedBy,proto3" json:"granted_by,omitempty"`
-	// Unix timestamp when the permission was granted
-	CreatedAt     int64 `protobuf:"varint,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GroupPermission) Reset() {
-	*x = GroupPermission{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GroupPermission) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GroupPermission) ProtoMessage() {}
-
-func (x *GroupPermission) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GroupPermission.ProtoReflect.Descriptor instead.
-func (*GroupPermission) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *GroupPermission) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *GroupPermission) GetGroupId() int64 {
-	if x != nil {
-		return x.GroupId
-	}
-	return 0
-}
-
-func (x *GroupPermission) GetPermissionId() int64 {
-	if x != nil {
-		return x.PermissionId
-	}
-	return 0
-}
-
-func (x *GroupPermission) GetPermissionName() string {
-	if x != nil {
-		return x.PermissionName
-	}
-	return ""
-}
-
-func (x *GroupPermission) GetPermissionDisplayName() string {
-	if x != nil {
-		return x.PermissionDisplayName
-	}
-	return ""
-}
-
-func (x *GroupPermission) GetPermissionDescription() string {
-	if x != nil && x.PermissionDescription != nil {
-		return *x.PermissionDescription
-	}
-	return ""
-}
-
-func (x *GroupPermission) GetGroupName() string {
-	if x != nil {
-		return x.GroupName
-	}
-	return ""
-}
-
-func (x *GroupPermission) GetGroupDisplayName() string {
-	if x != nil {
-		return x.GroupDisplayName
-	}
-	return ""
-}
-
-func (x *GroupPermission) GetGroupDescription() string {
-	if x != nil && x.GroupDescription != nil {
-		return *x.GroupDescription
-	}
-	return ""
-}
-
-func (x *GroupPermission) GetGrantedBy() int64 {
-	if x != nil {
-		return x.GrantedBy
-	}
-	return 0
-}
-
-func (x *GroupPermission) GetCreatedAt() int64 {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return 0
-}
-
-// UserPermission represents a permission assigned directly to a user
-type UserPermission struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Unique identifier for the user permission assignment
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	// ID of the user this permission is assigned to
-	UserId int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// ID of the permission being assigned
-	PermissionId int64 `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
-	// Permission details (populated when needed)
-	PermissionName        string  `protobuf:"bytes,4,opt,name=permission_name,json=permissionName,proto3" json:"permission_name,omitempty"`
-	PermissionDisplayName string  `protobuf:"bytes,5,opt,name=permission_display_name,json=permissionDisplayName,proto3" json:"permission_display_name,omitempty"`
-	PermissionDescription *string `protobuf:"bytes,6,opt,name=permission_description,json=permissionDescription,proto3,oneof" json:"permission_description,omitempty"`
-	// User details (populated when needed)
-	UserUuid        string  `protobuf:"bytes,7,opt,name=user_uuid,json=userUuid,proto3" json:"user_uuid,omitempty"`
-	Username        string  `protobuf:"bytes,8,opt,name=username,proto3" json:"username,omitempty"`
-	UserEmail       *string `protobuf:"bytes,9,opt,name=user_email,json=userEmail,proto3,oneof" json:"user_email,omitempty"`
-	UserDisplayName *string `protobuf:"bytes,10,opt,name=user_display_name,json=userDisplayName,proto3,oneof" json:"user_display_name,omitempty"`
-	// ID of the user who granted this permission
-	GrantedBy int64 `protobuf:"varint,11,opt,name=granted_by,json=grantedBy,proto3" json:"granted_by,omitempty"`
-	// Optional expiration timestamp (null means no expiration)
-	ExpiresAt *int64 `protobuf:"varint,12,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	// Unix timestamp when the permission was granted
-	CreatedAt     int64 `protobuf:"varint,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserPermission) Reset() {
-	*x = UserPermission{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserPermission) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserPermission) ProtoMessage() {}
-
-func (x *UserPermission) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserPermission.ProtoReflect.Descriptor instead.
-func (*UserPermission) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *UserPermission) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *UserPermission) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserPermission) GetPermissionId() int64 {
-	if x != nil {
-		return x.PermissionId
-	}
-	return 0
-}
-
-func (x *UserPermission) GetPermissionName() string {
-	if x != nil {
-		return x.PermissionName
-	}
-	return ""
-}
-
-func (x *UserPermission) GetPermissionDisplayName() string {
-	if x != nil {
-		return x.PermissionDisplayName
-	}
-	return ""
-}
-
-func (x *UserPermission) GetPermissionDescription() string {
-	if x != nil && x.PermissionDescription != nil {
-		return *x.PermissionDescription
-	}
-	return ""
-}
-
-func (x *UserPermission) GetUserUuid() string {
-	if x != nil {
-		return x.UserUuid
-	}
-	return ""
-}
-
-func (x *UserPermission) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *UserPermission) GetUserEmail() string {
-	if x != nil && x.UserEmail != nil {
-		return *x.UserEmail
-	}
-	return ""
-}
-
-func (x *UserPermission) GetUserDisplayName() string {
-	if x != nil && x.UserDisplayName != nil {
-		return *x.UserDisplayName
-	}
-	return ""
-}
-
-func (x *UserPermission) GetGrantedBy() int64 {
-	if x != nil {
-		return x.GrantedBy
-	}
-	return 0
-}
-
-func (x *UserPermission) GetExpiresAt() int64 {
-	if x != nil && x.ExpiresAt != nil {
-		return *x.ExpiresAt
-	}
-	return 0
-}
-
-func (x *UserPermission) GetCreatedAt() int64 {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return 0
-}
-
 // Request to assign a permission to a group
 type AssignPermissionToGroupRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -315,7 +34,7 @@ type AssignPermissionToGroupRequest struct {
 
 func (x *AssignPermissionToGroupRequest) Reset() {
 	*x = AssignPermissionToGroupRequest{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[2]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -327,7 +46,7 @@ func (x *AssignPermissionToGroupRequest) String() string {
 func (*AssignPermissionToGroupRequest) ProtoMessage() {}
 
 func (x *AssignPermissionToGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[2]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -340,7 +59,7 @@ func (x *AssignPermissionToGroupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignPermissionToGroupRequest.ProtoReflect.Descriptor instead.
 func (*AssignPermissionToGroupRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{2}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *AssignPermissionToGroupRequest) GetGroupId() int64 {
@@ -359,16 +78,15 @@ func (x *AssignPermissionToGroupRequest) GetPermissionId() int64 {
 
 // Response after assigning a permission to a group
 type AssignPermissionToGroupResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	GroupPermission *GroupPermission       `protobuf:"bytes,1,opt,name=group_permission,json=groupPermission,proto3" json:"group_permission,omitempty"`
-	Message         string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AssignPermissionToGroupResponse) Reset() {
 	*x = AssignPermissionToGroupResponse{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[3]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -380,7 +98,7 @@ func (x *AssignPermissionToGroupResponse) String() string {
 func (*AssignPermissionToGroupResponse) ProtoMessage() {}
 
 func (x *AssignPermissionToGroupResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[3]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -393,14 +111,7 @@ func (x *AssignPermissionToGroupResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignPermissionToGroupResponse.ProtoReflect.Descriptor instead.
 func (*AssignPermissionToGroupResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *AssignPermissionToGroupResponse) GetGroupPermission() *GroupPermission {
-	if x != nil {
-		return x.GroupPermission
-	}
-	return nil
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AssignPermissionToGroupResponse) GetMessage() string {
@@ -423,7 +134,7 @@ type RemovePermissionFromGroupRequest struct {
 
 func (x *RemovePermissionFromGroupRequest) Reset() {
 	*x = RemovePermissionFromGroupRequest{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[4]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -435,7 +146,7 @@ func (x *RemovePermissionFromGroupRequest) String() string {
 func (*RemovePermissionFromGroupRequest) ProtoMessage() {}
 
 func (x *RemovePermissionFromGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[4]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -448,7 +159,7 @@ func (x *RemovePermissionFromGroupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemovePermissionFromGroupRequest.ProtoReflect.Descriptor instead.
 func (*RemovePermissionFromGroupRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{4}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *RemovePermissionFromGroupRequest) GetGroupId() int64 {
@@ -476,7 +187,7 @@ type RemovePermissionFromGroupResponse struct {
 
 func (x *RemovePermissionFromGroupResponse) Reset() {
 	*x = RemovePermissionFromGroupResponse{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[5]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -488,7 +199,7 @@ func (x *RemovePermissionFromGroupResponse) String() string {
 func (*RemovePermissionFromGroupResponse) ProtoMessage() {}
 
 func (x *RemovePermissionFromGroupResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[5]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -501,7 +212,7 @@ func (x *RemovePermissionFromGroupResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use RemovePermissionFromGroupResponse.ProtoReflect.Descriptor instead.
 func (*RemovePermissionFromGroupResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{5}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *RemovePermissionFromGroupResponse) GetSuccess() bool {
@@ -522,20 +233,14 @@ func (x *RemovePermissionFromGroupResponse) GetMessage() string {
 type ListGroupPermissionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the group to list permissions for
-	GroupId int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	// Maximum number of permissions to return (default: 10, max: 100)
-	Limit *int32 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
-	// Number of permissions to skip for pagination (default: 0)
-	Offset *int32 `protobuf:"varint,3,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
-	// Search term to filter permissions by name, display_name, or description
-	Search        *string `protobuf:"bytes,4,opt,name=search,proto3,oneof" json:"search,omitempty"`
+	GroupId       int64 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListGroupPermissionsRequest) Reset() {
 	*x = ListGroupPermissionsRequest{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[6]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -547,7 +252,7 @@ func (x *ListGroupPermissionsRequest) String() string {
 func (*ListGroupPermissionsRequest) ProtoMessage() {}
 
 func (x *ListGroupPermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[6]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -560,7 +265,7 @@ func (x *ListGroupPermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGroupPermissionsRequest.ProtoReflect.Descriptor instead.
 func (*ListGroupPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{6}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListGroupPermissionsRequest) GetGroupId() int64 {
@@ -570,39 +275,18 @@ func (x *ListGroupPermissionsRequest) GetGroupId() int64 {
 	return 0
 }
 
-func (x *ListGroupPermissionsRequest) GetLimit() int32 {
-	if x != nil && x.Limit != nil {
-		return *x.Limit
-	}
-	return 0
-}
-
-func (x *ListGroupPermissionsRequest) GetOffset() int32 {
-	if x != nil && x.Offset != nil {
-		return *x.Offset
-	}
-	return 0
-}
-
-func (x *ListGroupPermissionsRequest) GetSearch() string {
-	if x != nil && x.Search != nil {
-		return *x.Search
-	}
-	return ""
-}
-
 // Response containing group permissions
 type ListGroupPermissionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Array of permissions assigned to the group
-	Permissions   []*GroupPermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Permissions   []*EffectivePermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListGroupPermissionsResponse) Reset() {
 	*x = ListGroupPermissionsResponse{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[7]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -614,7 +298,7 @@ func (x *ListGroupPermissionsResponse) String() string {
 func (*ListGroupPermissionsResponse) ProtoMessage() {}
 
 func (x *ListGroupPermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[7]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -627,10 +311,10 @@ func (x *ListGroupPermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGroupPermissionsResponse.ProtoReflect.Descriptor instead.
 func (*ListGroupPermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{7}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListGroupPermissionsResponse) GetPermissions() []*GroupPermission {
+func (x *ListGroupPermissionsResponse) GetPermissions() []*EffectivePermission {
 	if x != nil {
 		return x.Permissions
 	}
@@ -652,7 +336,7 @@ type AssignPermissionToUserRequest struct {
 
 func (x *AssignPermissionToUserRequest) Reset() {
 	*x = AssignPermissionToUserRequest{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[8]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -664,7 +348,7 @@ func (x *AssignPermissionToUserRequest) String() string {
 func (*AssignPermissionToUserRequest) ProtoMessage() {}
 
 func (x *AssignPermissionToUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[8]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -677,7 +361,7 @@ func (x *AssignPermissionToUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignPermissionToUserRequest.ProtoReflect.Descriptor instead.
 func (*AssignPermissionToUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{8}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *AssignPermissionToUserRequest) GetUserId() int64 {
@@ -703,16 +387,15 @@ func (x *AssignPermissionToUserRequest) GetExpiresAt() int64 {
 
 // Response after assigning a permission to a user
 type AssignPermissionToUserResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserPermission *UserPermission        `protobuf:"bytes,1,opt,name=user_permission,json=userPermission,proto3" json:"user_permission,omitempty"`
-	Message        string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AssignPermissionToUserResponse) Reset() {
 	*x = AssignPermissionToUserResponse{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[9]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -724,7 +407,7 @@ func (x *AssignPermissionToUserResponse) String() string {
 func (*AssignPermissionToUserResponse) ProtoMessage() {}
 
 func (x *AssignPermissionToUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[9]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -737,14 +420,7 @@ func (x *AssignPermissionToUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignPermissionToUserResponse.ProtoReflect.Descriptor instead.
 func (*AssignPermissionToUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *AssignPermissionToUserResponse) GetUserPermission() *UserPermission {
-	if x != nil {
-		return x.UserPermission
-	}
-	return nil
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *AssignPermissionToUserResponse) GetMessage() string {
@@ -767,7 +443,7 @@ type RemovePermissionFromUserRequest struct {
 
 func (x *RemovePermissionFromUserRequest) Reset() {
 	*x = RemovePermissionFromUserRequest{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[10]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -779,7 +455,7 @@ func (x *RemovePermissionFromUserRequest) String() string {
 func (*RemovePermissionFromUserRequest) ProtoMessage() {}
 
 func (x *RemovePermissionFromUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[10]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -792,7 +468,7 @@ func (x *RemovePermissionFromUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemovePermissionFromUserRequest.ProtoReflect.Descriptor instead.
 func (*RemovePermissionFromUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{10}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *RemovePermissionFromUserRequest) GetUserId() int64 {
@@ -820,7 +496,7 @@ type RemovePermissionFromUserResponse struct {
 
 func (x *RemovePermissionFromUserResponse) Reset() {
 	*x = RemovePermissionFromUserResponse{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[11]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -832,7 +508,7 @@ func (x *RemovePermissionFromUserResponse) String() string {
 func (*RemovePermissionFromUserResponse) ProtoMessage() {}
 
 func (x *RemovePermissionFromUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[11]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -845,7 +521,7 @@ func (x *RemovePermissionFromUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemovePermissionFromUserResponse.ProtoReflect.Descriptor instead.
 func (*RemovePermissionFromUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{11}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RemovePermissionFromUserResponse) GetSuccess() bool {
@@ -866,25 +542,14 @@ func (x *RemovePermissionFromUserResponse) GetMessage() string {
 type ListUserPermissionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the user to list permissions for
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// Maximum number of permissions to return (default: 10, max: 100)
-	Limit *int32 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
-	// Number of permissions to skip for pagination (default: 0)
-	Offset *int32 `protobuf:"varint,3,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
-	// Search term to filter permissions by name, display_name, or description
-	Search *string `protobuf:"bytes,4,opt,name=search,proto3,oneof" json:"search,omitempty"`
-	// Filter by expiration status
-	// true: only show expired permissions
-	// false: only show non-expired permissions
-	// null: show all permissions
-	Expired       *bool `protobuf:"varint,5,opt,name=expired,proto3,oneof" json:"expired,omitempty"`
+	UserId        int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListUserPermissionsRequest) Reset() {
 	*x = ListUserPermissionsRequest{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[12]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -896,7 +561,7 @@ func (x *ListUserPermissionsRequest) String() string {
 func (*ListUserPermissionsRequest) ProtoMessage() {}
 
 func (x *ListUserPermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[12]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -909,7 +574,7 @@ func (x *ListUserPermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserPermissionsRequest.ProtoReflect.Descriptor instead.
 func (*ListUserPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{12}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListUserPermissionsRequest) GetUserId() int64 {
@@ -919,46 +584,18 @@ func (x *ListUserPermissionsRequest) GetUserId() int64 {
 	return 0
 }
 
-func (x *ListUserPermissionsRequest) GetLimit() int32 {
-	if x != nil && x.Limit != nil {
-		return *x.Limit
-	}
-	return 0
-}
-
-func (x *ListUserPermissionsRequest) GetOffset() int32 {
-	if x != nil && x.Offset != nil {
-		return *x.Offset
-	}
-	return 0
-}
-
-func (x *ListUserPermissionsRequest) GetSearch() string {
-	if x != nil && x.Search != nil {
-		return *x.Search
-	}
-	return ""
-}
-
-func (x *ListUserPermissionsRequest) GetExpired() bool {
-	if x != nil && x.Expired != nil {
-		return *x.Expired
-	}
-	return false
-}
-
 // Response containing user permissions
 type ListUserPermissionsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Array of permissions assigned to the user
-	Permissions   []*UserPermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Permissions   []*EffectivePermission `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListUserPermissionsResponse) Reset() {
 	*x = ListUserPermissionsResponse{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[13]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -970,7 +607,7 @@ func (x *ListUserPermissionsResponse) String() string {
 func (*ListUserPermissionsResponse) ProtoMessage() {}
 
 func (x *ListUserPermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[13]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -983,10 +620,10 @@ func (x *ListUserPermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserPermissionsResponse.ProtoReflect.Descriptor instead.
 func (*ListUserPermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{13}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ListUserPermissionsResponse) GetPermissions() []*UserPermission {
+func (x *ListUserPermissionsResponse) GetPermissions() []*EffectivePermission {
 	if x != nil {
 		return x.Permissions
 	}
@@ -997,20 +634,14 @@ func (x *ListUserPermissionsResponse) GetPermissions() []*UserPermission {
 type GetUserEffectivePermissionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the user to get effective permissions for
-	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// Maximum number of permissions to return (default: 10, max: 100)
-	Limit *int32 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
-	// Number of permissions to skip for pagination (default: 0)
-	Offset *int32 `protobuf:"varint,3,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
-	// Search term to filter permissions by name, display_name, or description
-	Search        *string `protobuf:"bytes,4,opt,name=search,proto3,oneof" json:"search,omitempty"`
+	UserId        int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetUserEffectivePermissionsRequest) Reset() {
 	*x = GetUserEffectivePermissionsRequest{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[14]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1022,7 +653,7 @@ func (x *GetUserEffectivePermissionsRequest) String() string {
 func (*GetUserEffectivePermissionsRequest) ProtoMessage() {}
 
 func (x *GetUserEffectivePermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[14]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1035,7 +666,7 @@ func (x *GetUserEffectivePermissionsRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetUserEffectivePermissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetUserEffectivePermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{14}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetUserEffectivePermissionsRequest) GetUserId() int64 {
@@ -1043,27 +674,6 @@ func (x *GetUserEffectivePermissionsRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
-}
-
-func (x *GetUserEffectivePermissionsRequest) GetLimit() int32 {
-	if x != nil && x.Limit != nil {
-		return *x.Limit
-	}
-	return 0
-}
-
-func (x *GetUserEffectivePermissionsRequest) GetOffset() int32 {
-	if x != nil && x.Offset != nil {
-		return *x.Offset
-	}
-	return 0
-}
-
-func (x *GetUserEffectivePermissionsRequest) GetSearch() string {
-	if x != nil && x.Search != nil {
-		return *x.Search
-	}
-	return ""
 }
 
 // EffectivePermission represents a permission that a user has either directly or through group membership
@@ -1077,9 +687,9 @@ type EffectivePermission struct {
 	// Source of the permission: "direct" or "group"
 	Source string `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`
 	// If source is "group", this contains the group details
-	SourceGroupId          *int64  `protobuf:"varint,6,opt,name=source_group_id,json=sourceGroupId,proto3,oneof" json:"source_group_id,omitempty"`
-	SourceGroupName        *string `protobuf:"bytes,7,opt,name=source_group_name,json=sourceGroupName,proto3,oneof" json:"source_group_name,omitempty"`
-	SourceGroupDisplayName *string `protobuf:"bytes,8,opt,name=source_group_display_name,json=sourceGroupDisplayName,proto3,oneof" json:"source_group_display_name,omitempty"`
+	GroupId          *int64  `protobuf:"varint,6,opt,name=group_id,json=groupId,proto3,oneof" json:"group_id,omitempty"`
+	GroupName        *string `protobuf:"bytes,7,opt,name=group_name,json=groupName,proto3,oneof" json:"group_name,omitempty"`
+	GroupDisplayName *string `protobuf:"bytes,8,opt,name=group_display_name,json=groupDisplayName,proto3,oneof" json:"group_display_name,omitempty"`
 	// If source is "direct", this may contain expiration info
 	ExpiresAt *int64 `protobuf:"varint,9,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
 	// When this permission was granted
@@ -1092,7 +702,7 @@ type EffectivePermission struct {
 
 func (x *EffectivePermission) Reset() {
 	*x = EffectivePermission{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[15]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1104,7 +714,7 @@ func (x *EffectivePermission) String() string {
 func (*EffectivePermission) ProtoMessage() {}
 
 func (x *EffectivePermission) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[15]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1117,7 +727,7 @@ func (x *EffectivePermission) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EffectivePermission.ProtoReflect.Descriptor instead.
 func (*EffectivePermission) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{15}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *EffectivePermission) GetPermissionId() int64 {
@@ -1155,23 +765,23 @@ func (x *EffectivePermission) GetSource() string {
 	return ""
 }
 
-func (x *EffectivePermission) GetSourceGroupId() int64 {
-	if x != nil && x.SourceGroupId != nil {
-		return *x.SourceGroupId
+func (x *EffectivePermission) GetGroupId() int64 {
+	if x != nil && x.GroupId != nil {
+		return *x.GroupId
 	}
 	return 0
 }
 
-func (x *EffectivePermission) GetSourceGroupName() string {
-	if x != nil && x.SourceGroupName != nil {
-		return *x.SourceGroupName
+func (x *EffectivePermission) GetGroupName() string {
+	if x != nil && x.GroupName != nil {
+		return *x.GroupName
 	}
 	return ""
 }
 
-func (x *EffectivePermission) GetSourceGroupDisplayName() string {
-	if x != nil && x.SourceGroupDisplayName != nil {
-		return *x.SourceGroupDisplayName
+func (x *EffectivePermission) GetGroupDisplayName() string {
+	if x != nil && x.GroupDisplayName != nil {
+		return *x.GroupDisplayName
 	}
 	return ""
 }
@@ -1208,7 +818,7 @@ type GetUserEffectivePermissionsResponse struct {
 
 func (x *GetUserEffectivePermissionsResponse) Reset() {
 	*x = GetUserEffectivePermissionsResponse{}
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[16]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1220,7 +830,7 @@ func (x *GetUserEffectivePermissionsResponse) String() string {
 func (*GetUserEffectivePermissionsResponse) ProtoMessage() {}
 
 func (x *GetUserEffectivePermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[16]
+	mi := &file_proto_openauth_v1_permission_assignments_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1233,7 +843,7 @@ func (x *GetUserEffectivePermissionsResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use GetUserEffectivePermissionsResponse.ProtoReflect.Descriptor instead.
 func (*GetUserEffectivePermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{16}
+	return file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetUserEffectivePermissionsResponse) GetPermissions() []*EffectivePermission {
@@ -1247,115 +857,52 @@ var File_proto_openauth_v1_permission_assignments_proto protoreflect.FileDescrip
 
 const file_proto_openauth_v1_permission_assignments_proto_rawDesc = "" +
 	"\n" +
-	".proto/openauth/v1/permission_assignments.proto\x12\x02v1\"\xec\x03\n" +
-	"\x0fGroupPermission\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12#\n" +
-	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\x12'\n" +
-	"\x0fpermission_name\x18\x04 \x01(\tR\x0epermissionName\x126\n" +
-	"\x17permission_display_name\x18\x05 \x01(\tR\x15permissionDisplayName\x12:\n" +
-	"\x16permission_description\x18\x06 \x01(\tH\x00R\x15permissionDescription\x88\x01\x01\x12\x1d\n" +
-	"\n" +
-	"group_name\x18\a \x01(\tR\tgroupName\x12,\n" +
-	"\x12group_display_name\x18\b \x01(\tR\x10groupDisplayName\x120\n" +
-	"\x11group_description\x18\t \x01(\tH\x01R\x10groupDescription\x88\x01\x01\x12\x1d\n" +
-	"\n" +
-	"granted_by\x18\n" +
-	" \x01(\x03R\tgrantedBy\x12\x1d\n" +
-	"\n" +
-	"created_at\x18\v \x01(\x03R\tcreatedAtB\x19\n" +
-	"\x17_permission_descriptionB\x14\n" +
-	"\x12_group_description\"\xba\x04\n" +
-	"\x0eUserPermission\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
-	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\x12'\n" +
-	"\x0fpermission_name\x18\x04 \x01(\tR\x0epermissionName\x126\n" +
-	"\x17permission_display_name\x18\x05 \x01(\tR\x15permissionDisplayName\x12:\n" +
-	"\x16permission_description\x18\x06 \x01(\tH\x00R\x15permissionDescription\x88\x01\x01\x12\x1b\n" +
-	"\tuser_uuid\x18\a \x01(\tR\buserUuid\x12\x1a\n" +
-	"\busername\x18\b \x01(\tR\busername\x12\"\n" +
-	"\n" +
-	"user_email\x18\t \x01(\tH\x01R\tuserEmail\x88\x01\x01\x12/\n" +
-	"\x11user_display_name\x18\n" +
-	" \x01(\tH\x02R\x0fuserDisplayName\x88\x01\x01\x12\x1d\n" +
-	"\n" +
-	"granted_by\x18\v \x01(\x03R\tgrantedBy\x12\"\n" +
-	"\n" +
-	"expires_at\x18\f \x01(\x03H\x03R\texpiresAt\x88\x01\x01\x12\x1d\n" +
-	"\n" +
-	"created_at\x18\r \x01(\x03R\tcreatedAtB\x19\n" +
-	"\x17_permission_descriptionB\r\n" +
-	"\v_user_emailB\x14\n" +
-	"\x12_user_display_nameB\r\n" +
-	"\v_expires_at\"`\n" +
+	".proto/openauth/v1/permission_assignments.proto\x12\x02v1\x1a#proto/openauth/v1/permissions.proto\"`\n" +
 	"\x1eAssignPermissionToGroupRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12#\n" +
-	"\rpermission_id\x18\x02 \x01(\x03R\fpermissionId\"{\n" +
-	"\x1fAssignPermissionToGroupResponse\x12>\n" +
-	"\x10group_permission\x18\x01 \x01(\v2\x13.v1.GroupPermissionR\x0fgroupPermission\x12\x18\n" +
+	"\rpermission_id\x18\x02 \x01(\x03R\fpermissionId\";\n" +
+	"\x1fAssignPermissionToGroupResponse\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"b\n" +
 	" RemovePermissionFromGroupRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12#\n" +
 	"\rpermission_id\x18\x02 \x01(\x03R\fpermissionId\"W\n" +
 	"!RemovePermissionFromGroupResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xad\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"8\n" +
 	"\x1bListGroupPermissionsRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x19\n" +
-	"\x05limit\x18\x02 \x01(\x05H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
-	"\x06offset\x18\x03 \x01(\x05H\x01R\x06offset\x88\x01\x01\x12\x1b\n" +
-	"\x06search\x18\x04 \x01(\tH\x02R\x06search\x88\x01\x01B\b\n" +
-	"\x06_limitB\t\n" +
-	"\a_offsetB\t\n" +
-	"\a_search\"U\n" +
-	"\x1cListGroupPermissionsResponse\x125\n" +
-	"\vpermissions\x18\x01 \x03(\v2\x13.v1.GroupPermissionR\vpermissions\"\x90\x01\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"Y\n" +
+	"\x1cListGroupPermissionsResponse\x129\n" +
+	"\vpermissions\x18\x01 \x03(\v2\x17.v1.EffectivePermissionR\vpermissions\"\x90\x01\n" +
 	"\x1dAssignPermissionToUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12#\n" +
 	"\rpermission_id\x18\x02 \x01(\x03R\fpermissionId\x12\"\n" +
 	"\n" +
 	"expires_at\x18\x03 \x01(\x03H\x00R\texpiresAt\x88\x01\x01B\r\n" +
-	"\v_expires_at\"w\n" +
-	"\x1eAssignPermissionToUserResponse\x12;\n" +
-	"\x0fuser_permission\x18\x01 \x01(\v2\x12.v1.UserPermissionR\x0euserPermission\x12\x18\n" +
+	"\v_expires_at\":\n" +
+	"\x1eAssignPermissionToUserResponse\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"_\n" +
 	"\x1fRemovePermissionFromUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12#\n" +
 	"\rpermission_id\x18\x02 \x01(\x03R\fpermissionId\"V\n" +
 	" RemovePermissionFromUserResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xd5\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"5\n" +
 	"\x1aListUserPermissionsRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
-	"\x05limit\x18\x02 \x01(\x05H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
-	"\x06offset\x18\x03 \x01(\x05H\x01R\x06offset\x88\x01\x01\x12\x1b\n" +
-	"\x06search\x18\x04 \x01(\tH\x02R\x06search\x88\x01\x01\x12\x1d\n" +
-	"\aexpired\x18\x05 \x01(\bH\x03R\aexpired\x88\x01\x01B\b\n" +
-	"\x06_limitB\t\n" +
-	"\a_offsetB\t\n" +
-	"\a_searchB\n" +
-	"\n" +
-	"\b_expired\"S\n" +
-	"\x1bListUserPermissionsResponse\x124\n" +
-	"\vpermissions\x18\x01 \x03(\v2\x12.v1.UserPermissionR\vpermissions\"\xb2\x01\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"X\n" +
+	"\x1bListUserPermissionsResponse\x129\n" +
+	"\vpermissions\x18\x01 \x03(\v2\x17.v1.EffectivePermissionR\vpermissions\"=\n" +
 	"\"GetUserEffectivePermissionsRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
-	"\x05limit\x18\x02 \x01(\x05H\x00R\x05limit\x88\x01\x01\x12\x1b\n" +
-	"\x06offset\x18\x03 \x01(\x05H\x01R\x06offset\x88\x01\x01\x12\x1b\n" +
-	"\x06search\x18\x04 \x01(\tH\x02R\x06search\x88\x01\x01B\b\n" +
-	"\x06_limitB\t\n" +
-	"\a_offsetB\t\n" +
-	"\a_search\"\xe1\x04\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xa5\x04\n" +
 	"\x13EffectivePermission\x12#\n" +
 	"\rpermission_id\x18\x01 \x01(\x03R\fpermissionId\x12'\n" +
 	"\x0fpermission_name\x18\x02 \x01(\tR\x0epermissionName\x126\n" +
 	"\x17permission_display_name\x18\x03 \x01(\tR\x15permissionDisplayName\x12:\n" +
 	"\x16permission_description\x18\x04 \x01(\tH\x00R\x15permissionDescription\x88\x01\x01\x12\x16\n" +
-	"\x06source\x18\x05 \x01(\tR\x06source\x12+\n" +
-	"\x0fsource_group_id\x18\x06 \x01(\x03H\x01R\rsourceGroupId\x88\x01\x01\x12/\n" +
-	"\x11source_group_name\x18\a \x01(\tH\x02R\x0fsourceGroupName\x88\x01\x01\x12>\n" +
-	"\x19source_group_display_name\x18\b \x01(\tH\x03R\x16sourceGroupDisplayName\x88\x01\x01\x12\"\n" +
+	"\x06source\x18\x05 \x01(\tR\x06source\x12\x1e\n" +
+	"\bgroup_id\x18\x06 \x01(\x03H\x01R\agroupId\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"group_name\x18\a \x01(\tH\x02R\tgroupName\x88\x01\x01\x121\n" +
+	"\x12group_display_name\x18\b \x01(\tH\x03R\x10groupDisplayName\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"expires_at\x18\t \x01(\x03H\x04R\texpiresAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
@@ -1363,10 +910,10 @@ const file_proto_openauth_v1_permission_assignments_proto_rawDesc = "" +
 	" \x01(\x03R\tgrantedAt\x12\x1d\n" +
 	"\n" +
 	"granted_by\x18\v \x01(\x03R\tgrantedByB\x19\n" +
-	"\x17_permission_descriptionB\x12\n" +
-	"\x10_source_group_idB\x14\n" +
-	"\x12_source_group_nameB\x1c\n" +
-	"\x1a_source_group_display_nameB\r\n" +
+	"\x17_permission_descriptionB\v\n" +
+	"\t_group_idB\r\n" +
+	"\v_group_nameB\x15\n" +
+	"\x13_group_display_nameB\r\n" +
 	"\v_expires_at\"`\n" +
 	"#GetUserEffectivePermissionsResponse\x129\n" +
 	"\vpermissions\x18\x01 \x03(\v2\x17.v1.EffectivePermissionR\vpermissionsB\x0fZ\r./openauth_v1b\x06proto3"
@@ -1383,37 +930,33 @@ func file_proto_openauth_v1_permission_assignments_proto_rawDescGZIP() []byte {
 	return file_proto_openauth_v1_permission_assignments_proto_rawDescData
 }
 
-var file_proto_openauth_v1_permission_assignments_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_proto_openauth_v1_permission_assignments_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_proto_openauth_v1_permission_assignments_proto_goTypes = []any{
-	(*GroupPermission)(nil),                     // 0: v1.GroupPermission
-	(*UserPermission)(nil),                      // 1: v1.UserPermission
-	(*AssignPermissionToGroupRequest)(nil),      // 2: v1.AssignPermissionToGroupRequest
-	(*AssignPermissionToGroupResponse)(nil),     // 3: v1.AssignPermissionToGroupResponse
-	(*RemovePermissionFromGroupRequest)(nil),    // 4: v1.RemovePermissionFromGroupRequest
-	(*RemovePermissionFromGroupResponse)(nil),   // 5: v1.RemovePermissionFromGroupResponse
-	(*ListGroupPermissionsRequest)(nil),         // 6: v1.ListGroupPermissionsRequest
-	(*ListGroupPermissionsResponse)(nil),        // 7: v1.ListGroupPermissionsResponse
-	(*AssignPermissionToUserRequest)(nil),       // 8: v1.AssignPermissionToUserRequest
-	(*AssignPermissionToUserResponse)(nil),      // 9: v1.AssignPermissionToUserResponse
-	(*RemovePermissionFromUserRequest)(nil),     // 10: v1.RemovePermissionFromUserRequest
-	(*RemovePermissionFromUserResponse)(nil),    // 11: v1.RemovePermissionFromUserResponse
-	(*ListUserPermissionsRequest)(nil),          // 12: v1.ListUserPermissionsRequest
-	(*ListUserPermissionsResponse)(nil),         // 13: v1.ListUserPermissionsResponse
-	(*GetUserEffectivePermissionsRequest)(nil),  // 14: v1.GetUserEffectivePermissionsRequest
-	(*EffectivePermission)(nil),                 // 15: v1.EffectivePermission
-	(*GetUserEffectivePermissionsResponse)(nil), // 16: v1.GetUserEffectivePermissionsResponse
+	(*AssignPermissionToGroupRequest)(nil),      // 0: v1.AssignPermissionToGroupRequest
+	(*AssignPermissionToGroupResponse)(nil),     // 1: v1.AssignPermissionToGroupResponse
+	(*RemovePermissionFromGroupRequest)(nil),    // 2: v1.RemovePermissionFromGroupRequest
+	(*RemovePermissionFromGroupResponse)(nil),   // 3: v1.RemovePermissionFromGroupResponse
+	(*ListGroupPermissionsRequest)(nil),         // 4: v1.ListGroupPermissionsRequest
+	(*ListGroupPermissionsResponse)(nil),        // 5: v1.ListGroupPermissionsResponse
+	(*AssignPermissionToUserRequest)(nil),       // 6: v1.AssignPermissionToUserRequest
+	(*AssignPermissionToUserResponse)(nil),      // 7: v1.AssignPermissionToUserResponse
+	(*RemovePermissionFromUserRequest)(nil),     // 8: v1.RemovePermissionFromUserRequest
+	(*RemovePermissionFromUserResponse)(nil),    // 9: v1.RemovePermissionFromUserResponse
+	(*ListUserPermissionsRequest)(nil),          // 10: v1.ListUserPermissionsRequest
+	(*ListUserPermissionsResponse)(nil),         // 11: v1.ListUserPermissionsResponse
+	(*GetUserEffectivePermissionsRequest)(nil),  // 12: v1.GetUserEffectivePermissionsRequest
+	(*EffectivePermission)(nil),                 // 13: v1.EffectivePermission
+	(*GetUserEffectivePermissionsResponse)(nil), // 14: v1.GetUserEffectivePermissionsResponse
 }
 var file_proto_openauth_v1_permission_assignments_proto_depIdxs = []int32{
-	0,  // 0: v1.AssignPermissionToGroupResponse.group_permission:type_name -> v1.GroupPermission
-	0,  // 1: v1.ListGroupPermissionsResponse.permissions:type_name -> v1.GroupPermission
-	1,  // 2: v1.AssignPermissionToUserResponse.user_permission:type_name -> v1.UserPermission
-	1,  // 3: v1.ListUserPermissionsResponse.permissions:type_name -> v1.UserPermission
-	15, // 4: v1.GetUserEffectivePermissionsResponse.permissions:type_name -> v1.EffectivePermission
-	5,  // [5:5] is the sub-list for method output_type
-	5,  // [5:5] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	13, // 0: v1.ListGroupPermissionsResponse.permissions:type_name -> v1.EffectivePermission
+	13, // 1: v1.ListUserPermissionsResponse.permissions:type_name -> v1.EffectivePermission
+	13, // 2: v1.GetUserEffectivePermissionsResponse.permissions:type_name -> v1.EffectivePermission
+	3,  // [3:3] is the sub-list for method output_type
+	3,  // [3:3] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_permission_assignments_proto_init() }
@@ -1421,20 +964,16 @@ func file_proto_openauth_v1_permission_assignments_proto_init() {
 	if File_proto_openauth_v1_permission_assignments_proto != nil {
 		return
 	}
-	file_proto_openauth_v1_permission_assignments_proto_msgTypes[0].OneofWrappers = []any{}
-	file_proto_openauth_v1_permission_assignments_proto_msgTypes[1].OneofWrappers = []any{}
+	file_proto_openauth_v1_permissions_proto_init()
 	file_proto_openauth_v1_permission_assignments_proto_msgTypes[6].OneofWrappers = []any{}
-	file_proto_openauth_v1_permission_assignments_proto_msgTypes[8].OneofWrappers = []any{}
-	file_proto_openauth_v1_permission_assignments_proto_msgTypes[12].OneofWrappers = []any{}
-	file_proto_openauth_v1_permission_assignments_proto_msgTypes[14].OneofWrappers = []any{}
-	file_proto_openauth_v1_permission_assignments_proto_msgTypes[15].OneofWrappers = []any{}
+	file_proto_openauth_v1_permission_assignments_proto_msgTypes[13].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_openauth_v1_permission_assignments_proto_rawDesc), len(file_proto_openauth_v1_permission_assignments_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

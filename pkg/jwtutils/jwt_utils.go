@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -14,12 +15,12 @@ import (
 
 // Token claims structure
 type JWTClaims struct {
-	UserID      int64    `json:"userId"`
-	UserUUID    string   `json:"userUUID"`
-	SessionUUID string   `json:"sessionUUID"`
-	DeviceID    string   `json:"deviceId,omitempty"`
-	ProfileIds  []string `json:"profileIds,omitempty"`
-	Permissions []string `json:"permissions,omitempty"`
+	UserID      int64       `json:"userId"`
+	UserUUID    string      `json:"userUUID"`
+	SessionUUID string      `json:"sessionUUID"`
+	DeviceID    string      `json:"deviceId,omitempty"`
+	ProfileIds  []uuid.UUID `json:"profileIds,omitempty"`
+	Permissions []string    `json:"permissions,omitempty"`
 	jwt.RegisteredClaims
 }
 

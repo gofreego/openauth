@@ -10,7 +10,6 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/gofreego/openauth/pkg/jwtutils"
 )
 
@@ -38,7 +37,7 @@ func (s *Service) AssignPermissionToGroup(ctx context.Context, req *openauth_v1.
 	}
 
 	// Assign permission to group
-	groupPermission, err := s.repo.AssignPermissionToGroup(ctx, req.GroupId, req.PermissionId, claims.UserID)
+	err = s.repo.AssignPermissionToGroup(ctx, req.GroupId, req.PermissionId, claims.UserID)
 	if err != nil {
 		logger.Error(ctx, "Failed to assign permission to group: groupID=%d, permissionID=%d, grantedBy=%d: %v",
 			req.GroupId, req.PermissionId, claims.UserID, err)
@@ -49,8 +48,7 @@ func (s *Service) AssignPermissionToGroup(ctx context.Context, req *openauth_v1.
 		req.GroupId, req.PermissionId, claims.UserID)
 
 	return &openauth_v1.AssignPermissionToGroupResponse{
-		GroupPermission: groupPermission.ToProtoGroupPermission(),
-		Message:         "Permission successfully assigned to group",
+		Message: "Permission successfully assigned to group",
 	}, nil
 }
 
@@ -113,11 +111,8 @@ func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.Lis
 		return nil, status.Error(codes.InvalidArgument, "group_id must be greater than 0")
 	}
 
-	// Build filters from request
-	filters := filter.FromListGroupPermissionsRequest(req)
-
 	// Get group permissions from repository
-	groupPermissions, err := s.repo.ListGroupPermissions(ctx, filters)
+	groupPermissions, err := s.repo.ListGroupPermissions(ctx, req.GroupId)
 	if err != nil {
 		logger.Error(ctx, "Failed to list group permissions: groupID=%d: %v", req.GroupId, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to list group permissions: %v", err))
@@ -126,9 +121,9 @@ func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.Lis
 	logger.Debug(ctx, "Retrieved %d permissions for groupID=%d", len(groupPermissions), req.GroupId)
 
 	// Convert to proto response
-	protoGroupPermissions := make([]*openauth_v1.GroupPermission, len(groupPermissions))
+	protoGroupPermissions := make([]*openauth_v1.EffectivePermission, len(groupPermissions))
 	for i, gp := range groupPermissions {
-		protoGroupPermissions[i] = gp.ToProtoGroupPermission()
+		protoGroupPermissions[i] = gp.ToProtoUserEffectivePermission()
 	}
 
 	return &openauth_v1.ListGroupPermissionsResponse{
@@ -167,7 +162,7 @@ func (s *Service) AssignPermissionToUser(ctx context.Context, req *openauth_v1.A
 	}
 
 	// Assign permission to user
-	userPermission, err := s.repo.AssignPermissionToUser(ctx, req.UserId, req.PermissionId, claims.UserID, req.ExpiresAt)
+	err = s.repo.AssignPermissionToUser(ctx, req.UserId, req.PermissionId, claims.UserID, req.ExpiresAt)
 	if err != nil {
 		logger.Error(ctx, "Failed to assign permission to user: userID=%d, permissionID=%d, grantedBy=%d: %v",
 			req.UserId, req.PermissionId, claims.UserID, err)
@@ -178,8 +173,7 @@ func (s *Service) AssignPermissionToUser(ctx context.Context, req *openauth_v1.A
 		req.UserId, req.PermissionId, claims.UserID)
 
 	return &openauth_v1.AssignPermissionToUserResponse{
-		UserPermission: userPermission.ToProtoUserPermission(),
-		Message:        "Permission successfully assigned to user",
+		Message: "Permission successfully assigned to user",
 	}, nil
 }
 
@@ -241,12 +235,8 @@ func (s *Service) ListUserPermissions(ctx context.Context, req *openauth_v1.List
 		logger.Warn(ctx, "List user permissions failed: invalid user_id=%d", req.UserId)
 		return nil, status.Error(codes.InvalidArgument, "user_id must be greater than 0")
 	}
-
-	// Build filters from request
-	filters := filter.FromListUserPermissionsRequest(req)
-
 	// Get user permissions from repository
-	userPermissions, err := s.repo.ListUserPermissions(ctx, filters)
+	userPermissions, err := s.repo.ListUserPermissions(ctx, req.UserId)
 	if err != nil {
 		logger.Error(ctx, "Failed to list user permissions: userID=%d: %v", req.UserId, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to list user permissions: %v", err))
@@ -255,9 +245,9 @@ func (s *Service) ListUserPermissions(ctx context.Context, req *openauth_v1.List
 	logger.Debug(ctx, "Retrieved %d permissions for userID=%d", len(userPermissions), req.UserId)
 
 	// Convert to proto response
-	protoUserPermissions := make([]*openauth_v1.UserPermission, len(userPermissions))
+	protoUserPermissions := make([]*openauth_v1.EffectivePermission, len(userPermissions))
 	for i, up := range userPermissions {
-		protoUserPermissions[i] = up.ToProtoUserPermission()
+		protoUserPermissions[i] = up.ToProtoUserEffectivePermission()
 	}
 
 	return &openauth_v1.ListUserPermissionsResponse{
@@ -284,11 +274,8 @@ func (s *Service) GetUserEffectivePermissions(ctx context.Context, req *openauth
 		return nil, status.Error(codes.InvalidArgument, "user_id must be greater than 0")
 	}
 
-	// Build filters from request
-	filters := filter.FromGetUserEffectivePermissionsRequest(req)
-
 	// Get effective permissions from repository
-	permissions, err := s.repo.GetUserEffectivePermissions(ctx, filters)
+	permissions, err := s.repo.GetUserEffectivePermissions(ctx, req.UserId)
 	if err != nil {
 		logger.Error(ctx, "Failed to get user effective permissions: userID=%d: %v", req.UserId, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to get user effective permissions: %v", err))
@@ -301,15 +288,7 @@ func (s *Service) GetUserEffectivePermissions(ctx context.Context, req *openauth
 	for i, p := range permissions {
 		// For now, we'll mark all as "direct" or "group" based on simple logic
 		// In a more complete implementation, you'd need to query the source
-		protoEffectivePermissions[i] = &openauth_v1.EffectivePermission{
-			PermissionId:          p.ID,
-			PermissionName:        p.Name,
-			PermissionDisplayName: p.DisplayName,
-			PermissionDescription: p.Description,
-			Source:                "effective", // Simplified for now
-			GrantedAt:             p.CreatedAt,
-			GrantedBy:             p.CreatedBy,
-		}
+		protoEffectivePermissions[i] = p.ToProtoUserEffectivePermission()
 	}
 
 	return &openauth_v1.GetUserEffectivePermissionsResponse{

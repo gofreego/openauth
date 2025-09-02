@@ -301,29 +301,6 @@
             "required": true,
             "type": "string",
             "format": "int64"
-          },
-          {
-            "name": "limit",
-            "description": "Maximum number of permissions to return (default: 10, max: 100)",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "offset",
-            "description": "Number of permissions to skip for pagination (default: 0)",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "search",
-            "description": "Search term to filter permissions by name, display_name, or description",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1263,29 +1240,6 @@
             "required": true,
             "type": "string",
             "format": "int64"
-          },
-          {
-            "name": "limit",
-            "description": "Maximum number of permissions to return (default: 10, max: 100)",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "offset",
-            "description": "Number of permissions to skip for pagination (default: 0)",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "search",
-            "description": "Search term to filter permissions by name, display_name, or description",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1368,36 +1322,6 @@
             "required": true,
             "type": "string",
             "format": "int64"
-          },
-          {
-            "name": "limit",
-            "description": "Maximum number of permissions to return (default: 10, max: 100)",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "offset",
-            "description": "Number of permissions to skip for pagination (default: 0)",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "search",
-            "description": "Search term to filter permissions by name, display_name, or description",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "expired",
-            "description": "Filter by expiration status\ntrue: only show expired permissions\nfalse: only show non-expired permissions\nnull: show all permissions",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "tags": [
@@ -2034,9 +1958,6 @@
     "v1AssignPermissionToGroupResponse": {
       "type": "object",
       "properties": {
-        "groupPermission": {
-          "$ref": "#/definitions/v1GroupPermission"
-        },
         "message": {
           "type": "string"
         }
@@ -2046,9 +1967,6 @@
     "v1AssignPermissionToUserResponse": {
       "type": "object",
       "properties": {
-        "userPermission": {
-          "$ref": "#/definitions/v1UserPermission"
-        },
         "message": {
           "type": "string"
         }
@@ -2263,15 +2181,15 @@
           "type": "string",
           "title": "Source of the permission: \"direct\" or \"group\""
         },
-        "sourceGroupId": {
+        "groupId": {
           "type": "string",
           "format": "int64",
           "title": "If source is \"group\", this contains the group details"
         },
-        "sourceGroupName": {
+        "groupName": {
           "type": "string"
         },
-        "sourceGroupDisplayName": {
+        "groupDisplayName": {
           "type": "string"
         },
         "expiresAt": {
@@ -2368,57 +2286,6 @@
       },
       "title": "Group represents a group/role in the system for organizing users and permissions"
     },
-    "v1GroupPermission": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64",
-          "title": "Unique identifier for the group permission assignment"
-        },
-        "groupId": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the group this permission is assigned to"
-        },
-        "permissionId": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the permission being assigned"
-        },
-        "permissionName": {
-          "type": "string",
-          "title": "Permission details (populated when needed)"
-        },
-        "permissionDisplayName": {
-          "type": "string"
-        },
-        "permissionDescription": {
-          "type": "string"
-        },
-        "groupName": {
-          "type": "string",
-          "title": "Group details (populated when needed)"
-        },
-        "groupDisplayName": {
-          "type": "string"
-        },
-        "groupDescription": {
-          "type": "string"
-        },
-        "grantedBy": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the user who granted this permission"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "int64",
-          "title": "Unix timestamp when the permission was granted"
-        }
-      },
-      "title": "GroupPermission represents a permission assigned to a group"
-    },
     "v1GroupUser": {
       "type": "object",
       "properties": {
@@ -2463,7 +2330,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1GroupPermission"
+            "$ref": "#/definitions/v1EffectivePermission"
           },
           "title": "Array of permissions assigned to the group"
         }
@@ -2540,7 +2407,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1UserPermission"
+            "$ref": "#/definitions/v1EffectivePermission"
           },
           "title": "Array of permissions assigned to the user"
         }
@@ -2687,6 +2554,14 @@
         },
         "deviceId": {
           "type": "string"
+        },
+        "profiles": {
+          "type": "boolean",
+          "title": "Include user profile ids in access token"
+        },
+        "includePermissions": {
+          "type": "boolean",
+          "title": "Include user permissions in access token"
         }
       },
       "title": "RefreshTokenRequest to refresh access token"
@@ -3141,65 +3016,6 @@
         }
       },
       "title": "UserGroup represents a group membership for a user"
-    },
-    "v1UserPermission": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64",
-          "title": "Unique identifier for the user permission assignment"
-        },
-        "userId": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the user this permission is assigned to"
-        },
-        "permissionId": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the permission being assigned"
-        },
-        "permissionName": {
-          "type": "string",
-          "title": "Permission details (populated when needed)"
-        },
-        "permissionDisplayName": {
-          "type": "string"
-        },
-        "permissionDescription": {
-          "type": "string"
-        },
-        "userUuid": {
-          "type": "string",
-          "title": "User details (populated when needed)"
-        },
-        "username": {
-          "type": "string"
-        },
-        "userEmail": {
-          "type": "string"
-        },
-        "userDisplayName": {
-          "type": "string"
-        },
-        "grantedBy": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the user who granted this permission"
-        },
-        "expiresAt": {
-          "type": "string",
-          "format": "int64",
-          "title": "Optional expiration timestamp (null means no expiration)"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "int64",
-          "title": "Unix timestamp when the permission was granted"
-        }
-      },
-      "title": "UserPermission represents a permission assigned directly to a user"
     },
     "v1UserProfile": {
       "type": "object",

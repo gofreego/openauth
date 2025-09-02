@@ -9,6 +9,7 @@ import '../bloc/user_permissions_bloc.dart';
 import '../bloc/user_permissions_event.dart';
 import '../bloc/user_permissions_state.dart';
 import '../../domain/extensions/user_extensions.dart';
+import '../../../../shared/widgets/custom_search_bar.dart';
 
 class UserPermissionsDialog extends StatefulWidget {
   final user_pb.User user;
@@ -101,15 +102,10 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             const SizedBox(height: 24),
 
             // Search bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search permissions...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onChanged: (value) {
+            CustomSearchBar(
+              hintText: 'Search permissions...',
+              initialQuery: _searchQuery,
+              onSearch: (value) {
                 setState(() {
                   _searchQuery = value;
                 });
