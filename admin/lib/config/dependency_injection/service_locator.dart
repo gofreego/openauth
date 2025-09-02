@@ -58,9 +58,9 @@ Future<void> initializeDependencies({
     () => SessionManager(serviceLocator<SharedPreferences>()),
   );
 
-  // API Service with SessionManager for authorization
+  // API Service with centralized HTTP client
   serviceLocator.registerLazySingleton<ApiService>(
-    () => ApiService(serviceLocator<SessionManager>()),
+    () => ApiService(),
   );
 
   // Shared Catalog Service
