@@ -26,7 +26,7 @@ class UserPermissionsBloc extends Bloc<UserPermissionsEvent, UserPermissionsStat
 
     try {
       final response = await _apiService.get(
-        '/openauth/v1/users/${event.userId}/permissions',
+        '/openauth/v1/users/${event.userId}/effective-permissions',
         queryParameters: {
           'limit': 50,
           'offset': 0,

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fixnum/fixnum.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
-import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart' as perm_pb;
-import '../../../../src/generated/openauth/v1/permissions.pb.dart' as permissions_pb;
+import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart'
+    as perm_pb;
+import '../../../../src/generated/openauth/v1/permissions.pb.dart'
+    as permissions_pb;
 import '../../../permissions/presentation/bloc/permissions_bloc.dart';
 import '../bloc/user_permissions_bloc.dart';
 import '../bloc/user_permissions_event.dart';
@@ -34,18 +36,18 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     // Load user permissions and available permissions
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserPermissionsBloc>().add(
-        LoadUserPermissions(widget.user.id.toInt()),
-      );
+            LoadUserPermissions(widget.user.id.toInt()),
+          );
       context.read<PermissionsBloc>().add(
-        const LoadPermissions(),
-      );
+            const LoadPermissions(),
+          );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Dialog(
       child: Container(
         width: 800,
@@ -60,10 +62,10 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: theme.colorScheme.primary,
-                  backgroundImage: widget.user.avatarUrl.isNotEmpty 
-                      ? NetworkImage(widget.user.avatarUrl) 
+                  backgroundImage: widget.user.avatarUrl.isNotEmpty
+                      ? NetworkImage(widget.user.avatarUrl)
                       : null,
-                  child: widget.user.avatarUrl.isEmpty 
+                  child: widget.user.avatarUrl.isEmpty
                       ? Text(
                           _getInitial(),
                           style: theme.textTheme.titleMedium?.copyWith(
@@ -126,7 +128,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                         Tab(text: 'Available Permissions'),
                       ],
                       labelColor: theme.colorScheme.primary,
-                      unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
+                      unselectedLabelColor:
+                          theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
                     const SizedBox(height: 16),
                     Expanded(
@@ -181,8 +184,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 ElevatedButton(
                   onPressed: () {
                     context.read<UserPermissionsBloc>().add(
-                      LoadUserPermissions(widget.user.id.toInt()),
-                    );
+                          LoadUserPermissions(widget.user.id.toInt()),
+                        );
                   },
                   child: const Text('Retry'),
                 ),
@@ -193,8 +196,12 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
           _userPermissions = state.permissions;
           final filteredPermissions = _userPermissions.where((permission) {
             if (_searchQuery.isEmpty) return true;
-            return permission.permissionDisplayName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                   permission.permissionDescription.toLowerCase().contains(_searchQuery.toLowerCase());
+            return permission.permissionDisplayName
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase()) ||
+                permission.permissionDescription
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase());
           }).toList();
 
           if (filteredPermissions.isEmpty) {
@@ -202,10 +209,11 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.security_outlined, size: 48, color: Colors.grey),
+                  const Icon(Icons.security_outlined,
+                      size: 48, color: Colors.grey),
                   const SizedBox(height: 16),
                   Text(
-                    _searchQuery.isEmpty 
+                    _searchQuery.isEmpty
                         ? 'No permissions assigned'
                         : 'No permissions found matching "$_searchQuery"',
                     style: Theme.of(context).textTheme.titleMedium,
@@ -251,7 +259,9 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<PermissionsBloc>().add(const LoadPermissions());
+                    context
+                        .read<PermissionsBloc>()
+                        .add(const LoadPermissions());
                   },
                   child: const Text('Retry'),
                 ),
@@ -259,25 +269,31 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             ),
           );
         } else if (state is PermissionsLoaded) {
-          _availablePermissions = state.permissions.map((entity) => 
-            permissions_pb.Permission(
-              id: Int64(entity.id),
-              name: entity.name,
-              displayName: entity.displayName,
-              description: entity.description,
-            )
-          ).toList();
-          
+          _availablePermissions = state.permissions
+              .map((entity) => permissions_pb.Permission(
+                    id: Int64(entity.id),
+                    name: entity.name,
+                    displayName: entity.displayName,
+                    description: entity.description,
+                  ))
+              .toList();
+
           // Filter out permissions already assigned to user
-          final assignedPermissionIds = _userPermissions.map((p) => p.permissionId).toSet();
-          final unassignedPermissions = _availablePermissions.where((permission) {
+          final assignedPermissionIds =
+              _userPermissions.map((p) => p.permissionId).toSet();
+          final unassignedPermissions =
+              _availablePermissions.where((permission) {
             return !assignedPermissionIds.contains(permission.id);
           }).toList();
 
           final filteredPermissions = unassignedPermissions.where((permission) {
             if (_searchQuery.isEmpty) return true;
-            return permission.displayName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                   permission.description.toLowerCase().contains(_searchQuery.toLowerCase());
+            return permission.displayName
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase()) ||
+                permission.description
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase());
           }).toList();
 
           if (filteredPermissions.isEmpty) {
@@ -285,17 +301,18 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.check_circle_outline, size: 48, color: Colors.green),
+                  const Icon(Icons.check_circle_outline,
+                      size: 48, color: Colors.green),
                   const SizedBox(height: 16),
                   Text(
-                    _searchQuery.isEmpty 
+                    _searchQuery.isEmpty
                         ? 'All permissions assigned'
                         : 'No available permissions found matching "$_searchQuery"',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _searchQuery.isEmpty 
+                    _searchQuery.isEmpty
                         ? 'This user has been assigned all available permissions.'
                         : 'Try adjusting your search query.',
                   ),
@@ -319,7 +336,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
 
   Widget _buildCurrentPermissionCard(perm_pb.EffectivePermission permission) {
     final theme = Theme.of(context);
-    
+    final bool isGroupPermission = permission.source.toLowerCase() == 'group';
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -331,8 +349,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
           ),
         ),
         title: Text(
-          permission.permissionDisplayName.isEmpty 
-              ? permission.permissionName 
+          permission.permissionDisplayName.isEmpty
+              ? permission.permissionName
               : permission.permissionDisplayName,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w500,
@@ -376,22 +394,48 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                     ),
                   ),
                 ],
+                if (isGroupPermission) ...[
+                  const SizedBox(width: 16),
+                  Icon(
+                    Icons.group,
+                    size: 12,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Group : ${permission.groupDisplayName.isNotEmpty ? permission.groupDisplayName : permission.groupName}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ],
               ],
             ),
           ],
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-          tooltip: 'Remove permission',
-          onPressed: () => _removePermission(permission),
-        ),
+        trailing: isGroupPermission
+            ? IconButton(
+                icon: Icon(
+                  Icons.remove_circle_outline,
+                  color: Colors.grey.withOpacity(0.5),
+                ),
+                tooltip:
+                    'Group permissions cannot be deleted directly.\nYou can delete the group or remove permission from the group.',
+                onPressed: null, // Disabled
+              )
+            : IconButton(
+                icon:
+                    const Icon(Icons.remove_circle_outline, color: Colors.red),
+                tooltip: 'Remove permission',
+                onPressed: () => _removePermission(permission),
+              ),
       ),
     );
   }
 
   Widget _buildAvailablePermissionCard(permissions_pb.Permission permission) {
     final theme = Theme.of(context);
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -403,8 +447,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
           ),
         ),
         title: Text(
-          permission.displayName.isEmpty 
-              ? permission.name 
+          permission.displayName.isEmpty
+              ? permission.name
               : permission.displayName,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w500,
@@ -442,11 +486,11 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             onPressed: () {
               Navigator.of(context).pop();
               context.read<UserPermissionsBloc>().add(
-                AssignPermissionToUser(
-                  widget.user.id.toInt(),
-                  permission.id.toInt(),
-                ),
-              );
+                    AssignPermissionToUser(
+                      widget.user.id.toInt(),
+                      permission.id.toInt(),
+                    ),
+                  );
             },
             child: const Text('Add'),
           ),
@@ -472,11 +516,11 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             onPressed: () {
               Navigator.of(context).pop();
               context.read<UserPermissionsBloc>().add(
-                RemovePermissionFromUser(
-                  widget.user.id.toInt(),
-                  permission.permissionId.toInt(),
-                ),
-              );
+                    RemovePermissionFromUser(
+                      widget.user.id.toInt(),
+                      permission.permissionId.toInt(),
+                    ),
+                  );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -491,8 +535,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
 
   String _getInitial() {
     if (widget.user.displayName.isEmpty) {
-      return widget.user.username.isNotEmpty 
-          ? widget.user.username[0].toUpperCase() 
+      return widget.user.username.isNotEmpty
+          ? widget.user.username[0].toUpperCase()
           : '?';
     }
     return widget.user.displayName[0].toUpperCase();
