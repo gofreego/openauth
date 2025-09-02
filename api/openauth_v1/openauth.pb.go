@@ -7,6 +7,7 @@
 package openauth_v1
 
 import (
+	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -25,56 +26,103 @@ var File_proto_openauth_v1_openauth_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\n" +
-	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17proto/common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto2\xcd'\n" +
-	"\bOpenAuth\x12D\n" +
-	"\x04Ping\x12\x0f.v1.PingRequest\x1a\x10.v1.PingResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/ping\x12H\n" +
-	"\x05Stats\x12\x10.v1.StatsRequest\x1a\x11.v1.StatsResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/openauth/v1/stats\x12d\n" +
-	"\x10CreatePermission\x12\x1b.v1.CreatePermissionRequest\x1a\x0e.v1.Permission\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/permissions\x12`\n" +
-	"\rGetPermission\x12\x18.v1.GetPermissionRequest\x1a\x0e.v1.Permission\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/openauth/v1/permissions/{id}\x12l\n" +
-	"\x0fListPermissions\x12\x1a.v1.ListPermissionsRequest\x1a\x1b.v1.ListPermissionsResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/openauth/v1/permissions\x12i\n" +
-	"\x10UpdatePermission\x12\x1b.v1.UpdatePermissionRequest\x1a\x0e.v1.Permission\"(\x82\xd3\xe4\x93\x02\":\x01*\x1a\x1d/openauth/v1/permissions/{id}\x12t\n" +
-	"\x10DeletePermission\x12\x1b.v1.DeletePermissionRequest\x1a\x1c.v1.DeletePermissionResponse\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/openauth/v1/permissions/{id}\x12^\n" +
-	"\vCreateGroup\x12\x16.v1.CreateGroupRequest\x1a\x17.v1.CreateGroupResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/openauth/v1/groups\x12W\n" +
-	"\bGetGroup\x12\x13.v1.GetGroupRequest\x1a\x14.v1.GetGroupResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/openauth/v1/groups/{id}\x12X\n" +
+	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a\x17proto/common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto2\x9eF\n" +
+	"\bOpenAuth\x12}\n" +
+	"\x04Ping\x12\x0f.v1.PingRequest\x1a\x10.v1.PingResponse\"R\x92A6\n" +
+	"\x04Ping\x12\x0fPing the server\x1a\x1dCheck if the server is alive.\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/ping\x12\xd7\x01\n" +
+	"\x05Stats\x12\x10.v1.StatsRequest\x1a\x11.v1.StatsResponse\"\xa8\x01\x92A\x8a\x01\n" +
 	"\n" +
-	"ListGroups\x12\x15.v1.ListGroupsRequest\x1a\x16.v1.ListGroupsResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/openauth/v1/groups\x12c\n" +
-	"\vUpdateGroup\x12\x16.v1.UpdateGroupRequest\x1a\x17.v1.UpdateGroupResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/openauth/v1/groups/{id}\x12`\n" +
-	"\vDeleteGroup\x12\x16.v1.DeleteGroupRequest\x1a\x17.v1.DeleteGroupResponse\" \x82\xd3\xe4\x93\x02\x1a*\x18/openauth/v1/groups/{id}\x12v\n" +
-	"\x11AssignUserToGroup\x12\x1c.v1.AssignUserToGroupRequest\x1a\x1d.v1.AssignUserToGroupResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/openauth/v1/groups/users\x12\x8e\x01\n" +
-	"\x13RemoveUserFromGroup\x12\x1e.v1.RemoveUserFromGroupRequest\x1a\x1f.v1.RemoveUserFromGroupResponse\"6\x82\xd3\xe4\x93\x020*./openauth/v1/groups/{group_id}/users/{user_id}\x12u\n" +
-	"\x0eListGroupUsers\x12\x19.v1.ListGroupUsersRequest\x1a\x1a.v1.ListGroupUsersResponse\",\x82\xd3\xe4\x93\x02&\x12$/openauth/v1/groups/{group_id}/users\x12t\n" +
-	"\x0eListUserGroups\x12\x19.v1.ListUserGroupsRequest\x1a\x1a.v1.ListUserGroupsResponse\"+\x82\xd3\xe4\x93\x02%\x12#/openauth/v1/users/{user_id}/groups\x12\x99\x01\n" +
-	"\x17AssignPermissionToGroup\x12\".v1.AssignPermissionToGroupRequest\x1a#.v1.AssignPermissionToGroupResponse\"5\x82\xd3\xe4\x93\x02/:\x01*\"*/openauth/v1/groups/{group_id}/permissions\x12\xac\x01\n" +
-	"\x19RemovePermissionFromGroup\x12$.v1.RemovePermissionFromGroupRequest\x1a%.v1.RemovePermissionFromGroupResponse\"B\x82\xd3\xe4\x93\x02<*:/openauth/v1/groups/{group_id}/permissions/{permission_id}\x12\x8d\x01\n" +
-	"\x14ListGroupPermissions\x12\x1f.v1.ListGroupPermissionsRequest\x1a .v1.ListGroupPermissionsResponse\"2\x82\xd3\xe4\x93\x02,\x12*/openauth/v1/groups/{group_id}/permissions\x12\x94\x01\n" +
-	"\x16AssignPermissionToUser\x12!.v1.AssignPermissionToUserRequest\x1a\".v1.AssignPermissionToUserResponse\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/openauth/v1/users/{user_id}/permissions\x12\xa7\x01\n" +
-	"\x18RemovePermissionFromUser\x12#.v1.RemovePermissionFromUserRequest\x1a$.v1.RemovePermissionFromUserResponse\"@\x82\xd3\xe4\x93\x02:*8/openauth/v1/users/{user_id}/permissions/{permission_id}\x12\x88\x01\n" +
-	"\x13ListUserPermissions\x12\x1e.v1.ListUserPermissionsRequest\x1a\x1f.v1.ListUserPermissionsResponse\"0\x82\xd3\xe4\x93\x02*\x12(/openauth/v1/users/{user_id}/permissions\x12\xaa\x01\n" +
-	"\x1bGetUserEffectivePermissions\x12&.v1.GetUserEffectivePermissionsRequest\x1a'.v1.GetUserEffectivePermissionsResponse\":\x82\xd3\xe4\x93\x024\x122/openauth/v1/users/{user_id}/effective-permissions\x12U\n" +
-	"\x06SignUp\x12\x11.v1.SignUpRequest\x1a\x12.v1.SignUpResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/openauth/v1/users/signup\x12k\n" +
-	"\vVerifyEmail\x12\x16.v1.VerifyEmailRequest\x1a\x18.v1.VerificationResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/openauth/v1/users/verify-email\x12k\n" +
-	"\vVerifyPhone\x12\x16.v1.VerifyPhoneRequest\x1a\x18.v1.VerificationResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/openauth/v1/users/verify-phone\x12\x8a\x01\n" +
-	"\x12ResendVerification\x12\x1f.v1.SendVerificationCodeRequest\x1a .v1.SendVerificationCodeResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/openauth/v1/users/resend-verification\x12z\n" +
-	"\rCheckUsername\x12\x18.v1.CheckUsernameRequest\x1a\x19.v1.CheckUsernameResponse\"4\x82\xd3\xe4\x93\x02.\x12,/openauth/v1/users/check-username/{username}\x12k\n" +
+	"Statistics\x12\x15Get system statistics\x1aeRetrieve system statistics including user counts, permission counts, group counts, and other metrics.\x82\xd3\xe4\x93\x02\x14\x12\x12/openauth/v1/stats\x12\xdb\x01\n" +
+	"\x10CreatePermission\x12\x1b.v1.CreatePermissionRequest\x1a\x0e.v1.Permission\"\x99\x01\x92As\n" +
+	"\vPermissions\x12\x17Create a new permission\x1aKCreate a new permission in the system with resource and action definitions.\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/permissions\x12\xba\x01\n" +
+	"\rGetPermission\x12\x18.v1.GetPermissionRequest\x1a\x0e.v1.Permission\"\x7f\x92AW\n" +
+	"\vPermissions\x12\x16Get a permission by ID\x1a0Retrieve a specific permission by its unique ID.\x82\xd3\xe4\x93\x02\x1f\x12\x1d/openauth/v1/permissions/{id}\x12\xcd\x01\n" +
+	"\x0fListPermissions\x12\x1a.v1.ListPermissionsRequest\x1a\x1b.v1.ListPermissionsResponse\"\x80\x01\x92A]\n" +
+	"\vPermissions\x12\x10List permissions\x1a<Retrieve permissions with optional filtering and pagination.\x82\xd3\xe4\x93\x02\x1a\x12\x18/openauth/v1/permissions\x12\xb8\x01\n" +
+	"\x10UpdatePermission\x12\x1b.v1.UpdatePermissionRequest\x1a\x0e.v1.Permission\"w\x92AL\n" +
+	"\vPermissions\x12\x13Update a permission\x1a(Modify an existing permission's details.\x82\xd3\xe4\x93\x02\":\x01*\x1a\x1d/openauth/v1/permissions/{id}\x12\xbf\x01\n" +
+	"\x10DeletePermission\x12\x1b.v1.DeletePermissionRequest\x1a\x1c.v1.DeletePermissionResponse\"p\x92AH\n" +
+	"\vPermissions\x12\x13Delete a permission\x1a$Remove a permission from the system.\x82\xd3\xe4\x93\x02\x1f*\x1d/openauth/v1/permissions/{id}\x12\xc6\x01\n" +
+	"\vCreateGroup\x12\x16.v1.CreateGroupRequest\x1a\x17.v1.CreateGroupResponse\"\x85\x01\x92Ad\n" +
+	"\x06Groups\x12\x12Create a new group\x1aFCreate a new group in the system for organizing users and permissions.\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/openauth/v1/groups\x12\xa6\x01\n" +
+	"\bGetGroup\x12\x13.v1.GetGroupRequest\x1a\x14.v1.GetGroupResponse\"o\x92AL\n" +
+	"\x06Groups\x12\x11Get a group by ID\x1a/Retrieve a specific group by ID, UUID, or name.\x82\xd3\xe4\x93\x02\x1a\x12\x18/openauth/v1/groups/{id}\x12\xa9\x01\n" +
 	"\n" +
-	"CheckEmail\x12\x15.v1.CheckEmailRequest\x1a\x16.v1.CheckEmailResponse\".\x82\xd3\xe4\x93\x02(\x12&/openauth/v1/users/check-email/{email}\x12U\n" +
-	"\aGetUser\x12\x12.v1.GetUserRequest\x1a\x13.v1.GetUserResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/openauth/v1/users/{uuid}\x12a\n" +
+	"ListGroups\x12\x15.v1.ListGroupsRequest\x1a\x16.v1.ListGroupsResponse\"l\x92AN\n" +
+	"\x06Groups\x12\vList groups\x1a7Retrieve groups with optional filtering and pagination.\x82\xd3\xe4\x93\x02\x15\x12\x13/openauth/v1/groups\x12\xa3\x01\n" +
+	"\vUpdateGroup\x12\x16.v1.UpdateGroupRequest\x1a\x17.v1.UpdateGroupResponse\"c\x92A=\n" +
+	"\x06Groups\x12\x0eUpdate a group\x1a#Modify an existing group's details.\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/openauth/v1/groups/{id}\x12\x9c\x01\n" +
+	"\vDeleteGroup\x12\x16.v1.DeleteGroupRequest\x1a\x17.v1.DeleteGroupResponse\"\\\x92A9\n" +
+	"\x06Groups\x12\x0eDelete a group\x1a\x1fRemove a group from the system.\x82\xd3\xe4\x93\x02\x1a*\x18/openauth/v1/groups/{id}\x12\xb4\x01\n" +
+	"\x11AssignUserToGroup\x12\x1c.v1.AssignUserToGroupRequest\x1a\x1d.v1.AssignUserToGroupResponse\"b\x92A;\n" +
+	"\vGroup Users\x12\x14Assign user to group\x1a\x16Add a user to a group.\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/openauth/v1/groups/users\x12\xd3\x01\n" +
+	"\x13RemoveUserFromGroup\x12\x1e.v1.RemoveUserFromGroupRequest\x1a\x1f.v1.RemoveUserFromGroupResponse\"{\x92AB\n" +
+	"\vGroup Users\x12\x16Remove user from group\x1a\x1bRemove a user from a group.\x82\xd3\xe4\x93\x020*./openauth/v1/groups/{group_id}/users/{user_id}\x12\xc0\x01\n" +
+	"\x0eListGroupUsers\x12\x19.v1.ListGroupUsersRequest\x1a\x1a.v1.ListGroupUsersResponse\"w\x92AH\n" +
+	"\vGroup Users\x12\x10List group users\x1a'Retrieve all users in a specific group.\x82\xd3\xe4\x93\x02&\x12$/openauth/v1/groups/{group_id}/users\x12\xc0\x01\n" +
+	"\x0eListUserGroups\x12\x19.v1.ListUserGroupsRequest\x1a\x1a.v1.ListUserGroupsResponse\"w\x92AI\n" +
+	"\vGroup Users\x12\x10List user groups\x1a(Retrieve all groups for a specific user.\x82\xd3\xe4\x93\x02%\x12#/openauth/v1/users/{user_id}/groups\x12\xf2\x01\n" +
+	"\x17AssignPermissionToGroup\x12\".v1.AssignPermissionToGroupRequest\x1a#.v1.AssignPermissionToGroupResponse\"\x8d\x01\x92AU\n" +
+	"\x16Permission Assignments\x12\x1aAssign permission to group\x1a\x1fAssign a permission to a group.\x82\xd3\xe4\x93\x02/:\x01*\"*/openauth/v1/groups/{group_id}/permissions\x12\x89\x02\n" +
+	"\x19RemovePermissionFromGroup\x12$.v1.RemovePermissionFromGroupRequest\x1a%.v1.RemovePermissionFromGroupResponse\"\x9e\x01\x92AY\n" +
+	"\x16Permission Assignments\x12\x1cRemove permission from group\x1a!Remove a permission from a group.\x82\xd3\xe4\x93\x02<*:/openauth/v1/groups/{group_id}/permissions/{permission_id}\x12\xf9\x01\n" +
+	"\x14ListGroupPermissions\x12\x1f.v1.ListGroupPermissionsRequest\x1a .v1.ListGroupPermissionsResponse\"\x9d\x01\x92Ah\n" +
+	"\x16Permission Assignments\x12\x16List group permissions\x1a6Retrieve all permissions assigned to a specific group.\x82\xd3\xe4\x93\x02,\x12*/openauth/v1/groups/{group_id}/permissions\x12\xf4\x01\n" +
+	"\x16AssignPermissionToUser\x12!.v1.AssignPermissionToUserRequest\x1a\".v1.AssignPermissionToUserResponse\"\x92\x01\x92A\\\n" +
+	"\x16Permission Assignments\x12\x19Assign permission to user\x1a'Assign a permission directly to a user.\x82\xd3\xe4\x93\x02-:\x01*\"(/openauth/v1/users/{user_id}/permissions\x12\x92\x02\n" +
+	"\x18RemovePermissionFromUser\x12#.v1.RemovePermissionFromUserRequest\x1a$.v1.RemovePermissionFromUserResponse\"\xaa\x01\x92Ag\n" +
+	"\x16Permission Assignments\x12\x1bRemove permission from user\x1a0Remove a permission directly assigned to a user.\x82\xd3\xe4\x93\x02:*8/openauth/v1/users/{user_id}/permissions/{permission_id}\x12\xf2\x01\n" +
+	"\x13ListUserPermissions\x12\x1e.v1.ListUserPermissionsRequest\x1a\x1f.v1.ListUserPermissionsResponse\"\x99\x01\x92Af\n" +
+	"\x16Permission Assignments\x12\x15List user permissions\x1a5Retrieve all permissions directly assigned to a user.\x82\xd3\xe4\x93\x02*\x12(/openauth/v1/users/{user_id}/permissions\x12\xb7\x02\n" +
+	"\x1bGetUserEffectivePermissions\x12&.v1.GetUserEffectivePermissionsRequest\x1a'.v1.GetUserEffectivePermissionsResponse\"\xc6\x01\x92A\x88\x01\n" +
+	"\x16Permission Assignments\x12\x1eGet user effective permissions\x1aNRetrieve all effective permissions for a user including inherited permissions.\x82\xd3\xe4\x93\x024\x122/openauth/v1/users/{user_id}/effective-permissions\x12\xa9\x01\n" +
+	"\x06SignUp\x12\x11.v1.SignUpRequest\x1a\x12.v1.SignUpResponse\"x\x92AQ\n" +
+	"\x11User Registration\x12\x12Sign up a new user\x1a(Create a new user account in the system.\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/openauth/v1/users/signup\x12\xd2\x01\n" +
+	"\vVerifyEmail\x12\x16.v1.VerifyEmailRequest\x1a\x18.v1.VerificationResponse\"\x90\x01\x92Ac\n" +
+	"\x11User Registration\x12\x14Verify email address\x1a8Verify a user's email address using a verification code.\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/openauth/v1/users/verify-email\x12\xd0\x01\n" +
+	"\vVerifyPhone\x12\x16.v1.VerifyPhoneRequest\x1a\x18.v1.VerificationResponse\"\x8e\x01\x92Aa\n" +
+	"\x11User Registration\x12\x13Verify phone number\x1a7Verify a user's phone number using a verification code.\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/openauth/v1/users/verify-phone\x12\xea\x01\n" +
+	"\x12ResendVerification\x12\x1f.v1.SendVerificationCodeRequest\x1a .v1.SendVerificationCodeResponse\"\x90\x01\x92A\\\n" +
+	"\x11User Registration\x12\x18Resend verification code\x1a-Resend verification codes for email or phone.\x82\xd3\xe4\x93\x02+:\x01*\"&/openauth/v1/users/resend-verification\x12\xe2\x01\n" +
+	"\rCheckUsername\x12\x18.v1.CheckUsernameRequest\x1a\x19.v1.CheckUsernameResponse\"\x9b\x01\x92Ad\n" +
+	"\x11User Registration\x12\x1bCheck username availability\x1a2Check if a username is available for registration.\x82\xd3\xe4\x93\x02.\x12,/openauth/v1/users/check-username/{username}\x12\xd6\x01\n" +
 	"\n" +
-	"UpdateUser\x12\x15.v1.UpdateUserRequest\x1a\x16.v1.UpdateUserResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/openauth/v1/users/{uuid}\x12}\n" +
-	"\x0eChangePassword\x12\x19.v1.ChangePasswordRequest\x1a\x1a.v1.ChangePasswordResponse\"4\x82\xd3\xe4\x93\x02.:\x01*\")/openauth/v1/users/{uuid}/change-password\x12T\n" +
-	"\tListUsers\x12\x14.v1.ListUsersRequest\x1a\x15.v1.ListUsersResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/openauth/v1/users\x12^\n" +
+	"CheckEmail\x12\x15.v1.CheckEmailRequest\x1a\x16.v1.CheckEmailResponse\"\x98\x01\x92Ag\n" +
+	"\x11User Registration\x12\x18Check email availability\x1a8Check if an email address is available for registration.\x82\xd3\xe4\x93\x02(\x12&/openauth/v1/users/check-email/{email}\x12\xb6\x01\n" +
+	"\aGetUser\x12\x12.v1.GetUserRequest\x1a\x13.v1.GetUserResponse\"\x81\x01\x92A]\n" +
+	"\x0fUser Management\x12\x0eGet user by ID\x1a:Retrieve user information by ID, UUID, username, or email.\x82\xd3\xe4\x93\x02\x1b\x12\x19/openauth/v1/users/{uuid}\x12\xbc\x01\n" +
 	"\n" +
-	"DeleteUser\x12\x15.v1.DeleteUserRequest\x1a\x16.v1.DeleteUserResponse\"!\x82\xd3\xe4\x93\x02\x1b*\x19/openauth/v1/users/{uuid}\x12x\n" +
-	"\rCreateProfile\x12\x18.v1.CreateProfileRequest\x1a\x19.v1.CreateProfileResponse\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/openauth/v1/users/{user_uuid}/profiles\x12~\n" +
-	"\x10ListUserProfiles\x12\x1b.v1.ListUserProfilesRequest\x1a\x1c.v1.ListUserProfilesResponse\"/\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/profiles\x12u\n" +
-	"\rUpdateProfile\x12\x18.v1.UpdateProfileRequest\x1a\x19.v1.UpdateProfileResponse\"/\x82\xd3\xe4\x93\x02):\x01*\x1a$/openauth/v1/profiles/{profile_uuid}\x12r\n" +
-	"\rDeleteProfile\x12\x18.v1.DeleteProfileRequest\x1a\x19.v1.DeleteProfileResponse\",\x82\xd3\xe4\x93\x02&*$/openauth/v1/profiles/{profile_uuid}\x12T\n" +
-	"\x06SignIn\x12\x11.v1.SignInRequest\x1a\x12.v1.SignInResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/auth/signin\x12g\n" +
-	"\fRefreshToken\x12\x17.v1.RefreshTokenRequest\x1a\x18.v1.RefreshTokenResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/openauth/v1/auth/refresh\x12T\n" +
-	"\x06Logout\x12\x11.v1.LogoutRequest\x1a\x12.v1.LogoutResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/auth/logout\x12k\n" +
-	"\rValidateToken\x12\x18.v1.ValidateTokenRequest\x1a\x19.v1.ValidateTokenResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/openauth/v1/auth/validate\x12~\n" +
-	"\x10ListUserSessions\x12\x1b.v1.ListUserSessionsRequest\x1a\x1c.v1.ListUserSessionsResponse\"/\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/sessions\x12y\n" +
-	"\x10TerminateSession\x12\x1b.v1.TerminateSessionRequest\x1a\x1c.v1.TerminateSessionResponse\"*\x82\xd3\xe4\x93\x02$*\"/openauth/v1/sessions/{session_id}B\x0fZ\r./openauth_v1b\x06proto3"
+	"UpdateUser\x12\x15.v1.UpdateUserRequest\x1a\x16.v1.UpdateUserResponse\"\x7f\x92AX\n" +
+	"\x0fUser Management\x12\x17Update user information\x1a,Modify user account and profile information.\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/openauth/v1/users/{uuid}\x12\xcf\x01\n" +
+	"\x0eChangePassword\x12\x19.v1.ChangePasswordRequest\x1a\x1a.v1.ChangePasswordResponse\"\x85\x01\x92AN\n" +
+	"\x0fUser Management\x12\x14Change user password\x1a%Allow users to change their password.\x82\xd3\xe4\x93\x02.:\x01*\")/openauth/v1/users/{uuid}/change-password\x12\xad\x01\n" +
+	"\tListUsers\x12\x14.v1.ListUsersRequest\x1a\x15.v1.ListUsersResponse\"s\x92AV\n" +
+	"\x0fUser Management\x12\n" +
+	"List users\x1a7Retrieve users with filtering, sorting, and pagination.\x82\xd3\xe4\x93\x02\x14\x12\x12/openauth/v1/users\x12\xad\x01\n" +
+	"\n" +
+	"DeleteUser\x12\x15.v1.DeleteUserRequest\x1a\x16.v1.DeleteUserResponse\"p\x92AL\n" +
+	"\x0fUser Management\x12\x13Delete user account\x1a$Remove or deactivate a user account.\x82\xd3\xe4\x93\x02\x1b*\x19/openauth/v1/users/{uuid}\x12\xc8\x01\n" +
+	"\rCreateProfile\x12\x18.v1.CreateProfileRequest\x1a\x19.v1.CreateProfileResponse\"\x81\x01\x92AL\n" +
+	"\x12Profile Management\x12\x14Create a new profile\x1a Create a new profile for a user.\x82\xd3\xe4\x93\x02,:\x01*\"'/openauth/v1/users/{user_uuid}/profiles\x12\xd6\x01\n" +
+	"\x10ListUserProfiles\x12\x1b.v1.ListUserProfilesRequest\x1a\x1c.v1.ListUserProfilesResponse\"\x86\x01\x92AT\n" +
+	"\x12Profile Management\x12\x12List user profiles\x1a*Retrieve all profiles for a specific user.\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/profiles\x12\xbb\x01\n" +
+	"\rUpdateProfile\x12\x18.v1.UpdateProfileRequest\x1a\x19.v1.UpdateProfileResponse\"u\x92AC\n" +
+	"\x12Profile Management\x12\x10Update a profile\x1a\x1bModify an existing profile.\x82\xd3\xe4\x93\x02):\x01*\x1a$/openauth/v1/profiles/{profile_uuid}\x12\xb7\x01\n" +
+	"\rDeleteProfile\x12\x18.v1.DeleteProfileRequest\x1a\x19.v1.DeleteProfileResponse\"q\x92AB\n" +
+	"\x12Profile Management\x12\x10Delete a profile\x1a\x1aRemove a specific profile.\x82\xd3\xe4\x93\x02&*$/openauth/v1/profiles/{profile_uuid}\x12\xa4\x01\n" +
+	"\x06SignIn\x12\x11.v1.SignInRequest\x1a\x12.v1.SignInResponse\"s\x92AM\n" +
+	"\x0eAuthentication\x12\fSign in user\x1a-Authenticate a user and create a new session.\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/auth/signin\x12\xc0\x01\n" +
+	"\fRefreshToken\x12\x17.v1.RefreshTokenRequest\x1a\x18.v1.RefreshTokenResponse\"}\x92AV\n" +
+	"\x0eAuthentication\x12\x14Refresh access token\x1a.Generate new access token using refresh token.\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/openauth/v1/auth/refresh\x12\x90\x01\n" +
+	"\x06Logout\x12\x11.v1.LogoutRequest\x1a\x12.v1.LogoutResponse\"_\x92A9\n" +
+	"\x0eAuthentication\x12\vLogout user\x1a\x1aTerminate user session(s).\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/auth/logout\x12\xc4\x01\n" +
+	"\rValidateToken\x12\x18.v1.ValidateTokenRequest\x1a\x19.v1.ValidateTokenResponse\"~\x92AV\n" +
+	"\x0eAuthentication\x12\x15Validate access token\x1a-Check if an access token is valid and active.\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/openauth/v1/auth/validate\x12\xd0\x01\n" +
+	"\x10ListUserSessions\x12\x1b.v1.ListUserSessionsRequest\x1a\x1c.v1.ListUserSessionsResponse\"\x80\x01\x92AN\n" +
+	"\x12Session Management\x12\x12List user sessions\x1a$Retrieve active sessions for a user.\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/sessions\x12\xc6\x01\n" +
+	"\x10TerminateSession\x12\x1b.v1.TerminateSessionRequest\x1a\x1c.v1.TerminateSessionResponse\"w\x92AJ\n" +
+	"\x12Session Management\x12\x16Terminate user session\x1a\x1cEnd a specific user session.\x82\xd3\xe4\x93\x02$*\"/openauth/v1/sessions/{session_id}B\xba\x01\x92A\xa7\x01\x12\xa4\x01\n" +
+	"\bOpenAuth\x12\x90\x01OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.2\x051.0.0Z\r./openauth_v1b\x06proto3"
 
 var file_proto_openauth_v1_openauth_proto_goTypes = []any{
 	(*PingRequest)(nil),                         // 0: v1.PingRequest

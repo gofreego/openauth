@@ -68,9 +68,6 @@ const (
 // OpenAuthClient is the client API for OpenAuth service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// OpenAuth service provides authentication and authorization functionality
-// including user management, permissions, groups, and session management.
 type OpenAuthClient interface {
 	// Ping is a simple health check endpoint to verify service availability
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
@@ -784,9 +781,6 @@ func (c *openAuthClient) TerminateSession(ctx context.Context, in *TerminateSess
 // OpenAuthServer is the server API for OpenAuth service.
 // All implementations must embed UnimplementedOpenAuthServer
 // for forward compatibility.
-//
-// OpenAuth service provides authentication and authorization functionality
-// including user management, permissions, groups, and session management.
 type OpenAuthServer interface {
 	// Ping is a simple health check endpoint to verify service availability
 	Ping(context.Context, *PingRequest) (*PingResponse, error)

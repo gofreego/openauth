@@ -1,8 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "proto/openauth/v1/openauth.proto",
-    "version": "version not set"
+    "title": "OpenAuth",
+    "description": "OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications.",
+    "version": "1.0.0"
   },
   "tags": [
     {
@@ -18,8 +19,8 @@
   "paths": {
     "/openauth/v1/auth/logout": {
       "post": {
-        "summary": "Logout terminates user session(s).",
-        "description": "Can logout from current session or all sessions across devices.\nInvalidates tokens and cleans up session data.",
+        "summary": "Logout user",
+        "description": "Terminate user session(s).",
         "operationId": "OpenAuth_Logout",
         "responses": {
           "200": {
@@ -46,14 +47,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Authentication"
         ]
       }
     },
     "/openauth/v1/auth/refresh": {
       "post": {
-        "summary": "RefreshToken generates new access token using refresh token.",
-        "description": "Implements token rotation for enhanced security where each refresh\ngenerates a new refresh token and invalidates the old one.",
+        "summary": "Refresh access token",
+        "description": "Generate new access token using refresh token.",
         "operationId": "OpenAuth_RefreshToken",
         "responses": {
           "200": {
@@ -80,14 +81,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Authentication"
         ]
       }
     },
     "/openauth/v1/auth/signin": {
       "post": {
-        "summary": "SignIn authenticates a user and creates a new session.",
-        "description": "Supports multiple login methods:\n- Username + password\n- Email + password  \n- Phone + password\n\nReturns access token, refresh token, and user information.\nTracks device information and manages session security.",
+        "summary": "Sign in user",
+        "description": "Authenticate a user and create a new session.",
         "operationId": "OpenAuth_SignIn",
         "responses": {
           "200": {
@@ -114,14 +115,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Authentication"
         ]
       }
     },
     "/openauth/v1/auth/validate": {
       "post": {
-        "summary": "ValidateToken checks if an access token is valid and active.",
-        "description": "Used for authentication middleware and token verification.\nReturns user information if token is valid.",
+        "summary": "Validate access token",
+        "description": "Check if an access token is valid and active.",
         "operationId": "OpenAuth_ValidateToken",
         "responses": {
           "200": {
@@ -148,14 +149,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Authentication"
         ]
       }
     },
     "/openauth/v1/groups": {
       "get": {
-        "summary": "ListGroups retrieves groups with optional filtering and pagination.",
-        "description": "Supports filtering by:\n- search: Searches across name, display_name, and description fields\n- is_system: Filter by system vs user-created groups\n- is_default: Filter by default groups for new users",
+        "summary": "List groups",
+        "description": "Retrieve groups with optional filtering and pagination.",
         "operationId": "OpenAuth_ListGroups",
         "responses": {
           "200": {
@@ -204,12 +205,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Groups"
         ]
       },
       "post": {
-        "summary": "CreateGroup creates a new group in the system.",
-        "description": "Groups are used to organize users and assign permissions collectively.\nEach group has a unique name and can have multiple users and permissions assigned.",
+        "summary": "Create a new group",
+        "description": "Create a new group in the system for organizing users and permissions.",
         "operationId": "OpenAuth_CreateGroup",
         "responses": {
           "200": {
@@ -236,14 +237,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Groups"
         ]
       }
     },
     "/openauth/v1/groups/users": {
       "post": {
-        "summary": "AssignUserToGroup adds a user to a group.",
-        "description": "Grants the user all permissions associated with the group.\nSupports optional expiration time for temporary group membership.",
+        "summary": "Assign user to group",
+        "description": "Add a user to a group.",
         "operationId": "OpenAuth_AssignUserToGroup",
         "responses": {
           "200": {
@@ -270,14 +271,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Group Users"
         ]
       }
     },
     "/openauth/v1/groups/{groupId}/permissions": {
       "get": {
-        "summary": "ListGroupPermissions retrieves all permissions assigned to a specific group.",
-        "description": "Returns paginated list of permissions with optional search filtering.",
+        "summary": "List group permissions",
+        "description": "Retrieve all permissions assigned to a specific group.",
         "operationId": "OpenAuth_ListGroupPermissions",
         "responses": {
           "200": {
@@ -304,12 +305,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permission Assignments"
         ]
       },
       "post": {
-        "summary": "AssignPermissionToGroup assigns a permission to a group.",
-        "description": "This allows all users in the group to inherit this permission.\nThe permission will be available to all current and future group members.",
+        "summary": "Assign permission to group",
+        "description": "Assign a permission to a group.",
         "operationId": "OpenAuth_AssignPermissionToGroup",
         "responses": {
           "200": {
@@ -344,14 +345,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permission Assignments"
         ]
       }
     },
     "/openauth/v1/groups/{groupId}/permissions/{permissionId}": {
       "delete": {
-        "summary": "RemovePermissionFromGroup removes a permission from a group.",
-        "description": "This will remove the permission from all users who had it through group membership.\nUsers who have the same permission assigned directly will retain it.",
+        "summary": "Remove permission from group",
+        "description": "Remove a permission from a group.",
         "operationId": "OpenAuth_RemovePermissionFromGroup",
         "responses": {
           "200": {
@@ -386,14 +387,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permission Assignments"
         ]
       }
     },
     "/openauth/v1/groups/{groupId}/users": {
       "get": {
-        "summary": "ListGroupUsers retrieves all users in a specific group.",
-        "description": "Returns paginated list of users with their group membership details.",
+        "summary": "List group users",
+        "description": "Retrieve all users in a specific group.",
         "operationId": "OpenAuth_ListGroupUsers",
         "responses": {
           "200": {
@@ -434,14 +435,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Group Users"
         ]
       }
     },
     "/openauth/v1/groups/{groupId}/users/{userId}": {
       "delete": {
-        "summary": "RemoveUserFromGroup removes a user from a group.",
-        "description": "Revokes all group-based permissions from the user.\nDirect user permissions are not affected.",
+        "summary": "Remove user from group",
+        "description": "Remove a user from a group.",
         "operationId": "OpenAuth_RemoveUserFromGroup",
         "responses": {
           "200": {
@@ -474,14 +475,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Group Users"
         ]
       }
     },
     "/openauth/v1/groups/{id}": {
       "get": {
-        "summary": "GetGroup retrieves a specific group by ID, UUID, or name.",
-        "description": "Returns complete group information including metadata and system status.",
+        "summary": "Get a group by ID",
+        "description": "Retrieve a specific group by ID, UUID, or name.",
         "operationId": "OpenAuth_GetGroup",
         "responses": {
           "200": {
@@ -507,12 +508,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Groups"
         ]
       },
       "delete": {
-        "summary": "DeleteGroup removes a group from the system.",
-        "description": "System groups (is_system=true) cannot be deleted as they are critical for application functionality.\nWarning: Deleting a group will remove all user assignments and group permissions.",
+        "summary": "Delete a group",
+        "description": "Remove a group from the system.",
         "operationId": "OpenAuth_DeleteGroup",
         "responses": {
           "200": {
@@ -538,12 +539,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Groups"
         ]
       },
       "put": {
-        "summary": "UpdateGroup modifies an existing group.",
-        "description": "All fields in the request are optional - only provided fields will be updated.\nSystem groups (is_system=true) cannot be modified to prevent breaking core functionality.",
+        "summary": "Update a group",
+        "description": "Modify an existing group's details.",
         "operationId": "OpenAuth_UpdateGroup",
         "responses": {
           "200": {
@@ -577,14 +578,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Groups"
         ]
       }
     },
     "/openauth/v1/permissions": {
       "get": {
-        "summary": "ListPermissions retrieves permissions with optional filtering and pagination.",
-        "description": "Supports filtering by:\n- search: Searches across name, display_name, and description fields\n- resource: Filter by specific resource type (e.g., \"users\", \"groups\")\n- action: Filter by specific action type (e.g., \"create\", \"read\")\n- is_system: Filter by system vs user-created permissions\n\nPagination is handled via limit/offset parameters:\n- limit: Maximum number of results (default: 10, max: 100)\n- offset: Number of results to skip (default: 0)\n\nExample queries:\n- GET /openauth/v1/permissions?resource=users - All user-related permissions\n- GET /openauth/v1/permissions?action=create - All creation permissions\n- GET /openauth/v1/permissions?search=user\u0026limit=20 - Search for \"user\" with 20 results",
+        "summary": "List permissions",
+        "description": "Retrieve permissions with optional filtering and pagination.",
         "operationId": "OpenAuth_ListPermissions",
         "responses": {
           "200": {
@@ -626,12 +627,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permissions"
         ]
       },
       "post": {
-        "summary": "CreatePermission creates a new permission in the system.",
-        "description": "Permissions follow the pattern: resource.action (e.g., \"users.create\")\n- resource: The entity being accessed (users, groups, permissions, etc.)\n- action: The operation being performed (create, read, update, delete, etc.)\n\nExample: Creating a permission for user management would have:\n- name: \"users.create\"\n- resource: \"users\" \n- action: \"create\"\n- display_name: \"Create Users\"",
+        "summary": "Create a new permission",
+        "description": "Create a new permission in the system with resource and action definitions.",
         "operationId": "OpenAuth_CreatePermission",
         "responses": {
           "200": {
@@ -658,14 +659,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permissions"
         ]
       }
     },
     "/openauth/v1/permissions/{id}": {
       "get": {
-        "summary": "GetPermission retrieves a specific permission by its unique ID.",
-        "description": "Returns the complete permission details including resource, action,\nsystem status, and metadata.",
+        "summary": "Get a permission by ID",
+        "description": "Retrieve a specific permission by its unique ID.",
         "operationId": "OpenAuth_GetPermission",
         "responses": {
           "200": {
@@ -692,12 +693,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permissions"
         ]
       },
       "delete": {
-        "summary": "DeletePermission removes a permission from the system.",
-        "description": "System permissions (is_system=true) cannot be deleted as they are\ncritical for application functionality. Attempting to delete a system\npermission will return a PermissionDenied error.\n\nWarning: Deleting a permission will affect all users and groups\nthat currently have this permission assigned.",
+        "summary": "Delete a permission",
+        "description": "Remove a permission from the system.",
         "operationId": "OpenAuth_DeletePermission",
         "responses": {
           "200": {
@@ -724,12 +725,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permissions"
         ]
       },
       "put": {
-        "summary": "UpdatePermission modifies an existing permission.",
-        "description": "All fields in the request are optional - only provided fields will be updated.\nSystem permissions (is_system=true) cannot be modified to prevent\nbreaking core application functionality.\n\nNote: Changing the name requires ensuring uniqueness across all permissions.",
+        "summary": "Update a permission",
+        "description": "Modify an existing permission's details.",
         "operationId": "OpenAuth_UpdatePermission",
         "responses": {
           "200": {
@@ -764,13 +765,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permissions"
         ]
       }
     },
     "/openauth/v1/ping": {
       "get": {
-        "summary": "Ping is a simple health check endpoint to verify service availability",
+        "summary": "Ping the server",
+        "description": "Check if the server is alive.",
         "operationId": "OpenAuth_Ping",
         "responses": {
           "200": {
@@ -795,14 +797,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Ping"
         ]
       }
     },
     "/openauth/v1/profiles/{profileUuid}": {
       "delete": {
-        "summary": "DeleteProfile removes a specific profile.",
-        "description": "Permanently deletes a profile and all associated data.\nUsers must have at least one profile, so deletion of the last\nprofile may be restricted based on business rules.",
+        "summary": "Delete a profile",
+        "description": "Remove a specific profile.",
         "operationId": "OpenAuth_DeleteProfile",
         "responses": {
           "200": {
@@ -827,12 +829,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Profile Management"
         ]
       },
       "put": {
-        "summary": "UpdateProfile modifies an existing profile.",
-        "description": "Supports partial updates - only provided fields are modified.\nProfile updates are independent of user account information.",
+        "summary": "Update a profile",
+        "description": "Modify an existing profile.",
         "operationId": "OpenAuth_UpdateProfile",
         "responses": {
           "200": {
@@ -866,14 +868,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Profile Management"
         ]
       }
     },
     "/openauth/v1/sessions/{sessionId}": {
       "delete": {
-        "summary": "TerminateSession ends a specific user session.",
-        "description": "Allows users to logout from specific devices remotely.\nUseful for security when a device is lost or compromised.",
+        "summary": "Terminate user session",
+        "description": "End a specific user session.",
         "operationId": "OpenAuth_TerminateSession",
         "responses": {
           "200": {
@@ -898,13 +900,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Session Management"
         ]
       }
     },
     "/openauth/v1/stats": {
       "get": {
-        "summary": "Stats provides system statistics including user counts, permission counts, etc.",
+        "summary": "Get system statistics",
+        "description": "Retrieve system statistics including user counts, permission counts, group counts, and other metrics.",
         "operationId": "OpenAuth_Stats",
         "responses": {
           "200": {
@@ -921,14 +924,14 @@
           }
         },
         "tags": [
-          "OpenAuth"
+          "Statistics"
         ]
       }
     },
     "/openauth/v1/users": {
       "get": {
-        "summary": "ListUsers retrieves users with filtering, sorting, and pagination.",
-        "description": "Supports filtering by:\n- search: Search across username, email, and name fields\n- is_active: Filter by account status\n- email_verified/phone_verified: Filter by verification status\n\nRequires appropriate permissions to access user listings.",
+        "summary": "List users",
+        "description": "Retrieve users with filtering, sorting, and pagination.",
         "operationId": "OpenAuth_ListUsers",
         "responses": {
           "200": {
@@ -1009,14 +1012,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Management"
         ]
       }
     },
     "/openauth/v1/users/check-email/{email}": {
       "get": {
-        "summary": "CheckEmail checks if an email address is available for registration.",
-        "description": "Returns availability status for the email address. Used to prevent\nduplicate registrations and provide user feedback during signup.",
+        "summary": "Check email availability",
+        "description": "Check if an email address is available for registration.",
         "operationId": "OpenAuth_CheckEmail",
         "responses": {
           "200": {
@@ -1041,14 +1044,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Registration"
         ]
       }
     },
     "/openauth/v1/users/check-username/{username}": {
       "get": {
-        "summary": "CheckUsername checks if a username is available for registration.",
-        "description": "Returns availability status and suggestions for alternative usernames\nif the requested username is already taken. Useful for real-time\nusername validation during registration.",
+        "summary": "Check username availability",
+        "description": "Check if a username is available for registration.",
         "operationId": "OpenAuth_CheckUsername",
         "responses": {
           "200": {
@@ -1073,14 +1076,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Registration"
         ]
       }
     },
     "/openauth/v1/users/resend-verification": {
       "post": {
-        "summary": "ResendVerification resends verification codes for email or phone.",
-        "description": "Useful when users don't receive the initial verification code\nor when the code has expired. Includes rate limiting to prevent abuse.",
+        "summary": "Resend verification code",
+        "description": "Resend verification codes for email or phone.",
         "operationId": "OpenAuth_ResendVerification",
         "responses": {
           "200": {
@@ -1107,14 +1110,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Registration"
         ]
       }
     },
     "/openauth/v1/users/signup": {
       "post": {
-        "summary": "SignUp creates a new user account in the system.",
-        "description": "Supports multiple registration methods:\n- Username + password (required)\n- Email + password (optional, triggers email verification)\n- Phone + password (optional, triggers SMS verification)\n\nReturns the created user and profile information along with\nverification requirements if email/phone was provided.",
+        "summary": "Sign up a new user",
+        "description": "Create a new user account in the system.",
         "operationId": "OpenAuth_SignUp",
         "responses": {
           "200": {
@@ -1141,14 +1144,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Registration"
         ]
       }
     },
     "/openauth/v1/users/verify-email": {
       "post": {
-        "summary": "VerifyEmail verifies a user's email address using a verification code.",
-        "description": "The verification code is typically sent via email during registration\nor when requesting email verification. Successful verification\nenables email-based features and login.",
+        "summary": "Verify email address",
+        "description": "Verify a user's email address using a verification code.",
         "operationId": "OpenAuth_VerifyEmail",
         "responses": {
           "200": {
@@ -1175,14 +1178,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Registration"
         ]
       }
     },
     "/openauth/v1/users/verify-phone": {
       "post": {
-        "summary": "VerifyPhone verifies a user's phone number using a verification code.",
-        "description": "The verification code is typically sent via SMS during registration\nor when requesting phone verification. Successful verification\nenables SMS-based features and login.",
+        "summary": "Verify phone number",
+        "description": "Verify a user's phone number using a verification code.",
         "operationId": "OpenAuth_VerifyPhone",
         "responses": {
           "200": {
@@ -1209,14 +1212,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Registration"
         ]
       }
     },
     "/openauth/v1/users/{userId}/effective-permissions": {
       "get": {
-        "summary": "GetUserEffectivePermissions retrieves all effective permissions for a user.",
-        "description": "This includes both directly assigned permissions and permissions inherited from group membership.\nEach permission includes information about its source (direct assignment or group inheritance).",
+        "summary": "Get user effective permissions",
+        "description": "Retrieve all effective permissions for a user including inherited permissions.",
         "operationId": "OpenAuth_GetUserEffectivePermissions",
         "responses": {
           "200": {
@@ -1243,14 +1246,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permission Assignments"
         ]
       }
     },
     "/openauth/v1/users/{userId}/groups": {
       "get": {
-        "summary": "ListUserGroups retrieves all groups for a specific user.",
-        "description": "Returns paginated list of groups the user belongs to.",
+        "summary": "List user groups",
+        "description": "Retrieve all groups for a specific user.",
         "operationId": "OpenAuth_ListUserGroups",
         "responses": {
           "200": {
@@ -1291,14 +1294,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Group Users"
         ]
       }
     },
     "/openauth/v1/users/{userId}/permissions": {
       "get": {
-        "summary": "ListUserPermissions retrieves all permissions directly assigned to a user.",
-        "description": "This does not include permissions inherited from group membership.\nUse GetUserEffectivePermissions to get all permissions including group-inherited ones.",
+        "summary": "List user permissions",
+        "description": "Retrieve all permissions directly assigned to a user.",
         "operationId": "OpenAuth_ListUserPermissions",
         "responses": {
           "200": {
@@ -1325,12 +1328,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permission Assignments"
         ]
       },
       "post": {
-        "summary": "AssignPermissionToUser assigns a permission directly to a user.",
-        "description": "This creates a direct permission assignment that bypasses group membership.\nCan include an optional expiration time for temporary permissions.",
+        "summary": "Assign permission to user",
+        "description": "Assign a permission directly to a user.",
         "operationId": "OpenAuth_AssignPermissionToUser",
         "responses": {
           "200": {
@@ -1365,14 +1368,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permission Assignments"
         ]
       }
     },
     "/openauth/v1/users/{userId}/permissions/{permissionId}": {
       "delete": {
-        "summary": "RemovePermissionFromUser removes a permission directly assigned to a user.",
-        "description": "This only removes direct permission assignments, not permissions inherited from groups.",
+        "summary": "Remove permission from user",
+        "description": "Remove a permission directly assigned to a user.",
         "operationId": "OpenAuth_RemovePermissionFromUser",
         "responses": {
           "200": {
@@ -1407,14 +1410,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Permission Assignments"
         ]
       }
     },
     "/openauth/v1/users/{userUuid}/profiles": {
       "get": {
-        "summary": "ListUserProfiles retrieves all profiles for a specific user.",
-        "description": "Returns paginated list of profiles belonging to a user.\nUseful for profile selection interfaces and management.",
+        "summary": "List user profiles",
+        "description": "Retrieve all profiles for a specific user.",
         "operationId": "OpenAuth_ListUserProfiles",
         "responses": {
           "200": {
@@ -1453,12 +1456,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Profile Management"
         ]
       },
       "post": {
-        "summary": "CreateProfile creates a new profile for a user.",
-        "description": "Allows users to create multiple profiles for different contexts.\nEach profile can have different display information, preferences,\nand metadata while belonging to the same user account.",
+        "summary": "Create a new profile",
+        "description": "Create a new profile for a user.",
         "operationId": "OpenAuth_CreateProfile",
         "responses": {
           "200": {
@@ -1492,14 +1495,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Profile Management"
         ]
       }
     },
     "/openauth/v1/users/{userUuid}/sessions": {
       "get": {
-        "summary": "ListUserSessions retrieves active sessions for a user.",
-        "description": "Shows all devices and sessions where the user is logged in.\nUseful for security management and device tracking.",
+        "summary": "List user sessions",
+        "description": "Retrieve active sessions for a user.",
         "operationId": "OpenAuth_ListUserSessions",
         "responses": {
           "200": {
@@ -1544,14 +1547,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "Session Management"
         ]
       }
     },
     "/openauth/v1/users/{uuid}": {
       "get": {
-        "summary": "GetUser retrieves user information by ID, UUID, username, or email.",
-        "description": "Supports multiple identifier types and optional profile inclusion.\nAccess control should be enforced based on the requesting user's\npermissions and relationship to the target user.",
+        "summary": "Get user by ID",
+        "description": "Retrieve user information by ID, UUID, username, or email.",
         "operationId": "OpenAuth_GetUser",
         "responses": {
           "200": {
@@ -1590,12 +1593,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Management"
         ]
       },
       "delete": {
-        "summary": "DeleteUser removes or deactivates a user account.",
-        "description": "Supports both soft delete (deactivation) and hard delete.\nSoft delete preserves data while preventing access.\nHard delete permanently removes the user and all associated data.",
+        "summary": "Delete user account",
+        "description": "Remove or deactivate a user account.",
         "operationId": "OpenAuth_DeleteUser",
         "responses": {
           "200": {
@@ -1627,12 +1630,12 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Management"
         ]
       },
       "put": {
-        "summary": "UpdateUser modifies user account and profile information.",
-        "description": "Supports partial updates - only provided fields are modified.\nSensitive operations like email/phone changes may require\nadditional verification steps.",
+        "summary": "Update user information",
+        "description": "Modify user account and profile information.",
         "operationId": "OpenAuth_UpdateUser",
         "responses": {
           "200": {
@@ -1665,14 +1668,14 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Management"
         ]
       }
     },
     "/openauth/v1/users/{uuid}/change-password": {
       "post": {
-        "summary": "ChangePassword allows users to change their password.",
-        "description": "Requires the current password for verification and the new password.\nTriggers password change tracking and may invalidate existing sessions.",
+        "summary": "Change user password",
+        "description": "Allow users to change their password.",
         "operationId": "OpenAuth_ChangePassword",
         "responses": {
           "200": {
@@ -1705,7 +1708,7 @@
           }
         ],
         "tags": [
-          "OpenAuth"
+          "User Management"
         ]
       }
     }

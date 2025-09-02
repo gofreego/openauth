@@ -4,6 +4,7 @@ package v1;
 option go_package = "./openauth_v1";
 
 import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 import "proto/common/ping.proto";
 import "proto/openauth/v1/permissions.proto";
 import "proto/openauth/v1/users.proto";
@@ -12,8 +13,14 @@ import "proto/openauth/v1/sessions.proto";
 import "proto/openauth/v1/permission_assignments.proto";
 import "proto/openauth/v1/stats.proto";
 
-// OpenAuth service provides authentication and authorization functionality
-// including user management, permissions, groups, and session management.
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "OpenAuth"
+    version: "1.0.0"
+    description: "OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications."
+  }
+};
+
 service OpenAuth {
     
     // Ping is a simple health check endpoint to verify service availability
@@ -21,12 +28,22 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/ping"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Ping"
+            summary: "Ping the server"
+            description: "Check if the server is alive."
+        };
     }
 
     // Stats provides system statistics including user counts, permission counts, etc.
     rpc Stats (StatsRequest) returns (StatsResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/stats"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Statistics"
+            summary: "Get system statistics"
+            description: "Retrieve system statistics including user counts, permission counts, group counts, and other metrics."
         };
     }
 
@@ -50,6 +67,11 @@ service OpenAuth {
             post: "/openauth/v1/permissions"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permissions"
+            summary: "Create a new permission"
+            description: "Create a new permission in the system with resource and action definitions."
+        };
     }
 
     // GetPermission retrieves a specific permission by its unique ID.
@@ -59,6 +81,11 @@ service OpenAuth {
     rpc GetPermission (GetPermissionRequest) returns (Permission) {
         option (google.api.http) = {
             get: "/openauth/v1/permissions/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permissions"
+            summary: "Get a permission by ID"
+            description: "Retrieve a specific permission by its unique ID."
         };
     }
 
@@ -82,6 +109,11 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/permissions"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permissions"
+            summary: "List permissions"
+            description: "Retrieve permissions with optional filtering and pagination."
+        };
     }
 
     // UpdatePermission modifies an existing permission.
@@ -95,6 +127,11 @@ service OpenAuth {
         option (google.api.http) = {
             put: "/openauth/v1/permissions/{id}"
             body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permissions"
+            summary: "Update a permission"
+            description: "Modify an existing permission's details."
         };
     }
 
@@ -110,6 +147,11 @@ service OpenAuth {
         option (google.api.http) = {
             delete: "/openauth/v1/permissions/{id}"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permissions"
+            summary: "Delete a permission"
+            description: "Remove a permission from the system."
+        };
     }
 
     // Group Management APIs
@@ -124,6 +166,11 @@ service OpenAuth {
             post: "/openauth/v1/groups"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Groups"
+            summary: "Create a new group"
+            description: "Create a new group in the system for organizing users and permissions."
+        };
     }
 
     // GetGroup retrieves a specific group by ID, UUID, or name.
@@ -132,6 +179,11 @@ service OpenAuth {
     rpc GetGroup (GetGroupRequest) returns (GetGroupResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/groups/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Groups"
+            summary: "Get a group by ID"
+            description: "Retrieve a specific group by ID, UUID, or name."
         };
     }
 
@@ -145,6 +197,11 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/groups"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Groups"
+            summary: "List groups"
+            description: "Retrieve groups with optional filtering and pagination."
+        };
     }
 
     // UpdateGroup modifies an existing group.
@@ -156,6 +213,11 @@ service OpenAuth {
             put: "/openauth/v1/groups/{id}"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Groups"
+            summary: "Update a group"
+            description: "Modify an existing group's details."
+        };
     }
 
     // DeleteGroup removes a group from the system.
@@ -165,6 +227,11 @@ service OpenAuth {
     rpc DeleteGroup (DeleteGroupRequest) returns (DeleteGroupResponse) {
         option (google.api.http) = {
             delete: "/openauth/v1/groups/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Groups"
+            summary: "Delete a group"
+            description: "Remove a group from the system."
         };
     }
 
@@ -177,6 +244,11 @@ service OpenAuth {
             post: "/openauth/v1/groups/users"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Group Users"
+            summary: "Assign user to group"
+            description: "Add a user to a group."
+        };
     }
 
     // RemoveUserFromGroup removes a user from a group.
@@ -187,6 +259,11 @@ service OpenAuth {
         option (google.api.http) = {
             delete: "/openauth/v1/groups/{group_id}/users/{user_id}"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Group Users"
+            summary: "Remove user from group"
+            description: "Remove a user from a group."
+        };
     }
 
     // ListGroupUsers retrieves all users in a specific group.
@@ -196,6 +273,11 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/groups/{group_id}/users"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Group Users"
+            summary: "List group users"
+            description: "Retrieve all users in a specific group."
+        };
     }
 
     // ListUserGroups retrieves all groups for a specific user.
@@ -204,6 +286,11 @@ service OpenAuth {
     rpc ListUserGroups (ListUserGroupsRequest) returns (ListUserGroupsResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/users/{user_id}/groups"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Group Users"
+            summary: "List user groups"
+            description: "Retrieve all groups for a specific user."
         };
     }
 
@@ -219,6 +306,11 @@ service OpenAuth {
             post: "/openauth/v1/groups/{group_id}/permissions"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permission Assignments"
+            summary: "Assign permission to group"
+            description: "Assign a permission to a group."
+        };
     }
 
     // RemovePermissionFromGroup removes a permission from a group.
@@ -229,6 +321,11 @@ service OpenAuth {
         option (google.api.http) = {
             delete: "/openauth/v1/groups/{group_id}/permissions/{permission_id}"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permission Assignments"
+            summary: "Remove permission from group"
+            description: "Remove a permission from a group."
+        };
     }
 
     // ListGroupPermissions retrieves all permissions assigned to a specific group.
@@ -237,6 +334,11 @@ service OpenAuth {
     rpc ListGroupPermissions (ListGroupPermissionsRequest) returns (ListGroupPermissionsResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/groups/{group_id}/permissions"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permission Assignments"
+            summary: "List group permissions"
+            description: "Retrieve all permissions assigned to a specific group."
         };
     }
 
@@ -249,6 +351,11 @@ service OpenAuth {
             post: "/openauth/v1/users/{user_id}/permissions"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permission Assignments"
+            summary: "Assign permission to user"
+            description: "Assign a permission directly to a user."
+        };
     }
 
     // RemovePermissionFromUser removes a permission directly assigned to a user.
@@ -257,6 +364,11 @@ service OpenAuth {
     rpc RemovePermissionFromUser (RemovePermissionFromUserRequest) returns (RemovePermissionFromUserResponse) {
         option (google.api.http) = {
             delete: "/openauth/v1/users/{user_id}/permissions/{permission_id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permission Assignments"
+            summary: "Remove permission from user"
+            description: "Remove a permission directly assigned to a user."
         };
     }
 
@@ -268,6 +380,11 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/users/{user_id}/permissions"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permission Assignments"
+            summary: "List user permissions"
+            description: "Retrieve all permissions directly assigned to a user."
+        };
     }
 
     // GetUserEffectivePermissions retrieves all effective permissions for a user.
@@ -277,6 +394,11 @@ service OpenAuth {
     rpc GetUserEffectivePermissions (GetUserEffectivePermissionsRequest) returns (GetUserEffectivePermissionsResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/users/{user_id}/effective-permissions"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permission Assignments"
+            summary: "Get user effective permissions"
+            description: "Retrieve all effective permissions for a user including inherited permissions."
         };
     }
 
@@ -297,6 +419,11 @@ service OpenAuth {
             post: "/openauth/v1/users/signup"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Registration"
+            summary: "Sign up a new user"
+            description: "Create a new user account in the system."
+        };
     }
 
     // VerifyEmail verifies a user's email address using a verification code.
@@ -308,6 +435,11 @@ service OpenAuth {
         option (google.api.http) = {
             post: "/openauth/v1/users/verify-email"
             body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Registration"
+            summary: "Verify email address"
+            description: "Verify a user's email address using a verification code."
         };
     }
 
@@ -321,6 +453,11 @@ service OpenAuth {
             post: "/openauth/v1/users/verify-phone"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Registration"
+            summary: "Verify phone number"
+            description: "Verify a user's phone number using a verification code."
+        };
     }
 
     // ResendVerification resends verification codes for email or phone.
@@ -331,6 +468,11 @@ service OpenAuth {
         option (google.api.http) = {
             post: "/openauth/v1/users/resend-verification"
             body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Registration"
+            summary: "Resend verification code"
+            description: "Resend verification codes for email or phone."
         };
     }
 
@@ -343,6 +485,11 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/users/check-username/{username}"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Registration"
+            summary: "Check username availability"
+            description: "Check if a username is available for registration."
+        };
     }
 
     // CheckEmail checks if an email address is available for registration.
@@ -352,6 +499,11 @@ service OpenAuth {
     rpc CheckEmail (CheckEmailRequest) returns (CheckEmailResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/users/check-email/{email}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Registration"
+            summary: "Check email availability"
+            description: "Check if an email address is available for registration."
         };
     }
 
@@ -363,6 +515,11 @@ service OpenAuth {
     rpc GetUser (GetUserRequest) returns (GetUserResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/users/{uuid}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Management"
+            summary: "Get user by ID"
+            description: "Retrieve user information by ID, UUID, username, or email."
         };
     }
 
@@ -376,6 +533,11 @@ service OpenAuth {
             put: "/openauth/v1/users/{uuid}"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Management"
+            summary: "Update user information"
+            description: "Modify user account and profile information."
+        };
     }
 
     // ChangePassword allows users to change their password.
@@ -386,6 +548,11 @@ service OpenAuth {
         option (google.api.http) = {
             post: "/openauth/v1/users/{uuid}/change-password"
             body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Management"
+            summary: "Change user password"
+            description: "Allow users to change their password."
         };
     }
 
@@ -401,6 +568,11 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/users"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Management"
+            summary: "List users"
+            description: "Retrieve users with filtering, sorting, and pagination."
+        };
     }
 
     // DeleteUser removes or deactivates a user account.
@@ -411,6 +583,11 @@ service OpenAuth {
     rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
         option (google.api.http) = {
             delete: "/openauth/v1/users/{uuid}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Management"
+            summary: "Delete user account"
+            description: "Remove or deactivate a user account."
         };
     }
 
@@ -428,6 +605,11 @@ service OpenAuth {
             post: "/openauth/v1/users/{user_uuid}/profiles"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Profile Management"
+            summary: "Create a new profile"
+            description: "Create a new profile for a user."
+        };
     }
 
     // ListUserProfiles retrieves all profiles for a specific user.
@@ -437,6 +619,11 @@ service OpenAuth {
     rpc ListUserProfiles (ListUserProfilesRequest) returns (ListUserProfilesResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/users/{user_uuid}/profiles"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Profile Management"
+            summary: "List user profiles"
+            description: "Retrieve all profiles for a specific user."
         };
     }
 
@@ -449,6 +636,11 @@ service OpenAuth {
             put: "/openauth/v1/profiles/{profile_uuid}"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Profile Management"
+            summary: "Update a profile"
+            description: "Modify an existing profile."
+        };
     }
 
     // DeleteProfile removes a specific profile.
@@ -459,6 +651,11 @@ service OpenAuth {
     rpc DeleteProfile (DeleteProfileRequest) returns (DeleteProfileResponse) {
         option (google.api.http) = {
             delete: "/openauth/v1/profiles/{profile_uuid}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Profile Management"
+            summary: "Delete a profile"
+            description: "Remove a specific profile."
         };
     }
 
@@ -478,6 +675,11 @@ service OpenAuth {
             post: "/openauth/v1/auth/signin"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Sign in user"
+            description: "Authenticate a user and create a new session."
+        };
     }
 
     // RefreshToken generates new access token using refresh token.
@@ -488,6 +690,11 @@ service OpenAuth {
         option (google.api.http) = {
             post: "/openauth/v1/auth/refresh"
             body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Refresh access token"
+            description: "Generate new access token using refresh token."
         };
     }
 
@@ -500,6 +707,11 @@ service OpenAuth {
             post: "/openauth/v1/auth/logout"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Logout user"
+            description: "Terminate user session(s)."
+        };
     }
 
     // ValidateToken checks if an access token is valid and active.
@@ -511,6 +723,11 @@ service OpenAuth {
             post: "/openauth/v1/auth/validate"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Validate access token"
+            description: "Check if an access token is valid and active."
+        };
     }
 
     // ListUserSessions retrieves active sessions for a user.
@@ -521,6 +738,11 @@ service OpenAuth {
         option (google.api.http) = {
             get: "/openauth/v1/users/{user_uuid}/sessions"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Session Management"
+            summary: "List user sessions"
+            description: "Retrieve active sessions for a user."
+        };
     }
 
     // TerminateSession ends a specific user session.
@@ -530,6 +752,11 @@ service OpenAuth {
     rpc TerminateSession (TerminateSessionRequest) returns (TerminateSessionResponse) {
         option (google.api.http) = {
             delete: "/openauth/v1/sessions/{session_id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Session Management"
+            summary: "Terminate user session"
+            description: "End a specific user session."
         };
     }
 }
