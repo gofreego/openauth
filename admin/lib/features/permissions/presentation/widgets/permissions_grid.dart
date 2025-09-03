@@ -324,8 +324,7 @@ class PermissionCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  PopupMenuButton<String>(
-                    onSelected: onAction,
+                  PopupMenuButton<String>(onSelected: onAction,
                     itemBuilder: (context) => [
                       const PopupMenuItem(
                         value: 'edit',
@@ -368,23 +367,6 @@ class PermissionCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    size: 14,
-                    color: Colors.grey.shade500,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Created ${_formatDate(permission.createdAt)}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey.shade500,
-                    ),
-                  ),
-                ],
-              ),
             ],
             ),
           ),
@@ -406,22 +388,6 @@ class PermissionCard extends StatelessWidget {
     if (permission.name.startsWith('content.')) return Colors.green;
     if (permission.name.startsWith('analytics.')) return Colors.purple;
     return Colors.grey;
-  }
-
-  String _formatDate(Int64 millis) {
-    final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    
-    if (difference.inDays == 0) {
-      return 'today';
-    } else if (difference.inDays == 1) {
-      return 'yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
   }
 }
 
