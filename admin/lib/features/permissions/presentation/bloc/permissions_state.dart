@@ -12,7 +12,7 @@ class PermissionsInitial extends PermissionsState {}
 class PermissionsLoading extends PermissionsState {}
 
 class PermissionsLoaded extends PermissionsState {
-  final List<PermissionEntity> permissions;
+  final List<Permission> permissions;
   final bool hasReachedMax;
   final int currentPage;
   final bool isLoadingMore;
@@ -25,7 +25,7 @@ class PermissionsLoaded extends PermissionsState {
   });
 
   PermissionsLoaded copyWith({
-    List<PermissionEntity>? permissions,
+    List<Permission>? permissions,
     bool? hasReachedMax,
     int? currentPage,
     bool? isLoadingMore,
@@ -55,7 +55,7 @@ class PermissionsError extends PermissionsState {
 class PermissionLoading extends PermissionsState {}
 
 class PermissionLoaded extends PermissionsState {
-  final PermissionEntity permission;
+  final Permission permission;
 
   const PermissionLoaded(this.permission);
 
@@ -76,7 +76,7 @@ class PermissionError extends PermissionsState {
 class PermissionCreating extends PermissionsState {}
 
 class PermissionCreated extends PermissionsState {
-  final PermissionEntity permission;
+  final Permission permission;
 
   const PermissionCreated(this.permission);
 
@@ -88,7 +88,7 @@ class PermissionCreated extends PermissionsState {
 class PermissionUpdating extends PermissionsState {}
 
 class PermissionUpdated extends PermissionsState {
-  final PermissionEntity permission;
+  final Permission permission;
 
   const PermissionUpdated(this.permission);
 

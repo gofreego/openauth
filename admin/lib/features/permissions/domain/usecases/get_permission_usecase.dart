@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
+import 'package:fixnum/fixnum.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
 import '../../../../core/errors/failures.dart';
-import '../entities/permission_entity.dart';
 import '../repositories/permissions_repository.dart';
 
 class GetPermissionUseCase {
@@ -8,7 +9,7 @@ class GetPermissionUseCase {
 
   GetPermissionUseCase(this.repository);
 
-  Future<Either<Failure, PermissionEntity>> call(int permissionId) async {
+  Future<Either<Failure, Permission>> call(Int64 permissionId) async {
     return await repository.getPermission(permissionId);
   }
 }

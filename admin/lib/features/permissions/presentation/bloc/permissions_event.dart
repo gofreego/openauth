@@ -1,5 +1,5 @@
-part of 'permissions_bloc.dart';
 
+part of 'permissions_bloc.dart';
 abstract class PermissionsEvent extends Equatable {
   const PermissionsEvent();
 
@@ -23,7 +23,7 @@ class LoadPermissions extends PermissionsEvent {
 }
 
 class LoadPermission extends PermissionsEvent {
-  final int permissionId;
+  final Int64 permissionId;
 
   const LoadPermission(this.permissionId);
 
@@ -50,7 +50,7 @@ class UpdatePermission extends PermissionsEvent {
 }
 
 class DeletePermission extends PermissionsEvent {
-  final int permissionId;
+  final Int64 permissionId;
 
   const DeletePermission(this.permissionId);
 

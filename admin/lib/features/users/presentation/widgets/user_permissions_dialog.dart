@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fixnum/fixnum.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
 import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart'
     as perm_pb;
@@ -271,7 +270,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
         } else if (state is PermissionsLoaded) {
           _availablePermissions = state.permissions
               .map((entity) => permissions_pb.Permission(
-                    id: Int64(entity.id),
+                    id: entity.id,
                     name: entity.name,
                     displayName: entity.displayName,
                     description: entity.description,

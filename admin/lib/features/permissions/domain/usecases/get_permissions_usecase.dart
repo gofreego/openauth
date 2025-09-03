@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
 import '../../../../core/errors/failures.dart';
-import '../entities/permission_entity.dart';
 import '../repositories/permissions_repository.dart';
 
 class GetPermissionsUseCase {
@@ -8,7 +8,7 @@ class GetPermissionsUseCase {
 
   GetPermissionsUseCase(this.repository);
 
-  Future<Either<Failure, List<PermissionEntity>>> call({
+  Future<Either<Failure, List<Permission>>> call({
     int? limit,
     int? offset,
     String? search,

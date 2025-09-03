@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fixnum/fixnum.dart';
 import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_service.dart';
@@ -10,13 +11,13 @@ abstract class PermissionsRemoteDataSource {
     String? search,
   });
 
-  Future<pb.Permission> getPermission(int permissionId);
+  Future<pb.Permission> getPermission(Int64 permissionId);
 
   Future<pb.Permission> createPermission(pb.CreatePermissionRequest request);
 
   Future<pb.Permission> updatePermission(pb.UpdatePermissionRequest request);
 
-  Future<pb.DeletePermissionResponse> deletePermission(int permissionId);
+  Future<pb.DeletePermissionResponse> deletePermission(Int64 permissionId);
 }
 
 class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
@@ -64,7 +65,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   }
 
   @override
-  Future<pb.Permission> getPermission(int permissionId) async {
+  Future<pb.Permission> getPermission(Int64 permissionId) async {
     try {
       var response = await _apiService.get('/openauth/v1/permissions/$permissionId');
 
@@ -134,7 +135,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   }
 
   @override
-  Future<pb.DeletePermissionResponse> deletePermission(int permissionId) async {
+  Future<pb.DeletePermissionResponse> deletePermission(Int64 permissionId) async {
     try {
       await _apiService.delete('/openauth/v1/permissions/$permissionId');
 

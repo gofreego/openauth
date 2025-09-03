@@ -1,7 +1,6 @@
 // Permissions Feature Exports
 
 // Domain Layer
-export 'domain/entities/permission_entity.dart';
 export 'domain/repositories/permissions_repository.dart';
 export 'domain/usecases/get_permissions_usecase.dart';
 export 'domain/usecases/get_permission_usecase.dart';
@@ -15,8 +14,8 @@ export 'data/repositories/permissions_repository_impl.dart';
 
 // Presentation Layer - API Integration
 export 'presentation/bloc/permissions_bloc.dart';
-export 'presentation/widgets/permissions_grid.dart';
-export 'presentation/widgets/create_permission_dialog_api.dart';
+// export 'presentation/widgets/permissions_grid.dart';
+// export 'presentation/widgets/create_permission_dialog_api.dart';
 
 // Presentation Layer - Legacy (UI components using mock data)
 export 'presentation/pages/permissions_page.dart';

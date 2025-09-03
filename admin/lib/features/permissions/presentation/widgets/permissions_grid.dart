@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/permission_entity.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import '../bloc/permissions_bloc.dart';
 import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
 import 'package:fixnum/fixnum.dart';
 
 class PermissionsGrid extends StatefulWidget {
-  final List<PermissionEntity> permissions;
+  final List<Permission> permissions;
   final String searchQuery;
   final bool showSystemOnly;
   final bool showCustomOnly;
@@ -115,7 +115,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
               }
               
               final permission = filteredPermissions[index];
-              return PermissionEntityCard(
+              return PermissionCard(
                 permission: permission,
                 onTap: () => _showPermissionDetails(context, permission),
                 onAction: (action) => _handlePermissionAction(context, action, permission),
@@ -127,8 +127,8 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     );
   }
 
-  List<PermissionEntity> _getFilteredPermissions() {
-    List<PermissionEntity> filtered = List.from(widget.permissions);
+  List<Permission> _getFilteredPermissions() {
+    List<Permission> filtered = List.from(widget.permissions);
     
     // Apply search filter
     if (widget.searchQuery.isNotEmpty) {
@@ -152,12 +152,12 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     return filtered;
   }
 
-  void _showPermissionDetails(BuildContext context, PermissionEntity permission) {
+  void _showPermissionDetails(BuildContext context, Permission permission) {
     showDialog(
       context: context,
       builder: (dialogContext) => BlocProvider.value(
         value: context.read<PermissionsBloc>(),
-        child: PermissionEntityDetailsDialog(
+        child: PermissionDetailsDialog(
           permission: permission,
           onEdit: () => _handlePermissionAction(context, 'edit', permission),
         ),
@@ -165,7 +165,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     );
   }
 
-  void _handlePermissionAction(BuildContext context, String action, PermissionEntity permission) {
+  void _handlePermissionAction(BuildContext context, String action, Permission permission) {
     switch (action) {
       case 'edit':
         _showEditPermissionDialog(context, permission);
@@ -179,7 +179,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     }
   }
 
-  void _showEditPermissionDialog(BuildContext context, PermissionEntity permission) {
+  void _showEditPermissionDialog(BuildContext context, Permission permission) {
     // Create edit dialog similar to create dialog but pre-filled
     final nameController = TextEditingController(text: permission.name);
     final displayNameController = TextEditingController(text: permission.displayName);
@@ -229,7 +229,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
           FilledButton(
             onPressed: () {
               final request = pb.UpdatePermissionRequest()
-                ..id = Int64(permission.id)
+                ..id = permission.id
                 ..name = nameController.text
                 ..displayName = displayNameController.text
                 ..description = descriptionController.text;
@@ -244,7 +244,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     );
   }
 
-  void _duplicatePermission(BuildContext context, PermissionEntity permission) {
+  void _duplicatePermission(BuildContext context, Permission permission) {
     final request = pb.CreatePermissionRequest()
       ..name = '${permission.name}_copy'
       ..displayName = '${permission.displayName} (Copy)'
@@ -253,7 +253,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     context.read<PermissionsBloc>().add(CreatePermission(request));
   }
 
-  void _showDeletePermissionDialog(BuildContext context, PermissionEntity permission) {
+  void _showDeletePermissionDialog(BuildContext context, Permission permission) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -283,13 +283,13 @@ class _PermissionsGridState extends State<PermissionsGrid> {
   }
 }
 
-// Card widget for PermissionEntity
-class PermissionEntityCard extends StatelessWidget {
-  final PermissionEntity permission;
+// Card widget for Permission
+class PermissionCard extends StatelessWidget {
+  final Permission permission;
   final VoidCallback onTap;
   final void Function(String action) onAction;
 
-  const PermissionEntityCard({
+  const PermissionCard({
     super.key,
     required this.permission,
     required this.onTap,
@@ -335,16 +335,6 @@ class PermissionEntityCard extends StatelessWidget {
                             Icon(Icons.edit),
                             SizedBox(width: 8),
                             Text('Edit'),
-                          ],
-                        ),
-                      ),
-                      const PopupMenuItem(
-                        value: 'duplicate',
-                        child: Row(
-                          children: [
-                            Icon(Icons.copy),
-                            SizedBox(width: 8),
-                            Text('Duplicate'),
                           ],
                         ),
                       ),
@@ -419,7 +409,8 @@ class PermissionEntityCard extends StatelessWidget {
     return Colors.grey;
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(Int64 millis) {
+    final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
     final now = DateTime.now();
     final difference = now.difference(date);
     
@@ -435,12 +426,12 @@ class PermissionEntityCard extends StatelessWidget {
   }
 }
 
-// Details dialog for PermissionEntity
-class PermissionEntityDetailsDialog extends StatelessWidget {
-  final PermissionEntity permission;
+// Details dialog for Permission
+class PermissionDetailsDialog extends StatelessWidget {
+  final Permission permission;
   final VoidCallback onEdit;
 
-  const PermissionEntityDetailsDialog({
+  const PermissionDetailsDialog({
     super.key,
     required this.permission,
     required this.onEdit,
@@ -500,7 +491,8 @@ class PermissionEntityDetailsDialog extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(Int64 millis) {
+    final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
     return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

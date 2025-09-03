@@ -1,6 +1,7 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/permission_entity.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import '../../domain/usecases/get_permissions_usecase.dart';
 import '../../domain/usecases/get_permission_usecase.dart';
 import '../../domain/usecases/create_permission_usecase.dart';
@@ -203,7 +204,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
     result.fold(
       (failure) => emit(currentState.copyWith(isLoadingMore: false)),
       (newPermissions) {
-        final allPermissions = List<PermissionEntity>.from(currentState.permissions)
+        final allPermissions = List<Permission>.from(currentState.permissions)
           ..addAll(newPermissions);
         
         emit(PermissionsLoaded(
