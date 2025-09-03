@@ -1,55 +1,41 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
-import '../../data/models/permission_model.dart';
+import 'package:openauth/shared/widgets/info_row_with_copy.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 
 class PermissionDetailsDialog extends StatelessWidget {
-  final PermissionModel permission;
-  final VoidCallback? onEdit;
+  final Permission permission;
+  final VoidCallback onEdit;
 
   const PermissionDetailsDialog({
     super.key,
     required this.permission,
-    this.onEdit,
+    required this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return AlertDialog(
-      title: Text(permission.name),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Description:',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(permission.description),
-          const SizedBox(height: 16),
-          Text(
-            'Category:',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Chip(
-            label: Text(permission.category.displayName),
-            backgroundColor: permission.category.color.withValues(alpha: 0.1),
-            labelStyle: TextStyle(
-              color: permission.category.color,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Assigned Users: ${permission.assignedUsers}',
-            style: theme.textTheme.bodyMedium,
-          ),
-        ],
+      title: Text(permission.displayName),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 400,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDetailRow('Name', permission.name),
+            const SizedBox(height: 12),
+            _buildDetailRow('Description', permission.description),
+            const SizedBox(height: 12),
+            InfoRowWithCopy(label: 'Created', value: _formatDate(permission.createdAt)),
+            const SizedBox(height: 12),
+            InfoRowWithCopy(label: 'Last Updated', value: _formatDate(permission.updatedAt)),
+            const SizedBox(height: 12),
+            InfoRowWithCopy(label: 'Created by', value: permission.createdBy.toString(), copy: true),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -57,13 +43,36 @@ class PermissionDetailsDialog extends StatelessWidget {
           child: const Text('Close'),
         ),
         FilledButton(
-          onPressed: () {
+          onPressed: permission.isSystem?null: () {
             Navigator.of(context).pop();
-            onEdit?.call();
+            onEdit();
           },
           child: const Text('Edit'),
         ),
       ],
     );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(value),
+      ],
+    );
+  }
+
+  String _formatDate(Int64 millis) {
+    final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
+    return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

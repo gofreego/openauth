@@ -3,19 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/permissions_bloc.dart';
 import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
 
-class CreatePermissionDialogAPI extends StatefulWidget {
+class CreatePermissionDialog extends StatefulWidget {
   final VoidCallback? onPermissionCreated;
 
-  const CreatePermissionDialogAPI({
+  const CreatePermissionDialog({
     super.key,
     this.onPermissionCreated,
   });
 
   @override
-  State<CreatePermissionDialogAPI> createState() => _CreatePermissionDialogAPIState();
+  State<CreatePermissionDialog> createState() => _CreatePermissionDialogState();
 }
 
-class _CreatePermissionDialogAPIState extends State<CreatePermissionDialogAPI> {
+class _CreatePermissionDialogState extends State<CreatePermissionDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _displayNameController = TextEditingController();

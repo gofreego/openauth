@@ -1,115 +1,89 @@
 import 'package:flutter/material.dart';
-import '../../data/models/permission_model.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 
 class PermissionCard extends StatelessWidget {
-  final PermissionModel permission;
-  final VoidCallback? onTap;
-  final Function(String action, PermissionModel permission)? onAction;
+  final Permission permission;
+  final VoidCallback onTap;
+  final void Function(String action) onAction;
 
   const PermissionCard({
     super.key,
     required this.permission,
-    this.onTap,
-    this.onAction,
+    required this.onTap,
+    required this.onAction,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Card(
-      elevation: 2,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            mainAxisSize: MainAxisSize.min,
+              children: [
               Row(
                 children: [
-                  Icon(
-                    permission.category.icon,
-                    color: theme.colorScheme.primary,
+                  const Icon(
+                    Icons.security,
                     size: 24,
+                    color: Colors.orange,
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      permission.displayName,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert, size: 20),
-                    onSelected: (value) => onAction?.call(value, permission),
+                    onSelected: onAction,
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
+                        PopupMenuItem(
+                        enabled: !permission.isSystem,
                         value: 'edit',
-                        child: ListTile(
-                          leading: Icon(Icons.edit),
-                          title: Text('Edit'),
-                          contentPadding: EdgeInsets.zero,
+                        child: const Row(
+                          children: [
+                            Icon(Icons.edit),
+                            SizedBox(width: 8),
+                            Text('Edit'),
+                          ],
                         ),
                       ),
-                      const PopupMenuItem(
-                        value: 'duplicate',
-                        child: ListTile(
-                          leading: Icon(Icons.copy),
-                          title: Text('Duplicate'),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                      const PopupMenuDivider(),
-                      const PopupMenuItem(
+                      PopupMenuItem(
+                        enabled: !permission.isSystem,
                         value: 'delete',
-                        child: ListTile(
-                          leading: Icon(Icons.delete, color: Colors.red),
-                          title: Text('Delete', style: TextStyle(color: Colors.red)),
-                          contentPadding: EdgeInsets.zero,
+                        child: const Row(
+                          children: [
+                            Icon(Icons.delete, color: Colors.red),
+                            SizedBox(width: 8),
+                            Text('Delete', style: TextStyle(color: Colors.red)),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Text(
-                permission.name,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Text(
                 permission.description,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const Spacer(),
-              Row(
-                children: [
-                  Chip(
-                    label: Text(permission.category.displayName),
-                    backgroundColor: permission.category.color.withValues(alpha: 0.1),
-                    labelStyle: TextStyle(
-                      color: permission.category.color,
-                      fontSize: 11,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '${permission.assignedUsers} users',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
             ],
+            ),
           ),
         ),
-      ),
     );
   }
 }

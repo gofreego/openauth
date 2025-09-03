@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/widgets/widgets.dart';
 import '../bloc/permissions_bloc.dart';
 import '../widgets/permissions_header.dart';
-import '../widgets/permissions_search_bar.dart';
 import '../widgets/permissions_grid.dart';
-import '../widgets/create_permission_dialog_api.dart';
+import '../widgets/create_permission_dialog.dart';
 
 class PermissionsPage extends StatefulWidget {
   const PermissionsPage({super.key});
@@ -15,8 +15,6 @@ class PermissionsPage extends StatefulWidget {
 
 class _PermissionsPageState extends State<PermissionsPage> {
   String _searchQuery = '';
-  bool _showSystemOnly = false;
-  bool _showCustomOnly = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +34,10 @@ class _PermissionsPageState extends State<PermissionsPage> {
             const SizedBox(height: 32),
 
             // Search and filters
-            PermissionsSearchBar(
-              searchQuery: _searchQuery,
-              showSystemOnly: _showSystemOnly,
-              showCustomOnly: _showCustomOnly,
-              onSearchChanged: (query) {
+            CustomSearchBar(
+              showSearchIcon: false,
+              onKeyStroke: true,
+              onSearch: (query) {
                 setState(() {
                   _searchQuery = query;
                 });
@@ -56,16 +53,6 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     });
                   }
                 }
-              },
-              onSystemFilterChanged: (value) {
-                setState(() {
-                  _showSystemOnly = value;
-                });
-              },
-              onCustomFilterChanged: (value) {
-                setState(() {
-                  _showCustomOnly = value;
-                });
               },
             ),
             const SizedBox(height: 24),
@@ -113,8 +100,6 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     return PermissionsGrid(
                       permissions: state.permissions,
                       searchQuery: _searchQuery,
-                      showSystemOnly: _showSystemOnly,
-                      showCustomOnly: _showCustomOnly,
                       hasReachedMax: state.hasReachedMax,
                       isLoadingMore: state.isLoadingMore,
                       onLoadMore: () {
@@ -180,7 +165,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
       context: context,
       builder: (dialogContext) => BlocProvider.value(
         value: context.read<PermissionsBloc>(),
-        child: CreatePermissionDialogAPI(
+        child: CreatePermissionDialog(
           onPermissionCreated: () {
             // The BlocConsumer above will handle the success message
           },

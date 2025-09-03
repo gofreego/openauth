@@ -1,0 +1,171 @@
+import 'package:equatable/equatable.dart';
+import 'package:fixnum/fixnum.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../src/generated/openauth/v1/groups.pb.dart';
+import '../../domain/usecases/get_groups_usecase.dart';
+import '../../domain/usecases/get_group_usecase.dart';
+import '../../domain/usecases/create_group_usecase.dart';
+import '../../domain/usecases/update_group_usecase.dart';
+import '../../domain/usecases/delete_group_usecase.dart';
+
+part 'groups_event.dart';
+part 'groups_state.dart';
+
+class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
+  final GetGroupsUseCase getGroupsUseCase;
+  final GetGroupUseCase getGroupUseCase;
+  final CreateGroupUseCase createGroupUseCase;
+  final UpdateGroupUseCase updateGroupUseCase;
+  final DeleteGroupUseCase deleteGroupUseCase;
+
+  String? _currentSearchQuery;
+
+  GroupsBloc({
+    required this.getGroupsUseCase,
+    required this.getGroupUseCase,
+    required this.createGroupUseCase,
+    required this.updateGroupUseCase,
+    required this.deleteGroupUseCase,
+  }) : super(const GroupsInitial()) {
+    on<LoadGroups>(_onLoadGroups);
+    on<RefreshGroups>(_onRefreshGroups);
+    on<SearchGroups>(_onSearchGroups);
+    on<LoadGroup>(_onLoadGroup);
+    on<CreateGroup>(_onCreateGroup);
+    on<UpdateGroup>(_onUpdateGroup);
+    on<DeleteGroup>(_onDeleteGroup);
+  }
+
+  Future<void> _onLoadGroups(LoadGroups event, Emitter<GroupsState> emit) async {
+    try {
+      if (state is! GroupsLoaded) {
+        emit(const GroupsLoading());
+      }
+
+      _currentSearchQuery = event.search;
+
+      final result = await getGroupsUseCase.call(
+        search: event.search,
+        pageSize: event.pageSize ?? 20,
+        pageToken: event.pageToken,
+      );
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (groups) {
+          if (state is GroupsLoaded && event.pageToken != null) {
+            // This is pagination - append to existing groups
+            final currentState = state as GroupsLoaded;
+            final allGroups = List<Group>.from(currentState.groups)..addAll(groups);
+            emit(GroupsLoaded(
+              groups: allGroups,
+              currentSearch: event.search,
+              nextPageToken: null, // TODO: Get from response when pagination is implemented
+              hasReachedMax: groups.isEmpty,
+            ));
+          } else {
+            // This is initial load or refresh - replace groups
+            emit(GroupsLoaded(
+              groups: groups,
+              currentSearch: event.search,
+              nextPageToken: null, // TODO: Get from response when pagination is implemented
+              hasReachedMax: false,
+            ));
+          }
+        },
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onRefreshGroups(RefreshGroups event, Emitter<GroupsState> emit) async {
+    add(LoadGroups(search: event.search));
+  }
+
+  Future<void> _onSearchGroups(SearchGroups event, Emitter<GroupsState> emit) async {
+    _currentSearchQuery = event.query;
+    add(LoadGroups(search: event.query));
+  }
+
+  Future<void> _onLoadGroup(LoadGroup event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const GroupLoading());
+
+      final result = await getGroupUseCase.call(event.groupId);
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (group) => emit(GroupLoaded(group)),
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onCreateGroup(CreateGroup event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const GroupCreating());
+
+      final result = await createGroupUseCase.call(
+        name: event.name,
+        displayName: event.displayName,
+        description: event.description,
+      );
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (group) {
+          emit(GroupCreated(group));
+          // Refresh the groups list
+          add(LoadGroups(search: _currentSearchQuery));
+        },
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateGroup(UpdateGroup event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const GroupUpdating());
+
+      final result = await updateGroupUseCase.call(
+        groupId: event.groupId,
+        name: event.name,
+        displayName: event.displayName,
+        description: event.description,
+      );
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (group) {
+          emit(GroupUpdated(group));
+          // Refresh the groups list
+          add(LoadGroups(search: _currentSearchQuery));
+        },
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteGroup(DeleteGroup event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const GroupDeleting());
+
+      final result = await deleteGroupUseCase.call(event.groupId);
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (_) {
+          emit(const GroupDeleted());
+          // Refresh the groups list
+          add(LoadGroups(search: _currentSearchQuery));
+        },
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+}

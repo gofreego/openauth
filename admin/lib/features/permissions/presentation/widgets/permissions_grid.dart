@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/features/permissions/presentation/widgets/permission_card.dart';
+import 'package:openauth/features/permissions/presentation/widgets/permission_details_dialog.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import '../bloc/permissions_bloc.dart';
 import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
-import 'package:fixnum/fixnum.dart';
 
 class PermissionsGrid extends StatefulWidget {
   final List<Permission> permissions;
   final String searchQuery;
-  final bool showSystemOnly;
-  final bool showCustomOnly;
   final bool hasReachedMax;
   final bool isLoadingMore;
   final VoidCallback? onLoadMore;
@@ -18,8 +17,6 @@ class PermissionsGrid extends StatefulWidget {
     super.key,
     required this.permissions,
     required this.searchQuery,
-    required this.showSystemOnly,
-    required this.showCustomOnly,
     this.hasReachedMax = false,
     this.isLoadingMore = false,
     this.onLoadMore,
@@ -149,15 +146,6 @@ class _PermissionsGridState extends State<PermissionsGrid> {
       }).toList();
     }
     
-    // Apply category filters (simplified for now - could be enhanced)
-    if (widget.showSystemOnly && !widget.showCustomOnly) {
-      filtered = filtered.where((permission) => 
-        permission.name.startsWith('system.')).toList();
-    } else if (widget.showCustomOnly && !widget.showSystemOnly) {
-      filtered = filtered.where((permission) => 
-        !permission.name.startsWith('system.')).toList();
-    }
-    
     return filtered;
   }
 
@@ -278,167 +266,5 @@ class _PermissionsGridState extends State<PermissionsGrid> {
         ],
       ),
     );
-  }
-}
-
-// Card widget for Permission
-class PermissionCard extends StatelessWidget {
-  final Permission permission;
-  final VoidCallback onTap;
-  final void Function(String action) onAction;
-
-  const PermissionCard({
-    super.key,
-    required this.permission,
-    required this.onTap,
-    required this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-              children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.security,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      permission.displayName,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert, size: 20),
-                    onSelected: onAction,
-                    itemBuilder: (context) => [
-                        PopupMenuItem(
-                        enabled: !permission.isSystem,
-                        value: 'edit',
-                        child: const Row(
-                          children: [
-                            Icon(Icons.edit),
-                            SizedBox(width: 8),
-                            Text('Edit'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        enabled: !permission.isSystem,
-                        value: 'delete',
-                        child: const Row(
-                          children: [
-                            Icon(Icons.delete, color: Colors.red),
-                            SizedBox(width: 8),
-                            Text('Delete', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                permission.description,
-                style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-            ),
-          ),
-        ),
-    );
-  }
-}
-
-// Details dialog for Permission
-class PermissionDetailsDialog extends StatelessWidget {
-  final Permission permission;
-  final VoidCallback onEdit;
-
-  const PermissionDetailsDialog({
-    super.key,
-    required this.permission,
-    required this.onEdit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(permission.displayName),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 400,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDetailRow('Name', permission.name),
-            const SizedBox(height: 12),
-            _buildDetailRow('Description', permission.description),
-            const SizedBox(height: 12),
-            _buildDetailRow('Created', _formatDate(permission.createdAt)),
-            const SizedBox(height: 12),
-            _buildDetailRow('Last Updated', _formatDate(permission.updatedAt)),
-            const SizedBox(height: 12),
-            _buildDetailRow('Created by', permission.createdBy.toString()),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
-        ),
-        FilledButton(
-          onPressed: permission.isSystem?null: () {
-            Navigator.of(context).pop();
-            onEdit();
-          },
-          child: const Text('Edit'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(value),
-      ],
-    );
-  }
-
-  String _formatDate(Int64 millis) {
-    final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
-    return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

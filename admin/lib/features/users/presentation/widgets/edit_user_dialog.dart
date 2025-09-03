@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_event.dart';
@@ -303,12 +303,16 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          _buildInfoRowWithCopy('ID', widget.user.id.toString()),
-                          _buildInfoRowWithCopy('UUID', widget.user.uuid),
-                          _buildInfoRow(
-                              'Created', widget.user.formattedCreatedAt),
-                          _buildInfoRow(
-                              'Last Login', widget.user.lastLoginFormatted),
+                          InfoRowWithCopy(label:  'ID', value: widget.user.id.toString(), copy: true,),
+                          InfoRowWithCopy(label: 'UUID',value:  widget.user.uuid, copy: true,),
+                          InfoRowWithCopy(
+                              label: 'Created',
+                              value: widget.user.formattedCreatedAt,
+                          ),
+                          InfoRowWithCopy(
+                              label: 'Last Login',
+                              value: widget.user.lastLoginFormatted,
+                          ),
                         ],
                       ),
                     ),
@@ -424,83 +428,6 @@ class _EditUserDialogState extends State<EditUserDialog> {
             ),
           ],
         ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              '$label:',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRowWithCopy(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              '$label:',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-            ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    value,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => _copyToClipboard(value, label),
-                  icon: const Icon(Icons.copy, size: 16),
-                  tooltip: 'Copy $label',
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _copyToClipboard(String value, String label) {
-    Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$label copied to clipboard'),
-        duration: const Duration(seconds: 2),
       ),
     );
   }
