@@ -156,7 +156,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       title: 'Groups',
                       value: stats?.totalGroups.toString() ?? '0',
                       icon: Icons.group,
-                      color: Colors.purple,
+                      color: Colors.indigoAccent,
                       onTap: () {
                         // TODO: Navigate to groups page
                       },

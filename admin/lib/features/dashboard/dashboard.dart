@@ -3,7 +3,6 @@
 // Presentation Layer
 export 'presentation/pages/dashboard_page.dart';
 export 'presentation/widgets/stat_card.dart';
-export 'presentation/widgets/dashboard_welcome.dart';
 export 'presentation/bloc/dashboard_bloc.dart';
 export 'presentation/bloc/dashboard_event.dart';
 export 'presentation/bloc/dashboard_state.dart';

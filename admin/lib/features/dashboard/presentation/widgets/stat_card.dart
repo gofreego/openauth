@@ -26,50 +26,66 @@ class StatCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Calculate scaling factors based on available space
+            final minDimension = constraints.smallest.shortestSide;
+            final scaleFactor = (minDimension / 200).clamp(0.5, 2.0);
+            
+            // Dynamic sizes based on scale factor
+            final iconSize = (24 * scaleFactor).clamp(20, 48).toDouble();
+            final numberSize = (72 * scaleFactor).clamp(54, 150).toDouble();
+            final titleSize = (20 * scaleFactor).clamp(18, 32).toDouble();
+            final padding = (20 * scaleFactor).clamp(16, 32).toDouble();
+            
+            return Padding(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    icon,
-                    color: color,
-                    size: 24,
+                  
+                  Row(
+                    children: [
+                      Icon(
+                        icon,
+                        color: color,
+                        size: iconSize,
+                      ),
+                    ],
                   ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                  SizedBox(height: 16 * scaleFactor),
+                  Flexible(
+                    child: Center(
+                      child: Text(
+                        value,
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                          fontSize: numberSize,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    child: Icon(
-                      icon,
-                      color: color,
-                      size: 16,
+                  ),
+                  SizedBox(height: 8 * scaleFactor),
+                  Text(
+                    title,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: titleSize,
                     ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              Text(
-                value,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                title,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
