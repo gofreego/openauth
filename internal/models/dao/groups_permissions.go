@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"github.com/google/uuid"
 )
 
 // Permissions table
@@ -51,16 +50,15 @@ func (p *Permission) ToProtoPermission() *openauth_v1.Permission {
 
 // Groups (roles) table
 type Group struct {
-	ID          int64     `db:"id" json:"id"`
-	UUID        uuid.UUID `db:"uuid" json:"uuid"`
-	Name        string    `db:"name" json:"name"`
-	DisplayName string    `db:"display_name" json:"displayName"`
-	Description *string   `db:"description" json:"description,omitempty"`
-	IsSystem    bool      `db:"is_system" json:"isSystem"`
-	IsDefault   bool      `db:"is_default" json:"isDefault"`
-	CreatedBy   int64     `db:"created_by" json:"createdBy"`
-	CreatedAt   int64     `db:"created_at" json:"createdAt"`
-	UpdatedAt   int64     `db:"updated_at" json:"updatedAt"`
+	ID          int64   `db:"id" json:"id"`
+	Name        string  `db:"name" json:"name"`
+	DisplayName string  `db:"display_name" json:"displayName"`
+	Description *string `db:"description" json:"description,omitempty"`
+	IsSystem    bool    `db:"is_system" json:"isSystem"`
+	IsDefault   bool    `db:"is_default" json:"isDefault"`
+	CreatedBy   int64   `db:"created_by" json:"createdBy"`
+	CreatedAt   int64   `db:"created_at" json:"createdAt"`
+	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
 }
 
 func (g *Group) FromCreateGroupRequest(req *openauth_v1.CreateGroupRequest, createdBy int64) *Group {

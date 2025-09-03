@@ -13,7 +13,6 @@ CREATE TABLE permissions (
 -- Create groups/roles table
 CREATE TABLE groups (
     id SERIAL PRIMARY KEY,
-    uuid UUID UNIQUE DEFAULT gen_random_uuid(),
     name VARCHAR(255) UNIQUE NOT NULL,
     display_name VARCHAR(255) NOT NULL,
     description TEXT,

@@ -33,7 +33,7 @@ func (r *Repository) CreateGroup(ctx context.Context, group *dao.Group) (*dao.Gr
 // GetGroupByID retrieves a group by its ID
 func (r *Repository) GetGroupByID(ctx context.Context, id int64) (*dao.Group, error) {
 	query := `
-		SELECT id, uuid, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
 		FROM groups
 		WHERE id = $1`
 
@@ -44,7 +44,7 @@ func (r *Repository) GetGroupByID(ctx context.Context, id int64) (*dao.Group, er
 // GetGroupByUUID retrieves a group by its UUID
 func (r *Repository) GetGroupByUUID(ctx context.Context, uuid string) (*dao.Group, error) {
 	query := `
-		SELECT id, uuid, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
 		FROM groups
 		WHERE uuid = $1`
 
@@ -55,7 +55,7 @@ func (r *Repository) GetGroupByUUID(ctx context.Context, uuid string) (*dao.Grou
 // GetGroupByName retrieves a group by its name
 func (r *Repository) GetGroupByName(ctx context.Context, name string) (*dao.Group, error) {
 	query := `
-		SELECT id, uuid, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
 		FROM groups
 		WHERE name = $1`
 
@@ -96,7 +96,7 @@ func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter
 
 	// Get groups with pagination
 	query := fmt.Sprintf(`
-		SELECT id, uuid, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
 		FROM groups
 		%s
 		ORDER BY created_at DESC
@@ -147,7 +147,7 @@ func (r *Repository) UpdateGroup(ctx context.Context, id int64, updates map[stri
 		UPDATE groups
 		SET %s
 		WHERE id = $%d
-		RETURNING id, uuid, name, display_name, description, is_system, is_default, created_at, updated_at`,
+		RETURNING id, name, display_name, description, is_system, is_default, created_at, updated_at`,
 		strings.Join(setParts, ", "), argIndex)
 
 	args = append(args, id)
@@ -271,7 +271,7 @@ func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUs
 func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, error) {
 	// Get groups with pagination
 	query := `
-		SELECT g.id, g.uuid, g.name, g.display_name, g.description, g.is_system, g.is_default, g.created_at, g.updated_at
+		SELECT g.id, g.name, g.display_name, g.description, g.is_system, g.is_default, g.created_at, g.updated_at
 		FROM groups g
 		INNER JOIN user_groups ug ON g.id = ug.group_id
 		WHERE ug.user_id = $1

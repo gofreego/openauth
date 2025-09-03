@@ -101,6 +101,7 @@ func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsReq
 	// Get groups from repository
 	groups, err := s.repo.ListGroups(ctx, filters)
 	if err != nil {
+		logger.Error(ctx, "Failed to list groups: %v", err)
 		return nil, status.Error(codes.Internal, "failed to list groups")
 	}
 
@@ -124,6 +125,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 	// Get group to update
 	group, err := s.repo.GetGroupByID(ctx, req.Id)
 	if err != nil {
+		logger.Error(ctx, "Failed to get group by ID=%d: %v", req.Id, err)
 		return nil, status.Error(codes.NotFound, "group not found")
 	}
 
@@ -141,6 +143,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 			// Check if new name already exists
 			exists, err := s.repo.CheckGroupNameExists(ctx, newName)
 			if err != nil {
+				logger.Error(ctx, "Failed to check group name availability: %v", err)
 				return nil, status.Error(codes.Internal, "failed to check group name availability")
 			}
 			if exists {
@@ -172,6 +175,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 	// Update group in repository
 	updatedGroup, err := s.repo.UpdateGroup(ctx, group.ID, updates)
 	if err != nil {
+		logger.Error(ctx, "Failed to update group: %v", err)
 		return nil, status.Error(codes.Internal, "failed to update group")
 	}
 
@@ -201,6 +205,7 @@ func (s *Service) DeleteGroup(ctx context.Context, req *openauth_v1.DeleteGroupR
 	// Delete group from repository
 	err = s.repo.DeleteGroup(ctx, group.ID)
 	if err != nil {
+		logger.Error(ctx, "Failed to delete group: %v", err)
 		return nil, status.Error(codes.Internal, "failed to delete group")
 	}
 
@@ -274,6 +279,7 @@ func (s *Service) RemoveUserFromGroup(ctx context.Context, req *openauth_v1.Remo
 	// Check if user is in the group
 	isInGroup, err := s.repo.IsUserInGroup(ctx, req.UserId, req.GroupId)
 	if err != nil {
+		logger.Error(ctx, "Failed to check group membership for userID=%d, groupID=%d: %v", req.UserId, req.GroupId, err)
 		return nil, status.Error(codes.Internal, "failed to check group membership")
 	}
 	if !isInGroup {
@@ -283,6 +289,7 @@ func (s *Service) RemoveUserFromGroup(ctx context.Context, req *openauth_v1.Remo
 	// Remove user from group
 	err = s.repo.RemoveUserFromGroup(ctx, req.UserId, req.GroupId)
 	if err != nil {
+		logger.Error(ctx, "Failed to remove userID=%d from groupID=%d: %v", req.UserId, req.GroupId, err)
 		return nil, status.Error(codes.Internal, "failed to remove user from group")
 	}
 
@@ -312,6 +319,7 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 	filters := filter.NewGroupUsersFilter(req.GroupId, limit, offset)
 	users, err := s.repo.ListGroupUsers(ctx, filters)
 	if err != nil {
+		logger.Error(ctx, "Failed to list group users: %v", err)
 		return nil, status.Error(codes.Internal, "failed to list group users")
 	}
 
@@ -347,6 +355,7 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 	filters := filter.NewUserGroupsFilter(req.UserId, limit, offset)
 	groups, err := s.repo.ListUserGroups(ctx, filters)
 	if err != nil {
+		logger.Error(ctx, "Failed to list user groups: %v", err)
 		return nil, status.Error(codes.Internal, "failed to list user groups")
 	}
 
