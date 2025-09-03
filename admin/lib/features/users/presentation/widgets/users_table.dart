@@ -247,13 +247,13 @@ class UsersTable extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('$capitalizedAction User'),
-        content: Text('Are you sure you want to $action ${user.displayName}?'),
+        content: Text('Are you sure you want to $action ? ${user.displayName} will${action == 'activate'?'':' not'} be able to log in!'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Cancel'),
           ),
-          FilledButton(
+          OutlinedButton(
             onPressed: () {
               Navigator.of(context).pop();
               final bloc = context.read<UsersBloc>();
@@ -269,6 +269,10 @@ class UsersTable extends StatelessWidget {
                 SnackBar(content: Text('${user.displayName} ${action}d successfully')),
               );
             },
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.orange),
+              foregroundColor: Colors.orange,
+            ),
             child: Text(capitalizedAction),
           ),
         ],

@@ -64,6 +64,11 @@ class _EditUserDialogState extends State<EditUserDialog> {
     return UserUtils.getInitials(widget.user);
   }
 
+  /// Check if the current user is the admin user
+  bool _isAdminUser() {
+    return widget.user.username.toLowerCase() == 'admin';
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<UsersBloc, UsersState>(
@@ -130,15 +135,20 @@ class _EditUserDialogState extends State<EditUserDialog> {
             ),
           ],
         ),
-        content: SizedBox(
-          width: 600,
-          height: MediaQuery.of(context).size.height * 0.8, // Use 80% of screen height
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 600,
+            maxHeight: MediaQuery.of(context).size.height * 0.8,
+          ),
+          child: IntrinsicHeight(
+            child: SizedBox(
+              width: 600,
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                   const SizedBox(height: 16),
                    TextFormField(
                     controller: _nameController,
@@ -163,25 +173,30 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   const SizedBox(
                     height: 16,
                   ),
-                  TextFormField(
-                    controller: _usernameController,
-                    readOnly: !_isEditMode,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.person_outline),
-                      filled: !_isEditMode,
-                      fillColor: !_isEditMode ? Colors.grey[100] : null,
+                  Tooltip(
+                    message: _isAdminUser() && _isEditMode 
+                        ? 'Admin username cannot be changed'
+                        : '',
+                    child: TextFormField(
+                      controller: _usernameController,
+                      readOnly: !_isEditMode || _isAdminUser(),
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.person_outline),
+                        filled: !_isEditMode || _isAdminUser(),
+                        fillColor: (!_isEditMode || _isAdminUser()) ? Colors.grey[100] : null,
+                      ),
+                      validator: _isEditMode && !_isAdminUser() ? (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Username is required';
+                        }
+                        if (value.length < 3) {
+                          return 'Username must be at least 3 characters';
+                        }
+                        return null;
+                      } : null,
                     ),
-                    validator: _isEditMode ? (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Username is required';
-                      }
-                      if (value.length < 3) {
-                        return 'Username must be at least 3 characters';
-                      }
-                      return null;
-                    } : null,
                   ),
                   const SizedBox(height: 16),
                  
@@ -262,42 +277,6 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     } : null,
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Switch(
-                        value: _isActive,
-                        onChanged: _isEditMode ? (value) {
-                          setState(() {
-                            _isActive = value;
-                          });
-                        } : null,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Active Status',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            Text(
-                              _isActive
-                                  ? 'User is active and can log in'
-                                  : 'User is inactive and cannot log in',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
                   // User info card - only show in view mode
                   if (!_isEditMode) ...[
                     Container(
@@ -353,27 +332,41 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           icon: const Icon(Icons.schedule_outlined, size: 16),
                           label: const Text('Sessions'),
                         ),
-                        ElevatedButton.icon(
-                          onPressed: () => widget.onUserAction?.call(
-                            widget.user.isActive ? 'deactivate' : 'activate', 
-                            widget.user, 
-                            context
+                        Tooltip(
+                          message: _isAdminUser() 
+                              ? 'Admin user cannot be deactivated'
+                              : '',
+                          child: OutlinedButton.icon(
+                            onPressed: _isAdminUser() ? null : () => widget.onUserAction?.call(
+                              widget.user.isActive ? 'deactivate' : 'activate', 
+                              widget.user, 
+                              context
+                            ),
+                        style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.orange),
+                              foregroundColor: Colors.orange,
+                            ),
+                            icon: Icon(
+                              widget.user.isActive ? Icons.block_outlined : Icons.check_circle_outline,
+                              size: 16,
+                            ),
+                            label: Text(widget.user.isActive ? 'Deactivate' : 'Activate'),
                           ),
-                          icon: Icon(
-                            widget.user.isActive ? Icons.block_outlined : Icons.check_circle_outline,
-                            size: 16,
-                          ),
-                          label: Text(widget.user.isActive ? 'Deactivate' : 'Activate'),
                         ),
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            widget.onUserAction?.call('delete', widget.user, context);
-                          },
-                          icon: const Icon(Icons.delete_outline, size: 16, color: Colors.red),
-                          label: const Text('Delete', style: TextStyle(color: Colors.red)),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.red),
-                            foregroundColor: Colors.red,
+                        Tooltip(
+                          message: _isAdminUser() 
+                              ? 'Admin user cannot be deleted'
+                              : '',
+                          child: OutlinedButton.icon(
+                            onPressed: _isAdminUser() ? null : () {
+                              widget.onUserAction?.call('delete', widget.user, context);
+                            },
+                            icon: const Icon(Icons.delete_outline, size: 16, color: Colors.red),
+                            label: const Text('Delete', style: TextStyle(color: Colors.red)),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.red),
+                              foregroundColor: Colors.red,
+                            ),
                           ),
                         ),
                       ],
