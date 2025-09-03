@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../bloc/users_bloc.dart';
@@ -11,11 +12,15 @@ import '../../domain/utils/user_utils.dart';
 class EditUserDialog extends StatefulWidget {
   final pb.User user;
   final VoidCallback? onUserUpdated;
+  final Function(String action, pb.User user, BuildContext context)? onUserAction;
+  final bool isViewMode;
 
   const EditUserDialog({
     super.key,
     required this.user,
     this.onUserUpdated,
+    this.onUserAction,
+    this.isViewMode = false,
   });
 
   @override
@@ -30,6 +35,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _avatarUrlController;
   late bool _isActive;
+  late bool _isEditMode;
 
   @override
   void initState() {
@@ -40,6 +46,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     _nameController = TextEditingController(text: widget.user.name);
     _avatarUrlController = TextEditingController(text: widget.user.avatarUrl);
     _isActive = widget.user.isActive;
+    _isEditMode = !widget.isViewMode;
   }
 
   @override
@@ -62,7 +69,16 @@ class _EditUserDialogState extends State<EditUserDialog> {
     return BlocListener<UsersBloc, UsersState>(
       listener: (context, state) {
         if (state is UserUpdated) {
-          Navigator.of(context).pop();
+          setState(() {
+            _isEditMode = false;
+            // Update controllers with new values
+            _usernameController.text = state.user.username;
+            _emailController.text = state.user.email;
+            _phoneController.text = state.user.phone;
+            _nameController.text = state.user.name;
+            _avatarUrlController.text = state.user.avatarUrl;
+            _isActive = state.user.isActive;
+          });
           widget.onUserUpdated?.call();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -101,7 +117,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Edit User',
+                  Text(_isEditMode ? 'Edit User' : 'User Details',
                       style: Theme.of(context).textTheme.headlineSmall),
                   Text(
                     widget.user.displayName,
@@ -115,8 +131,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
           ],
         ),
         content: SizedBox(
-          width: 500,
-          height: 600, // Set a fixed height to enable scrolling
+          width: 600,
+          height: MediaQuery.of(context).size.height * 0.8, // Use 80% of screen height
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -126,32 +142,38 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   const SizedBox(height: 16),
                    TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
+                    readOnly: !_isEditMode,
+                    decoration: InputDecoration(
                       labelText: 'Name',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.badge_outlined),
-                      helperText: 'The name shown to other users',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.badge_outlined),
+                      helperText: _isEditMode ? 'The name shown to other users' : null,
+                      filled: !_isEditMode,
+                      fillColor: !_isEditMode ? Colors.grey[100] : null,
                     ),
-                    validator: (value) {
+                    validator: _isEditMode ? (value) {
                       if (value != null &&
                           value.trim().isNotEmpty &&
                           value.trim().length < 3) {
                         return 'Display name must be at least 3 characters';
                       }
                       return null;
-                    },
+                    } : null,
                   ),
                   const SizedBox(
                     height: 16,
                   ),
                   TextFormField(
                     controller: _usernameController,
-                    decoration: const InputDecoration(
+                    readOnly: !_isEditMode,
+                    decoration: InputDecoration(
                       labelText: 'Username',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.person_outline),
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.person_outline),
+                      filled: !_isEditMode,
+                      fillColor: !_isEditMode ? Colors.grey[100] : null,
                     ),
-                    validator: (value) {
+                    validator: _isEditMode ? (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Username is required';
                       }
@@ -159,19 +181,22 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         return 'Username must be at least 3 characters';
                       }
                       return null;
-                    },
+                    } : null,
                   ),
                   const SizedBox(height: 16),
                  
                   TextFormField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
+                    readOnly: !_isEditMode,
+                    decoration: InputDecoration(
                       labelText: 'Email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email_outlined),
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      filled: !_isEditMode,
+                      fillColor: !_isEditMode ? Colors.grey[100] : null,
                     ),
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
+                    validator: _isEditMode ? (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Email is required';
                       }
@@ -180,34 +205,40 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         return 'Please enter a valid email';
                       }
                       return null;
-                    },
+                    } : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _phoneController,
-                    decoration: const InputDecoration(
+                    readOnly: !_isEditMode,
+                    decoration: InputDecoration(
                       labelText: 'Phone (optional)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.phone_outlined),
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                      filled: !_isEditMode,
+                      fillColor: !_isEditMode ? Colors.grey[100] : null,
                     ),
                     keyboardType: TextInputType.phone,
-                    validator: (value) {
+                    validator: _isEditMode ? (value) {
                       if (value != null && value.isNotEmpty) {
                         if (!RegExp(r'^\+?[\d\s\-\(\)]+$').hasMatch(value)) {
                           return 'Please enter a valid phone number';
                         }
                       }
                       return null;
-                    },
+                    } : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _avatarUrlController,
+                    readOnly: !_isEditMode,
                     decoration: InputDecoration(
                       labelText: 'Avatar URL (optional)',
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.image_outlined),
-                      helperText: 'URL to the user\'s profile picture',
+                      helperText: _isEditMode ? 'URL to the user\'s profile picture' : null,
+                      filled: !_isEditMode,
+                      fillColor: !_isEditMode ? Colors.grey[100] : null,
                       suffixIcon: _avatarUrlController.text.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.visibility),
@@ -217,10 +248,10 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           : null,
                     ),
                     keyboardType: TextInputType.url,
-                    onChanged: (value) {
+                    onChanged: _isEditMode ? (value) {
                       setState(() {}); // Rebuild to show/hide preview button
-                    },
-                    validator: (value) {
+                    } : null,
+                    validator: _isEditMode ? (value) {
                       if (value != null && value.isNotEmpty) {
                         final uri = Uri.tryParse(value);
                         if (uri == null || !uri.hasAbsolutePath) {
@@ -228,18 +259,18 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         }
                       }
                       return null;
-                    },
+                    } : null,
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Switch(
                         value: _isActive,
-                        onChanged: (value) {
+                        onChanged: _isEditMode ? (value) {
                           setState(() {
                             _isActive = value;
                           });
-                        },
+                        } : null,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -267,68 +298,141 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // User info card
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
+                  // User info card - only show in view mode
+                  if (!_isEditMode) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color:
+                            Theme.of(context).colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.info_outline,
+                                  size: 16, color: Colors.grey[600]),
+                              const SizedBox(width: 8),
+                              Text(
+                                'User Information',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          _buildInfoRowWithCopy('ID', widget.user.id.toString()),
+                          _buildInfoRowWithCopy('UUID', widget.user.uuid),
+                          _buildInfoRow(
+                              'Created', widget.user.formattedCreatedAt),
+                          _buildInfoRow(
+                              'Last Login', widget.user.lastLoginFormatted),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 16),
+                    if (!_isEditMode) ...[
+                    // Action buttons in view mode
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.info_outline,
-                                size: 16, color: Colors.grey[600]),
-                            const SizedBox(width: 8),
-                            Text(
-                              'User Information',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
+                        ElevatedButton.icon(
+                          onPressed: () => widget.onUserAction?.call('permissions', widget.user, context),
+                          icon: const Icon(Icons.security_outlined, size: 16),
+                          label: const Text('Permissions'),
                         ),
-                        const SizedBox(height: 8),
-                        _buildInfoRow('UUID', widget.user.uuid),
-                        _buildInfoRow(
-                            'Created', widget.user.formattedCreatedAt),
-                        _buildInfoRow(
-                            'Last Login', widget.user.lastLoginFormatted),
+                        ElevatedButton.icon(
+                          onPressed: () => widget.onUserAction?.call('sessions', widget.user, context),
+                          icon: const Icon(Icons.schedule_outlined, size: 16),
+                          label: const Text('Sessions'),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () => widget.onUserAction?.call(
+                            widget.user.isActive ? 'deactivate' : 'activate', 
+                            widget.user, 
+                            context
+                          ),
+                          icon: Icon(
+                            widget.user.isActive ? Icons.block_outlined : Icons.check_circle_outline,
+                            size: 16,
+                          ),
+                          label: Text(widget.user.isActive ? 'Deactivate' : 'Activate'),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            widget.onUserAction?.call('delete', widget.user, context);
+                          },
+                          icon: const Icon(Icons.delete_outline, size: 16, color: Colors.red),
+                          label: const Text('Delete', style: TextStyle(color: Colors.red)),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.red),
+                            foregroundColor: Colors.red,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 24),
+                  ],
+                  ],
                 ],
               ),
             ),
           ),
         ),
         actions: [
+          if (!_isEditMode)
+            TextButton.icon(
+              onPressed: () {
+                setState(() {
+                  _isEditMode = true;
+                });
+              },
+              icon: const Icon(Icons.edit_outlined, size: 16),
+              label: const Text('Edit'),
+            ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text('Close'),
           ),
-          BlocBuilder<UsersBloc, UsersState>(
-            builder: (context, state) {
-              final isUpdating = state is UserUpdating;
-              return FilledButton(
-                onPressed: isUpdating ? null : _handleUpdateUser,
-                child: isUpdating
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Update User'),
-              );
-            },
-          ),
+          if (_isEditMode) ...[
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _isEditMode = false;
+                  // Reset form to original values
+                  _usernameController.text = widget.user.username;
+                  _emailController.text = widget.user.email;
+                  _phoneController.text = widget.user.phone;
+                  _nameController.text = widget.user.name;
+                  _avatarUrlController.text = widget.user.avatarUrl;
+                  _isActive = widget.user.isActive;
+                });
+              },
+              child: const Text('Cancel'),
+            ),
+            BlocBuilder<UsersBloc, UsersState>(
+              builder: (context, state) {
+                final isUpdating = state is UserUpdating;
+                return FilledButton(
+                  onPressed: isUpdating ? null : _handleUpdateUser,
+                  child: isUpdating
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Update User'),
+                );
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -357,6 +461,56 @@ class _EditUserDialogState extends State<EditUserDialog> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRowWithCopy(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    value,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => _copyToClipboard(value, label),
+                  icon: const Icon(Icons.copy, size: 16),
+                  tooltip: 'Copy $label',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _copyToClipboard(String value, String label) {
+    Clipboard.setData(ClipboardData(text: value));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$label copied to clipboard'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

@@ -64,39 +64,53 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final searchBar = TextField(
-      controller: _controller,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: BorderSide.none,
+    final searchBar = Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          width: 1,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-            width: 2,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
           ),
-        ),
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        suffixIcon: widget.showSearchIcon
-            ? IconButton(
-                icon: const Icon(Icons.search, size: 20),
-                onPressed: _performSearch,
-                tooltip: 'Search',
-                iconSize: 20,
-              )
-            : null,
+        ],
       ),
-      onSubmitted: (_) => _performSearch(),
-      onChanged: widget.onKeyStroke ? (value) => widget.onSearch?.call(value) : null,
+      child: TextField(
+        controller: _controller,
+        decoration: InputDecoration(
+          hintText: widget.hintText,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(28),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(28),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(28),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surface,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          suffixIcon: widget.showSearchIcon
+              ? IconButton(
+                  icon: const Icon(Icons.search, size: 20),
+                  onPressed: _performSearch,
+                  tooltip: 'Search',
+                  iconSize: 20,
+                )
+              : null,
+        ),
+        onSubmitted: (_) => _performSearch(),
+        onChanged: widget.onKeyStroke ? (value) => widget.onSearch?.call(value) : null,
+      ),
     );
 
     return widget.width != null 
