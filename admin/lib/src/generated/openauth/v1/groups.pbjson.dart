@@ -19,6 +19,7 @@ const Group$json = const {
     const {'1': 'created_by', '3': 5, '4': 1, '5': 3, '10': 'createdBy'},
     const {'1': 'created_at', '3': 6, '4': 1, '5': 3, '10': 'createdAt'},
     const {'1': 'updated_at', '3': 7, '4': 1, '5': 3, '10': 'updatedAt'},
+    const {'1': 'is_system', '3': 8, '4': 1, '5': 8, '10': 'isSystem'},
   ],
   '8': const [
     const {'1': '_description'},
@@ -26,7 +27,7 @@ const Group$json = const {
 };
 
 /// Descriptor for `Group`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoA1ICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxkaXNwbGF5X25hbWUYAyABKAlSC2Rpc3BsYXlOYW1lEiUKC2Rlc2NyaXB0aW9uGAQgASgJSABSC2Rlc2NyaXB0aW9uiAEBEh0KCmNyZWF0ZWRfYnkYBSABKANSCWNyZWF0ZWRCeRIdCgpjcmVhdGVkX2F0GAYgASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgHIAEoA1IJdXBkYXRlZEF0Qg4KDF9kZXNjcmlwdGlvbg==');
+final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoA1ICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxkaXNwbGF5X25hbWUYAyABKAlSC2Rpc3BsYXlOYW1lEiUKC2Rlc2NyaXB0aW9uGAQgASgJSABSC2Rlc2NyaXB0aW9uiAEBEh0KCmNyZWF0ZWRfYnkYBSABKANSCWNyZWF0ZWRCeRIdCgpjcmVhdGVkX2F0GAYgASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgHIAEoA1IJdXBkYXRlZEF0EhsKCWlzX3N5c3RlbRgIIAEoCFIIaXNTeXN0ZW1CDgoMX2Rlc2NyaXB0aW9u');
 @$core.Deprecated('Use createGroupRequestDescriptor instead')
 const CreateGroupRequest$json = const {
   '1': 'CreateGroupRequest',
