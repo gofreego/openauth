@@ -14,13 +14,13 @@ import (
 // CreateGroup creates a new group in the database
 func (r *Repository) CreateGroup(ctx context.Context, group *dao.Group) (*dao.Group, error) {
 	query := `
-		INSERT INTO groups (name, display_name, description, is_system, is_default, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO groups (name, display_name, description, is_system, is_default, created_by, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id`
 
 	err := r.connManager.Primary().QueryRowContext(ctx, query,
 		group.Name, group.DisplayName, group.Description,
-		group.IsSystem, group.IsDefault, group.CreatedAt, group.UpdatedAt,
+		group.IsSystem, group.IsDefault, group.CreatedBy, group.CreatedAt, group.UpdatedAt,
 	).Scan(&group.ID)
 
 	if err != nil {
@@ -33,7 +33,7 @@ func (r *Repository) CreateGroup(ctx context.Context, group *dao.Group) (*dao.Gr
 // GetGroupByID retrieves a group by its ID
 func (r *Repository) GetGroupByID(ctx context.Context, id int64) (*dao.Group, error) {
 	query := `
-		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_by, created_at, updated_at
 		FROM groups
 		WHERE id = $1`
 
@@ -44,7 +44,7 @@ func (r *Repository) GetGroupByID(ctx context.Context, id int64) (*dao.Group, er
 // GetGroupByUUID retrieves a group by its UUID
 func (r *Repository) GetGroupByUUID(ctx context.Context, uuid string) (*dao.Group, error) {
 	query := `
-		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_by, created_at, updated_at
 		FROM groups
 		WHERE uuid = $1`
 
@@ -55,7 +55,7 @@ func (r *Repository) GetGroupByUUID(ctx context.Context, uuid string) (*dao.Grou
 // GetGroupByName retrieves a group by its name
 func (r *Repository) GetGroupByName(ctx context.Context, name string) (*dao.Group, error) {
 	query := `
-		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_by, created_at, updated_at
 		FROM groups
 		WHERE name = $1`
 
@@ -96,7 +96,7 @@ func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter
 
 	// Get groups with pagination
 	query := fmt.Sprintf(`
-		SELECT id, name, display_name, description, is_system, is_default, created_at, updated_at
+		SELECT id, name, display_name, description, is_system, is_default, created_by, created_at, updated_at
 		FROM groups
 		%s
 		ORDER BY created_at DESC
@@ -147,7 +147,7 @@ func (r *Repository) UpdateGroup(ctx context.Context, id int64, updates map[stri
 		UPDATE groups
 		SET %s
 		WHERE id = $%d
-		RETURNING id, name, display_name, description, is_system, is_default, created_at, updated_at`,
+		RETURNING id, name, display_name, description, is_system, is_default, created_by, created_at, updated_at`,
 		strings.Join(setParts, ", "), argIndex)
 
 	args = append(args, id)
@@ -319,7 +319,7 @@ func (r *Repository) scanGroup(row *sql.Row) (*dao.Group, error) {
 	err := row.Scan(
 		&group.ID, &group.Name, &group.DisplayName,
 		&group.Description, &group.IsSystem, &group.IsDefault,
-		&group.CreatedAt, &group.UpdatedAt)
+		&group.CreatedBy, &group.CreatedAt, &group.UpdatedAt)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -336,7 +336,7 @@ func (r *Repository) scanGroupFromRows(rows *sql.Rows) (*dao.Group, error) {
 	var group dao.Group
 	err := rows.Scan(
 		&group.ID, &group.Name, &group.DisplayName,
-		&group.Description, &group.IsSystem, &group.IsDefault,
+		&group.Description, &group.IsSystem, &group.IsDefault, &group.CreatedBy,
 		&group.CreatedAt, &group.UpdatedAt)
 
 	if err != nil {

@@ -88,40 +88,10 @@ class GroupCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '0 members', // TODO: Get actual member count
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  if (group.hasCreatedAt())
-                    Text(
-                      _formatDate(group.createdAt),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                ],
-              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  String _formatDate(dynamic timestamp) {
-    if (timestamp == null || timestamp == 0) return '—';
-    
-    try {
-      final date = DateTime.fromMillisecondsSinceEpoch(timestamp.toInt() * 1000);
-      return '${date.day}/${date.month}/${date.year}';
-    } catch (e) {
-      return '—';
-    }
   }
 }
