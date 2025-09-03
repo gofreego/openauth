@@ -13,15 +13,11 @@ class GroupsRepositoryImpl implements GroupsRepository {
 
   @override
   Future<Either<Failure, List<Group>>> getGroups({
-    String? search,
-    int? pageSize,
-    String? pageToken,
+   required ListGroupsRequest request,
   }) async {
     try {
       final result = await remoteDataSource.getGroups(
-        search: search,
-        pageSize: pageSize,
-        pageToken: pageToken,
+       request: request
       );
       return Right(result.groups);
     } on ServerException catch (e) {
@@ -49,15 +45,11 @@ class GroupsRepositoryImpl implements GroupsRepository {
 
   @override
   Future<Either<Failure, Group>> createGroup({
-    required String name,
-    required String displayName,
-    String? description,
+    required CreateGroupRequest request,
   }) async {
     try {
       final result = await remoteDataSource.createGroup(
-        name: name,
-        displayName: displayName,
-        description: description,
+        request: request
       );
       return Right(result);
     } on ServerException catch (e) {
@@ -71,17 +63,11 @@ class GroupsRepositoryImpl implements GroupsRepository {
 
   @override
   Future<Either<Failure, Group>> updateGroup({
-    required Int64 groupId,
-    required String name,
-    required String displayName,
-    String? description,
+    required UpdateGroupRequest request,
   }) async {
     try {
       final result = await remoteDataSource.updateGroup(
-        groupId: groupId,
-        name: name,
-        displayName: displayName,
-        description: description,
+          request: request
       );
       return Right(result);
     } on ServerException catch (e) {
@@ -123,13 +109,11 @@ class GroupsRepositoryImpl implements GroupsRepository {
 
   @override
   Future<Either<Failure, void>> assignUserToGroup({
-    required Int64 groupId,
-    required Int64 userId,
+    required AssignUserToGroupRequest request,
   }) async {
     try {
       await remoteDataSource.assignUserToGroup(
-        groupId: groupId,
-        userId: userId,
+        request: request,
       );
       return const Right(null);
     } on ServerException catch (e) {
@@ -143,13 +127,11 @@ class GroupsRepositoryImpl implements GroupsRepository {
 
   @override
   Future<Either<Failure, void>> removeUserFromGroup({
-    required Int64 groupId,
-    required Int64 userId,
+    required RemoveUserFromGroupRequest request,
   }) async {
     try {
       await remoteDataSource.removeUserFromGroup(
-        groupId: groupId,
-        userId: userId,
+        request: request
       );
       return const Right(null);
     } on ServerException catch (e) {

@@ -9,14 +9,10 @@ class CreateGroupUseCase {
   CreateGroupUseCase(this.repository);
 
   Future<Either<Failure, Group>> call({
-    required String name,
-    required String displayName,
-    String? description,
+    required CreateGroupRequest request,
   }) async {
     return await repository.createGroup(
-      name: name,
-      displayName: displayName,
-      description: description,
+      request: request,
     );
   }
 }

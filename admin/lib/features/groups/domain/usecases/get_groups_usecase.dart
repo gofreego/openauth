@@ -9,14 +9,10 @@ class GetGroupsUseCase {
   GetGroupsUseCase(this.repository);
 
   Future<Either<Failure, List<Group>>> call({
-    String? search,
-    int? pageSize,
-    String? pageToken,
+   required ListGroupsRequest request,
   }) async {
     return await repository.getGroups(
-      search: search,
-      pageSize: pageSize,
-      pageToken: pageToken,
+      request: request,
     );
   }
 }

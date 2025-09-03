@@ -9,17 +9,17 @@ abstract class GroupsEvent extends Equatable {
 
 class LoadGroups extends GroupsEvent {
   final String? search;
-  final int? pageSize;
-  final String? pageToken;
+  final int? limit;
+  final int? offset;
 
   const LoadGroups({
     this.search,
-    this.pageSize,
-    this.pageToken,
+    this.limit,
+    this.offset,
   });
 
   @override
-  List<Object?> get props => [search, pageSize, pageToken];
+  List<Object?> get props => [search, limit, offset];
 }
 
 class RefreshGroups extends GroupsEvent {

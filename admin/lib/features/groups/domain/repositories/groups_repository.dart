@@ -5,24 +5,17 @@ import '../../../../src/generated/openauth/v1/groups.pb.dart';
 
 abstract class GroupsRepository {
   Future<Either<Failure, List<Group>>> getGroups({
-    String? search,
-    int? pageSize,
-    String? pageToken,
+      required ListGroupsRequest request,
   });
 
   Future<Either<Failure, Group>> getGroup(Int64 groupId);
 
   Future<Either<Failure, Group>> createGroup({
-    required String name,
-    required String displayName,
-    String? description,
+    required CreateGroupRequest request,
   });
 
   Future<Either<Failure, Group>> updateGroup({
-    required Int64 groupId,
-    required String name,
-    required String displayName,
-    String? description,
+    required UpdateGroupRequest request,
   });
 
   Future<Either<Failure, void>> deleteGroup(Int64 groupId);
@@ -30,12 +23,10 @@ abstract class GroupsRepository {
   Future<Either<Failure, List<GroupUser>>> getGroupUsers(Int64 groupId);
 
   Future<Either<Failure, void>> assignUserToGroup({
-    required Int64 groupId,
-    required Int64 userId,
+  required AssignUserToGroupRequest request,
   });
 
   Future<Either<Failure, void>> removeUserFromGroup({
-    required Int64 groupId,
-    required Int64 userId,
+    required RemoveUserFromGroupRequest request,
   });
 }

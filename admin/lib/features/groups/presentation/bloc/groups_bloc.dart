@@ -36,7 +36,8 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     on<DeleteGroup>(_onDeleteGroup);
   }
 
-  Future<void> _onLoadGroups(LoadGroups event, Emitter<GroupsState> emit) async {
+  Future<void> _onLoadGroups(
+      LoadGroups event, Emitter<GroupsState> emit) async {
     try {
       if (state is! GroupsLoaded) {
         emit(const GroupsLoading());
@@ -45,22 +46,26 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
       _currentSearchQuery = event.search;
 
       final result = await getGroupsUseCase.call(
-        search: event.search,
-        pageSize: event.pageSize ?? 20,
-        pageToken: event.pageToken,
+      request:   ListGroupsRequest(
+          search: _currentSearchQuery,
+          limit: event.limit ?? 20,
+          offset: event.offset ?? 0,
+        ),
       );
 
       result.fold(
         (failure) => emit(GroupsError(failure.message)),
         (groups) {
-          if (state is GroupsLoaded && event.pageToken != null) {
+          if (state is GroupsLoaded && event.offset != null) {
             // This is pagination - append to existing groups
             final currentState = state as GroupsLoaded;
-            final allGroups = List<Group>.from(currentState.groups)..addAll(groups);
+            final allGroups = List<Group>.from(currentState.groups)
+              ..addAll(groups);
             emit(GroupsLoaded(
               groups: allGroups,
               currentSearch: event.search,
-              nextPageToken: null, // TODO: Get from response when pagination is implemented
+              nextPageToken:
+                  null, // TODO: Get from response when pagination is implemented
               hasReachedMax: groups.isEmpty,
             ));
           } else {
@@ -68,7 +73,8 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
             emit(GroupsLoaded(
               groups: groups,
               currentSearch: event.search,
-              nextPageToken: null, // TODO: Get from response when pagination is implemented
+              nextPageToken:
+                  null, // TODO: Get from response when pagination is implemented
               hasReachedMax: false,
             ));
           }
@@ -79,11 +85,13 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     }
   }
 
-  Future<void> _onRefreshGroups(RefreshGroups event, Emitter<GroupsState> emit) async {
+  Future<void> _onRefreshGroups(
+      RefreshGroups event, Emitter<GroupsState> emit) async {
     add(LoadGroups(search: event.search));
   }
 
-  Future<void> _onSearchGroups(SearchGroups event, Emitter<GroupsState> emit) async {
+  Future<void> _onSearchGroups(
+      SearchGroups event, Emitter<GroupsState> emit) async {
     _currentSearchQuery = event.query;
     add(LoadGroups(search: event.query));
   }
@@ -103,14 +111,17 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     }
   }
 
-  Future<void> _onCreateGroup(CreateGroup event, Emitter<GroupsState> emit) async {
+  Future<void> _onCreateGroup(
+      CreateGroup event, Emitter<GroupsState> emit) async {
     try {
       emit(const GroupCreating());
 
       final result = await createGroupUseCase.call(
-        name: event.name,
-        displayName: event.displayName,
-        description: event.description,
+        request: CreateGroupRequest(
+          name: event.name,
+          displayName: event.displayName,
+          description: event.description,
+        ),
       );
 
       result.fold(
@@ -126,15 +137,18 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     }
   }
 
-  Future<void> _onUpdateGroup(UpdateGroup event, Emitter<GroupsState> emit) async {
+  Future<void> _onUpdateGroup(
+      UpdateGroup event, Emitter<GroupsState> emit) async {
     try {
       emit(const GroupUpdating());
 
       final result = await updateGroupUseCase.call(
-        groupId: event.groupId,
-        name: event.name,
-        displayName: event.displayName,
-        description: event.description,
+        request: UpdateGroupRequest(
+          id: event.groupId,
+          newName: event.name,
+          displayName: event.displayName,
+          description: event.description,
+        ),
       );
 
       result.fold(
@@ -150,7 +164,8 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     }
   }
 
-  Future<void> _onDeleteGroup(DeleteGroup event, Emitter<GroupsState> emit) async {
+  Future<void> _onDeleteGroup(
+      DeleteGroup event, Emitter<GroupsState> emit) async {
     try {
       emit(const GroupDeleting());
 
