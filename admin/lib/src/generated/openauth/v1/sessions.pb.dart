@@ -124,6 +124,7 @@ class SignInRequest extends $pb.GeneratedMessage {
     ..aOM<SignInMetadata>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata', subBuilder: SignInMetadata.create)
     ..aOB(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'profiles')
     ..aOB(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'includePermissions')
+    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'verificationId')
     ..hasRequiredFields = false
   ;
 
@@ -136,6 +137,7 @@ class SignInRequest extends $pb.GeneratedMessage {
     SignInMetadata? metadata,
     $core.bool? profiles,
     $core.bool? includePermissions,
+    $fixnum.Int64? verificationId,
   }) {
     final _result = create();
     if (username != null) {
@@ -158,6 +160,9 @@ class SignInRequest extends $pb.GeneratedMessage {
     }
     if (includePermissions != null) {
       _result.includePermissions = includePermissions;
+    }
+    if (verificationId != null) {
+      _result.verificationId = verificationId;
     }
     return _result;
   }
@@ -246,6 +251,15 @@ class SignInRequest extends $pb.GeneratedMessage {
   $core.bool hasIncludePermissions() => $_has(6);
   @$pb.TagNumber(7)
   void clearIncludePermissions() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $fixnum.Int64 get verificationId => $_getI64(7);
+  @$pb.TagNumber(8)
+  set verificationId($fixnum.Int64 v) { $_setInt64(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasVerificationId() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearVerificationId() => clearField(8);
 }
 
 class SignInResponse extends $pb.GeneratedMessage {

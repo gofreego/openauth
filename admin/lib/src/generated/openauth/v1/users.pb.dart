@@ -1040,6 +1040,7 @@ class SendVerificationCodeResponse extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt')
     ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resendAfter')
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..hasRequiredFields = false
   ;
 
@@ -1049,6 +1050,7 @@ class SendVerificationCodeResponse extends $pb.GeneratedMessage {
     $core.String? message,
     $fixnum.Int64? expiresAt,
     $fixnum.Int64? resendAfter,
+    $fixnum.Int64? id,
   }) {
     final _result = create();
     if (sent != null) {
@@ -1062,6 +1064,9 @@ class SendVerificationCodeResponse extends $pb.GeneratedMessage {
     }
     if (resendAfter != null) {
       _result.resendAfter = resendAfter;
+    }
+    if (id != null) {
+      _result.id = id;
     }
     return _result;
   }
@@ -1121,6 +1126,15 @@ class SendVerificationCodeResponse extends $pb.GeneratedMessage {
   $core.bool hasResendAfter() => $_has(3);
   @$pb.TagNumber(4)
   void clearResendAfter() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $fixnum.Int64 get id => $_getI64(4);
+  @$pb.TagNumber(5)
+  set id($fixnum.Int64 v) { $_setInt64(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasId() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearId() => clearField(5);
 }
 
 class CheckUsernameRequest extends $pb.GeneratedMessage {

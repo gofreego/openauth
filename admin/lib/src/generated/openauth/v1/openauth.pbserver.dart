@@ -48,7 +48,7 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
   $async.Future<$1.SignUpResponse> signUp($pb.ServerContext ctx, $1.SignUpRequest request);
   $async.Future<$1.VerificationResponse> verifyEmail($pb.ServerContext ctx, $1.VerifyEmailRequest request);
   $async.Future<$1.VerificationResponse> verifyPhone($pb.ServerContext ctx, $1.VerifyPhoneRequest request);
-  $async.Future<$1.SendVerificationCodeResponse> resendVerification($pb.ServerContext ctx, $1.SendVerificationCodeRequest request);
+  $async.Future<$1.SendVerificationCodeResponse> sendVerificationCode($pb.ServerContext ctx, $1.SendVerificationCodeRequest request);
   $async.Future<$1.CheckUsernameResponse> checkUsername($pb.ServerContext ctx, $1.CheckUsernameRequest request);
   $async.Future<$1.CheckEmailResponse> checkEmail($pb.ServerContext ctx, $1.CheckEmailRequest request);
   $async.Future<$1.GetUserResponse> getUser($pb.ServerContext ctx, $1.GetUserRequest request);
@@ -95,7 +95,7 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'SignUp': return $1.SignUpRequest();
       case 'VerifyEmail': return $1.VerifyEmailRequest();
       case 'VerifyPhone': return $1.VerifyPhoneRequest();
-      case 'ResendVerification': return $1.SendVerificationCodeRequest();
+      case 'SendVerificationCode': return $1.SendVerificationCodeRequest();
       case 'CheckUsername': return $1.CheckUsernameRequest();
       case 'CheckEmail': return $1.CheckEmailRequest();
       case 'GetUser': return $1.GetUserRequest();
@@ -145,7 +145,7 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'SignUp': return this.signUp(ctx, request as $1.SignUpRequest);
       case 'VerifyEmail': return this.verifyEmail(ctx, request as $1.VerifyEmailRequest);
       case 'VerifyPhone': return this.verifyPhone(ctx, request as $1.VerifyPhoneRequest);
-      case 'ResendVerification': return this.resendVerification(ctx, request as $1.SendVerificationCodeRequest);
+      case 'SendVerificationCode': return this.sendVerificationCode(ctx, request as $1.SendVerificationCodeRequest);
       case 'CheckUsername': return this.checkUsername(ctx, request as $1.CheckUsernameRequest);
       case 'CheckEmail': return this.checkEmail(ctx, request as $1.CheckEmailRequest);
       case 'GetUser': return this.getUser(ctx, request as $1.GetUserRequest);

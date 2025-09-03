@@ -19,6 +19,7 @@ class Permission extends $pb.GeneratedMessage {
     ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdBy')
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
     ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..aOB(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isSystem')
     ..hasRequiredFields = false
   ;
 
@@ -31,6 +32,7 @@ class Permission extends $pb.GeneratedMessage {
     $fixnum.Int64? createdBy,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
+    $core.bool? isSystem,
   }) {
     final _result = create();
     if (id != null) {
@@ -53,6 +55,9 @@ class Permission extends $pb.GeneratedMessage {
     }
     if (updatedAt != null) {
       _result.updatedAt = updatedAt;
+    }
+    if (isSystem != null) {
+      _result.isSystem = isSystem;
     }
     return _result;
   }
@@ -139,6 +144,15 @@ class Permission extends $pb.GeneratedMessage {
   $core.bool hasUpdatedAt() => $_has(6);
   @$pb.TagNumber(7)
   void clearUpdatedAt() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.bool get isSystem => $_getBF(7);
+  @$pb.TagNumber(8)
+  set isSystem($core.bool v) { $_setBool(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasIsSystem() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearIsSystem() => clearField(8);
 }
 
 class CreatePermissionRequest extends $pb.GeneratedMessage {

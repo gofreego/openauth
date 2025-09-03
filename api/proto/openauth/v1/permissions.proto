@@ -33,6 +33,9 @@ message Permission {
 
     // Unix timestamp when the permission was last updated
     int64 updated_at = 7;
+    
+    // Whether this is a system permission (cannot be modified/deleted)
+    bool is_system = 8;
 }
 
 // Request to create a new permission

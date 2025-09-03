@@ -39,6 +39,7 @@ func (p *Permission) ToProtoPermission() *openauth_v1.Permission {
 		CreatedBy:   p.CreatedBy,
 		CreatedAt:   p.CreatedAt,
 		UpdatedAt:   p.UpdatedAt,
+		IsSystem:    p.IsSystem,
 	}
 
 	if p.Description != nil {

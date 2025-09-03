@@ -44,22 +44,9 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 		return nil, status.Error(codes.AlreadyExists, "permission with this name already exists")
 	}
 
-	// Create permission object
-	now := time.Now().Unix()
-	permission := &dao.Permission{
-		Name:        req.Name,
-		DisplayName: req.DisplayName,
-		IsSystem:    false, // User-created permissions are not system permissions
-		CreatedAt:   now,
-		UpdatedAt:   now,
-	}
-
-	if req.Description != nil {
-		permission.Description = req.Description
-	}
-
+	permission := new(dao.Permission).FromCreatePermissionRequest(req, claims.UserID)
 	// Save to repository
-	createdPermission, err := s.repo.CreatePermission(ctx, new(dao.Permission).FromCreatePermissionRequest(req, claims.UserID))
+	createdPermission, err := s.repo.CreatePermission(ctx, permission)
 	if err != nil {
 		logger.Error(ctx, "Failed to create permission %s by userID=%d: %v", req.Name, claims.UserID, err)
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create permission: %v", err))

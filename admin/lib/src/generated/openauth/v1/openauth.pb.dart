@@ -126,9 +126,9 @@ class OpenAuthApi {
     var emptyResponse = $1.VerificationResponse();
     return _client.invoke<$1.VerificationResponse>(ctx, 'OpenAuth', 'VerifyPhone', request, emptyResponse);
   }
-  $async.Future<$1.SendVerificationCodeResponse> resendVerification($pb.ClientContext? ctx, $1.SendVerificationCodeRequest request) {
+  $async.Future<$1.SendVerificationCodeResponse> sendVerificationCode($pb.ClientContext? ctx, $1.SendVerificationCodeRequest request) {
     var emptyResponse = $1.SendVerificationCodeResponse();
-    return _client.invoke<$1.SendVerificationCodeResponse>(ctx, 'OpenAuth', 'ResendVerification', request, emptyResponse);
+    return _client.invoke<$1.SendVerificationCodeResponse>(ctx, 'OpenAuth', 'SendVerificationCode', request, emptyResponse);
   }
   $async.Future<$1.CheckUsernameResponse> checkUsername($pb.ClientContext? ctx, $1.CheckUsernameRequest request) {
     var emptyResponse = $1.CheckUsernameResponse();

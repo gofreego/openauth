@@ -2583,6 +2583,10 @@
           "type": "string",
           "format": "int64",
           "title": "Unix timestamp when the permission was last updated"
+        },
+        "isSystem": {
+          "type": "boolean",
+          "title": "Whether this is a system permission (cannot be modified/deleted)"
         }
       },
       "description": "Permission represents a specific authorization rule in the system.\nIt follows a Resource-Based Access Control (RBAC) pattern where permissions\nare defined by combining a resource (what) with an action (how).\n\nExample: A permission with resource=\"users\" and action=\"create\" allows\ncreating new user accounts."

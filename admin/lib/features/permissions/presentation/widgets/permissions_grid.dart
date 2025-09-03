@@ -308,10 +308,9 @@ class PermissionCard extends StatelessWidget {
               children: [
               Row(
                 children: [
-                  Icon(
-                    _getPermissionIcon(),
+                  const Icon(
+                    Icons.security,
                     size: 24,
-                    color: _getPermissionColor(),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -324,11 +323,14 @@ class PermissionCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  PopupMenuButton<String>(onSelected: onAction,
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, size: 20),
+                    onSelected: onAction,
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
+                        PopupMenuItem(
+                        enabled: !permission.isSystem,
                         value: 'edit',
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(Icons.edit),
                             SizedBox(width: 8),
@@ -336,9 +338,10 @@ class PermissionCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
+                        enabled: !permission.isSystem,
                         value: 'delete',
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(Icons.delete, color: Colors.red),
                             SizedBox(width: 8),
@@ -352,16 +355,6 @@ class PermissionCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                permission.name,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  color: Colors.grey.shade600,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
                 permission.description,
                 style: Theme.of(context).textTheme.bodyMedium,
                 maxLines: 2,
@@ -372,22 +365,6 @@ class PermissionCard extends StatelessWidget {
           ),
         ),
     );
-  }
-
-  IconData _getPermissionIcon() {
-    if (permission.name.startsWith('user.')) return Icons.people;
-    if (permission.name.startsWith('system.')) return Icons.settings;
-    if (permission.name.startsWith('content.')) return Icons.article;
-    if (permission.name.startsWith('analytics.')) return Icons.analytics;
-    return Icons.security;
-  }
-
-  Color _getPermissionColor() {
-    if (permission.name.startsWith('user.')) return Colors.blue;
-    if (permission.name.startsWith('system.')) return Colors.orange;
-    if (permission.name.startsWith('content.')) return Colors.green;
-    if (permission.name.startsWith('analytics.')) return Colors.purple;
-    return Colors.grey;
   }
 }
 
@@ -406,8 +383,10 @@ class PermissionDetailsDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(permission.displayName),
-      content: SizedBox(
-        width: 400,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 400,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -419,6 +398,8 @@ class PermissionDetailsDialog extends StatelessWidget {
             _buildDetailRow('Created', _formatDate(permission.createdAt)),
             const SizedBox(height: 12),
             _buildDetailRow('Last Updated', _formatDate(permission.updatedAt)),
+            const SizedBox(height: 12),
+            _buildDetailRow('Created by', permission.createdBy.toString()),
           ],
         ),
       ),
@@ -428,7 +409,7 @@ class PermissionDetailsDialog extends StatelessWidget {
           child: const Text('Close'),
         ),
         FilledButton(
-          onPressed: () {
+          onPressed: permission.isSystem?null: () {
             Navigator.of(context).pop();
             onEdit();
           },

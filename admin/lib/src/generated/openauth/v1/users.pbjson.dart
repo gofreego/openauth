@@ -171,11 +171,12 @@ const SendVerificationCodeResponse$json = const {
     const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
     const {'1': 'expires_at', '3': 3, '4': 1, '5': 3, '10': 'expiresAt'},
     const {'1': 'resend_after', '3': 4, '4': 1, '5': 3, '10': 'resendAfter'},
+    const {'1': 'id', '3': 5, '4': 1, '5': 3, '10': 'id'},
   ],
 };
 
 /// Descriptor for `SendVerificationCodeResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List sendVerificationCodeResponseDescriptor = $convert.base64Decode('ChxTZW5kVmVyaWZpY2F0aW9uQ29kZVJlc3BvbnNlEhIKBHNlbnQYASABKAhSBHNlbnQSGAoHbWVzc2FnZRgCIAEoCVIHbWVzc2FnZRIdCgpleHBpcmVzX2F0GAMgASgDUglleHBpcmVzQXQSIQoMcmVzZW5kX2FmdGVyGAQgASgDUgtyZXNlbmRBZnRlcg==');
+final $typed_data.Uint8List sendVerificationCodeResponseDescriptor = $convert.base64Decode('ChxTZW5kVmVyaWZpY2F0aW9uQ29kZVJlc3BvbnNlEhIKBHNlbnQYASABKAhSBHNlbnQSGAoHbWVzc2FnZRgCIAEoCVIHbWVzc2FnZRIdCgpleHBpcmVzX2F0GAMgASgDUglleHBpcmVzQXQSIQoMcmVzZW5kX2FmdGVyGAQgASgDUgtyZXNlbmRBZnRlchIOCgJpZBgFIAEoA1ICaWQ=');
 @$core.Deprecated('Use checkUsernameRequestDescriptor instead')
 const CheckUsernameRequest$json = const {
   '1': 'CheckUsernameRequest',

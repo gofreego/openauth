@@ -40,6 +40,7 @@ const SignInRequest$json = const {
     const {'1': 'metadata', '3': 5, '4': 1, '5': 11, '6': '.v1.SignInMetadata', '9': 3, '10': 'metadata', '17': true},
     const {'1': 'profiles', '3': 6, '4': 1, '5': 8, '9': 4, '10': 'profiles', '17': true},
     const {'1': 'include_permissions', '3': 7, '4': 1, '5': 8, '9': 5, '10': 'includePermissions', '17': true},
+    const {'1': 'verification_id', '3': 8, '4': 1, '5': 3, '9': 6, '10': 'verificationId', '17': true},
   ],
   '8': const [
     const {'1': '_password'},
@@ -48,11 +49,12 @@ const SignInRequest$json = const {
     const {'1': '_metadata'},
     const {'1': '_profiles'},
     const {'1': '_include_permissions'},
+    const {'1': '_verification_id'},
   ],
 };
 
 /// Descriptor for `SignInRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signInRequestDescriptor = $convert.base64Decode('Cg1TaWduSW5SZXF1ZXN0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIfCghwYXNzd29yZBgCIAEoCUgAUghwYXNzd29yZIgBARIVCgNvdHAYAyABKAlIAVIDb3RwiAEBEiQKC3JlbWVtYmVyX21lGAQgASgISAJSCnJlbWVtYmVyTWWIAQESMwoIbWV0YWRhdGEYBSABKAsyEi52MS5TaWduSW5NZXRhZGF0YUgDUghtZXRhZGF0YYgBARIfCghwcm9maWxlcxgGIAEoCEgEUghwcm9maWxlc4gBARI0ChNpbmNsdWRlX3Blcm1pc3Npb25zGAcgASgISAVSEmluY2x1ZGVQZXJtaXNzaW9uc4gBAUILCglfcGFzc3dvcmRCBgoEX290cEIOCgxfcmVtZW1iZXJfbWVCCwoJX21ldGFkYXRhQgsKCV9wcm9maWxlc0IWChRfaW5jbHVkZV9wZXJtaXNzaW9ucw==');
+final $typed_data.Uint8List signInRequestDescriptor = $convert.base64Decode('Cg1TaWduSW5SZXF1ZXN0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIfCghwYXNzd29yZBgCIAEoCUgAUghwYXNzd29yZIgBARIVCgNvdHAYAyABKAlIAVIDb3RwiAEBEiQKC3JlbWVtYmVyX21lGAQgASgISAJSCnJlbWVtYmVyTWWIAQESMwoIbWV0YWRhdGEYBSABKAsyEi52MS5TaWduSW5NZXRhZGF0YUgDUghtZXRhZGF0YYgBARIfCghwcm9maWxlcxgGIAEoCEgEUghwcm9maWxlc4gBARI0ChNpbmNsdWRlX3Blcm1pc3Npb25zGAcgASgISAVSEmluY2x1ZGVQZXJtaXNzaW9uc4gBARIsCg92ZXJpZmljYXRpb25faWQYCCABKANIBlIOdmVyaWZpY2F0aW9uSWSIAQFCCwoJX3Bhc3N3b3JkQgYKBF9vdHBCDgoMX3JlbWVtYmVyX21lQgsKCV9tZXRhZGF0YUILCglfcHJvZmlsZXNCFgoUX2luY2x1ZGVfcGVybWlzc2lvbnNCEgoQX3ZlcmlmaWNhdGlvbl9pZA==');
 @$core.Deprecated('Use signInResponseDescriptor instead')
 const SignInResponse$json = const {
   '1': 'SignInResponse',
