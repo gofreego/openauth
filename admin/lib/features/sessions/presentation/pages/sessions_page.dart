@@ -64,7 +64,7 @@ class _SessionsPageState extends State<SessionsPage> {
           Text(
             'Monitor and manage active user sessions across the system',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 32),
@@ -75,7 +75,7 @@ class _SessionsPageState extends State<SessionsPage> {
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
             ),
             child: TextField(
               decoration: const InputDecoration(
@@ -227,7 +227,7 @@ class _SessionsPageState extends State<SessionsPage> {
                                   Text(
                                     '@${user.username}',
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -254,7 +254,7 @@ class _SessionsPageState extends State<SessionsPage> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: user.isActive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                            color: user.isActive ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(

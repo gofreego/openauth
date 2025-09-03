@@ -91,7 +91,7 @@ class PermissionCard extends StatelessWidget {
                 children: [
                   Chip(
                     label: Text(permission.category.displayName),
-                    backgroundColor: permission.category.color.withOpacity(0.1),
+                    backgroundColor: permission.category.color.withValues(alpha: 0.1),
                     labelStyle: TextStyle(
                       color: permission.category.color,
                       fontSize: 11,

@@ -89,7 +89,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                       Text(
                         'for ${widget.user.displayName} (@${widget.user.username})',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -129,7 +129,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                       ],
                       labelColor: theme.colorScheme.primary,
                       unselectedLabelColor:
-                          theme.colorScheme.onSurface.withOpacity(0.6),
+                          theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     const SizedBox(height: 16),
                     Expanded(
@@ -342,7 +342,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
           child: Icon(
             Icons.security_outlined,
             color: theme.colorScheme.primary,
@@ -370,13 +370,13 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 Icon(
                   Icons.access_time,
                   size: 12,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'Granted ${_formatDate(permission.grantedAt.toInt())}',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 if (permission.expiresAt.toInt() > 0) ...[
@@ -405,7 +405,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                   Text(
                     'Group : ${permission.groupDisplayName.isNotEmpty ? permission.groupDisplayName : permission.groupName}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -417,7 +417,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             ? IconButton(
                 icon: Icon(
                   Icons.remove_circle_outline,
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.grey.withValues(alpha: 0.5),
                 ),
                 tooltip:
                     'Group permissions cannot be deleted directly.\nYou can delete the group or remove permission from the group.',
@@ -440,7 +440,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.secondary.withOpacity(0.1),
+          backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
           child: Icon(
             Icons.add_circle_outline,
             color: theme.colorScheme.secondary,

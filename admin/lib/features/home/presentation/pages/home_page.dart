@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
               VerticalDivider(
                 width: 1,
                 thickness: 1,
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
               ),
               
               // Main content area

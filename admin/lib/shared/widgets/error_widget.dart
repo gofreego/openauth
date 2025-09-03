@@ -35,7 +35,7 @@ class ErrorWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: _getErrorColor(colorScheme).withOpacity(0.1),
+              color: _getErrorColor(colorScheme).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: customIcon ?? Icon(
@@ -63,7 +63,7 @@ class ErrorWidget extends StatelessWidget {
           Text(
             failure.message,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.7),
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
             maxLines: 3,
@@ -172,10 +172,10 @@ class CompactErrorWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: colorScheme.errorContainer.withOpacity(0.1),
+        color: colorScheme.errorContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: colorScheme.error.withOpacity(0.3),
+          color: colorScheme.error.withValues(alpha: 0.3),
         ),
       ),
       child: Row(

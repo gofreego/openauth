@@ -46,12 +46,12 @@ class AppColors {
   static const Color shadowDark = Colors.black;
   
   // Common transparent colors
-  static Color get primaryTransparent => primary.withOpacity(0.5);
-  static Color get primaryLightTransparent => primaryLight.withOpacity(0.5);
-  static Color get primaryDarkTransparent => primaryDark.withOpacity(0.3);
-  static Color get textMutedTransparent => textMuted.withOpacity(0.3);
-  static Color get borderDarkTransparent => borderDark.withOpacity(0.3);
-  static Color get borderLightTransparent => borderLight.withOpacity(0.5);
-  static Color get shadowTransparent => Colors.black.withOpacity(0.3);
-  static Color get shadowLightTransparent => Colors.black.withOpacity(0.05);
+  static Color get primaryTransparent => primary.withValues(alpha: 0.5);
+  static Color get primaryLightTransparent => primaryLight.withValues(alpha: 0.5);
+  static Color get primaryDarkTransparent => primaryDark.withValues(alpha: 0.3);
+  static Color get textMutedTransparent => textMuted.withValues(alpha: 0.3);
+  static Color get borderDarkTransparent => borderDark.withValues(alpha: 0.3);
+  static Color get borderLightTransparent => borderLight.withValues(alpha: 0.5);
+  static Color get shadowTransparent => Colors.black.withValues(alpha: 0.3);
+  static Color get shadowLightTransparent => Colors.black.withValues(alpha: 0.05);
 }

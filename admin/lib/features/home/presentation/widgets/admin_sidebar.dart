@@ -38,13 +38,13 @@ class AdminSidebar extends StatelessWidget {
               color: theme.colorScheme.surface,
               border: Border(
                 bottom: BorderSide(
-                  color: theme.colorScheme.outline.withOpacity(0.1),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -189,7 +189,7 @@ class AdminSidebar extends StatelessWidget {
         ),
         selected: isSelected,
         selectedColor: theme.colorScheme.primary,
-        selectedTileColor: theme.colorScheme.primary.withOpacity(0.1),
+        selectedTileColor: theme.colorScheme.primary.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
