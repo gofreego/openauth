@@ -77,31 +77,36 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
   }
 
   Widget _buildContent() {
-    // Show warning for system groups
-    if (widget.group.isSystem) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.security, size: 64, color: Colors.orange),
-            SizedBox(height: 16),
-            Text(
-              'System Group Permissions',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Permissions for system groups cannot be modified.\nThey are managed by the system.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
-      );
-    }
-
     return Column(
       children: [
+        // Info message for system groups
+        if (widget.group.isSystem)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              border: Border.all(color: Colors.blue.shade200),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info, color: Colors.blue.shade600, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'This is a system group. Permission changes should be made carefully.',
+                    style: TextStyle(
+                      color: Colors.blue.shade600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
         // Search bar
         TextField(
           decoration: const InputDecoration(

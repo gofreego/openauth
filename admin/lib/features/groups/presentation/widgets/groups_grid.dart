@@ -155,7 +155,6 @@ class _GroupsGridState extends State<GroupsGrid> {
         value: context.read<GroupsBloc>(),
         child: GroupDetailsDialog(
           group: group,
-          onEdit: () => _handleGroupAction(context, 'edit', group),
         ),
       ),
     );

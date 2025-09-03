@@ -3,7 +3,7 @@ import 'package:fixnum/fixnum.dart';
 class UtilityFunctions {
     static String formatDate(Int64 millis) {
     final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
-    return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
    static String  formatDateInWords(Int64 millis) {

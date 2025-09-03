@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import '../../domain/usecases/get_groups_usecase.dart';
 import '../../domain/usecases/get_group_usecase.dart';
+import '../../domain/usecases/get_group_users_usecase.dart';
 import '../../domain/usecases/create_group_usecase.dart';
 import '../../domain/usecases/update_group_usecase.dart';
 import '../../domain/usecases/delete_group_usecase.dart';
@@ -14,6 +15,7 @@ part 'groups_state.dart';
 class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
   final GetGroupsUseCase getGroupsUseCase;
   final GetGroupUseCase getGroupUseCase;
+  final GetGroupUsersUseCase getGroupUsersUseCase;
   final CreateGroupUseCase createGroupUseCase;
   final UpdateGroupUseCase updateGroupUseCase;
   final DeleteGroupUseCase deleteGroupUseCase;
@@ -23,6 +25,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
   GroupsBloc({
     required this.getGroupsUseCase,
     required this.getGroupUseCase,
+    required this.getGroupUsersUseCase,
     required this.createGroupUseCase,
     required this.updateGroupUseCase,
     required this.deleteGroupUseCase,
@@ -31,6 +34,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     on<RefreshGroups>(_onRefreshGroups);
     on<SearchGroups>(_onSearchGroups);
     on<LoadGroup>(_onLoadGroup);
+    on<LoadGroupUsers>(_onLoadGroupUsers);
     on<CreateGroup>(_onCreateGroup);
     on<UpdateGroup>(_onUpdateGroup);
     on<DeleteGroup>(_onDeleteGroup);
@@ -105,6 +109,25 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
       result.fold(
         (failure) => emit(GroupsError(failure.message)),
         (group) => emit(GroupLoaded(group)),
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onLoadGroupUsers(
+      LoadGroupUsers event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const GroupUsersLoading());
+
+      final result = await getGroupUsersUseCase.call(event.groupId);
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (users) => emit(GroupUsersLoaded(
+          users: users,
+          groupId: event.groupId,
+        )),
       );
     } catch (e) {
       emit(GroupsError(e.toString()));
