@@ -51,7 +51,7 @@ final ThemeData lightTheme = ThemeData(
   ),
   
   // Card Theme
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     color: AppColors.lightSurface,
     elevation: 1,
     shadowColor: AppColors.shadowLightTransparent,
@@ -178,7 +178,7 @@ final ThemeData lightTheme = ThemeData(
   ),
 
   // Tab Bar Theme
-  tabBarTheme: const TabBarTheme(
+  tabBarTheme: const TabBarThemeData(
     labelColor: AppColors.primaryDark,
     unselectedLabelColor: AppColors.textSecondary,
     indicator: BoxDecoration(
@@ -192,7 +192,7 @@ final ThemeData lightTheme = ThemeData(
   ),
 
   // Dialog Theme
-  dialogTheme: const DialogTheme(
+  dialogTheme: const DialogThemeData(
     backgroundColor: AppColors.lightSurface,
     elevation: 5,
     shape: RoundedRectangleBorder(
