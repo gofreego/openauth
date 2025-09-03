@@ -96,31 +96,30 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     return Column(
       children: [
         Expanded(
-          child: GridView.builder(
+          child: SingleChildScrollView(
             controller: _scrollController,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: filteredPermissions.length + (widget.isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index >= filteredPermissions.length) {
-                // Loading indicator for pagination
-                return const Card(
-                  child: Center(
-                    child: CircularProgressIndicator(),
+            padding: const EdgeInsets.all(16),
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                ...filteredPermissions.map((permission) => PermissionCard(
+                  permission: permission,
+                  onTap: () => _showPermissionDetails(context, permission),
+                  onAction: (action) => _handlePermissionAction(context, action, permission),
+                )),
+                if (widget.isLoadingMore)
+                  const SizedBox(
+                    width: 200,
+                    height: 150,
+                    child: Card(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
                   ),
-                );
-              }
-              
-              final permission = filteredPermissions[index];
-              return PermissionCard(
-                permission: permission,
-                onTap: () => _showPermissionDetails(context, permission),
-                onAction: (action) => _handlePermissionAction(context, action, permission),
-              );
-            },
+              ],
+            ),
           ),
         ),
       ],
@@ -298,15 +297,18 @@ class PermissionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    return SizedBox(
+      width: 280,
+      height: 200,
+      child: Card(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 children: [
                   Icon(
@@ -387,6 +389,7 @@ class PermissionCard extends StatelessWidget {
                 ],
               ),
             ],
+            ),
           ),
         ),
       ),
