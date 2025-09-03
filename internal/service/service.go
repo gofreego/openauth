@@ -50,6 +50,10 @@ type JWTConfig struct {
 	RefreshTokenTTL time.Duration `yaml:"RefreshTokenTTL"` // Refresh token expiration time
 }
 
+func (c *JWTConfig) GetSecretKey() []byte {
+	return []byte(c.SecretKey)
+}
+
 func (c *JWTConfig) Default() {
 	if c.SecretKey == "" {
 		c.SecretKey = constants.DefaultJWTSecretKey

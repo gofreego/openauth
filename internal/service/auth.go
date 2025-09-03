@@ -486,7 +486,7 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(s.cfg.JWT.SecretKey)
+	return token.SignedString(s.cfg.JWT.GetSecretKey())
 }
 
 // ValidateAccessToken parses and validates a JWT access token
@@ -495,7 +495,7 @@ func (s *Service) ValidateAccessToken(tokenString string) (*jwtutils.JWTClaims, 
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return s.cfg.JWT.SecretKey, nil
+		return s.cfg.JWT.GetSecretKey(), nil
 	})
 
 	if err != nil {
