@@ -179,9 +179,6 @@ class _PermissionsGridState extends State<PermissionsGrid> {
       case 'edit':
         _showEditPermissionDialog(context, permission);
         break;
-      case 'duplicate':
-        _duplicatePermission(context, permission);
-        break;
       case 'delete':
         _showDeletePermissionDialog(context, permission);
         break;
@@ -253,14 +250,6 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     );
   }
 
-  void _duplicatePermission(BuildContext context, Permission permission) {
-    final request = pb.CreatePermissionRequest()
-      ..name = '${permission.name}_copy'
-      ..displayName = '${permission.displayName} (Copy)'
-      ..description = permission.description;
-
-    context.read<PermissionsBloc>().add(CreatePermission(request));
-  }
 
   void _showDeletePermissionDialog(BuildContext context, Permission permission) {
     showDialog(
@@ -369,12 +358,14 @@ class PermissionCard extends StatelessWidget {
                   fontFamily: 'monospace',
                   color: Colors.grey.shade600,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
               Text(
                 permission.description,
                 style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: 3,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
