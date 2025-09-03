@@ -2,6 +2,8 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
+import 'manage_group_permissions_dialog.dart';
+import 'manage_group_members_dialog.dart';
 
 class GroupDetailsDialog extends StatelessWidget {
   final Group group;
@@ -36,6 +38,32 @@ class GroupDetailsDialog extends StatelessWidget {
             InfoRowWithCopy(label: 'Created by', value: group.createdBy.toString(), copy: true),
             const SizedBox(height: 12),
             _buildDetailRow('Members', '0'), // TODO: Get actual member count
+            const SizedBox(height: 24),
+            
+            // Management buttons
+            if (!group.isSystem) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showManagePermissionsDialog(context),
+                      icon: const Icon(Icons.security),
+                      label: const Text('Manage Permissions'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showManageMembersDialog(context),
+                      icon: const Icon(Icons.people),
+                      label: const Text('Manage Members'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
+            
             const SizedBox(height: 12),
             if (group.isSystem)
               Container(
@@ -95,6 +123,24 @@ class GroupDetailsDialog extends StatelessWidget {
         const SizedBox(height: 4),
         Text(value),
       ],
+    );
+  }
+
+  void _showManagePermissionsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => ManageGroupPermissionsDialog(
+        group: group,
+      ),
+    );
+  }
+
+  void _showManageMembersDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => ManageGroupMembersDialog(
+        group: group,
+      ),
     );
   }
 

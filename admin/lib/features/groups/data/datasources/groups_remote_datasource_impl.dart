@@ -106,9 +106,9 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
         data: request.toProto3Json(),
       );
 
-      final pbResponse = Group();
+      final pbResponse = CreateGroupResponse();
       pbResponse.mergeFromProto3Json(response.data);
-      return pbResponse;
+      return pbResponse.group;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to create group',
@@ -129,9 +129,9 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
         data: request.toProto3Json(),
       );
 
-      final pbResponse = Group();
+      final pbResponse = UpdateGroupResponse();
       pbResponse.mergeFromProto3Json(response.data);
-      return pbResponse;
+      return pbResponse.group;
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to update group',

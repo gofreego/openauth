@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 
@@ -21,8 +22,6 @@ class CompactUserProfile extends StatelessWidget {
         }
 
         final user = state.session.user;
-        // TODO: Profile is not part of SignInResponse, need to fetch separately
-        const profile = null; // state.session.profile;
         
         return InkWell(
           onTap: onTap,
@@ -37,7 +36,7 @@ class CompactUserProfile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                _buildAvatar(context, user.username, profile),
+                _buildAvatar(context, user),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -45,7 +44,7 @@ class CompactUserProfile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        _getDisplayName(user, profile),
+                        user.name.isNotEmpty ? user.name : 'Unknown User',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -78,19 +77,13 @@ class CompactUserProfile extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(BuildContext context, String username, dynamic profile) {
+  Widget _buildAvatar(BuildContext context, User user) {
     final theme = Theme.of(context);
-    
-    // Check if profile has an avatar URL
-    String? avatarUrl;
-    if (profile != null && profile.avatarUrl.isNotEmpty) {
-      avatarUrl = profile.avatarUrl;
-    }
-    
-    if (avatarUrl != null && avatarUrl.isNotEmpty) {
+
+    if ( user.avatarUrl.isNotEmpty) {
       return CircleAvatar(
         radius: 20,
-        backgroundImage: NetworkImage(avatarUrl),
+        backgroundImage: NetworkImage(user.avatarUrl),
         onBackgroundImageError: (_, __) {
           // Fallback to initials if image fails to load
         },
@@ -99,7 +92,7 @@ class CompactUserProfile extends StatelessWidget {
     }
     
     // Fallback to initials avatar
-    final initials = _getInitials(username);
+    final initials = _getInitials(user.name);
     return CircleAvatar(
       radius: 20,
       backgroundColor: theme.colorScheme.primary,
@@ -111,32 +104,6 @@ class CompactUserProfile extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _getDisplayName(dynamic user, dynamic profile) {
-    // Try to get display name from profile first
-    if (profile != null) {
-      if (profile.displayName.isNotEmpty) {
-        return profile.displayName;
-      }
-      if (profile.firstName.isNotEmpty) {
-        String name = profile.firstName;
-        if (profile.lastName.isNotEmpty) {
-          name += ' ${profile.lastName}';
-        }
-        return name;
-      }
-    }
-    
-    // Fallback to username or email
-    if (user.username.isNotEmpty) {
-      return user.username;
-    }
-    if (user.email.isNotEmpty) {
-      return user.email;
-    }
-    
-    return 'User';
   }
 
   String _getInitials(String username) {
