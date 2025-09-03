@@ -2332,6 +2332,10 @@
           "type": "string",
           "format": "int64",
           "title": "Timestamp when the group was last updated"
+        },
+        "isSystem": {
+          "type": "boolean",
+          "title": "Whether this is a system group (cannot be modified/deleted)"
         }
       },
       "title": "Group represents a group/role in the system for organizing users and permissions"

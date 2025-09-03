@@ -24,6 +24,9 @@ message Group {
 
     // Timestamp when the group was last updated
     int64 updated_at = 7;
+
+    // Whether this is a system group (cannot be modified/deleted)
+    bool is_system = 8;
 }
 
 // CreateGroupRequest to create a new group

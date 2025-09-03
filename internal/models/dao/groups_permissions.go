@@ -84,6 +84,7 @@ func (g *Group) ToProtoGroup() *openauth_v1.Group {
 		CreatedBy:   g.CreatedBy,
 		CreatedAt:   g.CreatedAt,
 		UpdatedAt:   g.UpdatedAt,
+		IsSystem:    g.IsSystem,
 	}
 
 	if g.Description != nil {
