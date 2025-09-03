@@ -20,6 +20,7 @@ message SignInRequest {
     optional SignInMetadata metadata = 5;       // Optional device metadata
     optional bool profiles = 6;            // Include user profile ids in access token
     optional bool include_permissions = 7; // Include user permissions in access token
+    optional int64 verification_id = 8;     // In case of otp verification
 }
 
 // SignInResponse with authentication tokens and user data

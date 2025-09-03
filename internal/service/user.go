@@ -12,6 +12,7 @@ import (
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
 	communicationservice "github.com/gofreego/openauth/pkg/clients/communication-service"
+	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -224,9 +225,46 @@ func (s *Service) VerifyPhone(ctx context.Context, req *openauth_v1.VerifyPhoneR
 	}, nil
 }
 
+func (s *Service) getUserByIdentifier(ctx context.Context, identifier string, identifierType utils.IdentifierType) (*dao.User, error) {
+	switch identifierType {
+	case utils.IdentifierTypeEmail:
+		return s.repo.GetUserByEmail(ctx, identifier)
+	case utils.IdentifierTypePhone:
+		return s.repo.GetUserByPhone(ctx, identifier)
+	default:
+		return nil, status.Error(codes.InvalidArgument, "invalid identifier type")
+	}
+}
+
 // SendVerificationCode implements openauth_v1.OpenAuthServer.
-func (s *Service) SendVerificationCode(context.Context, *openauth_v1.SendVerificationCodeRequest) (*openauth_v1.SendVerificationCodeResponse, error) {
-	panic("unimplemented")
+func (s *Service) SendVerificationCode(ctx context.Context, req *openauth_v1.SendVerificationCodeRequest) (*openauth_v1.SendVerificationCodeResponse, error) {
+
+	identifierType := utils.DetectIdentifierType(req.Identifier)
+	user, err := s.getUserByIdentifier(ctx, req.Identifier, identifierType)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+
+	switch identifierType {
+	case utils.IdentifierTypeEmail:
+		err = s.sendEmailVerification(ctx, user.ID, req.Identifier)
+		if err != nil {
+			return nil, status.Error(codes.Internal, "failed to send email verification code")
+		}
+	case utils.IdentifierTypePhone:
+		err = s.sendPhoneVerification(ctx, user.ID, req.Identifier)
+		if err != nil {
+			return nil, status.Error(codes.Internal, "failed to send SMS verification code")
+		}
+	default:
+		return nil, status.Error(codes.InvalidArgument, "invalid identifier type")
+	}
+	// No error means the verification code was sent successfully
+	logger.Info(ctx, "Verification code sent successfully to %s", req.Identifier)
+	return &openauth_v1.SendVerificationCodeResponse{
+		Message: "Verification code sent successfully",
+		Sent:    true,
+	}, nil
 }
 
 // CheckUsername checks if a username is available for registration

@@ -97,6 +97,7 @@ message SendVerificationCodeResponse {
     string message = 2;
     int64 expires_at = 3;  // When the code expires
     int64 resend_after = 4; // When the user can request another code (Unix timestamp milliseconds)
+    int64 id = 5;
 }
 
 // CheckUsernameRequest to check username availability

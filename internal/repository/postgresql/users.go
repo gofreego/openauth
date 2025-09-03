@@ -124,6 +124,18 @@ func (r *Repository) GetUserByEmail(ctx context.Context, email string) (*dao.Use
 	return r.scanUser(row)
 }
 
+// GetUserByPhone implements service.Repository.
+func (r *Repository) GetUserByPhone(ctx context.Context, identifier string) (*dao.User, error) {
+	query := `
+		SELECT id, uuid, username, email, phone, name, avatar_url, password_hash, email_verified,
+			phone_verified, is_active, is_locked, failed_login_attempts, last_login_at,
+			password_changed_at, created_at, updated_at
+		FROM users WHERE phone = $1`
+
+	row := r.connManager.Primary().QueryRowContext(ctx, query, identifier)
+	return r.scanUser(row)
+}
+
 // GetUserProfile retrieves a user profile by user ID
 func (r *Repository) GetUserProfile(ctx context.Context, userID int64) (*dao.Profile, error) {
 	query := `

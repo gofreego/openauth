@@ -2704,6 +2704,10 @@
           "type": "string",
           "format": "int64",
           "title": "When the user can request another code (Unix timestamp milliseconds)"
+        },
+        "id": {
+          "type": "string",
+          "format": "int64"
         }
       },
       "title": "SendVerificationCodeResponse"
@@ -2809,6 +2813,11 @@
         "includePermissions": {
           "type": "boolean",
           "title": "Include user permissions in access token"
+        },
+        "verificationId": {
+          "type": "string",
+          "format": "int64",
+          "title": "In case of otp verification"
         }
       },
       "title": "SignInRequest for user authentication"

@@ -98,6 +98,7 @@ type Repository interface {
 	GetUserByUUID(ctx context.Context, uuid string) (*dao.User, error)
 	GetUserByUsername(ctx context.Context, username string) (*dao.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*dao.User, error)
+	GetUserByPhone(ctx context.Context, identifier string) (*dao.User, error)
 	GetUserProfile(ctx context.Context, userID int64) (*dao.Profile, error)
 	UpdateUser(ctx context.Context, id int64, updates map[string]interface{}) (*dao.User, error)
 	UpdateUserProfile(ctx context.Context, userID int64, updates map[string]interface{}) (*dao.Profile, error)
