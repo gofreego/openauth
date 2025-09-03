@@ -14,14 +14,10 @@ import '../../../../shared/widgets/error_widget.dart' as shared;
 
 class UsersTable extends StatelessWidget {
   final String searchQuery;
-  final bool showActiveOnly;
-  final bool showInactiveOnly;
 
   const UsersTable({
     super.key,
     required this.searchQuery,
-    required this.showActiveOnly,
-    required this.showInactiveOnly,
   });
 
   @override
@@ -97,9 +93,8 @@ class UsersTable extends StatelessWidget {
                     },
                   );
                 } else if (state is UsersLoaded) {
-                  final filteredUsers = _getFilteredUsers(state.users);
-                  
-                  if (filteredUsers.isEmpty) {
+
+                  if (state.users.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -127,9 +122,9 @@ class UsersTable extends StatelessWidget {
                   }
                   
                   return ListView.builder(
-                    itemCount: filteredUsers.length,
+                    itemCount: state.users.length,
                     itemBuilder: (context, index) {
-                      final user = filteredUsers[index];
+                      final user = state.users[index];
                       return UserRow(
                         user: user,
                         index: index,
@@ -146,28 +141,6 @@ class UsersTable extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  List<pb.User> _getFilteredUsers(List<pb.User> users) {
-    List<pb.User> filtered = users;
-    
-    // Apply search filter
-    if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((user) {
-        return user.displayName.toLowerCase().contains(searchQuery.toLowerCase()) ||
-               user.username.toLowerCase().contains(searchQuery.toLowerCase()) ||
-               user.email.toLowerCase().contains(searchQuery.toLowerCase());
-      }).toList();
-    }
-    
-    // Apply status filters
-    if (showActiveOnly && !showInactiveOnly) {
-      filtered = filtered.where((user) => user.isActive).toList();
-    } else if (showInactiveOnly && !showActiveOnly) {
-      filtered = filtered.where((user) => !user.isActive).toList();
-    }
-    
-    return filtered;
   }
 
   void _handleUserAction(String action, pb.User user, BuildContext context) {

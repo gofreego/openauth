@@ -18,7 +18,6 @@ export 'presentation/bloc/users_event.dart';
 export 'presentation/bloc/users_state.dart';
 export 'presentation/pages/users_page.dart';
 export 'presentation/widgets/users_header.dart';
-export 'presentation/widgets/users_search_bar.dart';
 export 'presentation/widgets/users_table.dart';
 export 'presentation/widgets/user_row.dart';
 export 'presentation/widgets/create_user_dialog.dart';

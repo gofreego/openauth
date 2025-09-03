@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/widgets/custom_search_bar.dart';
 import '../widgets/users_header.dart';
-import '../widgets/users_search_bar.dart';
 import '../widgets/users_table.dart';
 import '../widgets/create_user_dialog.dart';
 import '../bloc/users_bloc.dart';
@@ -16,8 +16,6 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
   String _searchQuery = '';
-  bool _showActiveOnly = false;
-  bool _showInactiveOnly = false;
 
   @override
   void initState() {
@@ -42,29 +40,12 @@ class _UsersPageState extends State<UsersPage> {
           const SizedBox(height: 32),
 
           // Search and filters
-          UsersSearchBar(
-            searchQuery: _searchQuery,
-            showActiveOnly: _showActiveOnly,
-            showInactiveOnly: _showInactiveOnly,
-            onSearchChanged: (query) {
+          CustomSearchBar(
+            onSearch: (query) {
               setState(() {
                 _searchQuery = query;
               });
               context.read<UsersBloc>().add(SearchUsersEvent(query));
-            },
-            onActiveFilterChanged: (value) {
-              setState(() {
-                _showActiveOnly = value;
-                if (value) _showInactiveOnly = false;
-              });
-              _updateFilter();
-            },
-            onInactiveFilterChanged: (value) {
-              setState(() {
-                _showInactiveOnly = value;
-                if (value) _showActiveOnly = false;
-              });
-              _updateFilter();
             },
           ),
           const SizedBox(height: 24),
@@ -73,23 +54,11 @@ class _UsersPageState extends State<UsersPage> {
           Expanded(
             child: UsersTable(
               searchQuery: _searchQuery,
-              showActiveOnly: _showActiveOnly,
-              showInactiveOnly: _showInactiveOnly,
             ),
           ),
         ],
       ),
     );
-  }
-
-  void _updateFilter() {
-    bool? filterValue;
-    if (_showActiveOnly) {
-      filterValue = true;
-    } else if (_showInactiveOnly) {
-      filterValue = false;
-    }
-    context.read<UsersBloc>().add(FilterUsersEvent(filterValue));
   }
 
   void _showCreateUserDialog() {

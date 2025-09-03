@@ -12,7 +12,6 @@ class CustomSearchBar extends StatefulWidget {
   final ValueChanged<String>? onSearch;
   
   /// Optional controller for external control
-  final TextEditingController? controller;
   
   /// Whether to show the search icon on the right side
   final bool showSearchIcon;
@@ -28,7 +27,6 @@ class CustomSearchBar extends StatefulWidget {
     this.initialQuery = '',
     this.hintText = 'Search...',
     this.onSearch,
-    this.controller,
     this.showSearchIcon = true,
     this.width,
     this.onKeyStroke = false,
@@ -40,21 +38,16 @@ class CustomSearchBar extends StatefulWidget {
 
 class _CustomSearchBarState extends State<CustomSearchBar> {
   late final TextEditingController _controller;
-  late final bool _isControllerProvided;
 
   @override
   void initState() {
     super.initState();
-    _isControllerProvided = widget.controller != null;
-    _controller = widget.controller ?? TextEditingController(text: widget.initialQuery);
+    _controller =  TextEditingController(text: widget.initialQuery);
   }
 
   @override
   void dispose() {
-    // Only dispose the controller if we created it internally
-    if (!_isControllerProvided) {
-      _controller.dispose();
-    }
+     _controller.dispose();
     super.dispose();
   }
 
@@ -68,12 +61,12 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: .3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: .15),
             blurRadius: 6,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -101,7 +94,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           suffixIcon: widget.showSearchIcon
               ? IconButton(
-                  icon: const Icon(Icons.search, size: 20),
+                  icon: const Icon(Icons.search, size: 30),
                   onPressed: _performSearch,
                   tooltip: 'Search',
                   iconSize: 20,
