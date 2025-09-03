@@ -138,17 +138,14 @@ class _EditUserDialogState extends State<EditUserDialog> {
         content: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: 600,
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
+            maxHeight: MediaQuery.of(context).size.height * 0.8, // Use 80% of screen height
           ),
-          child: IntrinsicHeight(
-            child: SizedBox(
-              width: 600,
-              child: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   const SizedBox(height: 16),
                    TextFormField(
                     controller: _nameController,
