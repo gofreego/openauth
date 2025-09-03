@@ -510,15 +510,15 @@ service OpenAuth {
     // 
     // Useful when users don't receive the initial verification code
     // or when the code has expired. Includes rate limiting to prevent abuse.
-    rpc ResendVerification (SendVerificationCodeRequest) returns (SendVerificationCodeResponse) {
+    rpc SendVerificationCode (SendVerificationCodeRequest) returns (SendVerificationCodeResponse) {
         option (google.api.http) = {
-            post: "/openauth/v1/users/resend-verification"
+            post: "/openauth/v1/users/send-verification-code"
             body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "User Registration"
-            summary: "Resend verification code"
-            description: "Resend verification codes for email or phone."
+            summary: "Send verification code"
+            description: "Send verification codes for email or phone."
         };
     }
 

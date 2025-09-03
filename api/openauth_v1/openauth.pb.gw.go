@@ -1273,7 +1273,7 @@ func local_request_OpenAuth_VerifyPhone_0(ctx context.Context, marshaler runtime
 
 }
 
-func request_OpenAuth_ResendVerification_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_OpenAuth_SendVerificationCode_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq SendVerificationCodeRequest
 	var metadata runtime.ServerMetadata
 
@@ -1281,12 +1281,12 @@ func request_OpenAuth_ResendVerification_0(ctx context.Context, marshaler runtim
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.ResendVerification(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.SendVerificationCode(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_OpenAuth_ResendVerification_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_OpenAuth_SendVerificationCode_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq SendVerificationCodeRequest
 	var metadata runtime.ServerMetadata
 
@@ -1294,7 +1294,7 @@ func local_request_OpenAuth_ResendVerification_0(ctx context.Context, marshaler 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.ResendVerification(ctx, &protoReq)
+	msg, err := server.SendVerificationCode(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -2808,7 +2808,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_ResendVerification_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_SendVerificationCode_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2816,12 +2816,12 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/ResendVerification", runtime.WithHTTPPathPattern("/openauth/v1/users/resend-verification"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/SendVerificationCode", runtime.WithHTTPPathPattern("/openauth/v1/users/send-verification-code"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_OpenAuth_ResendVerification_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_OpenAuth_SendVerificationCode_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -2829,7 +2829,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_OpenAuth_ResendVerification_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_SendVerificationCode_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -3871,25 +3871,25 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_ResendVerification_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_SendVerificationCode_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/ResendVerification", runtime.WithHTTPPathPattern("/openauth/v1/users/resend-verification"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/SendVerificationCode", runtime.WithHTTPPathPattern("/openauth/v1/users/send-verification-code"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OpenAuth_ResendVerification_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OpenAuth_SendVerificationCode_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OpenAuth_ResendVerification_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_SendVerificationCode_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -4323,7 +4323,7 @@ var (
 
 	pattern_OpenAuth_VerifyPhone_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "users", "verify-phone"}, ""))
 
-	pattern_OpenAuth_ResendVerification_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "users", "resend-verification"}, ""))
+	pattern_OpenAuth_SendVerificationCode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "users", "send-verification-code"}, ""))
 
 	pattern_OpenAuth_CheckUsername_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"openauth", "v1", "users", "check-username", "username"}, ""))
 
@@ -4413,7 +4413,7 @@ var (
 
 	forward_OpenAuth_VerifyPhone_0 = runtime.ForwardResponseMessage
 
-	forward_OpenAuth_ResendVerification_0 = runtime.ForwardResponseMessage
+	forward_OpenAuth_SendVerificationCode_0 = runtime.ForwardResponseMessage
 
 	forward_OpenAuth_CheckUsername_0 = runtime.ForwardResponseMessage
 

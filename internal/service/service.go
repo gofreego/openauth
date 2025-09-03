@@ -9,12 +9,39 @@ import (
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
+	communicationservice "github.com/gofreego/openauth/pkg/clients/communication-service"
 	"github.com/google/uuid"
 )
 
 type Config struct {
-	JWT      JWTConfig      `yaml:"JWT"`
-	Security SecurityConfig `yaml:"Security"`
+	JWT           JWTConfig           `yaml:"JWT"`
+	Security      SecurityConfig      `yaml:"Security"`
+	Communication CommunicationConfig `yaml:"Communication"`
+}
+
+func (c *Config) Default() {
+	c.JWT.Default()
+	c.Security.Default()
+	c.Communication.Default()
+}
+
+type CommunicationConfig struct {
+	ServiceEndpoint          string `yaml:"ServiceEndpoint"`
+	EmailVerificationSubject string `yaml:"EmailVerificationSubject"`
+	EmailVerificationBody    string `yaml:"EmailVerificationBody"`
+	SMSVerificationMessage   string `yaml:"SMSVerificationMessage"`
+}
+
+func (c *CommunicationConfig) Default() {
+	if c.EmailVerificationSubject == "" {
+		c.EmailVerificationSubject = constants.DefaultEmailVerificationSubject
+	}
+	if c.EmailVerificationBody == "" {
+		c.EmailVerificationBody = constants.DefaultEmailVerificationBody
+	}
+	if c.SMSVerificationMessage == "" {
+		c.SMSVerificationMessage = constants.DefaultSMSVerificationMessage
+	}
 }
 
 type JWTConfig struct {
@@ -23,29 +50,16 @@ type JWTConfig struct {
 	RefreshTokenTTL time.Duration `yaml:"RefreshTokenTTL"` // Refresh token expiration time
 }
 
-// GetSecretKey returns the JWT secret key
-func (j *JWTConfig) GetSecretKey() []byte {
-	if j.SecretKey != "" {
-		return []byte(j.SecretKey)
+func (c *JWTConfig) Default() {
+	if c.SecretKey == "" {
+		c.SecretKey = constants.DefaultJWTSecretKey
 	}
-	// Default fallback (not recommended for production)
-	return []byte(constants.DefaultJWTSecretKey)
-}
-
-// GetAccessTokenTTL returns the access token TTL with default fallback
-func (j *JWTConfig) GetAccessTokenTTL() time.Duration {
-	if j.AccessTokenTTL > 0 {
-		return j.AccessTokenTTL
+	if c.AccessTokenTTL == 0 {
+		c.AccessTokenTTL = constants.DefaultAccessTokenTTL
 	}
-	return constants.DefaultAccessTokenTTL
-}
-
-// GetRefreshTokenTTL returns the refresh token TTL with default fallback
-func (j *JWTConfig) GetRefreshTokenTTL() time.Duration {
-	if j.RefreshTokenTTL > 0 {
-		return j.RefreshTokenTTL
+	if c.RefreshTokenTTL == 0 {
+		c.RefreshTokenTTL = constants.DefaultRefreshTokenTTL
 	}
-	return constants.DefaultRefreshTokenTTL
 }
 
 type SecurityConfig struct {
@@ -54,28 +68,16 @@ type SecurityConfig struct {
 	LockoutDuration  time.Duration `yaml:"LockoutDuration"`  // Account lockout duration
 }
 
-// GetBcryptCost returns the bcrypt cost with default fallback
-func (s *SecurityConfig) GetBcryptCost() int {
-	if s.BcryptCost > 0 {
-		return s.BcryptCost
+func (c *SecurityConfig) Default() {
+	if c.BcryptCost == 0 {
+		c.BcryptCost = constants.DefaultBcryptCost
 	}
-	return constants.DefaultBcryptCost
-}
-
-// GetMaxLoginAttempts returns the maximum login attempts with default fallback
-func (s *SecurityConfig) GetMaxLoginAttempts() int {
-	if s.MaxLoginAttempts > 0 {
-		return s.MaxLoginAttempts
+	if c.MaxLoginAttempts == 0 {
+		c.MaxLoginAttempts = constants.DefaultMaxLoginAttempts
 	}
-	return constants.DefaultMaxLoginAttempts
-}
-
-// GetLockoutDuration returns the lockout duration with default fallback
-func (s *SecurityConfig) GetLockoutDuration() time.Duration {
-	if s.LockoutDuration > 0 {
-		return s.LockoutDuration
+	if c.LockoutDuration == 0 {
+		c.LockoutDuration = constants.DefaultLockoutDuration
 	}
-	return constants.DefaultLockoutDuration
 }
 
 type Repository interface {
@@ -170,14 +172,16 @@ type Service struct {
 	repo Repository
 	cfg  *Config
 	openauth_v1.UnimplementedOpenAuthServer
+	communicationClient communicationservice.Client
 }
 
 func NewService(ctx context.Context, cfg *Config, repo Repository) *Service {
+	cfg.Communication.Default()
 	logger.Info(ctx, "Initializing OpenAuth Service with config: JWT TTL=%v, Security BcryptCost=%d",
-		cfg.JWT.GetAccessTokenTTL(), cfg.Security.GetBcryptCost())
-
+		cfg.JWT.AccessTokenTTL, cfg.Security.BcryptCost)
 	return &Service{
-		repo: repo,
-		cfg:  cfg,
+		repo:                repo,
+		cfg:                 cfg,
+		communicationClient: communicationservice.NewClient(cfg.Communication.ServiceEndpoint),
 	}
 }

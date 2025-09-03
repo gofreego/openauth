@@ -86,7 +86,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		}
 
 		// Lock account if too many failed attempts
-		if user.FailedLoginCount >= s.cfg.Security.GetMaxLoginAttempts()-1 {
+		if user.FailedLoginCount >= s.cfg.Security.MaxLoginAttempts-1 {
 			updates["is_locked"] = true
 			logger.Warn(ctx, "Account locked due to too many failed attempts: userID=%d, username=%s, attempts=%d",
 				user.ID, user.Username, user.FailedLoginCount+1)
@@ -122,8 +122,8 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	}
 
 	// Determine session duration
-	accessTokenDuration := s.cfg.JWT.GetAccessTokenTTL()
-	refreshTokenDuration := s.cfg.JWT.GetRefreshTokenTTL()
+	accessTokenDuration := s.cfg.JWT.AccessTokenTTL
+	refreshTokenDuration := s.cfg.JWT.RefreshTokenTTL
 
 	if req.RememberMe != nil && *req.RememberMe {
 		accessTokenDuration = accessTokenDuration * 4   // 4x longer access token
@@ -228,8 +228,8 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 		return nil, status.Error(codes.Internal, "failed to generate new refresh token")
 	}
 
-	accessTokenDuration := s.cfg.JWT.GetAccessTokenTTL()
-	refreshTokenDuration := s.cfg.JWT.GetRefreshTokenTTL()
+	accessTokenDuration := s.cfg.JWT.AccessTokenTTL
+	refreshTokenDuration := s.cfg.JWT.RefreshTokenTTL
 
 	expiresAt := time.Now().Add(accessTokenDuration).Unix()
 	refreshExpiresAt := time.Now().Add(refreshTokenDuration).Unix()
@@ -369,6 +369,8 @@ func (s *Service) ValidateToken(ctx context.Context, req *openauth_v1.ValidateTo
 
 // ListUserSessions retrieves active sessions for a user
 func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUserSessionsRequest) (*openauth_v1.ListUserSessionsResponse, error) {
+	logger.Debug(ctx, "List user sessions request initiated for userUUID=%s", req.UserUuid)
+
 	if req.UserUuid == "" {
 		return nil, status.Error(codes.InvalidArgument, "user_uuid is required")
 	}
@@ -388,6 +390,7 @@ func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUse
 	filters := filter.NewUserSessionsFilter(req.UserUuid, limit, offset, activeOnly)
 	sessions, err := s.repo.ListUserSessions(ctx, filters)
 	if err != nil {
+		logger.Error(ctx, "Failed to list user sessions: %v", err)
 		return nil, status.Error(codes.Internal, "failed to list sessions")
 	}
 
@@ -404,6 +407,7 @@ func (s *Service) ListUserSessions(ctx context.Context, req *openauth_v1.ListUse
 
 // TerminateSession ends a specific user session
 func (s *Service) TerminateSession(ctx context.Context, req *openauth_v1.TerminateSessionRequest) (*openauth_v1.TerminateSessionResponse, error) {
+	logger.Debug(ctx, "Terminate session request initiated for sessionID=%s", req.SessionId)
 	if req.SessionId == "" {
 		return nil, status.Error(codes.InvalidArgument, "session_id is required")
 	}
@@ -413,6 +417,7 @@ func (s *Service) TerminateSession(ctx context.Context, req *openauth_v1.Termina
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "session not found")
 		}
+		logger.Error(ctx, "Failed to terminate session: %v", err)
 		return nil, status.Error(codes.Internal, "failed to terminate session")
 	}
 
@@ -464,6 +469,7 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 	if req != nil && req.Profiles != nil && *req.Profiles {
 		profileIDs, err := s.repo.ListUserProfileUUIDs(ctx, user.ID)
 		if err != nil {
+			logger.Error(ctx, "Failed to get user profile IDs for userID=%d: %v", user.ID, err)
 			return "", fmt.Errorf("failed to get user profile IDs: %w", err)
 		}
 		claims.ProfileIds = profileIDs
@@ -473,13 +479,14 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 	if req != nil && req.IncludePermissions != nil && *req.IncludePermissions {
 		permissions, err := s.repo.GetUserEffectivePermissionNames(ctx, user.ID)
 		if err != nil {
+			logger.Error(ctx, "Failed to get user permissions: %v", err)
 			return "", fmt.Errorf("failed to get user permissions: %w", err)
 		}
 		claims.Permissions = permissions
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(s.cfg.JWT.GetSecretKey())
+	return token.SignedString(s.cfg.JWT.SecretKey)
 }
 
 // ValidateAccessToken parses and validates a JWT access token
@@ -488,7 +495,7 @@ func (s *Service) ValidateAccessToken(tokenString string) (*jwtutils.JWTClaims, 
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return s.cfg.JWT.GetSecretKey(), nil
+		return s.cfg.JWT.SecretKey, nil
 	})
 
 	if err != nil {

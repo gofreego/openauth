@@ -1127,11 +1127,11 @@
         ]
       }
     },
-    "/openauth/v1/users/resend-verification": {
+    "/openauth/v1/users/send-verification-code": {
       "post": {
-        "summary": "Resend verification code",
-        "description": "Resend verification codes for email or phone.",
-        "operationId": "OpenAuth_ResendVerification",
+        "summary": "Send verification code",
+        "description": "Send verification codes for email or phone.",
+        "operationId": "OpenAuth_SendVerificationCode",
         "responses": {
           "200": {
             "description": "A successful response.",

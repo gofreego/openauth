@@ -11,6 +11,7 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
+	communicationservice "github.com/gofreego/openauth/pkg/clients/communication-service"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -56,7 +57,7 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	}
 
 	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.cfg.Security.GetBcryptCost())
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.cfg.Security.BcryptCost)
 	if err != nil {
 		logger.Error(ctx, "Failed to hash password for username %s: %v", req.Username, err)
 		return nil, status.Error(codes.Internal, "failed to hash password")
@@ -221,6 +222,11 @@ func (s *Service) VerifyPhone(ctx context.Context, req *openauth_v1.VerifyPhoneR
 		Verified: true,
 		Message:  "Phone verified successfully",
 	}, nil
+}
+
+// SendVerificationCode implements openauth_v1.OpenAuthServer.
+func (s *Service) SendVerificationCode(context.Context, *openauth_v1.SendVerificationCodeRequest) (*openauth_v1.SendVerificationCodeResponse, error) {
+	panic("unimplemented")
 }
 
 // CheckUsername checks if a username is available for registration
@@ -423,7 +429,7 @@ func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePas
 	}
 
 	// Hash new password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), s.cfg.Security.GetBcryptCost())
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), s.cfg.Security.BcryptCost)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to hash new password")
 	}
@@ -556,8 +562,15 @@ func (s *Service) sendEmailVerification(ctx context.Context, userID int64, email
 		return err
 	}
 
-	// TODO: Send actual email with verification code
-	// For now, we'll just log it or store it
+	err = s.communicationClient.SendEmail(ctx, &communicationservice.SendEmailRequest{
+		Email:   email,
+		Subject: s.cfg.Communication.EmailVerificationSubject,
+		Body:    fmt.Sprintf(s.cfg.Communication.EmailVerificationBody, code),
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -591,8 +604,14 @@ func (s *Service) sendPhoneVerification(ctx context.Context, userID int64, phone
 		return err
 	}
 
-	// TODO: Send actual SMS with verification code
-	// For now, we'll just log it or store it
+	err = s.communicationClient.SendSMS(ctx, &communicationservice.SendSMSRequest{
+		Mobile:  phone,
+		Message: fmt.Sprintf(s.cfg.Communication.SMSVerificationMessage, code),
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

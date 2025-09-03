@@ -25,3 +25,13 @@ const (
 	// DefaultLockoutDuration is the default account lockout duration
 	DefaultLockoutDuration = 30 * time.Minute
 )
+
+// Email and SMS Configuration Defaults
+const (
+	// DefaultEmailVerificationSubject is the default subject for email verification
+	DefaultEmailVerificationSubject = "Please verify your email"
+	// DefaultEmailVerificationBody is the default body for email verification
+	DefaultEmailVerificationBody = "Your verification code is: %s"
+	// DefaultSMSVerificationMessage is the default message for SMS verification
+	DefaultSMSVerificationMessage = "Your verification code is: %s"
+)
