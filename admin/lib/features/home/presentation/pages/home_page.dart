@@ -7,7 +7,6 @@ import '../../../dashboard/dashboard.dart';
 import '../../../users/users.dart';
 import '../../../permissions/permissions.dart';
 import '../../../groups/groups.dart';
-import '../../../sessions/sessions.dart';
 import '../../../settings/settings.dart';
 import '../../../profile/profile.dart';
 
@@ -37,9 +36,6 @@ class _HomePageState extends State<HomePage> {
           break;
         case 'groups':
           _currentSection = NavigationSection.groups;
-          break;
-        case 'sessions':
-          _currentSection = NavigationSection.sessions;
           break;
         case 'settings':
           _currentSection = NavigationSection.settings;
@@ -97,21 +93,7 @@ class _HomePageState extends State<HomePage> {
       case NavigationSection.permissions:
         return const PermissionsPageWrapper();
       case NavigationSection.groups:
-        return GroupsPage(
-          onBackToDashboard: () {
-            setState(() {
-              _currentSection = NavigationSection.dashboard;
-            });
-          },
-        );
-      case NavigationSection.sessions:
-        return SessionsPage(
-          onBackToDashboard: () {
-            setState(() {
-              _currentSection = NavigationSection.dashboard;
-            });
-          },
-        );
+        return const GroupsPage();
       case NavigationSection.settings:
         return SettingsPage(
           onBackToDashboard: () {

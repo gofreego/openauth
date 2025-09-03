@@ -7,7 +7,6 @@ enum NavigationSection {
   users,
   permissions,
   groups,
-  sessions,
   settings,
   profile,
 }
@@ -80,20 +79,6 @@ class AdminSidebar extends StatelessWidget {
                   title: 'Dashboard',
                   section: NavigationSection.dashboard,
                 ),
-                const SizedBox(height: 8),
-                
-                // Management section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: Text(
-                    'MANAGEMENT',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ),
                 _buildNavigationItem(
                   context: context,
                   icon: Icons.people_outline,
@@ -114,27 +99,6 @@ class AdminSidebar extends StatelessWidget {
                   selectedIcon: Icons.group,
                   title: 'Groups',
                   section: NavigationSection.groups,
-                ),
-                _buildNavigationItem(
-                  context: context,
-                  icon: Icons.access_time_outlined,
-                  selectedIcon: Icons.access_time,
-                  title: 'Sessions',
-                  section: NavigationSection.sessions,
-                ),
-                const SizedBox(height: 8),
-                
-                // System section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: Text(
-                    'SYSTEM',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
                 ),
                 _buildNavigationItem(
                   context: context,

@@ -13,6 +13,5 @@ export 'domain/utils/session_utils.dart';
 export 'presentation/bloc/sessions_bloc.dart';
 export 'presentation/bloc/sessions_event.dart';
 export 'presentation/bloc/sessions_state.dart';
-export 'presentation/pages/sessions_page.dart';
 export 'presentation/widgets/user_sessions_dialog.dart';
 export 'presentation/widgets/session_row.dart';

@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/create_group_dialog.dart';
 
 class GroupsHeader extends StatelessWidget {
-  final Function(String)? onSearchChanged;
-  final VoidCallback? onRefresh;
-  final VoidCallback? onBackToDashboard;
+  final VoidCallback? onAddGroup;
 
   const GroupsHeader({
     super.key,
-    this.onSearchChanged,
-    this.onRefresh,
-    this.onBackToDashboard,
+    this.onAddGroup,
   });
 
   @override
@@ -22,13 +17,6 @@ class GroupsHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            if (onBackToDashboard != null) ...[
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: onBackToDashboard,
-              ),
-              const SizedBox(width: 8),
-            ],
             Icon(
               Icons.group,
               size: 32,
@@ -42,14 +30,8 @@ class GroupsHeader extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: onRefresh,
-              tooltip: 'Refresh',
-            ),
-            const SizedBox(width: 8),
             FilledButton.icon(
-              onPressed: () => _showCreateGroupDialog(context),
+              onPressed: onAddGroup,
               icon: const Icon(Icons.add),
               label: const Text('Add Group'),
             ),
@@ -62,29 +44,7 @@ class GroupsHeader extends StatelessWidget {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 24),
-        // Search bar
-        SizedBox(
-          width: 400,
-          child: TextField(
-            onChanged: onSearchChanged,
-            decoration: InputDecoration(
-              hintText: 'Search groups...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-        ),
       ],
-    );
-  }
-
-  void _showCreateGroupDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const CreateGroupDialog(),
     );
   }
 }
