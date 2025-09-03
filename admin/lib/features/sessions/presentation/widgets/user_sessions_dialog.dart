@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as session_pb;
-import '../../../users/domain/extensions/user_extensions.dart';
 import '../bloc/sessions_bloc.dart';
 import '../bloc/sessions_event.dart';
 import '../bloc/sessions_state.dart';
@@ -68,7 +67,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Sessions for ${widget.user.displayName}',
+                        'Sessions for ${widget.user.name}',
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -272,7 +271,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
       builder: (context) => AlertDialog(
         title: const Text('Terminate All Sessions'),
         content: Text(
-          'Are you sure you want to terminate all sessions for ${widget.user.displayName}? '
+          'Are you sure you want to terminate all sessions for ${widget.user.name}? '
           'This will log them out of all devices.',
         ),
         actions: [
@@ -299,7 +298,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
   }
 
   String _getInitials() {
-    final name = widget.user.displayName;
+    final name = widget.user.name;
     if (name.isEmpty) return widget.user.username.isNotEmpty ? widget.user.username[0].toUpperCase() : '?';
     
     final parts = name.split(' ');

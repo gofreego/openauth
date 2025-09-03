@@ -36,14 +36,12 @@ class GroupDetailsDialog extends StatelessWidget {
             InfoRowWithCopy(label: 'Last Updated', value: _formatDate(group.updatedAt)),
             const SizedBox(height: 12),
             InfoRowWithCopy(label: 'Created by', value: group.createdBy.toString(), copy: true),
-            const SizedBox(height: 12),
-            _buildDetailRow('Members', '0'), // TODO: Get actual member count
             const SizedBox(height: 24),
             
             // Management buttons
-            if (!group.isSystem) ...[
-              Row(
-                children: [
+            Row(
+              children: [
+                if (!group.isSystem) 
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => _showManagePermissionsDialog(context),
@@ -51,25 +49,24 @@ class GroupDetailsDialog extends StatelessWidget {
                       label: const Text('Manage Permissions'),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showManageMembersDialog(context),
-                      icon: const Icon(Icons.people),
-                      label: const Text('Manage Members'),
-                    ),
+                if (!group.isSystem) const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showManageMembersDialog(context),
+                    icon: const Icon(Icons.people),
+                    label: const Text('Manage Members'),
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
-            ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
             
             const SizedBox(height: 12),
             if (group.isSystem)
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
+                  // color: Colors.orange.shade50,
                   border: Border.all(color: Colors.orange.shade200),
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -79,7 +76,7 @@ class GroupDetailsDialog extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'This is a system group and cannot be modified',
+                        'This is a system group. Permissions cannot be modified, but members can be managed.',
                         style: TextStyle(
                           color: Colors.orange.shade600,
                           fontSize: 12,

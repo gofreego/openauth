@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
-import '../../domain/extensions/user_extensions.dart';
 import '../../domain/utils/user_utils.dart';
 
 class EditUserDialog extends StatefulWidget {
@@ -125,7 +125,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   Text(_isEditMode ? 'Edit User' : 'User Details',
                       style: Theme.of(context).textTheme.headlineSmall),
                   Text(
-                    widget.user.displayName,
+                    widget.user.name,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey[600],
                         ),
@@ -307,11 +307,11 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           InfoRowWithCopy(label: 'UUID',value:  widget.user.uuid, copy: true,),
                           InfoRowWithCopy(
                               label: 'Created',
-                              value: widget.user.formattedCreatedAt,
+                              value: UtilityFunctions.formatDate(widget.user.createdAt),
                           ),
                           InfoRowWithCopy(
                               label: 'Last Login',
-                              value: widget.user.lastLoginFormatted,
+                              value: UtilityFunctions.formatDateInWords(widget.user.lastLoginAt),
                           ),
                         ],
                       ),

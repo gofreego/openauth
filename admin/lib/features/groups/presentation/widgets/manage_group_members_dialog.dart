@@ -102,6 +102,34 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
   Widget _buildContent() {
     return Column(
       children: [
+        // System group info
+        if (widget.group.isSystem)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              border: Border.all(color: Colors.blue.shade200),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info, color: Colors.blue.shade600, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'This is a system group. You can manage members, but permissions are controlled by the system.',
+                    style: TextStyle(
+                      color: Colors.blue.shade700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        
         // Search bar
         TextField(
           decoration: const InputDecoration(

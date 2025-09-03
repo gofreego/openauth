@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:openauth/shared/utils/utility_functions.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
-import '../../domain/extensions/user_extensions.dart';
 import '../../domain/utils/user_utils.dart';
 import 'edit_user_dialog.dart';
 
@@ -57,7 +57,7 @@ class UserRow extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          user.displayName,
+                          user.name,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -103,7 +103,7 @@ class UserRow extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: Text(
-                user.lastLoginFormatted,
+                UtilityFunctions.formatDateInWords(user.lastLoginAt),
                 style: theme.textTheme.bodyMedium,
                 overflow: TextOverflow.ellipsis,
               ),

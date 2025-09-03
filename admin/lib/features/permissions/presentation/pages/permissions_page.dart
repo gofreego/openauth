@@ -35,8 +35,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
 
             // Search and filters
             CustomSearchBar(
-              showSearchIcon: false,
-              onKeyStroke: true,
+              showSearchIcon: true,
               onSearch: (query) {
                 setState(() {
                   _searchQuery = query;

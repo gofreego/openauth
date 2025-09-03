@@ -1,5 +1,5 @@
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 
@@ -29,9 +29,9 @@ class PermissionDetailsDialog extends StatelessWidget {
             const SizedBox(height: 12),
             _buildDetailRow('Description', permission.description),
             const SizedBox(height: 12),
-            InfoRowWithCopy(label: 'Created', value: _formatDate(permission.createdAt)),
+            InfoRowWithCopy(label: 'Created', value: UtilityFunctions.formatDate(permission.createdAt)),
             const SizedBox(height: 12),
-            InfoRowWithCopy(label: 'Last Updated', value: _formatDate(permission.updatedAt)),
+            InfoRowWithCopy(label: 'Last Updated', value: UtilityFunctions.formatDate(permission.updatedAt)),
             const SizedBox(height: 12),
             InfoRowWithCopy(label: 'Created by', value: permission.createdBy.toString(), copy: true),
           ],
@@ -71,8 +71,5 @@ class PermissionDetailsDialog extends StatelessWidget {
     );
   }
 
-  String _formatDate(Int64 millis) {
-    final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
-    return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
+
 }

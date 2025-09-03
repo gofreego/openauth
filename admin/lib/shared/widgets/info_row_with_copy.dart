@@ -28,10 +28,11 @@ class InfoRowWithCopy extends StatelessWidget {
             width: 80,
             child: Text(
               '$label:',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
+              style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: Colors.grey,
+          ),
             ),
           ),
 

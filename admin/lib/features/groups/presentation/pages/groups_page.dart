@@ -42,8 +42,6 @@ class _GroupsPageState extends State<GroupsPage> {
 
             // Search and filters
             CustomSearchBar(
-              showSearchIcon: false,
-              onKeyStroke: true,
               onSearch: (query) {
                 setState(() {
                   _searchQuery = query;

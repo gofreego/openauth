@@ -9,7 +9,6 @@ import '../../../permissions/presentation/bloc/permissions_bloc.dart';
 import '../bloc/user_permissions_bloc.dart';
 import '../bloc/user_permissions_event.dart';
 import '../bloc/user_permissions_state.dart';
-import '../../domain/extensions/user_extensions.dart';
 import '../../../../shared/widgets/custom_search_bar.dart';
 
 class UserPermissionsDialog extends StatefulWidget {
@@ -86,7 +85,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                         ),
                       ),
                       Text(
-                        'for ${widget.user.displayName} (@${widget.user.username})',
+                        'for ${widget.user.name} (@${widget.user.username})',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
@@ -474,7 +473,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
       builder: (context) => AlertDialog(
         title: const Text('Add Permission'),
         content: Text(
-          'Are you sure you want to add "${permission.displayName.isEmpty ? permission.name : permission.displayName}" permission to ${widget.user.displayName}?',
+          'Are you sure you want to add "${permission.displayName.isEmpty ? permission.name : permission.displayName}" permission to ${widget.user.name}?',
         ),
         actions: [
           TextButton(
@@ -504,7 +503,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
       builder: (context) => AlertDialog(
         title: const Text('Remove Permission'),
         content: Text(
-          'Are you sure you want to remove "${permission.permissionDisplayName.isEmpty ? permission.permissionName : permission.permissionDisplayName}" permission from ${widget.user.displayName}?',
+          'Are you sure you want to remove "${permission.permissionDisplayName.isEmpty ? permission.permissionName : permission.permissionDisplayName}" permission from ${widget.user.name}?',
         ),
         actions: [
           TextButton(
@@ -533,12 +532,12 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   }
 
   String _getInitial() {
-    if (widget.user.displayName.isEmpty) {
+    if (widget.user.name.isEmpty) {
       return widget.user.username.isNotEmpty
           ? widget.user.username[0].toUpperCase()
           : '?';
     }
-    return widget.user.displayName[0].toUpperCase();
+    return widget.user.name[0].toUpperCase();
   }
 
   String _formatDate(int timestamp) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
-import '../../domain/extensions/user_extensions.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
 import '../bloc/users_event.dart';
@@ -169,7 +168,7 @@ class UsersTable extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete User'),
-        content: Text('Are you sure you want to delete ${user.displayName}? This action cannot be undone.'),
+        content: Text('Are you sure you want to delete ${user.name}? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -183,7 +182,7 @@ class UsersTable extends StatelessWidget {
                 bloc.add(DeleteUserEvent(user.uuid));
               }
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${user.displayName} deleted successfully')),
+                SnackBar(content: Text('${user.name} deleted successfully')),
               );
             },
             style: FilledButton.styleFrom(
@@ -220,7 +219,7 @@ class UsersTable extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('$capitalizedAction User'),
-        content: Text('Are you sure you want to $action ? ${user.displayName} will${action == 'activate'?'':' not'} be able to log in!'),
+        content: Text('Are you sure you want to $action ? ${user.name} will${action == 'activate'?'':' not'} be able to log in!'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -239,7 +238,7 @@ class UsersTable extends StatelessWidget {
                 ));
               }
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${user.displayName} ${action}d successfully')),
+                SnackBar(content: Text('${user.name} ${action}d successfully')),
               );
             },
             style: OutlinedButton.styleFrom(

@@ -77,6 +77,29 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
   }
 
   Widget _buildContent() {
+    // Show warning for system groups
+    if (widget.group.isSystem) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.security, size: 64, color: Colors.orange),
+            SizedBox(height: 16),
+            Text(
+              'System Group Permissions',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Permissions for system groups cannot be modified.\nThey are managed by the system.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       children: [
         // Search bar
