@@ -98,27 +98,37 @@ class _PermissionsGridState extends State<PermissionsGrid> {
         Expanded(
           child: SingleChildScrollView(
             controller: _scrollController,
-            padding: const EdgeInsets.all(16),
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: [
-                ...filteredPermissions.map((permission) => PermissionCard(
-                  permission: permission,
-                  onTap: () => _showPermissionDetails(context, permission),
-                  onAction: (action) => _handlePermissionAction(context, action, permission),
-                )),
-                if (widget.isLoadingMore)
-                  const SizedBox(
-                    width: 200,
-                    height: 150,
-                    child: Card(
-                      child: Center(
-                        child: CircularProgressIndicator(),
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width < 600 ? 8 : 16),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final crossAxisCount = (constraints.maxWidth / 320).floor().clamp(1, 10);
+                final cardWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
+                
+                return Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: [
+                    ...filteredPermissions.map((permission) => SizedBox(
+                      width: cardWidth,
+                      child: PermissionCard(
+                        permission: permission,
+                        onTap: () => _showPermissionDetails(context, permission),
+                        onAction: (action) => _handlePermissionAction(context, action, permission),
                       ),
-                    ),
-                  ),
-              ],
+                    )),
+                    if (widget.isLoadingMore)
+                      SizedBox(
+                        width: cardWidth,
+                        height: 120,
+                        child: const Card(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -297,17 +307,15 @@ class PermissionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 280,
-      height: 200,
-      child: Card(
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
               children: [
               Row(
                 children: [
@@ -363,13 +371,11 @@ class PermissionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Expanded(
-                child: Text(
-                  permission.description,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Text(
+                permission.description,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
               Row(
@@ -392,7 +398,6 @@ class PermissionCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 
