@@ -148,20 +148,26 @@ type Repository interface {
 
 	// Group membership methods
 	AssignUserToGroup(ctx context.Context, userID, groupID int64, assignedBy int64, expiresAt *int64) error
+	AssignUsersToGroup(ctx context.Context, userIDs []int64, groupID int64, assignedBy int64, expiresAt *int64) error
 	RemoveUserFromGroup(ctx context.Context, userID, groupID int64) error
+	RemoveUsersFromGroup(ctx context.Context, userIDs []int64, groupID int64) error
 	ListGroupUsers(ctx context.Context, filters *filter.GroupUsersFilter) ([]*dao.User, error)
 	ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, error)
 	IsUserInGroup(ctx context.Context, userID, groupID int64) (bool, error)
 
 	// Group permission methods
 	AssignPermissionToGroup(ctx context.Context, groupID, permissionID, grantedBy int64) error
+	AssignPermissionsToGroup(ctx context.Context, groupID int64, permissionIDs []int64, grantedBy int64) error
 	RemovePermissionFromGroup(ctx context.Context, groupID, permissionID int64) error
+	RemovePermissionsFromGroup(ctx context.Context, groupID int64, permissionIDs []int64) error
 	ListGroupPermissions(ctx context.Context, groupId int64) ([]*dao.EffectivePermission, error)
 	IsPermissionAssignedToGroup(ctx context.Context, groupID, permissionID int64) (bool, error)
 
 	// User permission methods
 	AssignPermissionToUser(ctx context.Context, userID, permissionID, grantedBy int64, expiresAt *int64) error
+	AssignPermissionsToUser(ctx context.Context, userID int64, permissionIDs []int64, grantedBy int64, expiresAt *int64) error
 	RemovePermissionFromUser(ctx context.Context, userID, permissionID int64) error
+	RemovePermissionsFromUser(ctx context.Context, userID int64, permissionIDs []int64) error
 	ListUserPermissions(ctx context.Context, userId int64) ([]*dao.EffectivePermission, error)
 	GetUserEffectivePermissions(ctx context.Context, userId int64) ([]*dao.EffectivePermission, error)
 	IsPermissionAssignedToUser(ctx context.Context, userID, permissionID int64) (bool, error)

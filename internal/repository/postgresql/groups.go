@@ -213,6 +213,48 @@ func (r *Repository) AssignUserToGroup(ctx context.Context, userID, groupID int6
 	return nil
 }
 
+// AssignUsersToGroup assigns multiple users to a group in a single transaction
+func (r *Repository) AssignUsersToGroup(ctx context.Context, userIDs []int64, groupID int64, assignedBy int64, expiresAt *int64) error {
+	if len(userIDs) == 0 {
+		return nil
+	}
+
+	tx, err := r.connManager.Primary().BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Prepare the bulk insert query
+	query := `
+		INSERT INTO user_groups (user_id, group_id, assigned_by, expires_at, created_at)
+		VALUES `
+
+	args := make([]interface{}, 0, len(userIDs)*5)
+	placeholders := make([]string, 0, len(userIDs))
+	createdAt := time.Now().Unix()
+
+	for i, userID := range userIDs {
+		baseIndex := i * 5
+		placeholders = append(placeholders, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)",
+			baseIndex+1, baseIndex+2, baseIndex+3, baseIndex+4, baseIndex+5))
+		args = append(args, userID, groupID, assignedBy, expiresAt, createdAt)
+	}
+
+	query += strings.Join(placeholders, ", ") + " ON CONFLICT (user_id, group_id) DO NOTHING"
+
+	_, err = tx.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to assign users to group: %w", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
+
 // RemoveUserFromGroup removes a user from a group
 func (r *Repository) RemoveUserFromGroup(ctx context.Context, userID, groupID int64) error {
 	result, err := r.connManager.Primary().ExecContext(ctx, "DELETE FROM user_groups WHERE user_id = $1 AND group_id = $2", userID, groupID)
@@ -227,6 +269,52 @@ func (r *Repository) RemoveUserFromGroup(ctx context.Context, userID, groupID in
 
 	if rowsAffected == 0 {
 		return fmt.Errorf("user group assignment not found")
+	}
+
+	return nil
+}
+
+// RemoveUsersFromGroup removes multiple users from a group in a single transaction
+func (r *Repository) RemoveUsersFromGroup(ctx context.Context, userIDs []int64, groupID int64) error {
+	if len(userIDs) == 0 {
+		return nil
+	}
+
+	tx, err := r.connManager.Primary().BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Build the query with IN clause for bulk deletion
+	placeholders := make([]string, len(userIDs))
+	args := make([]interface{}, len(userIDs)+1)
+	args[0] = groupID
+
+	for i, userID := range userIDs {
+		placeholders[i] = fmt.Sprintf("$%d", i+2)
+		args[i+1] = userID
+	}
+
+	query := fmt.Sprintf("DELETE FROM user_groups WHERE group_id = $1 AND user_id IN (%s)",
+		strings.Join(placeholders, ", "))
+
+	result, err := tx.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to remove users from group: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no user group assignments found to remove")
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil

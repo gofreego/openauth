@@ -13,82 +13,82 @@ import (
 	"github.com/gofreego/openauth/pkg/jwtutils"
 )
 
-// AssignPermissionToGroup assigns a permission to a group
-func (s *Service) AssignPermissionToGroup(ctx context.Context, req *openauth_v1.AssignPermissionToGroupRequest) (*openauth_v1.AssignPermissionToGroupResponse, error) {
-	logger.Info(ctx, "Permission assignment to group requested: groupID=%d, permissionID=%d", req.GroupId, req.PermissionId)
+// AssignPermissionsToGroup assigns multiple permissions to a group
+func (s *Service) AssignPermissionsToGroup(ctx context.Context, req *openauth_v1.AssignPermissionsToGroupRequest) (*openauth_v1.AssignPermissionsToGroupResponse, error) {
+	logger.Info(ctx, "Permission assignment to group requested: groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
 
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission assignment failed: invalid or missing token for groupID=%d, permissionID=%d", req.GroupId, req.PermissionId)
+		logger.Warn(ctx, "Permission assignment failed: invalid or missing token for groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
 		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
 	}
 
-	logger.Debug(ctx, "Permission assignment initiated by userID=%d for groupID=%d, permissionID=%d", claims.UserID, req.GroupId, req.PermissionId)
+	logger.Debug(ctx, "Permission assignment initiated by userID=%d for groupID=%d, permissionIDs=%v", claims.UserID, req.GroupId, req.PermissionsIds)
 
 	// Validate input
 	if req.GroupId <= 0 {
 		logger.Warn(ctx, "Permission assignment failed: invalid group_id=%d", req.GroupId)
 		return nil, status.Error(codes.InvalidArgument, "group_id must be greater than 0")
 	}
-	if req.PermissionId <= 0 {
-		logger.Warn(ctx, "Permission assignment failed: invalid permission_id=%d", req.PermissionId)
-		return nil, status.Error(codes.InvalidArgument, "permission_id must be greater than 0")
+	if len(req.PermissionsIds) == 0 {
+		logger.Warn(ctx, "Permission assignment failed: no permission IDs provided")
+		return nil, status.Error(codes.InvalidArgument, "permission_ids are required")
 	}
 
-	// Assign permission to group
-	err = s.repo.AssignPermissionToGroup(ctx, req.GroupId, req.PermissionId, claims.UserID)
+	// Assign permissions to group using bulk operation
+	err = s.repo.AssignPermissionsToGroup(ctx, req.GroupId, req.PermissionsIds, claims.UserID)
 	if err != nil {
-		logger.Error(ctx, "Failed to assign permission to group: groupID=%d, permissionID=%d, grantedBy=%d: %v",
-			req.GroupId, req.PermissionId, claims.UserID, err)
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to assign permission to group: %v", err))
+		logger.Error(ctx, "Failed to assign permissions to group: groupID=%d, permissionIDs=%v, grantedBy=%d: %v",
+			req.GroupId, req.PermissionsIds, claims.UserID, err)
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to assign permissions to group: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully assigned to group: groupID=%d, permissionID=%d, grantedBy=%d",
-		req.GroupId, req.PermissionId, claims.UserID)
+	logger.Info(ctx, "Permissions successfully assigned to group: groupID=%d, permissionIDs=%v, grantedBy=%d",
+		req.GroupId, req.PermissionsIds, claims.UserID)
 
-	return &openauth_v1.AssignPermissionToGroupResponse{
-		Message: "Permission successfully assigned to group",
+	return &openauth_v1.AssignPermissionsToGroupResponse{
+		Message: fmt.Sprintf("Successfully assigned %d permissions to group", len(req.PermissionsIds)),
 	}, nil
 }
 
-// RemovePermissionFromGroup removes a permission from a group
-func (s *Service) RemovePermissionFromGroup(ctx context.Context, req *openauth_v1.RemovePermissionFromGroupRequest) (*openauth_v1.RemovePermissionFromGroupResponse, error) {
-	logger.Info(ctx, "Permission removal from group requested: groupID=%d, permissionID=%d", req.GroupId, req.PermissionId)
+// RemovePermissionsFromGroup removes multiple permissions from a group
+func (s *Service) RemovePermissionsFromGroup(ctx context.Context, req *openauth_v1.RemovePermissionsFromGroupRequest) (*openauth_v1.RemovePermissionsFromGroupResponse, error) {
+	logger.Info(ctx, "Permission removal from group requested: groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
 
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission removal failed: invalid or missing token for groupID=%d, permissionID=%d", req.GroupId, req.PermissionId)
+		logger.Warn(ctx, "Permission removal failed: invalid or missing token for groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
 		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
 	}
 
-	logger.Debug(ctx, "Permission removal initiated by userID=%d for groupID=%d, permissionID=%d", claims.UserID, req.GroupId, req.PermissionId)
+	logger.Debug(ctx, "Permission removal initiated by userID=%d for groupID=%d, permissionIDs=%v", claims.UserID, req.GroupId, req.PermissionsIds)
 
 	// Validate input
 	if req.GroupId <= 0 {
 		logger.Warn(ctx, "Permission removal failed: invalid group_id=%d", req.GroupId)
 		return nil, status.Error(codes.InvalidArgument, "group_id must be greater than 0")
 	}
-	if req.PermissionId <= 0 {
-		logger.Warn(ctx, "Permission removal failed: invalid permission_id=%d", req.PermissionId)
-		return nil, status.Error(codes.InvalidArgument, "permission_id must be greater than 0")
+	if len(req.PermissionsIds) == 0 {
+		logger.Warn(ctx, "Permission removal failed: no permission IDs provided")
+		return nil, status.Error(codes.InvalidArgument, "permission_ids are required")
 	}
 
-	// Remove permission from group
-	err = s.repo.RemovePermissionFromGroup(ctx, req.GroupId, req.PermissionId)
+	// Remove permissions from group using bulk operation
+	err = s.repo.RemovePermissionsFromGroup(ctx, req.GroupId, req.PermissionsIds)
 	if err != nil {
-		logger.Error(ctx, "Failed to remove permission from group: groupID=%d, permissionID=%d: %v",
-			req.GroupId, req.PermissionId, err)
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to remove permission from group: %v", err))
+		logger.Error(ctx, "Failed to remove permissions from group: groupID=%d, permissionIDs=%v: %v",
+			req.GroupId, req.PermissionsIds, err)
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to remove permissions from group: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully removed from group: groupID=%d, permissionID=%d",
-		req.GroupId, req.PermissionId)
+	logger.Info(ctx, "Permissions successfully removed from group: groupID=%d, permissionIDs=%v",
+		req.GroupId, req.PermissionsIds)
 
-	return &openauth_v1.RemovePermissionFromGroupResponse{
+	return &openauth_v1.RemovePermissionsFromGroupResponse{
 		Success: true,
-		Message: "Permission successfully removed from group",
+		Message: fmt.Sprintf("Successfully removed %d permissions from group", len(req.PermissionsIds)),
 	}, nil
 }
 
@@ -131,89 +131,89 @@ func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.Lis
 	}, nil
 }
 
-// AssignPermissionToUser assigns a permission directly to a user
-func (s *Service) AssignPermissionToUser(ctx context.Context, req *openauth_v1.AssignPermissionToUserRequest) (*openauth_v1.AssignPermissionToUserResponse, error) {
-	logger.Info(ctx, "Permission assignment to user requested: userID=%d, permissionID=%d", req.UserId, req.PermissionId)
+// AssignPermissionsToUser assigns multiple permissions directly to a user
+func (s *Service) AssignPermissionsToUser(ctx context.Context, req *openauth_v1.AssignPermissionsToUserRequest) (*openauth_v1.AssignPermissionsToUserResponse, error) {
+	logger.Info(ctx, "Permission assignment to user requested: userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
 
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission assignment failed: invalid or missing token for userID=%d, permissionID=%d", req.UserId, req.PermissionId)
+		logger.Warn(ctx, "Permission assignment failed: invalid or missing token for userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
 		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
 	}
 
-	logger.Debug(ctx, "Permission assignment initiated by userID=%d for targetUserID=%d, permissionID=%d", claims.UserID, req.UserId, req.PermissionId)
+	logger.Debug(ctx, "Permission assignment initiated by userID=%d for targetUserID=%d, permissionIDs=%v", claims.UserID, req.UserId, req.PermissionsIds)
 
 	// Validate input
 	if req.UserId <= 0 {
 		logger.Warn(ctx, "Permission assignment failed: invalid user_id=%d", req.UserId)
 		return nil, status.Error(codes.InvalidArgument, "user_id must be greater than 0")
 	}
-	if req.PermissionId <= 0 {
-		logger.Warn(ctx, "Permission assignment failed: invalid permission_id=%d", req.PermissionId)
-		return nil, status.Error(codes.InvalidArgument, "permission_id must be greater than 0")
+	if len(req.PermissionsIds) == 0 {
+		logger.Warn(ctx, "Permission assignment failed: no permission IDs provided")
+		return nil, status.Error(codes.InvalidArgument, "permission_ids are required")
 	}
 
 	// Validate expiration time if provided
 	if req.ExpiresAt != nil && *req.ExpiresAt <= time.Now().Unix() {
-		logger.Warn(ctx, "Permission assignment failed: expires_at is in the past: userID=%d, permissionID=%d, expires_at=%d",
-			req.UserId, req.PermissionId, *req.ExpiresAt)
+		logger.Warn(ctx, "Permission assignment failed: expires_at is in the past: userID=%d, permissionIDs=%v, expires_at=%d",
+			req.UserId, req.PermissionsIds, *req.ExpiresAt)
 		return nil, status.Error(codes.InvalidArgument, "expires_at must be in the future")
 	}
 
-	// Assign permission to user
-	err = s.repo.AssignPermissionToUser(ctx, req.UserId, req.PermissionId, claims.UserID, req.ExpiresAt)
+	// Assign permissions to user using bulk operation
+	err = s.repo.AssignPermissionsToUser(ctx, req.UserId, req.PermissionsIds, claims.UserID, req.ExpiresAt)
 	if err != nil {
-		logger.Error(ctx, "Failed to assign permission to user: userID=%d, permissionID=%d, grantedBy=%d: %v",
-			req.UserId, req.PermissionId, claims.UserID, err)
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to assign permission to user: %v", err))
+		logger.Error(ctx, "Failed to assign permissions to user: userID=%d, permissionIDs=%v, grantedBy=%d: %v",
+			req.UserId, req.PermissionsIds, claims.UserID, err)
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to assign permissions to user: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully assigned to user: userID=%d, permissionID=%d, grantedBy=%d",
-		req.UserId, req.PermissionId, claims.UserID)
+	logger.Info(ctx, "Permissions successfully assigned to user: userID=%d, permissionIDs=%v, grantedBy=%d",
+		req.UserId, req.PermissionsIds, claims.UserID)
 
-	return &openauth_v1.AssignPermissionToUserResponse{
-		Message: "Permission successfully assigned to user",
+	return &openauth_v1.AssignPermissionsToUserResponse{
+		Message: fmt.Sprintf("Successfully assigned %d permissions to user", len(req.PermissionsIds)),
 	}, nil
 }
 
-// RemovePermissionFromUser removes a permission directly assigned to a user
-func (s *Service) RemovePermissionFromUser(ctx context.Context, req *openauth_v1.RemovePermissionFromUserRequest) (*openauth_v1.RemovePermissionFromUserResponse, error) {
-	logger.Info(ctx, "Permission removal from user requested: userID=%d, permissionID=%d", req.UserId, req.PermissionId)
+// RemovePermissionsFromUser removes multiple permissions directly assigned to a user
+func (s *Service) RemovePermissionsFromUser(ctx context.Context, req *openauth_v1.RemovePermissionsFromUserRequest) (*openauth_v1.RemovePermissionsFromUserResponse, error) {
+	logger.Info(ctx, "Permission removal from user requested: userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
 
 	// Extract user claims from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission removal failed: invalid or missing token for userID=%d, permissionID=%d", req.UserId, req.PermissionId)
+		logger.Warn(ctx, "Permission removal failed: invalid or missing token for userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
 		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
 	}
 
-	logger.Debug(ctx, "Permission removal initiated by userID=%d for targetUserID=%d, permissionID=%d", claims.UserID, req.UserId, req.PermissionId)
+	logger.Debug(ctx, "Permission removal initiated by userID=%d for targetUserID=%d, permissionIDs=%v", claims.UserID, req.UserId, req.PermissionsIds)
 
 	// Validate input
 	if req.UserId <= 0 {
 		logger.Warn(ctx, "Permission removal failed: invalid user_id=%d", req.UserId)
 		return nil, status.Error(codes.InvalidArgument, "user_id must be greater than 0")
 	}
-	if req.PermissionId <= 0 {
-		logger.Warn(ctx, "Permission removal failed: invalid permission_id=%d", req.PermissionId)
-		return nil, status.Error(codes.InvalidArgument, "permission_id must be greater than 0")
+	if len(req.PermissionsIds) == 0 {
+		logger.Warn(ctx, "Permission removal failed: no permission IDs provided")
+		return nil, status.Error(codes.InvalidArgument, "permission_ids are required")
 	}
 
-	// Remove permission from user
-	err = s.repo.RemovePermissionFromUser(ctx, req.UserId, req.PermissionId)
+	// Remove permissions from user using bulk operation
+	err = s.repo.RemovePermissionsFromUser(ctx, req.UserId, req.PermissionsIds)
 	if err != nil {
-		logger.Error(ctx, "Failed to remove permission from user: userID=%d, permissionID=%d: %v",
-			req.UserId, req.PermissionId, err)
-		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to remove permission from user: %v", err))
+		logger.Error(ctx, "Failed to remove permissions from user: userID=%d, permissionIDs=%v: %v",
+			req.UserId, req.PermissionsIds, err)
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to remove permissions from user: %v", err))
 	}
 
-	logger.Info(ctx, "Permission successfully removed from user: userID=%d, permissionID=%d",
-		req.UserId, req.PermissionId)
+	logger.Info(ctx, "Permissions successfully removed from user: userID=%d, permissionIDs=%v",
+		req.UserId, req.PermissionsIds)
 
-	return &openauth_v1.RemovePermissionFromUserResponse{
+	return &openauth_v1.RemovePermissionsFromUserResponse{
 		Success: true,
-		Message: "Permission successfully removed from user",
+		Message: fmt.Sprintf("Successfully removed %d permissions from user", len(req.PermissionsIds)),
 	}, nil
 }
 

@@ -289,12 +289,12 @@
       "post": {
         "summary": "Assign user to group",
         "description": "Add a user to a group.",
-        "operationId": "OpenAuth_AssignUserToGroup",
+        "operationId": "OpenAuth_AssignUsersToGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1AssignUserToGroupResponse"
+              "$ref": "#/definitions/v1AssignUsersToGroupResponse"
             }
           },
           "default": {
@@ -310,7 +310,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1AssignUserToGroupRequest"
+              "$ref": "#/definitions/v1AssignUsersToGroupRequest"
             }
           }
         ],
@@ -353,14 +353,14 @@
         ]
       },
       "post": {
-        "summary": "Assign permission to group",
-        "description": "Assign a permission to a group.",
-        "operationId": "OpenAuth_AssignPermissionToGroup",
+        "summary": "Assign permissions to group",
+        "description": "Assign permissions to a group.",
+        "operationId": "OpenAuth_AssignPermissionsToGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1AssignPermissionToGroupResponse"
+              "$ref": "#/definitions/v1AssignPermissionsToGroupResponse"
             }
           },
           "default": {
@@ -384,25 +384,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/OpenAuthAssignPermissionToGroupBody"
+              "$ref": "#/definitions/OpenAuthAssignPermissionsToGroupBody"
             }
           }
         ],
         "tags": [
           "Permission Assignments"
         ]
-      }
-    },
-    "/openauth/v1/groups/{groupId}/permissions/{permissionId}": {
-      "delete": {
-        "summary": "Remove permission from group",
-        "description": "Remove a permission from a group.",
-        "operationId": "OpenAuth_RemovePermissionFromGroup",
+      },
+      "put": {
+        "summary": "Remove permissions from group",
+        "description": "Remove permissions from a group.",
+        "operationId": "OpenAuth_RemovePermissionsFromGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1RemovePermissionFromGroupResponse"
+              "$ref": "#/definitions/v1RemovePermissionsFromGroupResponse"
             }
           },
           "default": {
@@ -422,12 +420,12 @@
             "format": "int64"
           },
           {
-            "name": "permissionId",
-            "description": "ID of the permission to remove",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "schema": {
+              "$ref": "#/definitions/OpenAuthRemovePermissionsFromGroupBody"
+            }
           }
         ],
         "tags": [
@@ -481,18 +479,16 @@
         "tags": [
           "Group Users"
         ]
-      }
-    },
-    "/openauth/v1/groups/{groupId}/users/{userId}": {
-      "delete": {
-        "summary": "Remove user from group",
-        "description": "Remove a user from a group.",
-        "operationId": "OpenAuth_RemoveUserFromGroup",
+      },
+      "put": {
+        "summary": "Remove users from group",
+        "description": "Remove users from a group.",
+        "operationId": "OpenAuth_RemoveUsersFromGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1RemoveUserFromGroupResponse"
+              "$ref": "#/definitions/v1RemoveUsersFromGroupResponse"
             }
           },
           "default": {
@@ -511,11 +507,12 @@
             "format": "int64"
           },
           {
-            "name": "userId",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "schema": {
+              "$ref": "#/definitions/OpenAuthRemoveUsersFromGroupBody"
+            }
           }
         ],
         "tags": [
@@ -1338,14 +1335,14 @@
         ]
       },
       "post": {
-        "summary": "Assign permission to user",
-        "description": "Assign a permission directly to a user.",
-        "operationId": "OpenAuth_AssignPermissionToUser",
+        "summary": "Assign permissions to user",
+        "description": "Assign permissions directly to a user.",
+        "operationId": "OpenAuth_AssignPermissionsToUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1AssignPermissionToUserResponse"
+              "$ref": "#/definitions/v1AssignPermissionsToUserResponse"
             }
           },
           "default": {
@@ -1369,25 +1366,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/OpenAuthAssignPermissionToUserBody"
+              "$ref": "#/definitions/OpenAuthAssignPermissionsToUserBody"
             }
           }
         ],
         "tags": [
           "Permission Assignments"
         ]
-      }
-    },
-    "/openauth/v1/users/{userId}/permissions/{permissionId}": {
-      "delete": {
-        "summary": "Remove permission from user",
-        "description": "Remove a permission directly assigned to a user.",
-        "operationId": "OpenAuth_RemovePermissionFromUser",
+      },
+      "put": {
+        "summary": "Remove permissions from user",
+        "description": "Remove permissions directly assigned to a user.",
+        "operationId": "OpenAuth_RemovePermissionsFromUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1RemovePermissionFromUserResponse"
+              "$ref": "#/definitions/v1RemovePermissionsFromUserResponse"
             }
           },
           "default": {
@@ -1407,12 +1402,12 @@
             "format": "int64"
           },
           {
-            "name": "permissionId",
-            "description": "ID of the permission to remove",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "schema": {
+              "$ref": "#/definitions/OpenAuthRemovePermissionsFromUserBody"
+            }
           }
         ],
         "tags": [
@@ -1720,24 +1715,30 @@
     }
   },
   "definitions": {
-    "OpenAuthAssignPermissionToGroupBody": {
+    "OpenAuthAssignPermissionsToGroupBody": {
       "type": "object",
       "properties": {
-        "permissionId": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the permission to assign"
+        "permissionsIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          },
+          "title": "IDs of the permissions to assign"
         }
       },
       "title": "Request to assign a permission to a group"
     },
-    "OpenAuthAssignPermissionToUserBody": {
+    "OpenAuthAssignPermissionsToUserBody": {
       "type": "object",
       "properties": {
-        "permissionId": {
-          "type": "string",
-          "format": "int64",
-          "title": "ID of the permission to assign"
+        "permissionsIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          },
+          "title": "IDs of the permissions to assign"
         },
         "expiresAt": {
           "type": "string",
@@ -1817,6 +1818,47 @@
         }
       },
       "title": "CreateProfileRequest to create a new profile for a user"
+    },
+    "OpenAuthRemovePermissionsFromGroupBody": {
+      "type": "object",
+      "properties": {
+        "permissionsIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          },
+          "title": "IDs of the permissions to remove"
+        }
+      },
+      "title": "Request to remove a permission from a group"
+    },
+    "OpenAuthRemovePermissionsFromUserBody": {
+      "type": "object",
+      "properties": {
+        "permissionsIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          },
+          "title": "IDs of the permissions to remove"
+        }
+      },
+      "title": "Request to remove a permission from a user"
+    },
+    "OpenAuthRemoveUsersFromGroupBody": {
+      "type": "object",
+      "properties": {
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        }
+      },
+      "title": "RemoveUsersFromGroupRequest to remove users from a group"
     },
     "OpenAuthUpdateGroupBody": {
       "type": "object",
@@ -1964,7 +2006,7 @@
         }
       }
     },
-    "v1AssignPermissionToGroupResponse": {
+    "v1AssignPermissionsToGroupResponse": {
       "type": "object",
       "properties": {
         "message": {
@@ -1973,7 +2015,7 @@
       },
       "title": "Response after assigning a permission to a group"
     },
-    "v1AssignPermissionToUserResponse": {
+    "v1AssignPermissionsToUserResponse": {
       "type": "object",
       "properties": {
         "message": {
@@ -1982,12 +2024,15 @@
       },
       "title": "Response after assigning a permission to a user"
     },
-    "v1AssignUserToGroupRequest": {
+    "v1AssignUsersToGroupRequest": {
       "type": "object",
       "properties": {
-        "userId": {
-          "type": "string",
-          "format": "int64"
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
         },
         "groupId": {
           "type": "string",
@@ -1999,9 +2044,9 @@
           "title": "Optional expiration time for the group membership"
         }
       },
-      "title": "AssignUserToGroupRequest to add a user to a group"
+      "title": "AssignUsersToGroupRequest to add users to a group"
     },
-    "v1AssignUserToGroupResponse": {
+    "v1AssignUsersToGroupResponse": {
       "type": "object",
       "properties": {
         "success": {
@@ -2011,7 +2056,7 @@
           "type": "string"
         }
       },
-      "title": "AssignUserToGroupResponse"
+      "title": "AssignUsersToGroupResponse"
     },
     "v1ChangePasswordResponse": {
       "type": "object",
@@ -2607,7 +2652,7 @@
       },
       "title": "RefreshTokenResponse with new tokens"
     },
-    "v1RemovePermissionFromGroupResponse": {
+    "v1RemovePermissionsFromGroupResponse": {
       "type": "object",
       "properties": {
         "success": {
@@ -2619,7 +2664,7 @@
       },
       "title": "Response after removing a permission from a group"
     },
-    "v1RemovePermissionFromUserResponse": {
+    "v1RemovePermissionsFromUserResponse": {
       "type": "object",
       "properties": {
         "success": {
@@ -2631,7 +2676,7 @@
       },
       "title": "Response after removing a permission from a user"
     },
-    "v1RemoveUserFromGroupResponse": {
+    "v1RemoveUsersFromGroupResponse": {
       "type": "object",
       "properties": {
         "success": {
@@ -2641,7 +2686,7 @@
           "type": "string"
         }
       },
-      "title": "RemoveUserFromGroupResponse"
+      "title": "RemoveUsersFromGroupResponse"
     },
     "v1SendVerificationCodeRequest": {
       "type": "object",

@@ -537,35 +537,39 @@ func local_request_OpenAuth_DeleteGroup_0(ctx context.Context, marshaler runtime
 
 }
 
-func request_OpenAuth_AssignUserToGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AssignUserToGroupRequest
+func request_OpenAuth_AssignUsersToGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq AssignUsersToGroupRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.AssignUserToGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.AssignUsersToGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_OpenAuth_AssignUserToGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AssignUserToGroupRequest
+func local_request_OpenAuth_AssignUsersToGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq AssignUsersToGroupRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.AssignUserToGroup(ctx, &protoReq)
+	msg, err := server.AssignUsersToGroup(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RemoveUserFromGroupRequest
+func request_OpenAuth_RemoveUsersFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RemoveUsersFromGroupRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -584,24 +588,18 @@ func request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	val, ok = pathParams["user_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
-	}
-
-	protoReq.UserId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
-	}
-
-	msg, err := client.RemoveUserFromGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.RemoveUsersFromGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RemoveUserFromGroupRequest
+func local_request_OpenAuth_RemoveUsersFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RemoveUsersFromGroupRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -620,17 +618,7 @@ func local_request_OpenAuth_RemoveUserFromGroup_0(ctx context.Context, marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	val, ok = pathParams["user_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
-	}
-
-	protoReq.UserId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
-	}
-
-	msg, err := server.RemoveUserFromGroup(ctx, &protoReq)
+	msg, err := server.RemoveUsersFromGroup(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -775,8 +763,8 @@ func local_request_OpenAuth_ListUserGroups_0(ctx context.Context, marshaler runt
 
 }
 
-func request_OpenAuth_AssignPermissionToGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AssignPermissionToGroupRequest
+func request_OpenAuth_AssignPermissionsToGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq AssignPermissionsToGroupRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -800,13 +788,13 @@ func request_OpenAuth_AssignPermissionToGroup_0(ctx context.Context, marshaler r
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	msg, err := client.AssignPermissionToGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.AssignPermissionsToGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_OpenAuth_AssignPermissionToGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AssignPermissionToGroupRequest
+func local_request_OpenAuth_AssignPermissionsToGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq AssignPermissionsToGroupRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -830,14 +818,18 @@ func local_request_OpenAuth_AssignPermissionToGroup_0(ctx context.Context, marsh
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	msg, err := server.AssignPermissionToGroup(ctx, &protoReq)
+	msg, err := server.AssignPermissionsToGroup(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_OpenAuth_RemovePermissionFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RemovePermissionFromGroupRequest
+func request_OpenAuth_RemovePermissionsFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RemovePermissionsFromGroupRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -856,24 +848,18 @@ func request_OpenAuth_RemovePermissionFromGroup_0(ctx context.Context, marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	val, ok = pathParams["permission_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permission_id")
-	}
-
-	protoReq.PermissionId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permission_id", err)
-	}
-
-	msg, err := client.RemovePermissionFromGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.RemovePermissionsFromGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_OpenAuth_RemovePermissionFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RemovePermissionFromGroupRequest
+func local_request_OpenAuth_RemovePermissionsFromGroup_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RemovePermissionsFromGroupRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -892,17 +878,7 @@ func local_request_OpenAuth_RemovePermissionFromGroup_0(ctx context.Context, mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
 
-	val, ok = pathParams["permission_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permission_id")
-	}
-
-	protoReq.PermissionId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permission_id", err)
-	}
-
-	msg, err := server.RemovePermissionFromGroup(ctx, &protoReq)
+	msg, err := server.RemovePermissionsFromGroup(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -959,8 +935,8 @@ func local_request_OpenAuth_ListGroupPermissions_0(ctx context.Context, marshale
 
 }
 
-func request_OpenAuth_AssignPermissionToUser_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AssignPermissionToUserRequest
+func request_OpenAuth_AssignPermissionsToUser_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq AssignPermissionsToUserRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -984,13 +960,13 @@ func request_OpenAuth_AssignPermissionToUser_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
-	msg, err := client.AssignPermissionToUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.AssignPermissionsToUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_OpenAuth_AssignPermissionToUser_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AssignPermissionToUserRequest
+func local_request_OpenAuth_AssignPermissionsToUser_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq AssignPermissionsToUserRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -1014,14 +990,18 @@ func local_request_OpenAuth_AssignPermissionToUser_0(ctx context.Context, marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
-	msg, err := server.AssignPermissionToUser(ctx, &protoReq)
+	msg, err := server.AssignPermissionsToUser(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_OpenAuth_RemovePermissionFromUser_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RemovePermissionFromUserRequest
+func request_OpenAuth_RemovePermissionsFromUser_0(ctx context.Context, marshaler runtime.Marshaler, client OpenAuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RemovePermissionsFromUserRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -1040,24 +1020,18 @@ func request_OpenAuth_RemovePermissionFromUser_0(ctx context.Context, marshaler 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
-	val, ok = pathParams["permission_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permission_id")
-	}
-
-	protoReq.PermissionId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permission_id", err)
-	}
-
-	msg, err := client.RemovePermissionFromUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.RemovePermissionsFromUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_OpenAuth_RemovePermissionFromUser_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RemovePermissionFromUserRequest
+func local_request_OpenAuth_RemovePermissionsFromUser_0(ctx context.Context, marshaler runtime.Marshaler, server OpenAuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RemovePermissionsFromUserRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -1076,17 +1050,7 @@ func local_request_OpenAuth_RemovePermissionFromUser_0(ctx context.Context, mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
-	val, ok = pathParams["permission_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permission_id")
-	}
-
-	protoReq.PermissionId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permission_id", err)
-	}
-
-	msg, err := server.RemovePermissionFromUser(ctx, &protoReq)
+	msg, err := server.RemovePermissionsFromUser(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -2458,7 +2422,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_AssignUserToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_AssignUsersToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2466,12 +2430,12 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignUserToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/users"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignUsersToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_OpenAuth_AssignUserToGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_OpenAuth_AssignUsersToGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -2479,11 +2443,11 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_OpenAuth_AssignUserToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_AssignUsersToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_RemoveUserFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_RemoveUsersFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2491,12 +2455,12 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemoveUserFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users/{user_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemoveUsersFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_OpenAuth_RemoveUserFromGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_OpenAuth_RemoveUsersFromGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -2504,7 +2468,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_OpenAuth_RemoveUserFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_RemoveUsersFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -2558,7 +2522,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_AssignPermissionToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_AssignPermissionsToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2566,12 +2530,12 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionsToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_OpenAuth_AssignPermissionToGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_OpenAuth_AssignPermissionsToGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -2579,11 +2543,11 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_OpenAuth_AssignPermissionToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_AssignPermissionsToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_RemovePermissionFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_RemovePermissionsFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2591,12 +2555,12 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions/{permission_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionsFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_OpenAuth_RemovePermissionFromGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_OpenAuth_RemovePermissionsFromGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -2604,7 +2568,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_OpenAuth_RemovePermissionFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_RemovePermissionsFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -2633,7 +2597,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_AssignPermissionToUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_AssignPermissionsToUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2641,12 +2605,12 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionToUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionsToUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_OpenAuth_AssignPermissionToUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_OpenAuth_AssignPermissionsToUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -2654,11 +2618,11 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_OpenAuth_AssignPermissionToUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_AssignPermissionsToUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_RemovePermissionFromUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_RemovePermissionsFromUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2666,12 +2630,12 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionFromUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions/{permission_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionsFromUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_OpenAuth_RemovePermissionFromUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_OpenAuth_RemovePermissionsFromUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -2679,7 +2643,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_OpenAuth_RemovePermissionFromUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_RemovePermissionsFromUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -3563,47 +3527,47 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_AssignUserToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_AssignUsersToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignUserToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/users"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignUsersToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OpenAuth_AssignUserToGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OpenAuth_AssignUsersToGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OpenAuth_AssignUserToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_AssignUsersToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_RemoveUserFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_RemoveUsersFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemoveUserFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users/{user_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemoveUsersFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OpenAuth_RemoveUserFromGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OpenAuth_RemoveUsersFromGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OpenAuth_RemoveUserFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_RemoveUsersFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -3651,47 +3615,47 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_AssignPermissionToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_AssignPermissionsToGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionsToGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OpenAuth_AssignPermissionToGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OpenAuth_AssignPermissionsToGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OpenAuth_AssignPermissionToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_AssignPermissionsToGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_RemovePermissionFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_RemovePermissionsFromGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions/{permission_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionsFromGroup", runtime.WithHTTPPathPattern("/openauth/v1/groups/{group_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OpenAuth_RemovePermissionFromGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OpenAuth_RemovePermissionsFromGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OpenAuth_RemovePermissionFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_RemovePermissionsFromGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -3717,47 +3681,47 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
-	mux.Handle("POST", pattern_OpenAuth_AssignPermissionToUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_OpenAuth_AssignPermissionsToUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionToUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/AssignPermissionsToUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OpenAuth_AssignPermissionToUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OpenAuth_AssignPermissionsToUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OpenAuth_AssignPermissionToUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_AssignPermissionsToUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_OpenAuth_RemovePermissionFromUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_OpenAuth_RemovePermissionsFromUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionFromUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions/{permission_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/RemovePermissionsFromUser", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OpenAuth_RemovePermissionFromUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OpenAuth_RemovePermissionsFromUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OpenAuth_RemovePermissionFromUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OpenAuth_RemovePermissionsFromUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -4295,23 +4259,23 @@ var (
 
 	pattern_OpenAuth_DeleteGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "groups", "id"}, ""))
 
-	pattern_OpenAuth_AssignUserToGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "groups", "users"}, ""))
+	pattern_OpenAuth_AssignUsersToGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "groups", "users"}, ""))
 
-	pattern_OpenAuth_RemoveUserFromGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"openauth", "v1", "groups", "group_id", "users", "user_id"}, ""))
+	pattern_OpenAuth_RemoveUsersFromGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_id", "users"}, ""))
 
 	pattern_OpenAuth_ListGroupUsers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_id", "users"}, ""))
 
 	pattern_OpenAuth_ListUserGroups_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "groups"}, ""))
 
-	pattern_OpenAuth_AssignPermissionToGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_id", "permissions"}, ""))
+	pattern_OpenAuth_AssignPermissionsToGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_id", "permissions"}, ""))
 
-	pattern_OpenAuth_RemovePermissionFromGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"openauth", "v1", "groups", "group_id", "permissions", "permission_id"}, ""))
+	pattern_OpenAuth_RemovePermissionsFromGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_id", "permissions"}, ""))
 
 	pattern_OpenAuth_ListGroupPermissions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "groups", "group_id", "permissions"}, ""))
 
-	pattern_OpenAuth_AssignPermissionToUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "permissions"}, ""))
+	pattern_OpenAuth_AssignPermissionsToUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "permissions"}, ""))
 
-	pattern_OpenAuth_RemovePermissionFromUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"openauth", "v1", "users", "user_id", "permissions", "permission_id"}, ""))
+	pattern_OpenAuth_RemovePermissionsFromUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "permissions"}, ""))
 
 	pattern_OpenAuth_ListUserPermissions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "permissions"}, ""))
 
@@ -4385,23 +4349,23 @@ var (
 
 	forward_OpenAuth_DeleteGroup_0 = runtime.ForwardResponseMessage
 
-	forward_OpenAuth_AssignUserToGroup_0 = runtime.ForwardResponseMessage
+	forward_OpenAuth_AssignUsersToGroup_0 = runtime.ForwardResponseMessage
 
-	forward_OpenAuth_RemoveUserFromGroup_0 = runtime.ForwardResponseMessage
+	forward_OpenAuth_RemoveUsersFromGroup_0 = runtime.ForwardResponseMessage
 
 	forward_OpenAuth_ListGroupUsers_0 = runtime.ForwardResponseMessage
 
 	forward_OpenAuth_ListUserGroups_0 = runtime.ForwardResponseMessage
 
-	forward_OpenAuth_AssignPermissionToGroup_0 = runtime.ForwardResponseMessage
+	forward_OpenAuth_AssignPermissionsToGroup_0 = runtime.ForwardResponseMessage
 
-	forward_OpenAuth_RemovePermissionFromGroup_0 = runtime.ForwardResponseMessage
+	forward_OpenAuth_RemovePermissionsFromGroup_0 = runtime.ForwardResponseMessage
 
 	forward_OpenAuth_ListGroupPermissions_0 = runtime.ForwardResponseMessage
 
-	forward_OpenAuth_AssignPermissionToUser_0 = runtime.ForwardResponseMessage
+	forward_OpenAuth_AssignPermissionsToUser_0 = runtime.ForwardResponseMessage
 
-	forward_OpenAuth_RemovePermissionFromUser_0 = runtime.ForwardResponseMessage
+	forward_OpenAuth_RemovePermissionsFromUser_0 = runtime.ForwardResponseMessage
 
 	forward_OpenAuth_ListUserPermissions_0 = runtime.ForwardResponseMessage
 

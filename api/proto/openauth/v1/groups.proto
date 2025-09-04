@@ -108,28 +108,28 @@ message ListGroupsResponse {
     repeated Group groups = 1;
 }
 
-// AssignUserToGroupRequest to add a user to a group
-message AssignUserToGroupRequest {
-    int64 user_id = 1;
+// AssignUsersToGroupRequest to add users to a group
+message AssignUsersToGroupRequest {
+    repeated int64 user_ids = 1;
     int64 group_id = 2;
     // Optional expiration time for the group membership
     optional int64 expires_at = 3;
 }
 
-// AssignUserToGroupResponse
-message AssignUserToGroupResponse {
+// AssignUsersToGroupResponse
+message AssignUsersToGroupResponse {
     bool success = 1;
     string message = 2;
 }
 
-// RemoveUserFromGroupRequest to remove a user from a group
-message RemoveUserFromGroupRequest {
-    int64 user_id = 1;
+// RemoveUsersFromGroupRequest to remove users from a group
+message RemoveUsersFromGroupRequest {
+    repeated int64 user_ids = 1;
     int64 group_id = 2;
 }
 
-// RemoveUserFromGroupResponse
-message RemoveUserFromGroupResponse {
+// RemoveUsersFromGroupResponse
+message RemoveUsersFromGroupResponse {
     bool success = 1;
     string message = 2;
 }

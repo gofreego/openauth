@@ -285,7 +285,7 @@ service OpenAuth {
     // 
     // Grants the user all permissions associated with the group.
     // Supports optional expiration time for temporary group membership.
-    rpc AssignUserToGroup (AssignUserToGroupRequest) returns (AssignUserToGroupResponse) {
+    rpc AssignUsersToGroup (AssignUsersToGroupRequest) returns (AssignUsersToGroupResponse) {
         option (google.api.http) = {
             post: "/openauth/v1/groups/users"
             body: "*"
@@ -301,14 +301,15 @@ service OpenAuth {
     // 
     // Revokes all group-based permissions from the user.
     // Direct user permissions are not affected.
-    rpc RemoveUserFromGroup (RemoveUserFromGroupRequest) returns (RemoveUserFromGroupResponse) {
+    rpc RemoveUsersFromGroup (RemoveUsersFromGroupRequest) returns (RemoveUsersFromGroupResponse) {
         option (google.api.http) = {
-            delete: "/openauth/v1/groups/{group_id}/users/{user_id}"
+            put: "/openauth/v1/groups/{group_id}/users"
+            body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "Group Users"
-            summary: "Remove user from group"
-            description: "Remove a user from a group."
+            summary: "Remove users from group"
+            description: "Remove users from a group."
         };
     }
 
@@ -347,15 +348,15 @@ service OpenAuth {
     // 
     // This allows all users in the group to inherit this permission.
     // The permission will be available to all current and future group members.
-    rpc AssignPermissionToGroup (AssignPermissionToGroupRequest) returns (AssignPermissionToGroupResponse) {
+    rpc AssignPermissionsToGroup (AssignPermissionsToGroupRequest) returns (AssignPermissionsToGroupResponse) {
         option (google.api.http) = {
             post: "/openauth/v1/groups/{group_id}/permissions"
             body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "Permission Assignments"
-            summary: "Assign permission to group"
-            description: "Assign a permission to a group."
+            summary: "Assign permissions to group"
+            description: "Assign permissions to a group."
         };
     }
 
@@ -363,14 +364,15 @@ service OpenAuth {
     // 
     // This will remove the permission from all users who had it through group membership.
     // Users who have the same permission assigned directly will retain it.
-    rpc RemovePermissionFromGroup (RemovePermissionFromGroupRequest) returns (RemovePermissionFromGroupResponse) {
+    rpc RemovePermissionsFromGroup (RemovePermissionsFromGroupRequest) returns (RemovePermissionsFromGroupResponse) {
         option (google.api.http) = {
-            delete: "/openauth/v1/groups/{group_id}/permissions/{permission_id}"
+            put: "/openauth/v1/groups/{group_id}/permissions"
+            body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "Permission Assignments"
-            summary: "Remove permission from group"
-            description: "Remove a permission from a group."
+            summary: "Remove permissions from group"
+            description: "Remove permissions from a group."
         };
     }
 
@@ -392,29 +394,30 @@ service OpenAuth {
     // 
     // This creates a direct permission assignment that bypasses group membership.
     // Can include an optional expiration time for temporary permissions.
-    rpc AssignPermissionToUser (AssignPermissionToUserRequest) returns (AssignPermissionToUserResponse) {
+    rpc AssignPermissionsToUser (AssignPermissionsToUserRequest) returns (AssignPermissionsToUserResponse) {
         option (google.api.http) = {
             post: "/openauth/v1/users/{user_id}/permissions"
             body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "Permission Assignments"
-            summary: "Assign permission to user"
-            description: "Assign a permission directly to a user."
+            summary: "Assign permissions to user"
+            description: "Assign permissions directly to a user."
         };
     }
 
     // RemovePermissionFromUser removes a permission directly assigned to a user.
     // 
     // This only removes direct permission assignments, not permissions inherited from groups.
-    rpc RemovePermissionFromUser (RemovePermissionFromUserRequest) returns (RemovePermissionFromUserResponse) {
+    rpc RemovePermissionsFromUser (RemovePermissionsFromUserRequest) returns (RemovePermissionsFromUserResponse) {
         option (google.api.http) = {
-            delete: "/openauth/v1/users/{user_id}/permissions/{permission_id}"
+            put: "/openauth/v1/users/{user_id}/permissions"
+            body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "Permission Assignments"
-            summary: "Remove permission from user"
-            description: "Remove a permission directly assigned to a user."
+            summary: "Remove permissions from user"
+            description: "Remove permissions directly assigned to a user."
         };
     }
 

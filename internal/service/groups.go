@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -216,15 +217,15 @@ func (s *Service) DeleteGroup(ctx context.Context, req *openauth_v1.DeleteGroupR
 }
 
 // AssignUserToGroup adds a user to a group
-func (s *Service) AssignUserToGroup(ctx context.Context, req *openauth_v1.AssignUserToGroupRequest) (*openauth_v1.AssignUserToGroupResponse, error) {
-	logger.Debug(ctx, "AssignUserToGroup request: userID=%d, groupID=%d", req.UserId, req.GroupId)
+func (s *Service) AssignUsersToGroup(ctx context.Context, req *openauth_v1.AssignUsersToGroupRequest) (*openauth_v1.AssignUsersToGroupResponse, error) {
+	logger.Debug(ctx, "AssignUsersToGroup request: userIDs=%v, groupID=%d", req.UserIds, req.GroupId)
 
-	if req.UserId == 0 {
-		logger.Warn(ctx, "AssignUserToGroup failed: missing user ID")
-		return nil, status.Error(codes.InvalidArgument, "user id is required")
+	if len(req.UserIds) == 0 {
+		logger.Warn(ctx, "AssignUsersToGroup failed: missing user IDs")
+		return nil, status.Error(codes.InvalidArgument, "user ids are required")
 	}
 	if req.GroupId == 0 {
-		logger.Warn(ctx, "AssignUserToGroup failed: missing group ID")
+		logger.Warn(ctx, "AssignUsersToGroup failed: missing group ID")
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
@@ -235,67 +236,159 @@ func (s *Service) AssignUserToGroup(ctx context.Context, req *openauth_v1.Assign
 		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
 	}
 
-	logger.Debug(ctx, "User %s (userID=%d) assigning user %d to group %d",
-		claims.UserUUID, claims.UserID, req.UserId, req.GroupId)
+	logger.Debug(ctx, "User %s (userID=%d) assigning users %v to group %d",
+		claims.UserUUID, claims.UserID, req.UserIds, req.GroupId)
 
-	// Check if user is already in the group
-	isInGroup, err := s.repo.IsUserInGroup(ctx, req.UserId, req.GroupId)
+	// Get all users currently in the group using bulk operation
+	groupUsersFilter := &filter.GroupUsersFilter{
+		GroupID: req.GroupId,
+		Limit:   int32(len(req.UserIds) * 2), // Set a reasonable limit
+		Offset:  0,
+	}
+
+	existingUsers, err := s.repo.ListGroupUsers(ctx, groupUsersFilter)
 	if err != nil {
-		logger.Error(ctx, "Failed to check group membership for userID=%d, groupID=%d: %v",
-			req.UserId, req.GroupId, err)
+		logger.Error(ctx, "Failed to get existing group users for groupID=%d: %v", req.GroupId, err)
 		return nil, status.Error(codes.Internal, "failed to check group membership")
 	}
-	if isInGroup {
-		logger.Warn(ctx, "User %d is already in group %d", req.UserId, req.GroupId)
-		return nil, status.Error(codes.AlreadyExists, "user is already in the group")
+
+	// Create a map of existing user IDs for efficient lookup
+	existingUserMap := make(map[int64]bool)
+	for _, user := range existingUsers {
+		existingUserMap[user.ID] = true
 	}
 
-	// Assign user to group (using the current user's ID as assignedBy)
-	err = s.repo.AssignUserToGroup(ctx, req.UserId, req.GroupId, claims.UserID, req.ExpiresAt)
+	// Filter out users who are already in the group
+	var usersToAssign []int64
+	var alreadyInGroup []int64
+
+	for _, userID := range req.UserIds {
+		if existingUserMap[userID] {
+			alreadyInGroup = append(alreadyInGroup, userID)
+		} else {
+			usersToAssign = append(usersToAssign, userID)
+		}
+	}
+
+	if len(alreadyInGroup) > 0 {
+		logger.Warn(ctx, "Some users are already in group %d: %v", req.GroupId, alreadyInGroup)
+	}
+
+	if len(usersToAssign) == 0 {
+		logger.Info(ctx, "All users are already in group %d", req.GroupId)
+		return &openauth_v1.AssignUsersToGroupResponse{
+			Success: true,
+			Message: "All users are already in the group",
+		}, nil
+	}
+
+	// Assign users to group using bulk operation
+	err = s.repo.AssignUsersToGroup(ctx, usersToAssign, req.GroupId, claims.UserID, req.ExpiresAt)
 	if err != nil {
-		logger.Error(ctx, "Failed to assign userID=%d to groupID=%d, assignedBy=%d: %v",
-			req.UserId, req.GroupId, claims.UserID, err)
-		return nil, status.Error(codes.Internal, "failed to assign user to group")
+		logger.Error(ctx, "Failed to assign userIDs=%v to groupID=%d, assignedBy=%d: %v",
+			usersToAssign, req.GroupId, claims.UserID, err)
+		return nil, status.Error(codes.Internal, "failed to assign users to group")
 	}
 
-	logger.Info(ctx, "User assignment successful: userID=%d assigned to groupID=%d by userID=%d",
-		req.UserId, req.GroupId, claims.UserID)
+	logger.Info(ctx, "User assignment successful: userIDs=%v assigned to groupID=%d by userID=%d",
+		usersToAssign, req.GroupId, claims.UserID)
 
-	return &openauth_v1.AssignUserToGroupResponse{
+	message := fmt.Sprintf("Successfully assigned %d users to group", len(usersToAssign))
+	if len(alreadyInGroup) > 0 {
+		message += fmt.Sprintf(" (%d users were already in the group)", len(alreadyInGroup))
+	}
+
+	return &openauth_v1.AssignUsersToGroupResponse{
 		Success: true,
-		Message: "User assigned to group successfully",
+		Message: message,
 	}, nil
 }
 
-// RemoveUserFromGroup removes a user from a group
-func (s *Service) RemoveUserFromGroup(ctx context.Context, req *openauth_v1.RemoveUserFromGroupRequest) (*openauth_v1.RemoveUserFromGroupResponse, error) {
-	if req.UserId == 0 {
-		return nil, status.Error(codes.InvalidArgument, "user id is required")
+// RemoveUsersFromGroup removes multiple users from a group
+func (s *Service) RemoveUsersFromGroup(ctx context.Context, req *openauth_v1.RemoveUsersFromGroupRequest) (*openauth_v1.RemoveUsersFromGroupResponse, error) {
+	logger.Debug(ctx, "RemoveUsersFromGroup request: userIDs=%v, groupID=%d", req.UserIds, req.GroupId)
+
+	if len(req.UserIds) == 0 {
+		logger.Warn(ctx, "RemoveUsersFromGroup failed: missing user IDs")
+		return nil, status.Error(codes.InvalidArgument, "user ids are required")
 	}
 	if req.GroupId == 0 {
+		logger.Warn(ctx, "RemoveUsersFromGroup failed: missing group ID")
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
-	// Check if user is in the group
-	isInGroup, err := s.repo.IsUserInGroup(ctx, req.UserId, req.GroupId)
+	// Get the current user from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Error(ctx, "Failed to check group membership for userID=%d, groupID=%d: %v", req.UserId, req.GroupId, err)
+		logger.Error(ctx, "Failed to get current user from context for group removal: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
+	}
+
+	logger.Debug(ctx, "User %s (userID=%d) removing users %v from group %d",
+		claims.UserUUID, claims.UserID, req.UserIds, req.GroupId)
+
+	// Get all users currently in the group using bulk operation
+	groupUsersFilter := &filter.GroupUsersFilter{
+		GroupID: req.GroupId,
+		Limit:   int32(len(req.UserIds) * 2), // Set a reasonable limit
+		Offset:  0,
+	}
+
+	existingUsers, err := s.repo.ListGroupUsers(ctx, groupUsersFilter)
+	if err != nil {
+		logger.Error(ctx, "Failed to get existing group users for groupID=%d: %v", req.GroupId, err)
 		return nil, status.Error(codes.Internal, "failed to check group membership")
 	}
-	if !isInGroup {
-		return nil, status.Error(codes.NotFound, "user is not in the group")
+
+	// Create a map of existing user IDs for efficient lookup
+	existingUserMap := make(map[int64]bool)
+	for _, user := range existingUsers {
+		existingUserMap[user.ID] = true
 	}
 
-	// Remove user from group
-	err = s.repo.RemoveUserFromGroup(ctx, req.UserId, req.GroupId)
+	// Filter out users who are not in the group
+	var usersToRemove []int64
+	var notInGroup []int64
+
+	for _, userID := range req.UserIds {
+		if !existingUserMap[userID] {
+			notInGroup = append(notInGroup, userID)
+		} else {
+			usersToRemove = append(usersToRemove, userID)
+		}
+	}
+
+	if len(notInGroup) > 0 {
+		logger.Warn(ctx, "Some users are not in group %d: %v", req.GroupId, notInGroup)
+	}
+
+	if len(usersToRemove) == 0 {
+		logger.Info(ctx, "No users to remove from group %d", req.GroupId)
+		return &openauth_v1.RemoveUsersFromGroupResponse{
+			Success: true,
+			Message: "No users were in the group to remove",
+		}, nil
+	}
+
+	// Remove users from group using bulk operation
+	err = s.repo.RemoveUsersFromGroup(ctx, usersToRemove, req.GroupId)
 	if err != nil {
-		logger.Error(ctx, "Failed to remove userID=%d from groupID=%d: %v", req.UserId, req.GroupId, err)
-		return nil, status.Error(codes.Internal, "failed to remove user from group")
+		logger.Error(ctx, "Failed to remove userIDs=%v from groupID=%d: %v",
+			usersToRemove, req.GroupId, err)
+		return nil, status.Error(codes.Internal, "failed to remove users from group")
 	}
 
-	return &openauth_v1.RemoveUserFromGroupResponse{
+	logger.Info(ctx, "User removal successful: userIDs=%v removed from groupID=%d by userID=%d",
+		usersToRemove, req.GroupId, claims.UserID)
+
+	message := fmt.Sprintf("Successfully removed %d users from group", len(usersToRemove))
+	if len(notInGroup) > 0 {
+		message += fmt.Sprintf(" (%d users were not in the group)", len(notInGroup))
+	}
+
+	return &openauth_v1.RemoveUsersFromGroupResponse{
 		Success: true,
-		Message: "User removed from group successfully",
+		Message: message,
 	}, nil
 }
 

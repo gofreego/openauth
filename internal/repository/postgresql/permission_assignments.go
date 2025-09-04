@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gofreego/openauth/internal/models/dao"
@@ -56,6 +57,57 @@ func (r *Repository) AssignPermissionToGroup(ctx context.Context, groupID, permi
 	return nil
 }
 
+// AssignPermissionsToGroup assigns multiple permissions to a group in a single transaction
+func (r *Repository) AssignPermissionsToGroup(ctx context.Context, groupID int64, permissionIDs []int64, grantedBy int64) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+
+	tx, err := r.connManager.Primary().BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Validate that group exists
+	group, err := r.GetGroupByID(ctx, groupID)
+	if err != nil {
+		return fmt.Errorf("failed to get group: %w", err)
+	}
+	if group == nil {
+		return fmt.Errorf("group with ID %d not found", groupID)
+	}
+
+	// Prepare the bulk insert query
+	query := `
+		INSERT INTO group_permissions (group_id, permission_id, granted_by, created_at)
+		VALUES `
+
+	args := make([]interface{}, 0, len(permissionIDs)*4)
+	placeholders := make([]string, 0, len(permissionIDs))
+	createdAt := time.Now().Unix()
+
+	for i, permissionID := range permissionIDs {
+		baseIndex := i * 4
+		placeholders = append(placeholders, fmt.Sprintf("($%d, $%d, $%d, $%d)",
+			baseIndex+1, baseIndex+2, baseIndex+3, baseIndex+4))
+		args = append(args, groupID, permissionID, grantedBy, createdAt)
+	}
+
+	query += strings.Join(placeholders, ", ") + " ON CONFLICT (group_id, permission_id) DO NOTHING"
+
+	_, err = tx.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to assign permissions to group: %w", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
+
 // RemovePermissionFromGroup removes a permission from a group
 func (r *Repository) RemovePermissionFromGroup(ctx context.Context, groupID, permissionID int64) error {
 	query := `DELETE FROM group_permissions WHERE group_id = $1 AND permission_id = $2`
@@ -72,6 +124,52 @@ func (r *Repository) RemovePermissionFromGroup(ctx context.Context, groupID, per
 
 	if rowsAffected == 0 {
 		return fmt.Errorf("permission %d is not assigned to group %d", permissionID, groupID)
+	}
+
+	return nil
+}
+
+// RemovePermissionsFromGroup removes multiple permissions from a group in a single transaction
+func (r *Repository) RemovePermissionsFromGroup(ctx context.Context, groupID int64, permissionIDs []int64) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+
+	tx, err := r.connManager.Primary().BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Build the query with IN clause for bulk deletion
+	placeholders := make([]string, len(permissionIDs))
+	args := make([]interface{}, len(permissionIDs)+1)
+	args[0] = groupID
+
+	for i, permissionID := range permissionIDs {
+		placeholders[i] = fmt.Sprintf("$%d", i+2)
+		args[i+1] = permissionID
+	}
+
+	query := fmt.Sprintf("DELETE FROM group_permissions WHERE group_id = $1 AND permission_id IN (%s)",
+		strings.Join(placeholders, ", "))
+
+	result, err := tx.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to remove permissions from group: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no permission assignments found to remove")
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil
@@ -179,6 +277,57 @@ func (r *Repository) AssignPermissionToUser(ctx context.Context, userID, permiss
 	return nil
 }
 
+// AssignPermissionsToUser assigns multiple permissions directly to a user in a single transaction
+func (r *Repository) AssignPermissionsToUser(ctx context.Context, userID int64, permissionIDs []int64, grantedBy int64, expiresAt *int64) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+
+	tx, err := r.connManager.Primary().BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Validate that user exists
+	user, err := r.GetUserByID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("failed to get user: %w", err)
+	}
+	if user == nil {
+		return fmt.Errorf("user with ID %d not found", userID)
+	}
+
+	// Prepare the bulk insert query
+	query := `
+		INSERT INTO user_permissions (user_id, permission_id, granted_by, expires_at, created_at)
+		VALUES `
+
+	args := make([]interface{}, 0, len(permissionIDs)*5)
+	placeholders := make([]string, 0, len(permissionIDs))
+	createdAt := time.Now().Unix()
+
+	for i, permissionID := range permissionIDs {
+		baseIndex := i * 5
+		placeholders = append(placeholders, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)",
+			baseIndex+1, baseIndex+2, baseIndex+3, baseIndex+4, baseIndex+5))
+		args = append(args, userID, permissionID, grantedBy, expiresAt, createdAt)
+	}
+
+	query += strings.Join(placeholders, ", ") + " ON CONFLICT (user_id, permission_id) DO NOTHING"
+
+	_, err = tx.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to assign permissions to user: %w", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
+
 // RemovePermissionFromUser removes a permission directly assigned to a user
 func (r *Repository) RemovePermissionFromUser(ctx context.Context, userID, permissionID int64) error {
 	query := `DELETE FROM user_permissions WHERE user_id = $1 AND permission_id = $2`
@@ -195,6 +344,52 @@ func (r *Repository) RemovePermissionFromUser(ctx context.Context, userID, permi
 
 	if rowsAffected == 0 {
 		return fmt.Errorf("permission %d is not assigned to user %d", permissionID, userID)
+	}
+
+	return nil
+}
+
+// RemovePermissionsFromUser removes multiple permissions directly assigned to a user in a single transaction
+func (r *Repository) RemovePermissionsFromUser(ctx context.Context, userID int64, permissionIDs []int64) error {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+
+	tx, err := r.connManager.Primary().BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Build the query with IN clause for bulk deletion
+	placeholders := make([]string, len(permissionIDs))
+	args := make([]interface{}, len(permissionIDs)+1)
+	args[0] = userID
+
+	for i, permissionID := range permissionIDs {
+		placeholders[i] = fmt.Sprintf("$%d", i+2)
+		args[i+1] = permissionID
+	}
+
+	query := fmt.Sprintf("DELETE FROM user_permissions WHERE user_id = $1 AND permission_id IN (%s)",
+		strings.Join(placeholders, ", "))
+
+	result, err := tx.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to remove permissions from user: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no permission assignments found to remove")
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil
