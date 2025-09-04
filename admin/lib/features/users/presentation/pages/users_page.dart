@@ -8,7 +8,6 @@ import '../widgets/users_header.dart';
 import '../widgets/users_table.dart';
 import '../widgets/create_user_dialog.dart';
 import '../bloc/users_bloc.dart';
-import '../bloc/users_event.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -26,7 +25,7 @@ class _UsersPageState extends State<UsersPage> {
     super.initState();
     // Load users when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UsersBloc>().add(LoadUsersEvent(request: ListUsersRequest()));
+      context.read<UsersBloc>().add(ListUsersRequest());
     });
   }
 
@@ -60,7 +59,7 @@ class _UsersPageState extends State<UsersPage> {
               setState(() {
                 _searchQuery = '';
               });
-              context.read<UsersBloc>().add(LoadUsersEvent(request: ListUsersRequest()));
+              context.read<UsersBloc>().add(ListUsersRequest());
             },
             onKeyStrokeChanged: (value) => {
               setState(() {
@@ -127,17 +126,7 @@ class _UsersPageState extends State<UsersPage> {
     setState(() {
       _searchQuery = trimmedQuery;
     });
-
-    if (trimmedQuery.isEmpty) {
-      context.read<UsersBloc>().add(LoadUsersEvent(request: ListUsersRequest()));
-    } else {
-      // Check if it looks like a specific ID or UUID search
-      if (UtilityFunctions.isNumber(trimmedQuery) || UtilityFunctions.isUUID(trimmedQuery)) {
-        context.read<UsersBloc>().add(SearchUserByIdEvent(trimmedQuery));
-      } else {
-        context.read<UsersBloc>().add(SearchUsersEvent(trimmedQuery));
-      }
-    }
+    context.read<UsersBloc>().add(ListUsersRequest());
   }
 
   

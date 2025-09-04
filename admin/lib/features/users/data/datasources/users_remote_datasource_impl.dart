@@ -9,19 +9,19 @@ abstract class UsersRemoteDataSource {
     required pb.ListUsersRequest request,
   });
 
-  Future<pb.GetUserResponse> getUser(String userIdOrUuid);
+  Future<pb.GetUserResponse> getUser(pb.GetUserRequest request);
 
   Future<pb.SignUpResponse> createUser(pb.SignUpRequest request);
 
   Future<pb.UpdateUserResponse> updateUser(pb.UpdateUserRequest request);
 
-  Future<pb.DeleteUserResponse> deleteUser(String userIdOrUuid);
+  Future<pb.DeleteUserResponse> deleteUser(pb.DeleteUserRequest request);
 
   Future<pb.CreateProfileResponse> createProfile(pb.CreateProfileRequest request);
 
   Future<pb.UpdateProfileResponse> updateProfile(pb.UpdateProfileRequest request);
 
-  Future<pb.DeleteProfileResponse> deleteProfile(String profileUuid);
+  Future<pb.DeleteProfileResponse> deleteProfile(pb.DeleteProfileRequest request);
 }
 
 class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
@@ -61,9 +61,9 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   }
 
   @override
-  Future<pb.GetUserResponse> getUser(String uuid) async {
+  Future<pb.GetUserResponse> getUser(pb.GetUserRequest request) async {
     try {
-      var response = await _apiService.get('/openauth/v1/users/$uuid');
+      var response = await _apiService.get('/openauth/v1/users/${request.uuid}');
       var result = pb.GetUserResponse();
       result.mergeFromProto3Json(response.data);
       return result;
@@ -121,9 +121,9 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   }
 
   @override
-  Future<pb.DeleteUserResponse> deleteUser(String userIdOrUuid) async {
+  Future<pb.DeleteUserResponse> deleteUser(pb.DeleteUserRequest request) async {
     try {
-      await _apiService.delete('/openauth/v1/users/$userIdOrUuid');
+      await _apiService.delete('/openauth/v1/users/${request.uuid}');
 
       return pb.DeleteUserResponse()
         ..success = true
@@ -189,9 +189,9 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   }
 
   @override
-  Future<pb.DeleteProfileResponse> deleteProfile(String profileUuid) async {
+  Future<pb.DeleteProfileResponse> deleteProfile(pb.DeleteProfileRequest request) async {
     try {
-      await _apiService.delete('/openauth/v1/profiles/$profileUuid');
+      await _apiService.delete('/openauth/v1/profiles/${request.profileUuid}');
 
       return pb.DeleteProfileResponse()
         ..success = true

@@ -5,7 +5,6 @@ import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
-import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../domain/utils/user_utils.dart';
@@ -13,7 +12,8 @@ import '../../domain/utils/user_utils.dart';
 class EditUserDialog extends StatefulWidget {
   final pb.User user;
   final VoidCallback? onUserUpdated;
-  final Function(String action, pb.User user, BuildContext context)? onUserAction;
+  final Function(String action, pb.User user, BuildContext context)?
+      onUserAction;
   final bool isViewMode;
 
   const EditUserDialog({
@@ -86,7 +86,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
             _isActive = state.user.isActive;
           });
           widget.onUserUpdated?.call();
-          ToastUtils.showSuccess('User ${state.user.username} updated successfully');
+          ToastUtils.showSuccess(
+              'User ${state.user.username} updated successfully');
         } else if (state is UsersError) {
           ToastUtils.showError('Error: ${state.message}');
         }
@@ -130,7 +131,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
         content: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: 600,
-            maxHeight: MediaQuery.of(context).size.height * 0.8, // Use 80% of screen height
+            maxHeight: MediaQuery.of(context).size.height *
+                0.8, // Use 80% of screen height
           ),
           child: Form(
             key: _formKey,
@@ -139,31 +141,34 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 16),
-                   TextFormField(
+                  TextFormField(
                     controller: _nameController,
                     readOnly: !_isEditMode,
                     decoration: InputDecoration(
                       labelText: 'Name',
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.badge_outlined),
-                      helperText: _isEditMode ? 'The name shown to other users' : null,
+                      helperText:
+                          _isEditMode ? 'The name shown to other users' : null,
                       filled: !_isEditMode,
                       fillColor: !_isEditMode ? Colors.grey[100] : null,
                     ),
-                    validator: _isEditMode ? (value) {
-                      if (value != null &&
-                          value.trim().isNotEmpty &&
-                          value.trim().length < 3) {
-                        return 'Display name must be at least 3 characters';
-                      }
-                      return null;
-                    } : null,
+                    validator: _isEditMode
+                        ? (value) {
+                            if (value != null &&
+                                value.trim().isNotEmpty &&
+                                value.trim().length < 3) {
+                              return 'Display name must be at least 3 characters';
+                            }
+                            return null;
+                          }
+                        : null,
                   ),
                   const SizedBox(
                     height: 16,
                   ),
                   Tooltip(
-                    message: _isAdminUser() && _isEditMode 
+                    message: _isAdminUser() && _isEditMode
                         ? 'Admin username cannot be changed'
                         : '',
                     child: TextFormField(
@@ -174,21 +179,25 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         border: const OutlineInputBorder(),
                         prefixIcon: const Icon(Icons.person_outline),
                         filled: !_isEditMode || _isAdminUser(),
-                        fillColor: (!_isEditMode || _isAdminUser()) ? Colors.grey[100] : null,
+                        fillColor: (!_isEditMode || _isAdminUser())
+                            ? Colors.grey[100]
+                            : null,
                       ),
-                      validator: _isEditMode && !_isAdminUser() ? (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Username is required';
-                        }
-                        if (value.length < 3) {
-                          return 'Username must be at least 3 characters';
-                        }
-                        return null;
-                      } : null,
+                      validator: _isEditMode && !_isAdminUser()
+                          ? (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Username is required';
+                              }
+                              if (value.length < 3) {
+                                return 'Username must be at least 3 characters';
+                              }
+                              return null;
+                            }
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 16),
-                 
+
                   TextFormField(
                     controller: _emailController,
                     readOnly: !_isEditMode,
@@ -200,16 +209,18 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       fillColor: !_isEditMode ? Colors.grey[100] : null,
                     ),
                     keyboardType: TextInputType.emailAddress,
-                    validator: _isEditMode ? (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Email is required';
-                      }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    } : null,
+                    validator: _isEditMode
+                        ? (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Email is required';
+                            }
+                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                .hasMatch(value)) {
+                              return 'Please enter a valid email';
+                            }
+                            return null;
+                          }
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -223,14 +234,17 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       fillColor: !_isEditMode ? Colors.grey[100] : null,
                     ),
                     keyboardType: TextInputType.phone,
-                    validator: _isEditMode ? (value) {
-                      if (value != null && value.isNotEmpty) {
-                        if (!RegExp(r'^\+?[\d\s\-\(\)]+$').hasMatch(value)) {
-                          return 'Please enter a valid phone number';
-                        }
-                      }
-                      return null;
-                    } : null,
+                    validator: _isEditMode
+                        ? (value) {
+                            if (value != null && value.isNotEmpty) {
+                              if (!RegExp(r'^\+?[\d\s\-\(\)]+$')
+                                  .hasMatch(value)) {
+                                return 'Please enter a valid phone number';
+                              }
+                            }
+                            return null;
+                          }
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -240,7 +254,9 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       labelText: 'Avatar URL (optional)',
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.image_outlined),
-                      helperText: _isEditMode ? 'URL to the user\'s profile picture' : null,
+                      helperText: _isEditMode
+                          ? 'URL to the user\'s profile picture'
+                          : null,
                       filled: !_isEditMode,
                       fillColor: !_isEditMode ? Colors.grey[100] : null,
                       suffixIcon: _avatarUrlController.text.isNotEmpty
@@ -252,18 +268,23 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           : null,
                     ),
                     keyboardType: TextInputType.url,
-                    onChanged: _isEditMode ? (value) {
-                      setState(() {}); // Rebuild to show/hide preview button
-                    } : null,
-                    validator: _isEditMode ? (value) {
-                      if (value != null && value.isNotEmpty) {
-                        final uri = Uri.tryParse(value);
-                        if (uri == null || !uri.hasAbsolutePath) {
-                          return 'Please enter a valid URL';
-                        }
-                      }
-                      return null;
-                    } : null,
+                    onChanged: _isEditMode
+                        ? (value) {
+                            setState(
+                                () {}); // Rebuild to show/hide preview button
+                          }
+                        : null,
+                    validator: _isEditMode
+                        ? (value) {
+                            if (value != null && value.isNotEmpty) {
+                              final uri = Uri.tryParse(value);
+                              if (uri == null || !uri.hasAbsolutePath) {
+                                return 'Please enter a valid URL';
+                              }
+                            }
+                            return null;
+                          }
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   // User info card - only show in view mode
@@ -271,8 +292,9 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color:
-                            Theme.of(context).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
@@ -295,82 +317,107 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          InfoRowWithCopy(label:  'ID', value: widget.user.id.toString(), copy: true,),
-                          InfoRowWithCopy(label: 'UUID',value:  widget.user.uuid, copy: true,),
                           InfoRowWithCopy(
-                              label: 'Created',
-                              value: UtilityFunctions.formatDate(widget.user.createdAt),
+                            label: 'ID',
+                            value: widget.user.id.toString(),
+                            copy: true,
                           ),
                           InfoRowWithCopy(
-                              label: 'Last Login',
-                              value: UtilityFunctions.formatDateInWords(widget.user.lastLoginAt),
+                            label: 'UUID',
+                            value: widget.user.uuid,
+                            copy: true,
+                          ),
+                          InfoRowWithCopy(
+                            label: 'Created',
+                            value: UtilityFunctions.formatDate(
+                                widget.user.createdAt),
+                          ),
+                          InfoRowWithCopy(
+                            label: 'Last Login',
+                            value: UtilityFunctions.formatDateInWords(
+                                widget.user.lastLoginAt),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
                     if (!_isEditMode) ...[
-                    // Action buttons in view mode
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: () => widget.onUserAction?.call('permissions', widget.user, context),
-                          icon: const Icon(Icons.security_outlined, size: 16),
-                          label: const Text('Permissions'),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () => widget.onUserAction?.call('groups', widget.user, context),
-                          icon: const Icon(Icons.group_outlined, size: 16),
-                          label: const Text('Groups'),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () => widget.onUserAction?.call('sessions', widget.user, context),
-                          icon: const Icon(Icons.schedule_outlined, size: 16),
-                          label: const Text('Sessions'),
-                        ),
-                        Tooltip(
-                          message: _isAdminUser() 
-                              ? 'Admin user cannot be deactivated'
-                              : '',
-                          child: OutlinedButton.icon(
-                            onPressed: _isAdminUser() ? null : () => widget.onUserAction?.call(
-                              widget.user.isActive ? 'deactivate' : 'activate', 
-                              widget.user, 
-                              context
-                            ),
-                        style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Colors.orange),
-                              foregroundColor: Colors.orange,
-                            ),
-                            icon: Icon(
-                              widget.user.isActive ? Icons.block_outlined : Icons.check_circle_outline,
-                              size: 16,
-                            ),
-                            label: Text(widget.user.isActive ? 'Deactivate' : 'Activate'),
+                      // Action buttons in view mode
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () => widget.onUserAction
+                                ?.call('permissions', widget.user, context),
+                            icon: const Icon(Icons.security_outlined, size: 16),
+                            label: const Text('Permissions'),
                           ),
-                        ),
-                        Tooltip(
-                          message: _isAdminUser() 
-                              ? 'Admin user cannot be deleted'
-                              : '',
-                          child: OutlinedButton.icon(
-                            onPressed: _isAdminUser() ? null : () {
-                              widget.onUserAction?.call('delete', widget.user, context);
-                            },
-                            icon: const Icon(Icons.delete_outline, size: 16, color: Colors.red),
-                            label: const Text('Delete', style: TextStyle(color: Colors.red)),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Colors.red),
-                              foregroundColor: Colors.red,
+                          ElevatedButton.icon(
+                            onPressed: () => widget.onUserAction
+                                ?.call('groups', widget.user, context),
+                            icon: const Icon(Icons.group_outlined, size: 16),
+                            label: const Text('Groups'),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () => widget.onUserAction
+                                ?.call('sessions', widget.user, context),
+                            icon: const Icon(Icons.schedule_outlined, size: 16),
+                            label: const Text('Sessions'),
+                          ),
+                          Tooltip(
+                            message: _isAdminUser()
+                                ? 'Admin user cannot be deactivated'
+                                : '',
+                            child: OutlinedButton.icon(
+                              onPressed: _isAdminUser()
+                                  ? null
+                                  : () => widget.onUserAction?.call(
+                                      widget.user.isActive
+                                          ? 'deactivate'
+                                          : 'activate',
+                                      widget.user,
+                                      context),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Colors.orange),
+                                foregroundColor: Colors.orange,
+                              ),
+                              icon: Icon(
+                                widget.user.isActive
+                                    ? Icons.block_outlined
+                                    : Icons.check_circle_outline,
+                                size: 16,
+                              ),
+                              label: Text(widget.user.isActive
+                                  ? 'Deactivate'
+                                  : 'Activate'),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                          Tooltip(
+                            message: _isAdminUser()
+                                ? 'Admin user cannot be deleted'
+                                : '',
+                            child: OutlinedButton.icon(
+                              onPressed: _isAdminUser()
+                                  ? null
+                                  : () {
+                                      widget.onUserAction?.call(
+                                          'delete', widget.user, context);
+                                    },
+                              icon: const Icon(Icons.delete_outline,
+                                  size: 16, color: Colors.red),
+                              label: const Text('Delete',
+                                  style: TextStyle(color: Colors.red)),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Colors.red),
+                                foregroundColor: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ],
                 ],
               ),
@@ -447,8 +494,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
       if (mounted) {
         final bloc = context.read<UsersBloc>();
         if (!bloc.isClosed) {
-          bloc.add(UpdateUserEvent(
-              request: UpdateUserRequest(
+          bloc.add(UpdateUserRequest(
             uuid: widget.user.uuid,
             username: _usernameController.text.trim() != widget.user.username
                 ? _usernameController.text.trim()
@@ -466,7 +512,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 ? _avatarUrlController.text.trim()
                 : null,
             isActive: _isActive != widget.user.isActive ? _isActive : null,
-          )));
+          ));
         }
       }
     }

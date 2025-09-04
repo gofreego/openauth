@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
-import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
+import 'package:openauth/src/generated/openauth/v1/sessions.pb.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_service.dart';
 
 abstract class SessionsRemoteDataSource {
-  Future<pb.ListUserSessionsResponse> getUserSessions(String userId);
-  Future<pb.TerminateSessionResponse> terminateSession(String sessionId);
-  Future<void> terminateAllUserSessions(String userId);
+  Future<ListUserSessionsResponse> getUserSessions(ListUserSessionsRequest request);
+  Future<TerminateSessionResponse> terminateSession(TerminateSessionRequest request);
 }
 
 class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
@@ -15,12 +14,12 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
   SessionsRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<pb.ListUserSessionsResponse> getUserSessions(String userId) async {
+  Future<ListUserSessionsResponse> getUserSessions(ListUserSessionsRequest request) async {
     try {
       final response = await _apiService.get(
-        '/openauth/v1/users/$userId/sessions',
+        '/openauth/v1/users/${request.userUuid}/sessions?limit=${request.limit}&offset=${request.offset}',
       );
-      var sessionList = pb.ListUserSessionsResponse();
+      var sessionList = ListUserSessionsResponse();
       sessionList.mergeFromProto3Json(response.data);
       return sessionList;
     } on DioException catch (e) {
@@ -37,14 +36,14 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
   }
 
   @override
-  Future<pb.TerminateSessionResponse> terminateSession(String sessionId) async {
+  Future<TerminateSessionResponse> terminateSession(TerminateSessionRequest request) async {
     try {
 
       final response = await _apiService.put(
         '/openauth/v1/sessions/terminate',
-        data: pb.TerminateSessionRequest(sessionId: sessionId).toProto3Json(),
+        data: request.toProto3Json(),
       );
-      var terminateSessionResponse = pb.TerminateSessionResponse();
+      var terminateSessionResponse = TerminateSessionResponse();
       terminateSessionResponse.mergeFromProto3Json(response.data);
       return terminateSessionResponse;
     } on DioException catch (e) {
@@ -55,26 +54,6 @@ class SessionsRemoteDataSourceImpl implements SessionsRemoteDataSource {
     } catch (e) {
       throw ServerException(
         message: 'Unexpected error occurred while terminating session: $e',
-        statusCode: 500,
-      );
-    }
-  }
-
-  @override
-  Future<void> terminateAllUserSessions(String userId) async {
-    try {
-      await _apiService.post(
-        '/openauth/v1/sessions/terminate',
-        data: pb.TerminateSessionRequest(userId: userId).toProto3Json(),
-      );
-    } on DioException catch (e) {
-      throw ServerException(
-        message: 'Failed to terminate all user sessions: ${e.message}',
-        statusCode: e.response?.statusCode ?? 500,
-      );
-    } catch (e) {
-      throw ServerException(
-        message: 'Unexpected error occurred while terminating all user sessions: $e',
         statusCode: 500,
       );
     }

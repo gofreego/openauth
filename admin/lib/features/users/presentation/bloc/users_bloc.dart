@@ -1,32 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/features/users/data/repositories/users_repository.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pbserver.dart';
-import 'users_event.dart';
+import 'package:protobuf/protobuf.dart';
 import 'users_state.dart';
 
-class UsersBloc extends Bloc<UsersEvent, UsersState> {
+class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
   final UsersRepository repository;
 
   UsersBloc({
     required this.repository,
   }) : super(UsersInitial()) {
-    on<LoadUsersEvent>(_onLoadUsers);
-    on<RefreshUsersEvent>(_onRefreshUsers);
-    on<CreateUserEvent>(_onCreateUser);
-    on<UpdateUserEvent>(_onUpdateUser);
-    on<DeleteUserEvent>(_onDeleteUser);
-    on<SearchUsersEvent>(_onSearchUsers);
-    on<SearchUserByIdEvent>(_onSearchUserById);
-    on<FilterUsersEvent>(_onFilterUsers);
+    on<ListUsersRequest>(_onLoadUsers);
+    on<SignUpRequest>(_onCreateUser);
+    on<UpdateUserRequest>(_onUpdateUser);
+    on<DeleteUserRequest>(_onDeleteUser);
   }
 
-  Future<void> _onLoadUsers(LoadUsersEvent event, Emitter<UsersState> emit) async {
+  Future<void> _onLoadUsers(ListUsersRequest event, Emitter<UsersState> emit) async {
     emit(UsersLoading());
 
-    final result = await repository.getUsers(
-      request: event.request
-    );
-
+    final result = await repository.getUsers(event);
     result.fold(
       (failure) => emit(UsersError(failure)),
       (users) => emit(UsersLoaded(
@@ -35,23 +28,10 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     );
   }
 
-  Future<void> _onRefreshUsers(RefreshUsersEvent event, Emitter<UsersState> emit) async {
-    final result = await repository.getUsers(
-      request: event.request,
-    );
-
-    result.fold(
-      (failure) => emit(UsersError(failure)),
-      (users) => emit(UsersLoaded(
-        users: users
-      )),
-    );
-  }
-
-  Future<void> _onCreateUser(CreateUserEvent event, Emitter<UsersState> emit) async {
+  Future<void> _onCreateUser(SignUpRequest event, Emitter<UsersState> emit) async {
     emit(UserCreating());
 
-    final result = await repository.createUser(event.request);
+    final result = await repository.createUser(event);
 
     result.fold(
       (failure) => emit(UsersError(failure)),
@@ -59,16 +39,16 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         emit(UserCreated(user));
         // Refresh the users list
         if (!isClosed) {
-          add(RefreshUsersEvent(request: ListUsersRequest()));
+          add(ListUsersRequest());
         }
       },
     );
   }
 
-  Future<void> _onUpdateUser(UpdateUserEvent event, Emitter<UsersState> emit) async {
+  Future<void> _onUpdateUser(UpdateUserRequest event, Emitter<UsersState> emit) async {
     emit(UserUpdating());
 
-    final result = await repository.updateUser(event.request);
+    final result = await repository.updateUser(event);
 
     result.fold(
       (failure) => emit(UsersError(failure)),
@@ -76,87 +56,26 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         emit(UserUpdated(user));
         // Refresh the users list
         if (!isClosed) {
-          add(RefreshUsersEvent(request: ListUsersRequest()));
+          add(ListUsersRequest());
         }
       },
     );
   }
 
-  Future<void> _onDeleteUser(DeleteUserEvent event, Emitter<UsersState> emit) async {
+  Future<void> _onDeleteUser(DeleteUserRequest event, Emitter<UsersState> emit) async {
     emit(UserDeleting());
 
-    final result = await repository.deleteUser(event.userIdOrUuid);
+    final result = await repository.deleteUser(event);
 
     result.fold(
       (failure) => emit(UsersError(failure)),
       (_) {
-        emit(UserDeleted(event.userIdOrUuid));
+        emit(UserDeleted(event.uuid));
         // Refresh the users list
         if (!isClosed) {
-          add(RefreshUsersEvent(request: ListUsersRequest()));
+          add(ListUsersRequest());
         }
       },
-    );
-  }
-
-  Future<void> _onSearchUsers(SearchUsersEvent event, Emitter<UsersState> emit) async {
-    final currentState = state;
-    final currentFilter = currentState is UsersLoaded ? currentState.currentFilter : null;
-
-    final result = await repository.getUsers(
-      request: ListUsersRequest(
-        offset: 0,
-        limit: 50,
-        search: event.query.isEmpty ? null : event.query,
-      ),
-    );
-
-    result.fold(
-      (failure) => emit(UsersError(failure)),
-      (users) => emit(UsersLoaded(
-        users: users,
-        currentSearch: event.query.isEmpty ? null : event.query,
-        currentFilter: currentFilter,
-      )),
-    );
-  }
-
-  Future<void> _onSearchUserById(SearchUserByIdEvent event, Emitter<UsersState> emit) async {
-    // First try to get the specific user by ID/UUID
-    final result = await repository.getUser(event.idOrUuid);
-
-    result.fold(
-      (failure) {
-        // If direct lookup fails, fall back to general search
-        add(SearchUsersEvent(event.idOrUuid));
-      },
-      (user) => emit(UsersLoaded(
-        users: [user],
-        currentSearch: event.idOrUuid,
-        currentFilter: null,
-      )),
-    );
-  }
-
-  Future<void> _onFilterUsers(FilterUsersEvent event, Emitter<UsersState> emit) async {
-    final currentState = state;
-    final currentSearch = currentState is UsersLoaded ? currentState.currentSearch : null;
-
-    final result = await repository.getUsers(
-      request: ListUsersRequest(
-        offset: 0,
-        limit: 50,
-        search: currentSearch,
-      ),
-    );
-
-    result.fold(
-      (failure) => emit(UsersError(failure)),
-      (users) => emit(UsersLoaded(
-        users: users,
-        currentSearch: currentSearch,
-        currentFilter: event.isActive,
-      )),
     );
   }
 }

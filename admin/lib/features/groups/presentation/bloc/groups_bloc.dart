@@ -9,6 +9,7 @@ part 'groups_state.dart';
 class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
   final GroupsRepository repository;
 
+  final int listGroupsLimit = 20;
 
   String? _currentSearchQuery;
 
@@ -44,19 +45,15 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
               ..addAll(groups);
             emit(GroupsLoaded(
               groups: allGroups,
-              currentSearch: event.search,
-              nextPageToken:
-                  null, // TODO: Get from response when pagination is implemented
-              hasReachedMax: groups.isEmpty,
+              request: event,
+              hasReachedMax: groups.length < event.limit,
             ));
           } else {
             // This is initial load or refresh - replace groups
             emit(GroupsLoaded(
               groups: groups,
-              currentSearch: event.search,
-              nextPageToken:
-                  null, // TODO: Get from response when pagination is implemented
-              hasReachedMax: false,
+              request: event,
+              hasReachedMax: groups.length < event.limit,
             ));
           }
         },

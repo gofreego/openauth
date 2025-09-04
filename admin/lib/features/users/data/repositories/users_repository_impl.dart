@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pbserver.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
 import 'users_repository.dart';
@@ -11,9 +12,7 @@ class UsersRepositoryImpl implements UsersRepository {
   UsersRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<pb.User>>> getUsers({
-   required pb.ListUsersRequest request,
-  }) async {
+  Future<Either<Failure, List<pb.User>>> getUsers(pb.ListUsersRequest request) async {
     try {
       final response = await remoteDataSource.getUsers(
         request: request,
@@ -30,9 +29,9 @@ class UsersRepositoryImpl implements UsersRepository {
   }
 
   @override
-  Future<Either<Failure, pb.User>> getUser(String userIdOrUuid) async {
+  Future<Either<Failure, pb.User>> getUser(pb.GetUserRequest request) async {
     try {
-      final response = await remoteDataSource.getUser(userIdOrUuid);
+      final response = await remoteDataSource.getUser(request);
       return Right(response.user);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -72,9 +71,9 @@ class UsersRepositoryImpl implements UsersRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteUser(String userIdOrUuid) async {
+  Future<Either<Failure, void>> deleteUser(DeleteUserRequest request) async {
     try {
-      await remoteDataSource.deleteUser(userIdOrUuid);
+      await remoteDataSource.deleteUser(request);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));

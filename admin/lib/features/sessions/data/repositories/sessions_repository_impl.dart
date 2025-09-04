@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
+import 'package:openauth/src/generated/openauth/v1/sessions.pb.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
-import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 import 'sessions_repository.dart';
 import '../datasources/sessions_remote_datasource_impl.dart';
 
@@ -13,9 +13,9 @@ class SessionsRepositoryImpl implements SessionsRepository {
   }) : _remoteDataSource = remoteDataSource;
 
   @override
-  Future<Either<Failure, List<pb.Session>>> getUserSessions(String userId) async {
+  Future<Either<Failure, List<Session>>> getUserSessions(ListUserSessionsRequest request) async {
     try {
-      final response = await _remoteDataSource.getUserSessions(userId);
+      final response = await _remoteDataSource.getUserSessions(request);
       return Right(response.sessions);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -25,21 +25,9 @@ class SessionsRepositoryImpl implements SessionsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> terminateSession(String sessionId) async {
+  Future<Either<Failure, void>> terminateSession(TerminateSessionRequest request) async {
     try {
-      await _remoteDataSource.terminateSession(sessionId);
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error: $e'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> terminateAllUserSessions(String userId) async {
-    try {
-      await _remoteDataSource.terminateAllUserSessions(userId);
+      await _remoteDataSource.terminateSession(request);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));

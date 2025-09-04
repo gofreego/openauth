@@ -9,7 +9,6 @@ export 'data/repositories/users_repository_impl.dart';
 
 // Presentation
 export 'presentation/bloc/users_bloc.dart';
-export 'presentation/bloc/users_event.dart';
 export 'presentation/bloc/users_state.dart';
 export 'presentation/pages/users_page.dart';
 export 'presentation/widgets/users_header.dart';

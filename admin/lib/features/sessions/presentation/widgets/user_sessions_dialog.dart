@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
+import 'package:openauth/src/generated/openauth/v1/sessions.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as session_pb;
 import '../bloc/sessions_bloc.dart';
-import '../bloc/sessions_event.dart';
 import '../bloc/sessions_state.dart';
 import '../../domain/utils/session_utils.dart';
 import 'session_row.dart';
@@ -27,7 +27,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
     super.initState();
     // Load sessions when dialog opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SessionsBloc>().add(LoadUserSessionsEvent(widget.user.uuid));
+      context.read<SessionsBloc>().add(ListUserSessionsRequest(userUuid: widget.user.uuid));
     });
   }
 
@@ -98,7 +98,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
                   label: const Text('Refresh'),
                   onPressed: () {
                     context.read<SessionsBloc>().add(
-                      RefreshUserSessionsEvent(widget.user.uuid),
+                      ListUserSessionsRequest(userUuid: widget.user.uuid),
                     );
                   },
                 ),
@@ -123,13 +123,13 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
                     ToastUtils.showSuccess(state.message);
                     // Refresh the sessions list
                     context.read<SessionsBloc>().add(
-                      RefreshUserSessionsEvent(widget.user.uuid),
+                      ListUserSessionsRequest(userUuid: widget.user.uuid),
                     );
                   } else if (state is AllSessionsTerminated) {
                     ToastUtils.showSuccess(state.message);
                     // Refresh the sessions list
                     context.read<SessionsBloc>().add(
-                      RefreshUserSessionsEvent(widget.user.uuid),
+                      ListUserSessionsRequest(userUuid: widget.user.uuid),
                     );
                   } else if (state is SessionsError) {
                     ToastUtils.showError(state.message);
@@ -243,7 +243,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
           ElevatedButton(
             onPressed: () {
               context.read<SessionsBloc>().add(
-                LoadUserSessionsEvent(widget.user.uuid),
+                ListUserSessionsRequest(userUuid: widget.user.uuid),
               );
             },
             child: const Text('Retry'),
@@ -254,7 +254,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
   }
 
   void _terminateSession(String sessionId) {
-    context.read<SessionsBloc>().add(TerminateSessionEvent(sessionId));
+    context.read<SessionsBloc>().add(TerminateSessionRequest(sessionId: sessionId));
   }
 
   void _showTerminateAllDialog(BuildContext context) {
@@ -279,7 +279,7 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
             onPressed: () {
               Navigator.of(context).pop();
               context.read<SessionsBloc>().add(
-                TerminateAllUserSessionsEvent(widget.user.uuid),
+                TerminateSessionRequest(userId: widget.user.uuid),
               );
             },
             child: const Text('Terminate All'),

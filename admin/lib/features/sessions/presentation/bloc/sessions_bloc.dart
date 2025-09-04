@@ -1,59 +1,43 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'sessions_event.dart';
+import 'package:openauth/features/sessions/data/repositories/sessions_repository.dart';
+import 'package:openauth/src/generated/openauth/v1/sessions.pb.dart';
+import 'package:protobuf/protobuf.dart';
 import 'sessions_state.dart';
-import '../../data/repositories/sessions_repository.dart';
 
-class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
+class SessionsBloc extends Bloc<GeneratedMessage, SessionsState> {
   final SessionsRepository _sessionsRepository;
 
   SessionsBloc({
     required SessionsRepository sessionsRepository,
   })  : _sessionsRepository = sessionsRepository,
         super(SessionsInitial()) {
-    on<LoadUserSessionsEvent>(_onLoadUserSessions);
-    on<RefreshUserSessionsEvent>(_onRefreshUserSessions);
-    on<TerminateSessionEvent>(_onTerminateSession);
-    on<TerminateAllUserSessionsEvent>(_onTerminateAllUserSessions);
+    on<ListUserSessionsRequest>(_onLoadUserSessions);
+    on<TerminateSessionRequest>(_onTerminateSession);
   }
 
   Future<void> _onLoadUserSessions(
-    LoadUserSessionsEvent event,
+    ListUserSessionsRequest event,
     Emitter<SessionsState> emit,
   ) async {
     try {
       emit(SessionsLoading());
-      final result = await _sessionsRepository.getUserSessions(event.userId);
+      final result = await _sessionsRepository.getUserSessions(event);
       result.fold(
         (failure) => emit(SessionsError(failure.message)),
-        (sessions) => emit(SessionsLoaded(sessions: sessions, userId: event.userId)),
+        (sessions) => emit(SessionsLoaded(sessions: sessions, userId: event.userUuid)),
       );
     } catch (e) {
       emit(SessionsError('Failed to load sessions: ${e.toString()}'));
     }
   }
 
-  Future<void> _onRefreshUserSessions(
-    RefreshUserSessionsEvent event,
-    Emitter<SessionsState> emit,
-  ) async {
-    try {
-      final result = await _sessionsRepository.getUserSessions(event.userId);
-      result.fold(
-        (failure) => emit(SessionsError(failure.message)),
-        (sessions) => emit(SessionsLoaded(sessions: sessions, userId: event.userId)),
-      );
-    } catch (e) {
-      emit(SessionsError('Failed to refresh sessions: ${e.toString()}'));
-    }
-  }
-
   Future<void> _onTerminateSession(
-    TerminateSessionEvent event,
+    TerminateSessionRequest event,
     Emitter<SessionsState> emit,
   ) async {
     try {
       emit(SessionTerminating(event.sessionId));
-      final result = await _sessionsRepository.terminateSession(event.sessionId);
+      final result = await _sessionsRepository.terminateSession(event);
       result.fold(
         (failure) => emit(SessionsError(failure.message)),
         (_) => emit(SessionTerminated(
@@ -63,25 +47,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
       );
     } catch (e) {
       emit(SessionsError('Failed to terminate session: ${e.toString()}'));
-    }
-  }
-
-  Future<void> _onTerminateAllUserSessions(
-    TerminateAllUserSessionsEvent event,
-    Emitter<SessionsState> emit,
-  ) async {
-    try {
-      emit(AllSessionsTerminating(event.userId));
-      final result = await _sessionsRepository.terminateAllUserSessions(event.userId);
-      result.fold(
-        (failure) => emit(SessionsError(failure.message)),
-        (_) => emit(AllSessionsTerminated(
-          userId: event.userId,
-          message: 'All sessions terminated successfully',
-        )),
-      );
-    } catch (e) {
-      emit(SessionsError('Failed to terminate all sessions: ${e.toString()}'));
     }
   }
 }

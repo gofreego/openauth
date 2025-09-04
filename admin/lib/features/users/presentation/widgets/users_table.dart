@@ -5,7 +5,6 @@ import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
-import '../bloc/users_event.dart';
 import 'user_row.dart';
 import 'edit_user_dialog.dart';
 import 'user_permissions_dialog.dart';
@@ -90,7 +89,7 @@ class UsersTable extends StatelessWidget {
                   return shared.ErrorWidget(
                     failure: state.failure,
                     onRetry: () {
-                      context.read<UsersBloc>().add(RefreshUsersEvent(request: ListUsersRequest()));
+                      context.read<UsersBloc>().add(ListUsersRequest());
                     },
                   );
                 } else if (state is UsersLoaded) {
@@ -184,7 +183,7 @@ class UsersTable extends StatelessWidget {
               Navigator.of(context).pop();
               final bloc = context.read<UsersBloc>();
               if (!bloc.isClosed) {
-                bloc.add(DeleteUserEvent(user.uuid));
+                bloc.add(DeleteUserRequest(uuid:user.uuid));
               }
               ToastUtils.showSuccess('${user.name} deleted successfully');
             },
@@ -233,11 +232,9 @@ class UsersTable extends StatelessWidget {
               Navigator.of(context).pop();
               final bloc = context.read<UsersBloc>();
               if (!bloc.isClosed) {
-                bloc.add(UpdateUserEvent(
-                  request: UpdateUserRequest(
-                    uuid: user.uuid,
-                    isActive: newStatus,
-                  ),
+                bloc.add(UpdateUserRequest(
+                  uuid: user.uuid,
+                  isActive: newStatus,
                 ));
               }
               ToastUtils.showSuccess('${user.name} ${action}d successfully');

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
-import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
 
 class CreateUserDialog extends StatefulWidget {
@@ -43,7 +42,8 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
         if (state is UserCreated) {
           Navigator.of(context).pop();
           widget.onUserCreated?.call();
-          ToastUtils.showSuccess('User ${state.user.username} created successfully');
+          ToastUtils.showSuccess(
+              'User ${state.user.username} created successfully');
         } else if (state is UsersError) {
           ToastUtils.showError('Error: ${state.message}');
         }
@@ -105,7 +105,8 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter an email';
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
                       return 'Please enter a valid email';
                     }
                     return null;
@@ -160,7 +161,7 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
           BlocBuilder<UsersBloc, UsersState>(
             builder: (context, state) {
               final isLoading = state is UserCreating;
-              
+
               return FilledButton(
                 onPressed: isLoading ? null : _createUser,
                 child: isLoading
@@ -181,18 +182,16 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
   void _createUser() {
     if (_formKey.currentState!.validate()) {
       final phone = _phoneController.text.trim();
-      
+
       context.read<UsersBloc>().add(
-        CreateUserEvent(
-          request: SignUpRequest(
-            username: _usernameController.text.trim(),
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            phone: phone.isEmpty ? null : phone,
-            name: _nameController.text,
-          ),
-        ),
-      );
+            SignUpRequest(
+              username: _usernameController.text.trim(),
+              email: _emailController.text.trim(),
+              password: _passwordController.text,
+              phone: phone.isEmpty ? null : phone,
+              name: _nameController.text,
+            ),
+          );
     }
   }
 }

@@ -17,33 +17,29 @@ class GroupsLoading extends GroupsState {
 
 class GroupsLoaded extends GroupsState {
   final List<Group> groups;
-  final String? currentSearch;
-  final String? nextPageToken;
+  final ListGroupsRequest request;
   final bool hasReachedMax;
 
   const GroupsLoaded({
     required this.groups,
-    this.currentSearch,
-    this.nextPageToken,
+    required this.request,
     this.hasReachedMax = false,
   });
 
   GroupsLoaded copyWith({
     List<Group>? groups,
-    String? currentSearch,
-    String? nextPageToken,
+    ListGroupsRequest? request,
     bool? hasReachedMax,
   }) {
     return GroupsLoaded(
       groups: groups ?? this.groups,
-      currentSearch: currentSearch ?? this.currentSearch,
-      nextPageToken: nextPageToken ?? this.nextPageToken,
+      request: request ?? this.request,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );
   }
 
   @override
-  List<Object?> get props => [groups, currentSearch, nextPageToken, hasReachedMax];
+  List<Object?> get props => [groups, request, hasReachedMax];
 }
 
 class GroupsError extends GroupsState {
