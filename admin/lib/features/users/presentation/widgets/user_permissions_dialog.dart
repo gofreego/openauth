@@ -357,36 +357,57 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   }
 
   Widget _buildAvailablePermissionsPanel() {
-    return BlocBuilder<PermissionsBloc, PermissionsState>(
-      builder: (context, state) {
-        if (state is PermissionsLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is PermissionsError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(
-                  'Error loading available permissions',
-                  style: Theme.of(context).textTheme.titleMedium,
+    return BlocBuilder<UserPermissionsBloc, UserPermissionsState>(
+      builder: (context, userPermissionsState) {
+        // Update _userPermissions when loaded
+        if (userPermissionsState is UserPermissionsLoaded) {
+          _userPermissions = userPermissionsState.permissions;
+        }
+
+        return BlocBuilder<PermissionsBloc, PermissionsState>(
+          builder: (context, state) {
+            if (state is PermissionsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is PermissionsError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error loading available permissions',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(state.message),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<PermissionsBloc>()
+                            .add(const LoadPermissions());
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(state.message),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    context
-                        .read<PermissionsBloc>()
-                        .add(const LoadPermissions());
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
-          );
-        } else if (state is PermissionsLoaded) {
+              );
+            } else if (state is PermissionsLoaded) {
+              // Only process if user permissions are also loaded
+              if (_userPermissions.isEmpty) {
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text('Loading user permissions...'),
+                    ],
+                  ),
+                );
+              }
+
           _availablePermissions = state.permissions
               .map((entity) => permissions_pb.Permission(
                     id: entity.id,
@@ -449,6 +470,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
         }
         return const SizedBox.shrink();
       },
+    );
+  },
     );
   }
 
