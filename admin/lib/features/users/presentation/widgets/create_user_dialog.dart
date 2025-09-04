@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
@@ -42,16 +43,9 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
         if (state is UserCreated) {
           Navigator.of(context).pop();
           widget.onUserCreated?.call();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('User ${state.user.username} created successfully')),
-          );
+          ToastUtils.showSuccess('User ${state.user.username} created successfully');
         } else if (state is UsersError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${state.message}'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          ToastUtils.showError('Error: ${state.message}');
         }
       },
       child: AlertDialog(

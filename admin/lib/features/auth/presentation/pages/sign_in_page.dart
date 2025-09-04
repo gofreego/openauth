@@ -52,12 +52,7 @@ class _SignInPageState extends State<SignInPage> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSignInError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: theme.colorScheme.error,
-              ),
-            );
+            ToastUtils.showError(state.message);
           }
         },
         child: Center(

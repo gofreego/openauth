@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
 import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart'
     as perm_pb;
@@ -56,26 +57,16 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             selectedPermissions.clear();
             _isAssigning = false;
           });
-          
+            
           // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+          ToastUtils.showSuccess(state.message);
         } else if (state is UserPermissionsError) {
           setState(() {
             _isAssigning = false;
           });
           
           // Show error message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ToastUtils.showError(state.message);
         }
       },
       child: Dialog(
@@ -229,12 +220,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                               selectedPermissions.clear();
                               _isAssigning = false;
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Permissions assigned successfully'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
+                            ToastUtils.showSuccess('Permissions assigned successfully');
                             // Refresh permissions
                             context.read<UserPermissionsBloc>().add(
                                   LoadUserPermissions(widget.user.id.toInt()),
@@ -243,12 +229,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                             setState(() {
                               _isAssigning = false;
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: ${state.message}'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
+                            ToastUtils.showError('Error: ${state.message}');
                           }
                         },
                         builder: (context, state) {

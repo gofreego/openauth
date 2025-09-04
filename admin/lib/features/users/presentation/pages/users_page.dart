@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+import '../../../../shared/shared.dart';
 import '../widgets/users_header.dart';
 import '../widgets/users_table.dart';
 import '../widgets/create_user_dialog.dart';
@@ -114,9 +115,7 @@ class _UsersPageState extends State<UsersPage> {
       context: context,
       builder: (context) => CreateUserDialog(
         onUserCreated: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User created successfully')),
-          );
+          ToastUtils.showSuccess('User created successfully');
         },
       ),
     );

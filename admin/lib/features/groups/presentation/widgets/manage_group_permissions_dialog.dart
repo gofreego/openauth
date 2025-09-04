@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart';
 import '../../../../src/generated/openauth/v1/permissions.pb.dart';
@@ -318,12 +319,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
             onPressed: () {
               // TODO: Call API to remove permission from group
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Permission removed successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              ToastUtils.showSuccess('Permission removed successfully');
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Remove'),
@@ -353,12 +349,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
               // TODO: Call API to assign permissions to group
               Navigator.of(context).pop();
               Navigator.of(context).pop(); // Close main dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${_selectedPermissionIds.length} permission(s) assigned successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              ToastUtils.showSuccess('${_selectedPermissionIds.length} permission(s) assigned successfully');
             },
             child: const Text('Assign'),
           ),

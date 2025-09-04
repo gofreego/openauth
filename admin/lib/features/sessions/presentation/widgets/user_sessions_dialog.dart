@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as session_pb;
 import '../bloc/sessions_bloc.dart';
@@ -119,28 +120,19 @@ class _UserSessionsDialogState extends State<UserSessionsDialog> {
               child: BlocConsumer<SessionsBloc, SessionsState>(
                 listener: (context, state) {
                   if (state is SessionTerminated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
+                    ToastUtils.showSuccess(state.message);
                     // Refresh the sessions list
                     context.read<SessionsBloc>().add(
                       RefreshUserSessionsEvent(widget.user.uuid),
                     );
                   } else if (state is AllSessionsTerminated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
+                    ToastUtils.showSuccess(state.message);
                     // Refresh the sessions list
                     context.read<SessionsBloc>().add(
                       RefreshUserSessionsEvent(widget.user.uuid),
                     );
                   } else if (state is SessionsError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    ToastUtils.showError(state.message);
                   }
                 },
                 builder: (context, state) {

@@ -106,7 +106,7 @@ class GroupsRepositoryImpl implements GroupsRepository {
     required AssignUsersToGroupRequest request,
   }) async {
     try {
-      await remoteDataSource.assignUserToGroup(
+      await remoteDataSource.assignUsersToGroup(
         request: request
       );
       return const Right(null);

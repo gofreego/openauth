@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import '../bloc/groups_bloc.dart';
 
@@ -57,30 +58,17 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                     _isLoading = false;
                   });
                 } else if (state is UserAssigned) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('User added to group successfully'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
+                  ToastUtils.showSuccess('User added to group successfully');
+                } else if (state is UserRemoved) {
+                  ToastUtils.showSuccess('User removed from group successfully');
                   // Reload group members
                   context.read<GroupsBloc>().add(LoadGroupUsers(widget.group.id));
                 } else if (state is UserRemoved) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('User removed from group successfully'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
+                  ToastUtils.showSuccess('User removed from group successfully');
                   // Reload group members
                   context.read<GroupsBloc>().add(LoadGroupUsers(widget.group.id));
                 } else if (state is GroupsError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: ${state.message}'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  ToastUtils.showError('Error: ${state.message}');
                 }
               },
             ),

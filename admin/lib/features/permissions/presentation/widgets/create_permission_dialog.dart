@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../bloc/permissions_bloc.dart';
 import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
 
@@ -37,12 +38,7 @@ class _CreatePermissionDialogState extends State<CreatePermissionDialog> {
           Navigator.of(context).pop();
           widget.onPermissionCreated?.call();
         } else if (state is PermissionError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ToastUtils.showError(state.message);
         }
       },
       child: AlertDialog(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../../core/bloc/theme_bloc.dart';
 import '../../../../core/bloc/theme_event.dart';
 import '../../../../core/bloc/theme_state.dart';
@@ -472,16 +473,6 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showFeatureNotImplemented(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('This feature will be implemented in a future update'),
-        action: SnackBarAction(
-          label: 'OK',
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
-      ),
-    );
+    ToastUtils.showInfo('This feature will be implemented in a future update');
   }
 }

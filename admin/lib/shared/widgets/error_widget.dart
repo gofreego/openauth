@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/errors/failures.dart';
+import '../utils/toast_utils.dart';
 
 /// A common error widget that handles all types of failures
 class ErrorWidget extends StatelessWidget {
@@ -211,45 +212,14 @@ class CompactErrorWidget extends StatelessWidget {
   }
 }
 
-/// An error snackbar helper for showing errors as snackbars
+/// An error toast helper for showing errors as toast messages
 class ErrorSnackBar {
   static void show(
     BuildContext context,
     Failure failure, {
     VoidCallback? onRetry,
   }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              Icons.error_outline,
-              color: colorScheme.onError,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                failure.message,
-                style: TextStyle(color: colorScheme.onError),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: colorScheme.error,
-        action: onRetry != null
-            ? SnackBarAction(
-                label: 'Retry',
-                textColor: colorScheme.onError,
-                onPressed: onRetry,
-              )
-            : null,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
-      ),
-    );
+    // Use toast instead of snackbar for better visibility
+    ErrorToast.show(failure);
   }
 }

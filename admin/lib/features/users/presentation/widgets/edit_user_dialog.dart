@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_event.dart';
 import '../bloc/users_state.dart';
@@ -85,18 +86,9 @@ class _EditUserDialogState extends State<EditUserDialog> {
             _isActive = state.user.isActive;
           });
           widget.onUserUpdated?.call();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content:
-                    Text('User ${state.user.username} updated successfully')),
-          );
+          ToastUtils.showSuccess('User ${state.user.username} updated successfully');
         } else if (state is UsersError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${state.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ToastUtils.showError('Error: ${state.message}');
         }
       },
       child: AlertDialog(
@@ -448,9 +440,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
               _isActive != widget.user.isActive;
 
       if (!hasChanges) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No changes detected')),
-        );
+        ToastUtils.showInfo('No changes detected');
         return;
       }
 

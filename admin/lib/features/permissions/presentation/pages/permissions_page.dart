@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
 import '../bloc/permissions_bloc.dart';
 import '../widgets/permissions_header.dart';
@@ -61,33 +62,13 @@ class _PermissionsPageState extends State<PermissionsPage> {
               child: BlocConsumer<PermissionsBloc, PermissionsState>(
                 listener: (context, state) {
                   if (state is PermissionError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    ToastUtils.showError(state.message);
                   } else if (state is PermissionCreated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Permission created successfully'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    ToastUtils.showSuccess('Permission created successfully');
                   } else if (state is PermissionUpdated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Permission updated successfully'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    ToastUtils.showSuccess('Permission updated successfully');
                   } else if (state is PermissionDeleted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Permission deleted successfully'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    ToastUtils.showSuccess('Permission deleted successfully');
                   }
                 },
                 builder: (context, state) {

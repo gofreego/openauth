@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import '../bloc/groups_bloc.dart';
 import 'group_row.dart';
@@ -163,11 +164,7 @@ class GroupsTable extends StatelessWidget {
   }
 
   void _showManageUsersDialog(BuildContext context, Group group) {
-    // TODO: Implement manage users dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Manage users for ${group.displayName} - Coming soon'),
-      ),
-    );
+
+    ToastUtils.showInfo("Manage users for ${group.displayName} - Coming soon");
   }
 }

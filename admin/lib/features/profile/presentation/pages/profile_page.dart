@@ -4,6 +4,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/widgets/auth_session_info.dart';
+import '../../../../shared/shared.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -100,11 +101,7 @@ class ProfilePage extends StatelessWidget {
                             FilledButton.icon(
                               onPressed: () {
                                 // TODO: Implement edit profile
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Edit profile functionality coming soon'),
-                                  ),
-                                );
+                                ToastUtils.showInfo('Edit profile functionality coming soon');
                               },
                               icon: const Icon(Icons.edit),
                               label: const Text('Edit Profile'),

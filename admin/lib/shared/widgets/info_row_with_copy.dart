@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../utils/toast_utils.dart';
 
 class InfoRowWithCopy extends StatelessWidget {
   final String label;
@@ -12,12 +13,7 @@ class InfoRowWithCopy extends StatelessWidget {
   Widget build(BuildContext context) {
      void copyToClipboard(String value, String label) {
     Clipboard.setData(ClipboardData(text: value));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$label copied to clipboard'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    CopyToast.show(label);
   }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),

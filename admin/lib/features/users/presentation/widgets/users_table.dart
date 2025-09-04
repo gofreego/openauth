@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
 import '../bloc/users_event.dart';
@@ -185,9 +186,7 @@ class UsersTable extends StatelessWidget {
               if (!bloc.isClosed) {
                 bloc.add(DeleteUserEvent(user.uuid));
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${user.name} deleted successfully')),
-              );
+              ToastUtils.showSuccess('${user.name} deleted successfully');
             },
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red,
@@ -241,9 +240,7 @@ class UsersTable extends StatelessWidget {
                   ),
                 ));
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${user.name} ${action}d successfully')),
-              );
+              ToastUtils.showSuccess('${user.name} ${action}d successfully');
             },
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: Colors.orange),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
 import '../../../../src/generated/openauth/v1/groups.pb.dart' as groups_pb;
+import '../../../../shared/shared.dart';
 import '../../../groups/presentation/bloc/groups_bloc.dart';
 import '../../../../shared/widgets/custom_search_bar.dart';
 
@@ -284,24 +285,14 @@ class _UserGroupsDialogState extends State<UserGroupsDialog> {
       // TODO: Create a RemoveUserFromGroup event in the GroupsBloc
       
       // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${widget.user.name} will be removed from ${group.groupName}'),
-          backgroundColor: Colors.orange,
-        ),
-      );
+      ToastUtils.showWarning('${widget.user.name} will be removed from ${group.groupName}');
 
       // Refresh the groups list
       context.read<GroupsBloc>().add(
             LoadUserGroups(widget.user.id),
           );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to remove user from group: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ToastUtils.showError('Failed to remove user from group: $e');
     } finally {
       setState(() {
         _isRemoving = false;

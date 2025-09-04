@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
 import '../bloc/groups_bloc.dart';
 import '../widgets/groups_header.dart';
@@ -67,33 +68,14 @@ class _GroupsPageState extends State<GroupsPage> {
               child: BlocConsumer<GroupsBloc, GroupsState>(
                 listener: (context, state) {
                   if (state is GroupsError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    ToastUtils.showError(state.message);
                   } else if (state is GroupCreated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Group created successfully'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+
+                    ToastUtils.showSuccess('Group created successfully');
                   } else if (state is GroupUpdated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Group updated successfully'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    ToastUtils.showSuccess('Group updated successfully');
                   } else if (state is GroupDeleted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Group deleted successfully'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    ToastUtils.showSuccess('Group deleted successfully');
                   }
                 },
                 builder: (context, state) {

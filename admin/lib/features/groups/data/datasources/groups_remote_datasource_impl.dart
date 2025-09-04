@@ -25,7 +25,7 @@ abstract class GroupsRemoteDataSource {
 
   Future<ListUserGroupsResponse> getUserGroups(Int64 userId);
 
-  Future<AssignUsersToGroupResponse> assignUserToGroup({
+  Future<AssignUsersToGroupResponse> assignUsersToGroup({
     required AssignUsersToGroupRequest request,
   });
 
@@ -201,7 +201,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<AssignUsersToGroupResponse> assignUserToGroup({
+  Future<AssignUsersToGroupResponse> assignUsersToGroup({
     required AssignUsersToGroupRequest request,
   }) async {
     try {

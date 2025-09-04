@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
@@ -100,11 +101,7 @@ class ProfilePage extends StatelessWidget {
                             FilledButton.icon(
                               onPressed: () {
                                 // TODO: Implement edit profile
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Edit profile functionality coming soon'),
-                                  ),
-                                );
+                                ToastUtils.showInfo('Edit profile functionality coming soon');
                               },
                               icon: const Icon(Icons.edit),
                               label: const Text('Edit Profile'),
