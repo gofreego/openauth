@@ -1,21 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/usecases/get_stats_usecase.dart';
-import 'dashboard_event.dart';
-import 'dashboard_state.dart';
+import 'package:openauth/features/dashboard/dashboard.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  final GetStatsUseCase getStatsUseCase;
+  final StatsRepository repository;
 
-  DashboardBloc({required this.getStatsUseCase}) : super(DashboardInitial()) {
+  DashboardBloc({required this.repository}) : super(DashboardInitial()) {
     on<LoadStatsEvent>(_onLoadStats);
     on<RefreshStatsEvent>(_onRefreshStats);
   }
 
   Future<void> _onLoadStats(LoadStatsEvent event, Emitter<DashboardState> emit) async {
     emit(DashboardLoading());
-    
-    final result = await getStatsUseCase.call();
-    
+
+    final result = await repository.getStats();
+
     result.fold(
       (failure) => emit(DashboardError(message: failure.message)),
       (stats) => emit(DashboardLoaded(stats: stats)),
@@ -27,9 +25,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     if (state is! DashboardLoaded) {
       emit(DashboardLoading());
     }
-    
-    final result = await getStatsUseCase.call();
-    
+
+    final result = await repository.getStats();
+
     result.fold(
       (failure) => emit(DashboardError(message: failure.message)),
       (stats) => emit(DashboardLoaded(stats: stats)),

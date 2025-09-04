@@ -35,7 +35,6 @@ import '../../features/groups/presentation/bloc/groups_bloc.dart';
 import '../../features/dashboard/data/datasources/stats_remote_datasource.dart';
 import '../../features/dashboard/data/repositories/stats_repository_impl.dart';
 import '../../features/dashboard/domain/repositories/stats_repository.dart';
-import '../../features/dashboard/domain/usecases/get_stats_usecase.dart';
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 // Sessions feature dependencies
@@ -138,11 +137,6 @@ Future<void> initializeDependencies({
     ),
   );
 
-  // Dashboard use cases
-  serviceLocator.registerLazySingleton<GetStatsUseCase>(
-    () => GetStatsUseCase(serviceLocator<StatsRepository>()),
-  );
-
   // Sessions data sources
   serviceLocator.registerLazySingleton<SessionsRemoteDataSource>(
     () => SessionsRemoteDataSourceImpl(serviceLocator<ApiService>()),
@@ -190,7 +184,7 @@ Future<void> initializeDependencies({
 
   serviceLocator.registerLazySingleton<DashboardBloc>(
     () => DashboardBloc(
-      getStatsUseCase: serviceLocator<GetStatsUseCase>(),
+      repository: serviceLocator<StatsRepository>(),
     ),
   );
 

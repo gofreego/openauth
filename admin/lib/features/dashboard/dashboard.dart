@@ -10,9 +10,6 @@ export 'presentation/bloc/dashboard_state.dart';
 // Domain Layer
 export 'domain/entities/dashboard_stats_entity.dart';
 export 'domain/repositories/stats_repository.dart';
-export 'domain/usecases/get_stats_usecase.dart';
 
-// Data Layer
-export 'data/models/dashboard_stats.dart';
 export 'data/datasources/stats_remote_datasource.dart';
 export 'data/repositories/stats_repository_impl.dart';
