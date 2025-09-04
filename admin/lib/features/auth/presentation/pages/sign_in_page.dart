@@ -137,7 +137,6 @@ class _SignInPageState extends State<SignInPage> {
                           hint: LoginValidators.getHintText(),
                           prefixIcon: _getIdentifierIcon(),
                           textInputAction: TextInputAction.next,
-                          keyboardType: _getKeyboardType(),
                           validator: (value) {
                             final validation = LoginValidators.validateIdentifier(value ?? '');
                             return validation.isValid ? null : validation.message;
@@ -287,20 +286,7 @@ class _SignInPageState extends State<SignInPage> {
       case IdentifierType.username:
         return Icons.person_outline;
       case IdentifierType.unknown:
-        return Icons.login_outlined;
-    }
-  }
-
-  TextInputType _getKeyboardType() {
-    switch (_identifierType) {
-      case IdentifierType.email:
-        return TextInputType.emailAddress;
-      case IdentifierType.phone:
-        return TextInputType.phone;
-      case IdentifierType.username:
-        return TextInputType.text;
-      case IdentifierType.unknown:
-        return TextInputType.text;
+        return Icons.person_outline;
     }
   }
 
