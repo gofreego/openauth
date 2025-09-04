@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
+import 'package:openauth/src/generated/openauth/v1/groups.pb.dart';
 import '../bloc/groups_bloc.dart';
 import '../widgets/groups_header.dart';
 import '../widgets/groups_grid.dart';
@@ -21,7 +22,7 @@ class _GroupsPageState extends State<GroupsPage> {
   void initState() {
     super.initState();
     // Load groups when page is initialized
-    context.read<GroupsBloc>().add(const LoadGroups());
+    context.read<GroupsBloc>().add(ListGroupsRequest());
   }
 
   @override
@@ -54,7 +55,7 @@ class _GroupsPageState extends State<GroupsPage> {
                     // Use a small debounce to prevent too many requests while typing
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted && _searchQuery == query) {
-                        bloc.add(SearchGroups(query));
+                        bloc.add(ListGroupsRequest(search: query));
                       }
                     });
                   }
@@ -120,7 +121,7 @@ class _GroupsPageState extends State<GroupsPage> {
                               if (mounted) {
                                 final bloc = context.read<GroupsBloc>();
                                 if (!bloc.isClosed) {
-                                  bloc.add(const LoadGroups());
+                                  bloc.add(ListGroupsRequest());
                                 }
                               }
                             },

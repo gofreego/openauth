@@ -1,34 +1,23 @@
 import 'package:dartz/dartz.dart';
-import 'package:fixnum/fixnum.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 
 abstract class GroupsRepository {
-  Future<Either<Failure, List<Group>>> getGroups({
-      required ListGroupsRequest request,
-  });
+  Future<Either<Failure, List<Group>>> getGroups(ListGroupsRequest request);
 
-  Future<Either<Failure, Group>> getGroup(Int64 groupId);
+  Future<Either<Failure, Group>> getGroup(GetGroupRequest request);
 
-  Future<Either<Failure, Group>> createGroup({
-    required CreateGroupRequest request,
-  });
+  Future<Either<Failure, Group>> createGroup(CreateGroupRequest request);
 
-  Future<Either<Failure, Group>> updateGroup({
-    required UpdateGroupRequest request,
-  });
+  Future<Either<Failure, Group>> updateGroup(UpdateGroupRequest request);
 
-  Future<Either<Failure, void>> deleteGroup(Int64 groupId);
+  Future<Either<Failure, void>> deleteGroup(DeleteGroupRequest request);
 
-  Future<Either<Failure, List<GroupUser>>> getGroupUsers(Int64 groupId);
+  Future<Either<Failure, List<GroupUser>>> getGroupUsers(ListGroupUsersRequest request);
 
-  Future<Either<Failure, List<UserGroup>>> getUserGroups(Int64 userId);
+  Future<Either<Failure, List<UserGroup>>> getUserGroups(ListUserGroupsRequest request);
 
-  Future<Either<Failure, void>> assignUserToGroup({
-  required AssignUsersToGroupRequest request,
-  });
+  Future<Either<Failure, void>> assignUserToGroup(AssignUsersToGroupRequest request);
 
-  Future<Either<Failure, void>> removeUserFromGroup({
-    required RemoveUsersFromGroupRequest request,
-  });
+  Future<Either<Failure, void>> removeUserFromGroup(RemoveUsersFromGroupRequest request);
 }

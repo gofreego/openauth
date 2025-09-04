@@ -40,9 +40,9 @@ class _EditGroupDialogState extends State<EditGroupDialog> {
   void _updateGroup() {
     if (_formKey.currentState!.validate()) {
       context.read<GroupsBloc>().add(
-        UpdateGroup(
-          groupId: widget.group.id,
-          name: _nameController.text.trim(),
+        UpdateGroupRequest(
+          id: widget.group.id,
+          newName: _nameController.text.trim(),
           displayName: _displayNameController.text.trim(),
           description: _descriptionController.text.trim().isEmpty 
               ? null 

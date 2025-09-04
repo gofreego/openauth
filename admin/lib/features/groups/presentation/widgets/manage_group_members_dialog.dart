@@ -30,7 +30,7 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
 
   void _loadData() {
     // For now, just load group members - we'll add full user loading later
-    context.read<GroupsBloc>().add(LoadGroupUsers(widget.group.id));
+    context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
   }
 
   @override
@@ -62,11 +62,11 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                 } else if (state is UserRemoved) {
                   ToastUtils.showSuccess('User removed from group successfully');
                   // Reload group members
-                  context.read<GroupsBloc>().add(LoadGroupUsers(widget.group.id));
+                  context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
                 } else if (state is UserRemoved) {
                   ToastUtils.showSuccess('User removed from group successfully');
                   // Reload group members
-                  context.read<GroupsBloc>().add(LoadGroupUsers(widget.group.id));
+                  context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
                 } else if (state is GroupsError) {
                   ToastUtils.showError('Error: ${state.message}');
                 }
@@ -252,9 +252,9 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
-              context.read<GroupsBloc>().add(RemoveUserFromGroup(
+              context.read<GroupsBloc>().add(RemoveUsersFromGroupRequest(
                 groupId: widget.group.id,
-                userId: userId,
+                userIds: [userId],
               ));
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),

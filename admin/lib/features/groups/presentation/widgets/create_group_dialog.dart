@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/src/generated/openauth/v1/groups.pb.dart';
 import '../bloc/groups_bloc.dart';
 
 class CreateGroupDialog extends StatefulWidget {
@@ -26,7 +27,7 @@ class _CreateGroupDialogState extends State<CreateGroupDialog> {
   void _createGroup() {
     if (_formKey.currentState!.validate()) {
       context.read<GroupsBloc>().add(
-        CreateGroup(
+        CreateGroupRequest(
           name: _nameController.text.trim(),
           displayName: _displayNameController.text.trim(),
           description: _descriptionController.text.trim().isEmpty 

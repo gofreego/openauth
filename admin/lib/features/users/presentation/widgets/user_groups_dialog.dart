@@ -29,7 +29,7 @@ class _UserGroupsDialogState extends State<UserGroupsDialog> {
     // Load user groups
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<GroupsBloc>().add(
-            LoadUserGroups(widget.user.id),
+            groups_pb.ListUserGroupsRequest(userId: widget.user.id),
           );
     });
   }
@@ -144,7 +144,7 @@ class _UserGroupsDialogState extends State<UserGroupsDialog> {
           ElevatedButton(
             onPressed: () {
               context.read<GroupsBloc>().add(
-                    LoadUserGroups(widget.user.id),
+                    groups_pb.ListUserGroupsRequest(userId: widget.user.id),
                   );
             },
             child: const Text('Retry'),
@@ -289,7 +289,7 @@ class _UserGroupsDialogState extends State<UserGroupsDialog> {
 
       // Refresh the groups list
       context.read<GroupsBloc>().add(
-            LoadUserGroups(widget.user.id),
+            groups_pb.ListUserGroupsRequest(userId: widget.user.id),
           );
     } catch (e) {
       ToastUtils.showError('Failed to remove user from group: $e');

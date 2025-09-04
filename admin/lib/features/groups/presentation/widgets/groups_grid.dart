@@ -249,7 +249,7 @@ class _GroupsGridState extends State<GroupsGrid> {
           ),
           FilledButton(
             onPressed: () {
-              context.read<GroupsBloc>().add(DeleteGroup(group.id));
+              context.read<GroupsBloc>().add(DeleteGroupRequest(id: group.id));
               Navigator.of(context).pop();
             },
             style: FilledButton.styleFrom(

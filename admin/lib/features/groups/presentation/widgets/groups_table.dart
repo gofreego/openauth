@@ -151,7 +151,7 @@ class GroupsTable extends StatelessWidget {
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
-              context.read<GroupsBloc>().add(DeleteGroup(group.id));
+              context.read<GroupsBloc>().add(DeleteGroupRequest(id: group.id));
             },
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,

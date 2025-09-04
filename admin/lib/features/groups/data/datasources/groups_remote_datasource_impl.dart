@@ -1,37 +1,26 @@
 import 'package:dio/dio.dart';
-import 'package:fixnum/fixnum.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 
 abstract class GroupsRemoteDataSource {
-  Future<ListGroupsResponse> getGroups({
-    required ListGroupsRequest request,
-  });
+  Future<ListGroupsResponse> getGroups(ListGroupsRequest request);
 
-  Future<Group> getGroup(Int64 groupId);
+  Future<Group> getGroup(GetGroupRequest request);
 
-  Future<Group> createGroup({
-    required CreateGroupRequest request,
-  });
+  Future<Group> createGroup(CreateGroupRequest request);
 
-  Future<Group> updateGroup({
-    required UpdateGroupRequest request,
-  });
+  Future<Group> updateGroup(UpdateGroupRequest request);
 
-  Future<DeleteGroupResponse> deleteGroup(Int64 groupId);
+  Future<DeleteGroupResponse> deleteGroup(DeleteGroupRequest request);
 
-  Future<ListGroupUsersResponse> getGroupUsers(Int64 groupId);
+  Future<ListGroupUsersResponse> getGroupUsers(ListGroupUsersRequest request);
 
-  Future<ListUserGroupsResponse> getUserGroups(Int64 userId);
+  Future<ListUserGroupsResponse> getUserGroups(ListUserGroupsRequest request);
 
-  Future<AssignUsersToGroupResponse> assignUsersToGroup({
-    required AssignUsersToGroupRequest request,
-  });
+  Future<AssignUsersToGroupResponse> assignUsersToGroup(AssignUsersToGroupRequest request);
 
-  Future<RemoveUsersFromGroupResponse> removeUserFromGroup({
-    required RemoveUsersFromGroupRequest request,
-  });
+  Future<RemoveUsersFromGroupResponse> removeUserFromGroup(RemoveUsersFromGroupRequest request);
 }
 
 class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
@@ -40,9 +29,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   GroupsRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<ListGroupsResponse> getGroups({
-    required ListGroupsRequest request,
-  }) async {
+  Future<ListGroupsResponse> getGroups(ListGroupsRequest request) async {
     try {
       final queryParams = <String, dynamic>{};
 
@@ -81,10 +68,10 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<Group> getGroup(Int64 groupId) async {
+  Future<Group> getGroup(GetGroupRequest request) async {
     try {
-      final response = await _apiService.get('/openauth/v1/groups/$groupId');
-      
+      final response = await _apiService.get('/openauth/v1/groups/${request.id}');
+
       final pbResponse = Group();
       pbResponse.mergeFromProto3Json(response.data);
       return pbResponse;
@@ -99,9 +86,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<Group> createGroup({
-    required CreateGroupRequest request,
-  }) async {
+  Future<Group> createGroup(CreateGroupRequest request) async {
     try {
       final response = await _apiService.post(
         '/openauth/v1/groups',
@@ -122,9 +107,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<Group> updateGroup({
-    required UpdateGroupRequest request,
-  }) async {
+  Future<Group> updateGroup(UpdateGroupRequest request) async {
     try {
       final response = await _apiService.put(
         '/openauth/v1/groups/${request.id}',
@@ -145,9 +128,9 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<DeleteGroupResponse> deleteGroup(Int64 groupId) async {
+  Future<DeleteGroupResponse> deleteGroup(DeleteGroupRequest request) async {
     try {
-      final response = await _apiService.delete('/openauth/v1/groups/$groupId');
+      final response = await _apiService.delete('/openauth/v1/groups/${request.id}');
       
       final pbResponse = DeleteGroupResponse();
       if (response.data != null) {
@@ -165,10 +148,10 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<ListGroupUsersResponse> getGroupUsers(Int64 groupId) async {
+  Future<ListGroupUsersResponse> getGroupUsers(ListGroupUsersRequest request) async {
     try {
-      final response = await _apiService.get('/openauth/v1/groups/$groupId/users');
-      
+      final response = await _apiService.get('/openauth/v1/groups/${request.groupId}/users');
+
       final pbResponse = ListGroupUsersResponse();
       pbResponse.mergeFromProto3Json(response.data);
       return pbResponse;
@@ -183,10 +166,10 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<ListUserGroupsResponse> getUserGroups(Int64 userId) async {
+  Future<ListUserGroupsResponse> getUserGroups(ListUserGroupsRequest request) async {
     try {
-      final response = await _apiService.get('/openauth/v1/users/$userId/groups');
-      
+      final response = await _apiService.get('/openauth/v1/users/${request.userId}/groups');
+
       final pbResponse = ListUserGroupsResponse();
       pbResponse.mergeFromProto3Json(response.data);
       return pbResponse;
@@ -201,9 +184,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<AssignUsersToGroupResponse> assignUsersToGroup({
-    required AssignUsersToGroupRequest request,
-  }) async {
+  Future<AssignUsersToGroupResponse> assignUsersToGroup(AssignUsersToGroupRequest request) async {
     try {
       final response = await _apiService.post(
         '/openauth/v1/groups/${request.groupId}/users',
@@ -226,9 +207,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<RemoveUsersFromGroupResponse> removeUserFromGroup({
-    required RemoveUsersFromGroupRequest request,
-  }) async {
+  Future<RemoveUsersFromGroupResponse> removeUserFromGroup(RemoveUsersFromGroupRequest request) async {
     try {
       final response = await _apiService.delete(
         '/openauth/v1/groups/${request.groupId}/users',
