@@ -27,7 +27,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   String _searchQuery = '';
   List<permissions_pb.Permission> _availablePermissions = [];
   List<perm_pb.EffectivePermission> _userPermissions = [];
-  Set<int> _selectedPermissions = <int>{}; // Track selected permissions to add
+  Set<int> selectedPermissions = <int>{}; // Track selected permissions to add
   bool _isAssigning = false;
 
   @override
@@ -53,7 +53,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
         if (state is UserPermissionsBulkAssigned) {
           // Clear selections when permissions are successfully assigned
           setState(() {
-            _selectedPermissions.clear();
+            selectedPermissions.clear();
             _isAssigning = false;
           });
           
@@ -181,9 +181,9 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                               ),
                             ),
                             const Spacer(),
-                            if (_selectedPermissions.isNotEmpty)
+                            if (selectedPermissions.isNotEmpty)
                               Chip(
-                                label: Text('${_selectedPermissions.length} selected'),
+                                label: Text('${selectedPermissions.length} selected'),
                                 backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                               ),
                           ],
@@ -202,11 +202,11 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (_selectedPermissions.isNotEmpty)
+                if (selectedPermissions.isNotEmpty)
                   TextButton.icon(
                     onPressed: () {
                       setState(() {
-                        _selectedPermissions.clear();
+                        selectedPermissions.clear();
                       });
                     },
                     icon: const Icon(Icons.clear_all),
@@ -221,12 +221,12 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                       child: const Text('Close'),
                     ),
                     const SizedBox(width: 8),
-                    if (_selectedPermissions.isNotEmpty)
+                    if (selectedPermissions.isNotEmpty)
                       BlocConsumer<UserPermissionsBloc, UserPermissionsState>(
                         listener: (context, state) {
                           if (state is UserPermissionAssigned) {
                             setState(() {
-                              _selectedPermissions.clear();
+                              selectedPermissions.clear();
                               _isAssigning = false;
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -264,7 +264,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                             label: Text(
                               _isAssigning
                                   ? 'Assigning...'
-                                  : 'Assign ${_selectedPermissions.length} Permission${_selectedPermissions.length == 1 ? '' : 's'}',
+                                  : 'Assign ${selectedPermissions.length} Permission${selectedPermissions.length == 1 ? '' : 's'}',
                             ),
                           );
                         },
@@ -454,7 +454,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
 
   Widget _buildSelectablePermissionCard(permissions_pb.Permission permission) {
     final theme = Theme.of(context);
-    final isSelected = _selectedPermissions.contains(permission.id.toInt());
+    final isSelected = selectedPermissions.contains(permission.id.toInt());
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -497,13 +497,13 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
           setState(() {
             final permissionId = permission.id.toInt();
             if (isSelected) {
-              _selectedPermissions.remove(permissionId);
+              selectedPermissions.remove(permissionId);
               debugPrint('Deselected permission: ${permission.displayName} (ID: $permissionId)');
             } else {
-              _selectedPermissions.add(permissionId);
+              selectedPermissions.add(permissionId);
               debugPrint('Selected permission: ${permission.displayName} (ID: $permissionId)');
             }
-            debugPrint('Total selected: ${_selectedPermissions.length}');
+            debugPrint('Total selected: ${selectedPermissions.length}');
           });
         },
       ),
@@ -511,7 +511,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   }
 
   void _assignSelectedPermissions() {
-    if (_selectedPermissions.isEmpty) return;
+    if (selectedPermissions.isEmpty) return;
 
     setState(() {
       _isAssigning = true;
@@ -521,7 +521,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     context.read<UserPermissionsBloc>().add(
           AssignPermissionsToUser(
             widget.user.id.toInt(),
-            _selectedPermissions.toList(),
+            selectedPermissions.toList(),
           ),
         );
   }
