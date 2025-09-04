@@ -22,7 +22,7 @@ import '../../features/users/presentation/bloc/user_permissions_bloc.dart';
 // Permissions feature dependencies
 import '../../features/permissions/data/datasources/permissions_remote_datasource_impl.dart';
 import '../../features/permissions/data/repositories/permissions_repository_impl.dart';
-import '../../features/permissions/domain/repositories/permissions_repository.dart';
+import '../../features/permissions/data/repositories/permissions_repository.dart';
 import '../../features/permissions/presentation/bloc/permissions_bloc.dart';
 
 // Groups feature dependencies

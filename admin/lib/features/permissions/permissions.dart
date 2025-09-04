@@ -1,7 +1,7 @@
 // Permissions Feature Exports
 
 // Domain Layer
-export 'domain/repositories/permissions_repository.dart';
+export 'data/repositories/permissions_repository.dart';
 
 // Data Layer
 export 'data/datasources/permissions_remote_datasource_impl.dart';
@@ -12,7 +12,6 @@ export 'presentation/bloc/permissions_bloc.dart';
 
 // Presentation Layer - Legacy (UI components using mock data)
 export 'presentation/pages/permissions_page.dart';
-export 'presentation/pages/permissions_page_wrapper.dart';
 export 'presentation/widgets/permissions_header.dart';
 export 'presentation/widgets/permissions_grid.dart';
 export 'presentation/widgets/permission_card.dart';

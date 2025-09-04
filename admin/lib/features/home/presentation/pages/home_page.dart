@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
       case NavigationSection.users:
         return const UsersPage();
       case NavigationSection.permissions:
-        return const PermissionsPageWrapper();
+        return const PermissionsPage();
       case NavigationSection.groups:
         return const GroupsPage();
       case NavigationSection.settings:
