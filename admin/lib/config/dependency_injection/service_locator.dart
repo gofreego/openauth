@@ -166,7 +166,7 @@ Future<void> initializeDependencies({
 
   serviceLocator.registerLazySingleton<UserPermissionsBloc>(
     () => UserPermissionsBloc(
-      apiService: serviceLocator<ApiService>(),
+      repository: serviceLocator<PermissionsRepository>(),
     ),
   );
 

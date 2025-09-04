@@ -113,9 +113,9 @@ class UsersRepositoryImpl implements UsersRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteProfile(String profileUuid) async {
+  Future<Either<Failure, void>> deleteProfile(DeleteProfileRequest request) async {
     try {
-      await remoteDataSource.deleteProfile(profileUuid);
+      await remoteDataSource.deleteProfile(request);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));

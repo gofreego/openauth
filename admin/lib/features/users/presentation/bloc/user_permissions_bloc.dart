@@ -1,125 +1,64 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fixnum/fixnum.dart';
-import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart' as pb;
-import '../../../../core/network/api_service.dart';
-import 'user_permissions_event.dart';
+import 'package:openauth/features/permissions/permissions.dart';
+import 'package:openauth/src/generated/openauth/v1/permission_assignments.pb.dart';
+import 'package:protobuf/protobuf.dart';
 import 'user_permissions_state.dart';
 
-class UserPermissionsBloc extends Bloc<UserPermissionsEvent, UserPermissionsState> {
-  final ApiService _apiService;
+class UserPermissionsBloc extends Bloc<GeneratedMessage, UserPermissionsState> {
+  final PermissionsRepository repository;
 
   UserPermissionsBloc({
-    required ApiService apiService,
-  }) : _apiService = apiService,
-       super(UserPermissionsInitial()) {
-    on<LoadUserPermissions>(_onLoadUserPermissions);
-    on<AssignPermissionToUser>(_onAssignPermissionToUser);
-    on<RemovePermissionFromUser>(_onRemovePermissionFromUser);
-    on<RefreshUserPermissions>(_onRefreshUserPermissions);
+    required this.repository,
+  }) : super(UserPermissionsInitial()) {
+    on<ListUserPermissionsRequest>(_onLoadUserPermissions);
+    on<AssignPermissionsToUserRequest>(_onAssignPermissionToUser);
+    on<RemovePermissionsFromUserRequest>(_onRemovePermissionFromUser);
   }
-
   Future<void> _onLoadUserPermissions(
-    LoadUserPermissions event,
-    Emitter<UserPermissionsState> emit,
-  ) async {
-    emit(UserPermissionsLoading());
-
+      ListUserPermissionsRequest event, Emitter<UserPermissionsState> emit) async {
     try {
-      final response = await _apiService.get(
-        '/openauth/v1/users/${event.userId}/effective-permissions',
-        queryParameters: {
-          'limit': 50,
-          'offset': 0,
-        },
-      );
+      emit(UserPermissionsLoading());
 
-      final listResponse = pb.ListUserPermissionsResponse()
-        ..mergeFromProto3Json(response.data);
-      
-      emit(UserPermissionsLoaded(listResponse.permissions));
+      final result = await repository.getUserPermissions(event);
+
+      result.fold(
+        (failure) => emit(UserPermissionsError(failure.message)),
+        (response) => emit(UserPermissionsLoaded(response.permissions)),
+      );
     } catch (e) {
-      emit(UserPermissionsError(_getErrorMessage(e)));
+      emit(UserPermissionsError('Failed to load user permissions: ${e.toString()}'));
     }
   }
 
   Future<void> _onAssignPermissionToUser(
-    AssignPermissionToUser event,
-    Emitter<UserPermissionsState> emit,
-  ) async {
-    emit(UserPermissionAssigning());
-
+      AssignPermissionsToUserRequest event, Emitter<UserPermissionsState> emit) async {
     try {
-      final request = pb.AssignPermissionsToUserRequest(
-        userId: Int64(event.userId),
-      );
+      emit(UserPermissionAssigning());
 
-      await _apiService.post(
-        '/openauth/v1/users/${event.userId}/permissions',
-        data: request.toProto3Json(),
+      final result = await repository.assignPermissionsToUser(event);
+
+      result.fold(
+        (failure) => emit(UserPermissionsError(failure.message)),
+        (response) => emit(const UserPermissionAssigned()),
       );
-      emit(const UserPermissionAssigned());
-      
-      // Refresh the permissions list
-      if (!isClosed) {
-        add(RefreshUserPermissions(event.userId));
-      }
     } catch (e) {
-      emit(UserPermissionsError(_getErrorMessage(e)));
+      emit(UserPermissionsError('Failed to assign permission: ${e.toString()}'));
     }
   }
 
   Future<void> _onRemovePermissionFromUser(
-    RemovePermissionFromUser event,
-    Emitter<UserPermissionsState> emit,
-  ) async {
-    emit(UserPermissionRemoving());
-
+      RemovePermissionsFromUserRequest event, Emitter<UserPermissionsState> emit) async {
     try {
-      final response = await _apiService.delete(
-        '/openauth/v1/users/${event.userId}/permissions/${event.permissionId}',
+      emit(UserPermissionRemoving());
+
+      final result = await repository.removePermissionsFromUser(event);
+
+      result.fold(
+        (failure) => emit(UserPermissionsError(failure.message)),
+        (response) => emit(const UserPermissionRemoved("Permission removed successfully")),
       );
-
-      final removeResponse = pb.RemovePermissionsFromUserResponse()
-        ..mergeFromProto3Json(response.data);
-      
-      emit(UserPermissionRemoved(removeResponse.message));
-      
-      // Refresh the permissions list
-      if (!isClosed) {
-        add(RefreshUserPermissions(event.userId));
-      }
     } catch (e) {
-      emit(UserPermissionsError(_getErrorMessage(e)));
+      emit(UserPermissionsError('Failed to remove permission: ${e.toString()}'));
     }
-  }
-
-  Future<void> _onRefreshUserPermissions(
-    RefreshUserPermissions event,
-    Emitter<UserPermissionsState> emit,
-  ) async {
-    // Don't show loading state for refresh
-    try {
-      final response = await _apiService.get(
-        '/openauth/v1/users/${event.userId}/permissions',
-        queryParameters: {
-          'limit': 50,
-          'offset': 0,
-        },
-      );
-
-      final listResponse = pb.ListUserPermissionsResponse()
-        ..mergeFromProto3Json(response.data);
-      
-      emit(UserPermissionsLoaded(listResponse.permissions));
-    } catch (e) {
-      emit(UserPermissionsError(_getErrorMessage(e)));
-    }
-  }
-
-  String _getErrorMessage(dynamic error) {
-    if (error.toString().contains('DioException')) {
-      return 'Network error occurred. Please try again.';
-    }
-    return error.toString();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:openauth/src/generated/openauth/v1/permission_assignments.pb.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
@@ -12,7 +13,8 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
   PermissionsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<Permission>>> getPermissions(ListPermissionsRequest request) async {
+  Future<Either<Failure, List<Permission>>> getPermissions(
+      ListPermissionsRequest request) async {
     try {
       final response = await remoteDataSource.getPermissions(request);
       return Right(response.permissions);
@@ -21,12 +23,14 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(message: e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, Permission>> getPermission(GetPermissionRequest request) async {
+  Future<Either<Failure, Permission>> getPermission(
+      GetPermissionRequest request) async {
     try {
       return Right(await remoteDataSource.getPermission(request));
     } on ServerException catch (e) {
@@ -34,12 +38,14 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(message: e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, Permission>> createPermission(CreatePermissionRequest request) async {
+  Future<Either<Failure, Permission>> createPermission(
+      CreatePermissionRequest request) async {
     try {
       final permission = await remoteDataSource.createPermission(request);
       return Right(permission);
@@ -48,12 +54,14 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(message: e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, Permission>> updatePermission(UpdatePermissionRequest request) async {
+  Future<Either<Failure, Permission>> updatePermission(
+      UpdatePermissionRequest request) async {
     try {
       final permission = await remoteDataSource.updatePermission(request);
       return Right(permission);
@@ -62,12 +70,14 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(message: e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, void>> deletePermission(DeletePermissionRequest request) async {
+  Future<Either<Failure, void>> deletePermission(
+      DeletePermissionRequest request) async {
     try {
       await remoteDataSource.deletePermission(request);
       return const Right(null);
@@ -76,7 +86,58 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(message: e.message));
     } catch (e) {
-      return Left(ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'));
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ListUserPermissionsResponse>> getUserPermissions(
+      ListUserPermissionsRequest request) async {
+    try {
+      final response = await remoteDataSource.getUserPermissions(request);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AssignPermissionsToUserResponse>>
+      assignPermissionsToUser(AssignPermissionsToUserRequest request) async {
+    try {
+      final response = await remoteDataSource.assignPermissionsToUser(request);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, RemovePermissionsFromUserResponse>>
+      removePermissionsFromUser(
+          RemovePermissionsFromUserRequest request) async {
+    try {
+      final response =
+          await remoteDataSource.removePermissionsFromUser(request);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
     }
   }
 }

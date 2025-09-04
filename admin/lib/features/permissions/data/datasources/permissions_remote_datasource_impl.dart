@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:openauth/src/generated/openauth/v1/permission_assignments.pb.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_service.dart';
@@ -13,6 +14,9 @@ abstract class PermissionsRemoteDataSource {
   Future<Permission> updatePermission(UpdatePermissionRequest request);
 
   Future<DeletePermissionResponse> deletePermission(DeletePermissionRequest request);
+  Future<ListUserPermissionsResponse> getUserPermissions(ListUserPermissionsRequest request);
+  Future<AssignPermissionsToUserResponse> assignPermissionsToUser(AssignPermissionsToUserRequest request);
+  Future<RemovePermissionsFromUserResponse> removePermissionsFromUser(RemovePermissionsFromUserRequest request);
 }
 
 class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
@@ -23,18 +27,10 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   @override
   Future<ListPermissionsResponse> getPermissions(ListPermissionsRequest request) async {
     try {
-      final queryParams = <String, dynamic>{};
-        queryParams['limit'] = request.limit;
-        queryParams['offset'] = request.offset;
-
-      if (request.search.isNotEmpty) {
-        queryParams['search'] = request.search;
-      }
 
       // For now, return mock data until backend is ready
       var response = await _apiService.get(
-        '/openauth/v1/permissions',
-        queryParameters: queryParams,
+        '/openauth/v1/permissions?search=${request.search}&limit=${request.limit}&offset=${request.offset}',
       );
       var pbResponse = ListPermissionsResponse();
       pbResponse.mergeFromProto3Json(response.data);
@@ -132,6 +128,76 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
       );
     } catch (e) {
       throw NetworkException(message: 'Network error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<ListUserPermissionsResponse> getUserPermissions(ListUserPermissionsRequest request) async {
+    try {
+      final response = await _apiService.get(
+        '/openauth/v1/users/${request.userId}/permissions',
+      );
+      var permissionList = ListUserPermissionsResponse();
+      permissionList.mergeFromProto3Json(response.data);
+    
+      return permissionList;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: 'Failed to fetch user permissions: ${e.message}',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    } catch (e) {
+      throw ServerException(
+        message: 'Unexpected error occurred while fetching user permissions: $e',
+        statusCode: 500,
+      );
+    }
+  }
+
+   @override
+  Future<AssignPermissionsToUserResponse> assignPermissionsToUser(AssignPermissionsToUserRequest request) async {
+    try {
+      final response = await _apiService.post(
+        '/openauth/v1/users/${request.userId}/permissions',
+        data: request.toProto3Json(),
+      );
+      var assignResponse = AssignPermissionsToUserResponse();
+      assignResponse.mergeFromProto3Json(response.data);
+      return assignResponse;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: 'Failed to assign permissions to user: ${e.message}',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    } catch (e) {
+      throw ServerException(
+        message: 'Unexpected error occurred while assigning permissions to user: $e',
+        statusCode: 500,
+      );
+    }
+  } 
+
+
+  @override
+  Future<RemovePermissionsFromUserResponse> removePermissionsFromUser(RemovePermissionsFromUserRequest request) async {
+    try {
+      final response = await _apiService.put(
+        '/openauth/v1/users/${request.userId}/permissions',
+        data: request.toProto3Json(),
+      );
+      var removeResponse = RemovePermissionsFromUserResponse();
+      removeResponse.mergeFromProto3Json(response.data);
+      return removeResponse;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: 'Failed to remove permission from user: ${e.message}',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    } catch (e) {
+      throw ServerException(
+        message: 'Unexpected error occurred while removing permission from user: $e',
+        statusCode: 500,
+      );
     }
   }
 }

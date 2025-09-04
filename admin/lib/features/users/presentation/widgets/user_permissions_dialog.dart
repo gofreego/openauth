@@ -1,3 +1,4 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
@@ -6,7 +7,6 @@ import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../permissions/presentation/bloc/permissions_bloc.dart';
 import '../bloc/user_permissions_bloc.dart';
-import '../bloc/user_permissions_event.dart';
 import '../bloc/user_permissions_state.dart';
 import '../../../../shared/widgets/custom_search_bar.dart';
 
@@ -26,7 +26,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   String _searchQuery = '';
   List<Permission> _availablePermissions = [];
   List<EffectivePermission> _userPermissions = [];
-  Set<int> selectedPermissions = <int>{}; // Track selected permissions to add
+  Set<Int64> selectedPermissions = <Int64>{}; // Track selected permissions to add
   bool _isAssigning = false;
 
   @override
@@ -35,7 +35,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     // Load user permissions and available permissions
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserPermissionsBloc>().add(
-            LoadUserPermissions(widget.user.id.toInt()),
+            ListUserPermissionsRequest(userId: widget.user.id),
           );
       context.read<PermissionsBloc>().add(ListPermissionsRequest());
     });
@@ -219,7 +219,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                             ToastUtils.showSuccess('Permissions assigned successfully');
                             // Refresh permissions
                             context.read<UserPermissionsBloc>().add(
-                                  LoadUserPermissions(widget.user.id.toInt()),
+                                  ListUserPermissionsRequest(userId:  widget.user.id),
                                 );
                           } else if (state is UserPermissionsError) {
                             setState(() {
@@ -279,7 +279,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 ElevatedButton(
                   onPressed: () {
                     context.read<UserPermissionsBloc>().add(
-                          LoadUserPermissions(widget.user.id.toInt()),
+                          ListUserPermissionsRequest(userId: widget.user.id),
                         );
                   },
                   child: const Text('Retry'),
@@ -454,7 +454,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
 
   Widget _buildSelectablePermissionCard(Permission permission) {
     final theme = Theme.of(context);
-    final isSelected = selectedPermissions.contains(permission.id.toInt());
+    final isSelected = selectedPermissions.contains(permission.id);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -495,7 +495,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             : null,
         onTap: () {
           setState(() {
-            final permissionId = permission.id.toInt();
+            final permissionId = permission.id;
             if (isSelected) {
               selectedPermissions.remove(permissionId);
               debugPrint('Deselected permission: ${permission.displayName} (ID: $permissionId)');
@@ -519,9 +519,9 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
 
     // Create the request with multiple permission IDs
     context.read<UserPermissionsBloc>().add(
-          AssignPermissionsToUser(
-            widget.user.id.toInt(),
-            selectedPermissions.toList(),
+          AssignPermissionsToUserRequest(
+            userId: widget.user.id,
+            permissionsIds: selectedPermissions.toList(),
           ),
         );
   }
@@ -642,9 +642,9 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             onPressed: () {
               Navigator.of(context).pop();
               context.read<UserPermissionsBloc>().add(
-                    RemovePermissionFromUser(
-                      widget.user.id.toInt(),
-                      permission.permissionId.toInt(),
+                    RemovePermissionsFromUserRequest(
+                      userId: widget.user.id,
+                      permissionsIds: [permission.permissionId],
                     ),
                   );
             },
