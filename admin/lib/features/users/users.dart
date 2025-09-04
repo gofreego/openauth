@@ -2,10 +2,6 @@
 
 // Domain
 export 'data/repositories/users_repository.dart';
-export 'domain/usecases/get_users_usecase.dart';
-export 'domain/usecases/create_user_usecase.dart';
-export 'domain/usecases/update_user_usecase.dart';
-export 'domain/usecases/delete_user_usecase.dart';
 
 // Data
 export 'data/datasources/users_remote_datasource_impl.dart';

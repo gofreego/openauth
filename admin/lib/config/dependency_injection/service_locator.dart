@@ -16,11 +16,6 @@ import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/users/data/datasources/users_remote_datasource_impl.dart';
 import '../../features/users/data/repositories/users_repository_impl.dart';
 import '../../features/users/data/repositories/users_repository.dart';
-import '../../features/users/domain/usecases/get_users_usecase.dart';
-import '../../features/users/domain/usecases/get_user_usecase.dart';
-import '../../features/users/domain/usecases/create_user_usecase.dart';
-import '../../features/users/domain/usecases/update_user_usecase.dart';
-import '../../features/users/domain/usecases/delete_user_usecase.dart';
 import '../../features/users/presentation/bloc/users_bloc.dart';
 import '../../features/users/presentation/bloc/user_permissions_bloc.dart';
 
@@ -28,24 +23,12 @@ import '../../features/users/presentation/bloc/user_permissions_bloc.dart';
 import '../../features/permissions/data/datasources/permissions_remote_datasource_impl.dart';
 import '../../features/permissions/data/repositories/permissions_repository_impl.dart';
 import '../../features/permissions/domain/repositories/permissions_repository.dart';
-import '../../features/permissions/domain/usecases/get_permissions_usecase.dart';
-import '../../features/permissions/domain/usecases/get_permission_usecase.dart';
-import '../../features/permissions/domain/usecases/create_permission_usecase.dart';
-import '../../features/permissions/domain/usecases/update_permission_usecase.dart';
-import '../../features/permissions/domain/usecases/delete_permission_usecase.dart';
 import '../../features/permissions/presentation/bloc/permissions_bloc.dart';
 
 // Groups feature dependencies
 import '../../features/groups/data/datasources/groups_remote_datasource_impl.dart';
 import '../../features/groups/data/repositories/groups_repository_impl.dart';
-import '../../features/groups/domain/repositories/groups_repository.dart';
-import '../../features/groups/domain/usecases/get_groups_usecase.dart';
-import '../../features/groups/domain/usecases/get_group_usecase.dart';
-import '../../features/groups/domain/usecases/get_group_users_usecase.dart';
-import '../../features/groups/domain/usecases/get_user_groups_usecase.dart';
-import '../../features/groups/domain/usecases/create_group_usecase.dart';
-import '../../features/groups/domain/usecases/update_group_usecase.dart';
-import '../../features/groups/domain/usecases/delete_group_usecase.dart';
+import '../../features/groups/data/repositories/groups_repository.dart';
 import '../../features/groups/presentation/bloc/groups_bloc.dart';
 
 // Dashboard feature dependencies
@@ -119,27 +102,6 @@ Future<void> initializeDependencies({
     ),
   );
 
-  // Users use cases
-  serviceLocator.registerLazySingleton<GetUsersUseCase>(
-    () => GetUsersUseCase(serviceLocator<UsersRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<GetUserUseCase>(
-    () => GetUserUseCase(serviceLocator<UsersRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<CreateUserUseCase>(
-    () => CreateUserUseCase(serviceLocator<UsersRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<UpdateUserUseCase>(
-    () => UpdateUserUseCase(serviceLocator<UsersRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<DeleteUserUseCase>(
-    () => DeleteUserUseCase(serviceLocator<UsersRepository>()),
-  );
-
   // Permissions data sources
   serviceLocator.registerLazySingleton<PermissionsRemoteDataSource>(
     () => PermissionsRemoteDataSourceImpl(serviceLocator<ApiService>()),
@@ -152,27 +114,6 @@ Future<void> initializeDependencies({
     ),
   );
 
-  // Permissions use cases
-  serviceLocator.registerLazySingleton<GetPermissionsUseCase>(
-    () => GetPermissionsUseCase(serviceLocator<PermissionsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<GetPermissionUseCase>(
-    () => GetPermissionUseCase(serviceLocator<PermissionsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<CreatePermissionUseCase>(
-    () => CreatePermissionUseCase(serviceLocator<PermissionsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<UpdatePermissionUseCase>(
-    () => UpdatePermissionUseCase(serviceLocator<PermissionsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<DeletePermissionUseCase>(
-    () => DeletePermissionUseCase(serviceLocator<PermissionsRepository>()),
-  );
-
   // Groups data sources
   serviceLocator.registerLazySingleton<GroupsRemoteDataSource>(
     () => GroupsRemoteDataSourceImpl(serviceLocator<ApiService>()),
@@ -183,35 +124,6 @@ Future<void> initializeDependencies({
     () => GroupsRepositoryImpl(
       remoteDataSource: serviceLocator<GroupsRemoteDataSource>(),
     ),
-  );
-
-  // Groups use cases
-  serviceLocator.registerLazySingleton<GetGroupsUseCase>(
-    () => GetGroupsUseCase(serviceLocator<GroupsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<GetGroupUseCase>(
-    () => GetGroupUseCase(serviceLocator<GroupsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<GetGroupUsersUseCase>(
-    () => GetGroupUsersUseCase(serviceLocator<GroupsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<GetUserGroupsUseCase>(
-    () => GetUserGroupsUseCase(serviceLocator<GroupsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<CreateGroupUseCase>(
-    () => CreateGroupUseCase(serviceLocator<GroupsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<UpdateGroupUseCase>(
-    () => UpdateGroupUseCase(serviceLocator<GroupsRepository>()),
-  );
-
-  serviceLocator.registerLazySingleton<DeleteGroupUseCase>(
-    () => DeleteGroupUseCase(serviceLocator<GroupsRepository>()),
   );
 
   // Dashboard data sources
@@ -254,11 +166,7 @@ Future<void> initializeDependencies({
 
   serviceLocator.registerLazySingleton<UsersBloc>(
     () => UsersBloc(
-      getUsersUseCase: serviceLocator<GetUsersUseCase>(),
-      getUserUseCase: serviceLocator<GetUserUseCase>(),
-      createUserUseCase: serviceLocator<CreateUserUseCase>(),
-      updateUserUseCase: serviceLocator<UpdateUserUseCase>(),
-      deleteUserUseCase: serviceLocator<DeleteUserUseCase>(),
+    repository: serviceLocator<UsersRepository>(),
     ),
   );
 
@@ -270,23 +178,13 @@ Future<void> initializeDependencies({
 
   serviceLocator.registerLazySingleton<PermissionsBloc>(
     () => PermissionsBloc(
-      getPermissionsUseCase: serviceLocator<GetPermissionsUseCase>(),
-      getPermissionUseCase: serviceLocator<GetPermissionUseCase>(),
-      createPermissionUseCase: serviceLocator<CreatePermissionUseCase>(),
-      updatePermissionUseCase: serviceLocator<UpdatePermissionUseCase>(),
-      deletePermissionUseCase: serviceLocator<DeletePermissionUseCase>(),
+      repository: serviceLocator<PermissionsRepository>(),
     ),
   );
 
   serviceLocator.registerLazySingleton<GroupsBloc>(
     () => GroupsBloc(
-      getGroupsUseCase: serviceLocator<GetGroupsUseCase>(),
-      getGroupUseCase: serviceLocator<GetGroupUseCase>(),
-      getGroupUsersUseCase: serviceLocator<GetGroupUsersUseCase>(),
-      getUserGroupsUseCase: serviceLocator<GetUserGroupsUseCase>(),
-      createGroupUseCase: serviceLocator<CreateGroupUseCase>(),
-      updateGroupUseCase: serviceLocator<UpdateGroupUseCase>(),
-      deleteGroupUseCase: serviceLocator<DeleteGroupUseCase>(),
+      repository: serviceLocator<GroupsRepository>(),
     ),
   );
 

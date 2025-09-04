@@ -1,12 +1,7 @@
 // Groups Feature Exports
 
 // Domain Layer
-export 'domain/repositories/groups_repository.dart';
-export 'domain/usecases/get_groups_usecase.dart';
-export 'domain/usecases/get_group_usecase.dart';
-export 'domain/usecases/create_group_usecase.dart';
-export 'domain/usecases/update_group_usecase.dart';
-export 'domain/usecases/delete_group_usecase.dart';
+export 'data/repositories/groups_repository.dart';
 
 // Data Layer
 export 'data/datasources/groups_remote_datasource_impl.dart';

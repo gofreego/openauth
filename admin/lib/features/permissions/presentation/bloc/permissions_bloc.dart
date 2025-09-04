@@ -1,32 +1,20 @@
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:openauth/features/permissions/permissions.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
-import '../../domain/usecases/get_permissions_usecase.dart';
-import '../../domain/usecases/get_permission_usecase.dart';
-import '../../domain/usecases/create_permission_usecase.dart';
-import '../../domain/usecases/update_permission_usecase.dart';
-import '../../domain/usecases/delete_permission_usecase.dart';
 import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
 
 part 'permissions_event.dart';
 part 'permissions_state.dart';
 
 class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
-  final GetPermissionsUseCase getPermissionsUseCase;
-  final GetPermissionUseCase getPermissionUseCase;
-  final CreatePermissionUseCase createPermissionUseCase;
-  final UpdatePermissionUseCase updatePermissionUseCase;
-  final DeletePermissionUseCase deletePermissionUseCase;
+  final PermissionsRepository repository;
   
   String? _currentSearchQuery; // Store current search query for pagination
 
   PermissionsBloc({
-    required this.getPermissionsUseCase,
-    required this.getPermissionUseCase,
-    required this.createPermissionUseCase,
-    required this.updatePermissionUseCase,
-    required this.deletePermissionUseCase,
+    required this.repository,
   }) : super(PermissionsInitial()) {
     on<LoadPermissions>(_onLoadPermissions);
     on<LoadPermission>(_onLoadPermission);
@@ -45,7 +33,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
     _currentSearchQuery = event.search;
     emit(PermissionsLoading());
 
-    final result = await getPermissionsUseCase(
+    final result = await repository.getPermissions(
       limit: event.limit ?? 20, // Default page size
       offset: event.offset ?? 0,
       search: event.search,
@@ -67,7 +55,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
   ) async {
     emit(PermissionLoading());
 
-    final result = await getPermissionUseCase(event.permissionId);
+    final result = await repository.getPermission(event.permissionId);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -81,7 +69,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
   ) async {
     emit(PermissionCreating());
 
-    final result = await createPermissionUseCase(event.request);
+    final result = await repository.createPermission(event.request);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -101,7 +89,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
   ) async {
     emit(PermissionUpdating());
 
-    final result = await updatePermissionUseCase(event.request);
+    final result = await repository.updatePermission(event.request);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -121,7 +109,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
   ) async {
     emit(PermissionDeleting());
 
-    final result = await deletePermissionUseCase(event.permissionId);
+    final result = await repository.deletePermission(event.permissionId);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -143,7 +131,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
     _currentSearchQuery = null;
     
     // Don't show loading for refresh - just silently reload
-    final result = await getPermissionsUseCase(
+    final result = await repository.getPermissions(
       limit: 20,
       offset: 0,
     );
@@ -165,7 +153,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
     _currentSearchQuery = event.query.isEmpty ? null : event.query;
     emit(PermissionsLoading());
 
-    final result = await getPermissionsUseCase(
+    final result = await repository.getPermissions(
       search: _currentSearchQuery, // Don't pass empty search
       limit: event.limit ?? 20,
       offset: 0, // Reset offset for search
@@ -195,7 +183,7 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
     final nextPage = currentState.currentPage + 1;
     final offset = nextPage * 20; // Page size is 20
 
-    final result = await getPermissionsUseCase(
+    final result = await repository.getPermissions(
       limit: 20,
       offset: offset,
       search: _currentSearchQuery, // Use stored search query

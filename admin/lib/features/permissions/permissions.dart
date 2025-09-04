@@ -2,11 +2,6 @@
 
 // Domain Layer
 export 'domain/repositories/permissions_repository.dart';
-export 'domain/usecases/get_permissions_usecase.dart';
-export 'domain/usecases/get_permission_usecase.dart';
-export 'domain/usecases/create_permission_usecase.dart';
-export 'domain/usecases/update_permission_usecase.dart';
-export 'domain/usecases/delete_permission_usecase.dart';
 
 // Data Layer
 export 'data/datasources/permissions_remote_datasource_impl.dart';

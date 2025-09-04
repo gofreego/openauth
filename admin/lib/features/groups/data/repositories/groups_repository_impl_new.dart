@@ -3,7 +3,7 @@ import 'package:fixnum/fixnum.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
-import '../../domain/repositories/groups_repository.dart';
+import 'groups_repository.dart';
 import '../datasources/groups_remote_datasource_impl.dart';
 
 class GroupsRepositoryImpl implements GroupsRepository {

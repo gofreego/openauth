@@ -1,37 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/features/groups/data/repositories/groups_repository.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
-import '../../domain/usecases/get_groups_usecase.dart';
-import '../../domain/usecases/get_group_usecase.dart';
-import '../../domain/usecases/get_group_users_usecase.dart';
-import '../../domain/usecases/get_user_groups_usecase.dart';
-import '../../domain/usecases/create_group_usecase.dart';
-import '../../domain/usecases/update_group_usecase.dart';
-import '../../domain/usecases/delete_group_usecase.dart';
 
 part 'groups_event.dart';
 part 'groups_state.dart';
 
 class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
-  final GetGroupsUseCase getGroupsUseCase;
-  final GetGroupUseCase getGroupUseCase;
-  final GetGroupUsersUseCase getGroupUsersUseCase;
-  final GetUserGroupsUseCase getUserGroupsUseCase;
-  final CreateGroupUseCase createGroupUseCase;
-  final UpdateGroupUseCase updateGroupUseCase;
-  final DeleteGroupUseCase deleteGroupUseCase;
+  final GroupsRepository repository;
+
 
   String? _currentSearchQuery;
 
   GroupsBloc({
-    required this.getGroupsUseCase,
-    required this.getGroupUseCase,
-    required this.getGroupUsersUseCase,
-    required this.getUserGroupsUseCase,
-    required this.createGroupUseCase,
-    required this.updateGroupUseCase,
-    required this.deleteGroupUseCase,
+    required this.repository,
   }) : super(const GroupsInitial()) {
     on<LoadGroups>(_onLoadGroups);
     on<RefreshGroups>(_onRefreshGroups);
@@ -53,7 +36,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
 
       _currentSearchQuery = event.search;
 
-      final result = await getGroupsUseCase.call(
+      final result = await repository.getGroups(
       request:   ListGroupsRequest(
           search: _currentSearchQuery,
           limit: event.limit ?? 20,
@@ -108,7 +91,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     try {
       emit(const GroupLoading());
 
-      final result = await getGroupUseCase.call(event.groupId);
+      final result = await repository.getGroup(event.groupId);
 
       result.fold(
         (failure) => emit(GroupsError(failure.message)),
@@ -124,7 +107,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     try {
       emit(const GroupUsersLoading());
 
-      final result = await getGroupUsersUseCase.call(event.groupId);
+      final result = await repository.getGroupUsers(event.groupId);
 
       result.fold(
         (failure) => emit(GroupsError(failure.message)),
@@ -143,7 +126,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     try {
       emit(const GroupCreating());
 
-      final result = await createGroupUseCase.call(
+      final result = await repository.createGroup(
         request: CreateGroupRequest(
           name: event.name,
           displayName: event.displayName,
@@ -169,7 +152,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     try {
       emit(const GroupUpdating());
 
-      final result = await updateGroupUseCase.call(
+      final result = await repository.updateGroup(
         request: UpdateGroupRequest(
           id: event.groupId,
           newName: event.name,
@@ -196,7 +179,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     try {
       emit(const GroupDeleting());
 
-      final result = await deleteGroupUseCase.call(event.groupId);
+      final result = await repository.deleteGroup(event.groupId);
 
       result.fold(
         (failure) => emit(GroupsError(failure.message)),
@@ -216,7 +199,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     try {
       emit(const GroupsLoading());
 
-      final result = await getUserGroupsUseCase.call(userId: event.userId);
+      final result = await repository.getUserGroups(event.userId);
 
       result.fold(
         (failure) => emit(GroupsError(failure.message)),

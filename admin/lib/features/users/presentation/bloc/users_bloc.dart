@@ -1,26 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/features/users/data/repositories/users_repository.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pbserver.dart';
-import '../../domain/usecases/get_users_usecase.dart';
-import '../../domain/usecases/get_user_usecase.dart';
-import '../../domain/usecases/create_user_usecase.dart';
-import '../../domain/usecases/update_user_usecase.dart';
-import '../../domain/usecases/delete_user_usecase.dart';
 import 'users_event.dart';
 import 'users_state.dart';
 
 class UsersBloc extends Bloc<UsersEvent, UsersState> {
-  final GetUsersUseCase getUsersUseCase;
-  final GetUserUseCase getUserUseCase;
-  final CreateUserUseCase createUserUseCase;
-  final UpdateUserUseCase updateUserUseCase;
-  final DeleteUserUseCase deleteUserUseCase;
+  final UsersRepository repository;
 
   UsersBloc({
-    required this.getUsersUseCase,
-    required this.getUserUseCase,
-    required this.createUserUseCase,
-    required this.updateUserUseCase,
-    required this.deleteUserUseCase,
+    required this.repository,
   }) : super(UsersInitial()) {
     on<LoadUsersEvent>(_onLoadUsers);
     on<RefreshUsersEvent>(_onRefreshUsers);
@@ -35,7 +23,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   Future<void> _onLoadUsers(LoadUsersEvent event, Emitter<UsersState> emit) async {
     emit(UsersLoading());
 
-    final result = await getUsersUseCase(
+    final result = await repository.getUsers(
       request: event.request
     );
 
@@ -48,8 +36,8 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   }
 
   Future<void> _onRefreshUsers(RefreshUsersEvent event, Emitter<UsersState> emit) async {
-    final result = await getUsersUseCase(
-     request: event.request,
+    final result = await repository.getUsers(
+      request: event.request,
     );
 
     result.fold(
@@ -63,9 +51,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   Future<void> _onCreateUser(CreateUserEvent event, Emitter<UsersState> emit) async {
     emit(UserCreating());
 
-    final result = await createUserUseCase(
-      request: event.request,
-    );
+    final result = await repository.createUser(event.request);
 
     result.fold(
       (failure) => emit(UsersError(failure)),
@@ -82,9 +68,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   Future<void> _onUpdateUser(UpdateUserEvent event, Emitter<UsersState> emit) async {
     emit(UserUpdating());
 
-    final result = await updateUserUseCase(
-      request: event.request,
-    );
+    final result = await repository.updateUser(event.request);
 
     result.fold(
       (failure) => emit(UsersError(failure)),
@@ -101,7 +85,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   Future<void> _onDeleteUser(DeleteUserEvent event, Emitter<UsersState> emit) async {
     emit(UserDeleting());
 
-    final result = await deleteUserUseCase(event.userIdOrUuid);
+    final result = await repository.deleteUser(event.userIdOrUuid);
 
     result.fold(
       (failure) => emit(UsersError(failure)),
@@ -119,7 +103,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     final currentState = state;
     final currentFilter = currentState is UsersLoaded ? currentState.currentFilter : null;
 
-    final result = await getUsersUseCase(
+    final result = await repository.getUsers(
       request: ListUsersRequest(
         offset: 0,
         limit: 50,
@@ -139,8 +123,8 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
 
   Future<void> _onSearchUserById(SearchUserByIdEvent event, Emitter<UsersState> emit) async {
     // First try to get the specific user by ID/UUID
-    final result = await getUserUseCase(event.idOrUuid);
-    
+    final result = await repository.getUser(event.idOrUuid);
+
     result.fold(
       (failure) {
         // If direct lookup fails, fall back to general search
@@ -158,7 +142,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     final currentState = state;
     final currentSearch = currentState is UsersLoaded ? currentState.currentSearch : null;
 
-    final result = await getUsersUseCase(
+    final result = await repository.getUsers(
       request: ListUsersRequest(
         offset: 0,
         limit: 50,
