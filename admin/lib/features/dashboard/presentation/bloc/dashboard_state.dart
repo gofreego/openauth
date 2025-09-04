@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/dashboard_stats_entity.dart';
+import 'package:openauth/src/generated/openauth/v1/stats.pb.dart' as pb;
 
 abstract class DashboardState extends Equatable {
   const DashboardState();
@@ -13,7 +13,7 @@ class DashboardInitial extends DashboardState {}
 class DashboardLoading extends DashboardState {}
 
 class DashboardLoaded extends DashboardState {
-  final DashboardStatsEntity stats;
+  final pb.StatsResponse stats;
 
   const DashboardLoaded({required this.stats});
 

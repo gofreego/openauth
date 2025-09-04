@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:openauth/src/generated/openauth/v1/stats.pb.dart' as pb;
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
-import '../../domain/entities/dashboard_stats_entity.dart';
-import '../../domain/repositories/stats_repository.dart';
+import 'stats_repository.dart';
 import '../datasources/stats_remote_datasource.dart';
 
 class StatsRepositoryImpl implements StatsRepository {
@@ -11,11 +11,9 @@ class StatsRepositoryImpl implements StatsRepository {
   StatsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, DashboardStatsEntity>> getStats() async {
+  Future<Either<Failure, pb.StatsResponse>> getStats() async {
     try {
-      final statsResponse = await remoteDataSource.getStats();
-      final statsEntity = DashboardStatsEntity.fromProto(statsResponse);
-      return Right(statsEntity);
+      return Right(await remoteDataSource.getStats());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on NetworkException catch (e) {

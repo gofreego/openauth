@@ -34,7 +34,7 @@ import '../../features/groups/presentation/bloc/groups_bloc.dart';
 // Dashboard feature dependencies
 import '../../features/dashboard/data/datasources/stats_remote_datasource.dart';
 import '../../features/dashboard/data/repositories/stats_repository_impl.dart';
-import '../../features/dashboard/domain/repositories/stats_repository.dart';
+import '../../features/dashboard/data/repositories/stats_repository.dart';
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 // Sessions feature dependencies
