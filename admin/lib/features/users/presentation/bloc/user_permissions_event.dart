@@ -26,6 +26,16 @@ class AssignPermissionToUser extends UserPermissionsEvent {
   List<Object?> get props => [userId, permissionId];
 }
 
+class AssignPermissionsToUser extends UserPermissionsEvent {
+  final int userId;
+  final List<int> permissionIds;
+
+  const AssignPermissionsToUser(this.userId, this.permissionIds);
+
+  @override
+  List<Object?> get props => [userId, permissionIds];
+}
+
 class RemovePermissionFromUser extends UserPermissionsEvent {
   final int userId;
   final int permissionId;

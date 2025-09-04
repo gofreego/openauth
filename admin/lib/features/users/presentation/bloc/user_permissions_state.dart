@@ -40,6 +40,15 @@ class UserPermissionAssigned extends UserPermissionsState {
   List<Object?> get props => [];
 }
 
+class UserPermissionsBulkAssigned extends UserPermissionsState {
+  final String message;
+
+  const UserPermissionsBulkAssigned(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class UserPermissionRemoving extends UserPermissionsState {}
 
 class UserPermissionRemoved extends UserPermissionsState {

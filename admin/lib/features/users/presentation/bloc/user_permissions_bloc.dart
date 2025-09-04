@@ -14,6 +14,7 @@ class UserPermissionsBloc extends Bloc<UserPermissionsEvent, UserPermissionsStat
        super(UserPermissionsInitial()) {
     on<LoadUserPermissions>(_onLoadUserPermissions);
     on<AssignPermissionToUser>(_onAssignPermissionToUser);
+    on<AssignPermissionsToUser>(_onAssignPermissionsToUser);
     on<RemovePermissionFromUser>(_onRemovePermissionFromUser);
     on<RefreshUserPermissions>(_onRefreshUserPermissions);
   }
@@ -59,6 +60,33 @@ class UserPermissionsBloc extends Bloc<UserPermissionsEvent, UserPermissionsStat
         data: request.toProto3Json(),
       );
       emit(const UserPermissionAssigned());
+      
+      // Refresh the permissions list
+      if (!isClosed) {
+        add(RefreshUserPermissions(event.userId));
+      }
+    } catch (e) {
+      emit(UserPermissionsError(_getErrorMessage(e)));
+    }
+  }
+
+  Future<void> _onAssignPermissionsToUser(
+    AssignPermissionsToUser event,
+    Emitter<UserPermissionsState> emit,
+  ) async {
+    emit(UserPermissionAssigning());
+
+    try {
+      final request = pb.AssignPermissionsToUserRequest(
+        userId: Int64(event.userId),
+        permissionsIds: event.permissionIds.map((id) => Int64(id)).toList(),
+      );
+
+      await _apiService.post(
+        '/openauth/v1/users/${event.userId}/permissions',
+        data: request.toProto3Json(),
+      );
+      emit(UserPermissionsBulkAssigned('Successfully assigned ${event.permissionIds.length} permission${event.permissionIds.length == 1 ? '' : 's'}'));
       
       // Refresh the permissions list
       if (!isClosed) {

@@ -27,6 +27,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   String _searchQuery = '';
   List<permissions_pb.Permission> _availablePermissions = [];
   List<perm_pb.EffectivePermission> _userPermissions = [];
+  Set<int> _selectedPermissions = <int>{}; // Track selected permissions to add
+  bool _isAssigning = false;
 
   @override
   void initState() {
@@ -46,10 +48,40 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Dialog(
+    return BlocListener<UserPermissionsBloc, UserPermissionsState>(
+      listener: (context, state) {
+        if (state is UserPermissionsBulkAssigned) {
+          // Clear selections when permissions are successfully assigned
+          setState(() {
+            _selectedPermissions.clear();
+            _isAssigning = false;
+          });
+          
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state is UserPermissionsError) {
+          setState(() {
+            _isAssigning = false;
+          });
+          
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: Dialog(
       child: Container(
-        width: 800,
-        height: 600,
+        width: 1200, // Increased width for side-by-side layout
+        height: 700,
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,53 +146,141 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             ),
             const SizedBox(height: 16),
 
-            // Tabs
-            DefaultTabController(
-              length: 2,
-              child: Expanded(
-                child: Column(
-                  children: [
-                    TabBar(
-                      tabs: const [
-                        Tab(text: 'Current Permissions'),
-                        Tab(text: 'Available Permissions'),
+            // Side by side layout
+            Expanded(
+              child: Row(
+                children: [
+                  // Current permissions (left side)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Current Permissions',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Expanded(child: _buildCurrentPermissionsPanel()),
                       ],
-                      labelColor: theme.colorScheme.primary,
-                      unselectedLabelColor:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          _buildCurrentPermissionsTab(),
-                          _buildAvailablePermissionsTab(),
-                        ],
-                      ),
+                  ),
+                  const SizedBox(width: 24),
+                  // Available permissions (right side)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Available Permissions',
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Spacer(),
+                            if (_selectedPermissions.isNotEmpty)
+                              Chip(
+                                label: Text('${_selectedPermissions.length} selected'),
+                                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Expanded(child: _buildAvailablePermissionsPanel()),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
 
             // Action buttons
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
+                if (_selectedPermissions.isNotEmpty)
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _selectedPermissions.clear();
+                      });
+                    },
+                    icon: const Icon(Icons.clear_all),
+                    label: const Text('Clear Selection'),
+                  )
+                else
+                  const SizedBox.shrink(),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Close'),
+                    ),
+                    const SizedBox(width: 8),
+                    if (_selectedPermissions.isNotEmpty)
+                      BlocConsumer<UserPermissionsBloc, UserPermissionsState>(
+                        listener: (context, state) {
+                          if (state is UserPermissionAssigned) {
+                            setState(() {
+                              _selectedPermissions.clear();
+                              _isAssigning = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Permissions assigned successfully'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            // Refresh permissions
+                            context.read<UserPermissionsBloc>().add(
+                                  LoadUserPermissions(widget.user.id.toInt()),
+                                );
+                          } else if (state is UserPermissionsError) {
+                            setState(() {
+                              _isAssigning = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: ${state.message}'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          return ElevatedButton.icon(
+                            onPressed: _isAssigning ? null : _assignSelectedPermissions,
+                            icon: _isAssigning
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.add_circle),
+                            label: Text(
+                              _isAssigning
+                                  ? 'Assigning...'
+                                  : 'Assign ${_selectedPermissions.length} Permission${_selectedPermissions.length == 1 ? '' : 's'}',
+                            ),
+                          );
+                        },
+                      ),
+                  ],
                 ),
               ],
             ),
           ],
         ),
       ),
+    ),
     );
   }
 
-  Widget _buildCurrentPermissionsTab() {
+  Widget _buildCurrentPermissionsPanel() {
     return BlocBuilder<UserPermissionsBloc, UserPermissionsState>(
       builder: (context, state) {
         if (state is UserPermissionsLoading) {
@@ -236,7 +356,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     );
   }
 
-  Widget _buildAvailablePermissionsTab() {
+  Widget _buildAvailablePermissionsPanel() {
     return BlocBuilder<PermissionsBloc, PermissionsState>(
       builder: (context, state) {
         if (state is PermissionsLoading) {
@@ -278,10 +398,10 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
 
           // Filter out permissions already assigned to user
           final assignedPermissionIds =
-              _userPermissions.map((p) => p.permissionId).toSet();
+              _userPermissions.map((p) => p.permissionId.toInt()).toSet();
           final unassignedPermissions =
               _availablePermissions.where((permission) {
-            return !assignedPermissionIds.contains(permission.id);
+            return !assignedPermissionIds.contains(permission.id.toInt());
           }).toList();
 
           final filteredPermissions = unassignedPermissions.where((permission) {
@@ -323,13 +443,87 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             itemCount: filteredPermissions.length,
             itemBuilder: (context, index) {
               final permission = filteredPermissions[index];
-              return _buildAvailablePermissionCard(permission);
+              return _buildSelectablePermissionCard(permission);
             },
           );
         }
         return const SizedBox.shrink();
       },
     );
+  }
+
+  Widget _buildSelectablePermissionCard(permissions_pb.Permission permission) {
+    final theme = Theme.of(context);
+    final isSelected = _selectedPermissions.contains(permission.id.toInt());
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      color: isSelected 
+          ? theme.colorScheme.primary.withValues(alpha: 0.1)
+          : null,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.secondary.withValues(alpha: 0.1),
+          child: Icon(
+            isSelected ? Icons.check_circle : Icons.add_circle_outline,
+            color: isSelected
+                ? Colors.white
+                : theme.colorScheme.secondary,
+          ),
+        ),
+        title: Text(
+          permission.displayName.isEmpty
+              ? permission.name
+              : permission.displayName,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: permission.description.isNotEmpty
+            ? Text(
+                permission.description,
+                style: theme.textTheme.bodySmall,
+              )
+            : null,
+        trailing: isSelected
+            ? Icon(
+                Icons.check_circle,
+                color: theme.colorScheme.primary,
+              )
+            : null,
+        onTap: () {
+          setState(() {
+            final permissionId = permission.id.toInt();
+            if (isSelected) {
+              _selectedPermissions.remove(permissionId);
+              debugPrint('Deselected permission: ${permission.displayName} (ID: $permissionId)');
+            } else {
+              _selectedPermissions.add(permissionId);
+              debugPrint('Selected permission: ${permission.displayName} (ID: $permissionId)');
+            }
+            debugPrint('Total selected: ${_selectedPermissions.length}');
+          });
+        },
+      ),
+    );
+  }
+
+  void _assignSelectedPermissions() {
+    if (_selectedPermissions.isEmpty) return;
+
+    setState(() {
+      _isAssigning = true;
+    });
+
+    // Create the request with multiple permission IDs
+    context.read<UserPermissionsBloc>().add(
+          AssignPermissionsToUser(
+            widget.user.id.toInt(),
+            _selectedPermissions.toList(),
+          ),
+        );
   }
 
   Widget _buildCurrentPermissionCard(perm_pb.EffectivePermission permission) {
@@ -427,72 +621,6 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 tooltip: 'Remove permission',
                 onPressed: () => _removePermission(permission),
               ),
-      ),
-    );
-  }
-
-  Widget _buildAvailablePermissionCard(permissions_pb.Permission permission) {
-    final theme = Theme.of(context);
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
-          child: Icon(
-            Icons.add_circle_outline,
-            color: theme.colorScheme.secondary,
-          ),
-        ),
-        title: Text(
-          permission.displayName.isEmpty
-              ? permission.name
-              : permission.displayName,
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        subtitle: permission.description.isNotEmpty
-            ? Text(
-                permission.description,
-                style: theme.textTheme.bodySmall,
-              )
-            : null,
-        trailing: IconButton(
-          icon: const Icon(Icons.add_circle_outline, color: Colors.green),
-          tooltip: 'Add permission',
-          onPressed: () => _addPermission(permission),
-        ),
-      ),
-    );
-  }
-
-  void _addPermission(permissions_pb.Permission permission) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Permission'),
-        content: Text(
-          'Are you sure you want to add "${permission.displayName.isEmpty ? permission.name : permission.displayName}" permission to ${widget.user.name}?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.read<UserPermissionsBloc>().add(
-                    AssignPermissionToUser(
-                      widget.user.id.toInt(),
-                      permission.id.toInt(),
-                    ),
-                  );
-            },
-            child: const Text('Add'),
-          ),
-        ],
       ),
     );
   }
