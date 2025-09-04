@@ -1,14 +1,11 @@
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:openauth/features/permissions/permissions.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
-import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
-
-part 'permissions_event.dart';
+import 'package:protobuf/protobuf.dart';
 part 'permissions_state.dart';
 
-class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
+class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
   final PermissionsRepository repository;
   
   String? _currentSearchQuery; // Store current search query for pagination
@@ -16,46 +13,39 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
   PermissionsBloc({
     required this.repository,
   }) : super(PermissionsInitial()) {
-    on<LoadPermissions>(_onLoadPermissions);
-    on<LoadPermission>(_onLoadPermission);
-    on<CreatePermission>(_onCreatePermission);
-    on<UpdatePermission>(_onUpdatePermission);
-    on<DeletePermission>(_onDeletePermission);
-    on<RefreshPermissions>(_onRefreshPermissions);
-    on<SearchPermissions>(_onSearchPermissions);
-    on<LoadMorePermissions>(_onLoadMorePermissions);
+    on<ListPermissionsRequest>(_onLoadPermissions);
+    on<GetPermissionRequest>(_onLoadPermission);
+    on<CreatePermissionRequest>(_onCreatePermission);
+    on<UpdatePermissionRequest>(_onUpdatePermission);
+    on<DeletePermissionRequest>(_onDeletePermission);
   }
 
   Future<void> _onLoadPermissions(
-    LoadPermissions event,
+    ListPermissionsRequest event,
     Emitter<PermissionsState> emit,
   ) async {
     _currentSearchQuery = event.search;
     emit(PermissionsLoading());
 
-    final result = await repository.getPermissions(
-      limit: event.limit ?? 20, // Default page size
-      offset: event.offset ?? 0,
-      search: event.search,
-    );
+    final result = await repository.getPermissions(event);
 
     result.fold(
       (failure) => emit(PermissionsError(failure.message)),
       (permissions) => emit(PermissionsLoaded(
         permissions,
-        hasReachedMax: permissions.length < (event.limit ?? 20),
-        currentPage: ((event.offset ?? 0) / (event.limit ?? 20)).floor(),
+        hasReachedMax: permissions.length < event.limit,
+        currentPage: (event.offset / event.limit).floor(),
       )),
     );
   }
 
   Future<void> _onLoadPermission(
-    LoadPermission event,
+    GetPermissionRequest event,
     Emitter<PermissionsState> emit,
   ) async {
     emit(PermissionLoading());
 
-    final result = await repository.getPermission(event.permissionId);
+    final result = await repository.getPermission(event);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -64,12 +54,12 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
   }
 
   Future<void> _onCreatePermission(
-    CreatePermission event,
+    CreatePermissionRequest event,
     Emitter<PermissionsState> emit,
   ) async {
     emit(PermissionCreating());
 
-    final result = await repository.createPermission(event.request);
+    final result = await repository.createPermission(event);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -77,19 +67,19 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
         emit(PermissionCreated(permission));
         // Refresh the list after creating, but only if bloc is still open
         if (!isClosed) {
-          add(const RefreshPermissions());
+          add(ListPermissionsRequest(search: _currentSearchQuery));
         }
       },
     );
   }
 
   Future<void> _onUpdatePermission(
-    UpdatePermission event,
+    UpdatePermissionRequest event,
     Emitter<PermissionsState> emit,
   ) async {
     emit(PermissionUpdating());
 
-    final result = await repository.updatePermission(event.request);
+    final result = await repository.updatePermission(event);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -97,19 +87,19 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
         emit(PermissionUpdated(permission));
         // Refresh the list after updating, but only if bloc is still open
         if (!isClosed) {
-          add(const RefreshPermissions());
+          add(ListPermissionsRequest(search: _currentSearchQuery));
         }
       },
     );
   }
 
   Future<void> _onDeletePermission(
-    DeletePermission event,
+    DeletePermissionRequest event,
     Emitter<PermissionsState> emit,
   ) async {
     emit(PermissionDeleting());
 
-    final result = await repository.deletePermission(event.permissionId);
+    final result = await repository.deletePermission(event);
 
     result.fold(
       (failure) => emit(PermissionError(failure.message)),
@@ -117,90 +107,12 @@ class PermissionsBloc extends Bloc<PermissionsEvent, PermissionsState> {
         emit(PermissionDeleted());
         // Refresh the list after deleting, but only if bloc is still open
         if (!isClosed) {
-          add(const RefreshPermissions());
+          add(ListPermissionsRequest(
+            limit: 20,
+            offset: 0,
+            search: _currentSearchQuery,
+          ));
         }
-      },
-    );
-  }
-
-  Future<void> _onRefreshPermissions(
-    RefreshPermissions event,
-    Emitter<PermissionsState> emit,
-  ) async {
-    // Clear search query on refresh
-    _currentSearchQuery = null;
-    
-    // Don't show loading for refresh - just silently reload
-    final result = await repository.getPermissions(
-      limit: 20,
-      offset: 0,
-    );
-
-    result.fold(
-      (failure) => emit(PermissionsError(failure.message)),
-      (permissions) => emit(PermissionsLoaded(
-        permissions,
-        hasReachedMax: permissions.length < 20,
-        currentPage: 0,
-      )),
-    );
-  }
-
-  Future<void> _onSearchPermissions(
-    SearchPermissions event,
-    Emitter<PermissionsState> emit,
-  ) async {
-    _currentSearchQuery = event.query.isEmpty ? null : event.query;
-    emit(PermissionsLoading());
-
-    final result = await repository.getPermissions(
-      search: _currentSearchQuery, // Don't pass empty search
-      limit: event.limit ?? 20,
-      offset: 0, // Reset offset for search
-    );
-
-    result.fold(
-      (failure) => emit(PermissionsError(failure.message)),
-      (permissions) => emit(PermissionsLoaded(
-        permissions,
-        hasReachedMax: permissions.length < (event.limit ?? 20),
-        currentPage: 0,
-      )),
-    );
-  }
-
-  Future<void> _onLoadMorePermissions(
-    LoadMorePermissions event,
-    Emitter<PermissionsState> emit,
-  ) async {
-    final currentState = state;
-    if (currentState is! PermissionsLoaded || currentState.hasReachedMax || currentState.isLoadingMore) {
-      return;
-    }
-
-    emit(currentState.copyWith(isLoadingMore: true));
-
-    final nextPage = currentState.currentPage + 1;
-    final offset = nextPage * 20; // Page size is 20
-
-    final result = await repository.getPermissions(
-      limit: 20,
-      offset: offset,
-      search: _currentSearchQuery, // Use stored search query
-    );
-
-    result.fold(
-      (failure) => emit(currentState.copyWith(isLoadingMore: false)),
-      (newPermissions) {
-        final allPermissions = List<Permission>.from(currentState.permissions)
-          ..addAll(newPermissions);
-        
-        emit(PermissionsLoaded(
-          allPermissions,
-          hasReachedMax: newPermissions.length < 20,
-          currentPage: nextPage,
-          isLoadingMore: false,
-        ));
       },
     );
   }

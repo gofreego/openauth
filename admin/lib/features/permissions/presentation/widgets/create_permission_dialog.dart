@@ -139,7 +139,7 @@ class _CreatePermissionDialogState extends State<CreatePermissionDialog> {
       if (mounted) {
         final bloc = context.read<PermissionsBloc>();
         if (!bloc.isClosed) {
-          bloc.add(CreatePermission(request));
+          bloc.add(request);
         }
       }
     }

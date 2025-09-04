@@ -1,23 +1,18 @@
 import 'package:dio/dio.dart';
-import 'package:fixnum/fixnum.dart';
-import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
+import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_service.dart';
 
 abstract class PermissionsRemoteDataSource {
-  Future<pb.ListPermissionsResponse> getPermissions({
-    int? limit,
-    int? offset,
-    String? search,
-  });
+  Future<ListPermissionsResponse> getPermissions(ListPermissionsRequest request);
 
-  Future<pb.Permission> getPermission(Int64 permissionId);
+  Future<Permission> getPermission(GetPermissionRequest request);
 
-  Future<pb.Permission> createPermission(pb.CreatePermissionRequest request);
+  Future<Permission> createPermission(CreatePermissionRequest request);
 
-  Future<pb.Permission> updatePermission(pb.UpdatePermissionRequest request);
+  Future<Permission> updatePermission(UpdatePermissionRequest request);
 
-  Future<pb.DeletePermissionResponse> deletePermission(Int64 permissionId);
+  Future<DeletePermissionResponse> deletePermission(DeletePermissionRequest request);
 }
 
 class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
@@ -26,24 +21,14 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   PermissionsRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<pb.ListPermissionsResponse> getPermissions({
-    int? limit,
-    int? offset,
-    String? search,
-  }) async {
+  Future<ListPermissionsResponse> getPermissions(ListPermissionsRequest request) async {
     try {
       final queryParams = <String, dynamic>{};
+        queryParams['limit'] = request.limit;
+        queryParams['offset'] = request.offset;
 
-      if (limit != null) {
-        queryParams['limit'] = limit;
-      }
-
-      if (offset != null) {
-        queryParams['offset'] = offset;
-      }
-
-      if (search != null && search.isNotEmpty) {
-        queryParams['search'] = search;
+      if (request.search.isNotEmpty) {
+        queryParams['search'] = request.search;
       }
 
       // For now, return mock data until backend is ready
@@ -51,7 +36,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
         '/openauth/v1/permissions',
         queryParameters: queryParams,
       );
-      var pbResponse = pb.ListPermissionsResponse();
+      var pbResponse = ListPermissionsResponse();
       pbResponse.mergeFromProto3Json(response.data);
       return pbResponse;
     } on DioException catch (e) {
@@ -65,11 +50,11 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   }
 
   @override
-  Future<pb.Permission> getPermission(Int64 permissionId) async {
+  Future<Permission> getPermission(GetPermissionRequest request) async {
     try {
-      var response = await _apiService.get('/openauth/v1/permissions/$permissionId');
+      var response = await _apiService.get('/openauth/v1/permissions/${request.id}');
 
-      var pbResponse = pb.Permission();
+      var pbResponse = Permission();
       pbResponse.mergeFromProto3Json(response.data);
       return pbResponse;
     } on DioException catch (e) {
@@ -83,8 +68,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   }
 
   @override
-  Future<pb.Permission> createPermission(
-      pb.CreatePermissionRequest request) async {
+  Future<Permission> createPermission(CreatePermissionRequest request) async {
     try {
       var response = await _apiService.post(
         '/openauth/v1/permissions',
@@ -95,7 +79,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
         },
       );
 
-      var pbResponse = pb.Permission();
+      var pbResponse = Permission();
       pbResponse.mergeFromProto3Json(response.data);
       return pbResponse;
     } on DioException catch (e) {
@@ -109,8 +93,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   }
 
   @override
-  Future<pb.Permission> updatePermission(
-      pb.UpdatePermissionRequest request) async {
+  Future<Permission> updatePermission(UpdatePermissionRequest request) async {
     try {
       final permissionId = request.id.toInt();
       var response = await _apiService.put(
@@ -121,7 +104,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
           'description': request.description,
         },
       );
-      var pbResponse = pb.Permission();
+      var pbResponse = Permission();
       pbResponse.mergeFromProto3Json(response.data);
       return pbResponse;
     } on DioException catch (e) {
@@ -135,11 +118,11 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   }
 
   @override
-  Future<pb.DeletePermissionResponse> deletePermission(Int64 permissionId) async {
+  Future<DeletePermissionResponse> deletePermission(DeletePermissionRequest request) async {
     try {
-      await _apiService.delete('/openauth/v1/permissions/$permissionId');
+      await _apiService.delete('/openauth/v1/permissions/${request.id}');
 
-      return pb.DeletePermissionResponse()
+      return DeletePermissionResponse()
         ..success = true
         ..message = 'Permission deleted successfully';
     } on DioException catch (e) {

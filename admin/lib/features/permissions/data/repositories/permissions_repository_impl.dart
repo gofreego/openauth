@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:fixnum/fixnum.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
-import '../../domain/repositories/permissions_repository.dart';
+import 'permissions_repository.dart';
 import '../datasources/permissions_remote_datasource_impl.dart';
-import '../../../../src/generated/openauth/v1/permissions.pb.dart' as pb;
+import '../../../../src/generated/openauth/v1/permissions.pb.dart';
 
 class PermissionsRepositoryImpl implements PermissionsRepository {
   final PermissionsRemoteDataSource remoteDataSource;
@@ -12,17 +12,9 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
   PermissionsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<pb.Permission>>> getPermissions({
-    int? limit,
-    int? offset,
-    String? search,
-  }) async {
+  Future<Either<Failure, List<Permission>>> getPermissions(ListPermissionsRequest request) async {
     try {
-      final response = await remoteDataSource.getPermissions(
-        limit: limit,
-        offset: offset,
-        search: search,
-      );
+      final response = await remoteDataSource.getPermissions(request);
       return Right(response.permissions);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -34,9 +26,9 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
   }
 
   @override
-  Future<Either<Failure, pb.Permission>> getPermission(Int64 permissionId) async {
+  Future<Either<Failure, Permission>> getPermission(GetPermissionRequest request) async {
     try {
-      return Right(await remoteDataSource.getPermission(permissionId));
+      return Right(await remoteDataSource.getPermission(request));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on NetworkException catch (e) {
@@ -47,7 +39,7 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
   }
 
   @override
-  Future<Either<Failure, pb.Permission>> createPermission(pb.CreatePermissionRequest request) async {
+  Future<Either<Failure, Permission>> createPermission(CreatePermissionRequest request) async {
     try {
       final permission = await remoteDataSource.createPermission(request);
       return Right(permission);
@@ -61,7 +53,7 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
   }
 
   @override
-  Future<Either<Failure, pb.Permission>> updatePermission(pb.UpdatePermissionRequest request) async {
+  Future<Either<Failure, Permission>> updatePermission(UpdatePermissionRequest request) async {
     try {
       final permission = await remoteDataSource.updatePermission(request);
       return Right(permission);
@@ -75,9 +67,9 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deletePermission(Int64 permissionId) async {
+  Future<Either<Failure, void>> deletePermission(DeletePermissionRequest request) async {
     try {
-      await remoteDataSource.deletePermission(permissionId);
+      await remoteDataSource.deletePermission(request);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));

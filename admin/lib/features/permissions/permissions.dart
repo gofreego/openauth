@@ -17,5 +17,3 @@ export 'presentation/widgets/permissions_header.dart';
 export 'presentation/widgets/permissions_grid.dart';
 export 'presentation/widgets/permission_card.dart';
 
-// Legacy Data Layer (to be removed when UI is updated)
-export 'data/models/permission_model.dart';

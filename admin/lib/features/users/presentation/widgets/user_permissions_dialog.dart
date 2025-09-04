@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
-import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
-import '../../../../src/generated/openauth/v1/permission_assignments.pb.dart'
-    as perm_pb;
-import '../../../../src/generated/openauth/v1/permissions.pb.dart'
-    as permissions_pb;
+import 'package:openauth/src/generated/openauth/v1/permission_assignments.pb.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../permissions/presentation/bloc/permissions_bloc.dart';
 import '../bloc/user_permissions_bloc.dart';
 import '../bloc/user_permissions_event.dart';
@@ -13,7 +11,7 @@ import '../bloc/user_permissions_state.dart';
 import '../../../../shared/widgets/custom_search_bar.dart';
 
 class UserPermissionsDialog extends StatefulWidget {
-  final user_pb.User user;
+  final User user;
 
   const UserPermissionsDialog({
     super.key,
@@ -26,8 +24,8 @@ class UserPermissionsDialog extends StatefulWidget {
 
 class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   String _searchQuery = '';
-  List<permissions_pb.Permission> _availablePermissions = [];
-  List<perm_pb.EffectivePermission> _userPermissions = [];
+  List<Permission> _availablePermissions = [];
+  List<EffectivePermission> _userPermissions = [];
   Set<int> selectedPermissions = <int>{}; // Track selected permissions to add
   bool _isAssigning = false;
 
@@ -39,9 +37,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
       context.read<UserPermissionsBloc>().add(
             LoadUserPermissions(widget.user.id.toInt()),
           );
-      context.read<PermissionsBloc>().add(
-            const LoadPermissions(),
-          );
+      context.read<PermissionsBloc>().add(ListPermissionsRequest());
     });
   }
 
@@ -367,7 +363,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                       onPressed: () {
                         context
                             .read<PermissionsBloc>()
-                            .add(const LoadPermissions());
+                            .add(ListPermissionsRequest());
                       },
                       child: const Text('Retry'),
                     ),
@@ -390,7 +386,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
               }
 
           _availablePermissions = state.permissions
-              .map((entity) => permissions_pb.Permission(
+              .map((entity) => Permission(
                     id: entity.id,
                     name: entity.name,
                     displayName: entity.displayName,
@@ -456,7 +452,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     );
   }
 
-  Widget _buildSelectablePermissionCard(permissions_pb.Permission permission) {
+  Widget _buildSelectablePermissionCard(Permission permission) {
     final theme = Theme.of(context);
     final isSelected = selectedPermissions.contains(permission.id.toInt());
 
@@ -530,7 +526,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
         );
   }
 
-  Widget _buildCurrentPermissionCard(perm_pb.EffectivePermission permission) {
+  Widget _buildCurrentPermissionCard(EffectivePermission permission) {
     final theme = Theme.of(context);
     final bool isGroupPermission = permission.source.toLowerCase() == 'group';
 
@@ -629,7 +625,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
     );
   }
 
-  void _removePermission(perm_pb.EffectivePermission permission) {
+  void _removePermission(EffectivePermission permission) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

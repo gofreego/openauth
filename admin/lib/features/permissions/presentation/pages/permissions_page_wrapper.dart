@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import '../bloc/permissions_bloc.dart';
 import 'permissions_page.dart';
 import '../../../../config/dependency_injection/service_locator.dart';
@@ -15,7 +16,7 @@ class PermissionsPageWrapper extends StatelessWidget {
         // Add initial load event only if bloc is open, with slight delay for stability
         Future.microtask(() {
           if (!bloc.isClosed) {
-            bloc.add(const LoadPermissions());
+            bloc.add(ListPermissionsRequest());
           }
         });
         return bloc;
@@ -76,7 +77,7 @@ class PermissionsPageWithProvider extends StatelessWidget {
 
         return BlocProvider(
           create: (context) => serviceLocator<PermissionsBloc>()
-            ..add(const LoadPermissions()),
+            ..add(ListPermissionsRequest()),
           child: const PermissionsPage(),
         );
       },

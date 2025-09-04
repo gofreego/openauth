@@ -228,7 +228,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
                 ..displayName = displayNameController.text
                 ..description = descriptionController.text;
 
-              context.read<PermissionsBloc>().add(UpdatePermission(request));
+              context.read<PermissionsBloc>().add(request);
               Navigator.of(context).pop();
             },
             child: const Text('Update'),
@@ -255,7 +255,7 @@ class _PermissionsGridState extends State<PermissionsGrid> {
           ),
           FilledButton(
             onPressed: () {
-              context.read<PermissionsBloc>().add(DeletePermission(permission.id));
+              context.read<PermissionsBloc>().add(DeletePermissionRequest(id:permission.id));
               Navigator.of(context).pop();
             },
             style: FilledButton.styleFrom(

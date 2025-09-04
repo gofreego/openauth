@@ -35,8 +35,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
 
   void _loadData() async {
     // Load all permissions
-    context.read<PermissionsBloc>().add(const LoadPermissions());
-    
+    context.read<PermissionsBloc>().add(ListPermissionsRequest());
     // Load group permissions
     // TODO: Add LoadGroupPermissions event to bloc if not exists
     // For now, we'll simulate loading group permissions
@@ -278,7 +277,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<PermissionsBloc>().add(const LoadPermissions());
+                    context.read<PermissionsBloc>().add(ListPermissionsRequest());
                   },
                   child: const Text('Retry'),
                 ),

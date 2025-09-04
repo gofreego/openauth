@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
+import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import '../bloc/permissions_bloc.dart';
 import '../widgets/permissions_header.dart';
 import '../widgets/permissions_grid.dart';
@@ -48,7 +49,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     // Use a small debounce to prevent too many requests while typing
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted && _searchQuery == query) {
-                        bloc.add(SearchPermissions(query));
+                        bloc.add(ListPermissionsRequest(search: query));
                       }
                     });
                   }
@@ -86,7 +87,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                         if (mounted) {
                           final bloc = context.read<PermissionsBloc>();
                           if (!bloc.isClosed) {
-                            bloc.add(const LoadMorePermissions());
+                            bloc.add(ListPermissionsRequest());
                           }
                         }
                       },
@@ -118,7 +119,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                               if (mounted) {
                                 final bloc = context.read<PermissionsBloc>();
                                 if (!bloc.isClosed) {
-                                  bloc.add(const LoadPermissions());
+                                  bloc.add(ListPermissionsRequest());
                                 }
                               }
                             },
