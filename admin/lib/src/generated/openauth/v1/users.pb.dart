@@ -10,8 +10,6 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../../common/sort.pbenum.dart' as $0;
-
 class User extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'User', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
@@ -2777,11 +2775,6 @@ class ListUsersRequest extends $pb.GeneratedMessage {
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
-    ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isActive')
-    ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'emailVerified')
-    ..aOB(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'phoneVerified')
-    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sortBy')
-    ..e<$0.SortOrder>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sortOrder', $pb.PbFieldType.OE, defaultOrMaker: $0.SortOrder.NONE, valueOf: $0.SortOrder.valueOf, enumValues: $0.SortOrder.values)
     ..hasRequiredFields = false
   ;
 
@@ -2790,11 +2783,6 @@ class ListUsersRequest extends $pb.GeneratedMessage {
     $core.int? limit,
     $core.int? offset,
     $core.String? search,
-    $core.bool? isActive,
-    $core.bool? emailVerified,
-    $core.bool? phoneVerified,
-    $core.String? sortBy,
-    $0.SortOrder? sortOrder,
   }) {
     final _result = create();
     if (limit != null) {
@@ -2805,21 +2793,6 @@ class ListUsersRequest extends $pb.GeneratedMessage {
     }
     if (search != null) {
       _result.search = search;
-    }
-    if (isActive != null) {
-      _result.isActive = isActive;
-    }
-    if (emailVerified != null) {
-      _result.emailVerified = emailVerified;
-    }
-    if (phoneVerified != null) {
-      _result.phoneVerified = phoneVerified;
-    }
-    if (sortBy != null) {
-      _result.sortBy = sortBy;
-    }
-    if (sortOrder != null) {
-      _result.sortOrder = sortOrder;
     }
     return _result;
   }
@@ -2870,51 +2843,6 @@ class ListUsersRequest extends $pb.GeneratedMessage {
   $core.bool hasSearch() => $_has(2);
   @$pb.TagNumber(3)
   void clearSearch() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.bool get isActive => $_getBF(3);
-  @$pb.TagNumber(4)
-  set isActive($core.bool v) { $_setBool(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasIsActive() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearIsActive() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.bool get emailVerified => $_getBF(4);
-  @$pb.TagNumber(5)
-  set emailVerified($core.bool v) { $_setBool(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasEmailVerified() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearEmailVerified() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.bool get phoneVerified => $_getBF(5);
-  @$pb.TagNumber(6)
-  set phoneVerified($core.bool v) { $_setBool(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasPhoneVerified() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearPhoneVerified() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.String get sortBy => $_getSZ(6);
-  @$pb.TagNumber(7)
-  set sortBy($core.String v) { $_setString(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasSortBy() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearSortBy() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $0.SortOrder get sortOrder => $_getN(7);
-  @$pb.TagNumber(8)
-  set sortOrder($0.SortOrder v) { setField(8, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasSortOrder() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearSortOrder() => clearField(8);
 }
 
 class ListUsersResponse extends $pb.GeneratedMessage {

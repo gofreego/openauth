@@ -42,12 +42,6 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
       if (request.search.isNotEmpty) {
         queryParams['search'] = request.search;
       }
-
-      if (request.isActive) {
-        queryParams['is_active'] = request.isActive;
-      }
-
-      // For now, return mock data until backend is ready
       var response = await _apiService.get(
         '/openauth/v1/users',
         queryParameters: queryParams,
@@ -67,9 +61,9 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   }
 
   @override
-  Future<pb.GetUserResponse> getUser(String userIdOrUuid) async {
+  Future<pb.GetUserResponse> getUser(String uuid) async {
     try {
-      var response = await _apiService.get('/openauth/v1/users/$userIdOrUuid');
+      var response = await _apiService.get('/openauth/v1/users/$uuid');
       var result = pb.GetUserResponse();
       result.mergeFromProto3Json(response.data);
       return result;

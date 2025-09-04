@@ -36,40 +36,26 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     emit(UsersLoading());
 
     final result = await getUsersUseCase(
-      request: ListUsersRequest(
-        offset: 0,
-        limit: 50,
-        search: event.search,
-        isActive: event.isActive,
-      ),
+      request: event.request
     );
 
     result.fold(
       (failure) => emit(UsersError(failure)),
       (users) => emit(UsersLoaded(
         users: users,
-        currentSearch: event.search,
-        currentFilter: event.isActive,
       )),
     );
   }
 
   Future<void> _onRefreshUsers(RefreshUsersEvent event, Emitter<UsersState> emit) async {
     final result = await getUsersUseCase(
-     request: ListUsersRequest(
-        offset: 0,
-        limit: 50,
-        search: event.search,
-        isActive: event.isActive,
-     ),
+     request: event.request,
     );
 
     result.fold(
       (failure) => emit(UsersError(failure)),
       (users) => emit(UsersLoaded(
-        users: users,
-        currentSearch: event.search,
-        currentFilter: event.isActive,
+        users: users
       )),
     );
   }
@@ -87,7 +73,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         emit(UserCreated(user));
         // Refresh the users list
         if (!isClosed) {
-          add(const RefreshUsersEvent());
+          add(RefreshUsersEvent(request: ListUsersRequest()));
         }
       },
     );
@@ -106,7 +92,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         emit(UserUpdated(user));
         // Refresh the users list
         if (!isClosed) {
-          add(const RefreshUsersEvent());
+          add(RefreshUsersEvent(request: ListUsersRequest()));
         }
       },
     );
@@ -123,7 +109,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         emit(UserDeleted(event.userIdOrUuid));
         // Refresh the users list
         if (!isClosed) {
-          add(const RefreshUsersEvent());
+          add(RefreshUsersEvent(request: ListUsersRequest()));
         }
       },
     );
@@ -138,7 +124,6 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         offset: 0,
         limit: 50,
         search: event.query.isEmpty ? null : event.query,
-        isActive: currentFilter,
       ),
     );
 
@@ -178,7 +163,6 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         offset: 0,
         limit: 50,
         search: currentSearch,
-        isActive: event.isActive,
       ),
     );
 

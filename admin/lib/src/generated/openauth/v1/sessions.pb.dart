@@ -10,7 +10,7 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'users.pb.dart' as $1;
+import 'users.pb.dart' as $0;
 
 class SignInMetadata extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignInMetadata', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
@@ -268,7 +268,7 @@ class SignInResponse extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'refreshToken')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt')
     ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'refreshExpiresAt')
-    ..aOM<$1.User>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: $1.User.create)
+    ..aOM<$0.User>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: $0.User.create)
     ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sessionId')
     ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
@@ -280,7 +280,7 @@ class SignInResponse extends $pb.GeneratedMessage {
     $core.String? refreshToken,
     $fixnum.Int64? expiresAt,
     $fixnum.Int64? refreshExpiresAt,
-    $1.User? user,
+    $0.User? user,
     $core.String? sessionId,
     $core.String? message,
   }) {
@@ -366,15 +366,15 @@ class SignInResponse extends $pb.GeneratedMessage {
   void clearRefreshExpiresAt() => clearField(4);
 
   @$pb.TagNumber(5)
-  $1.User get user => $_getN(4);
+  $0.User get user => $_getN(4);
   @$pb.TagNumber(5)
-  set user($1.User v) { setField(5, v); }
+  set user($0.User v) { setField(5, v); }
   @$pb.TagNumber(5)
   $core.bool hasUser() => $_has(4);
   @$pb.TagNumber(5)
   void clearUser() => clearField(5);
   @$pb.TagNumber(5)
-  $1.User ensureUser() => $_ensure(4);
+  $0.User ensureUser() => $_ensure(4);
 
   @$pb.TagNumber(6)
   $core.String get sessionId => $_getSZ(5);
@@ -774,7 +774,7 @@ class ValidateTokenResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ValidateTokenResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'valid')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
-    ..aOM<$1.User>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: $1.User.create)
+    ..aOM<$0.User>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: $0.User.create)
     ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt')
     ..hasRequiredFields = false
   ;
@@ -783,7 +783,7 @@ class ValidateTokenResponse extends $pb.GeneratedMessage {
   factory ValidateTokenResponse({
     $core.bool? valid,
     $core.String? message,
-    $1.User? user,
+    $0.User? user,
     $fixnum.Int64? expiresAt,
   }) {
     final _result = create();
@@ -841,15 +841,15 @@ class ValidateTokenResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(2);
 
   @$pb.TagNumber(3)
-  $1.User get user => $_getN(2);
+  $0.User get user => $_getN(2);
   @$pb.TagNumber(3)
-  set user($1.User v) { setField(3, v); }
+  set user($0.User v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasUser() => $_has(2);
   @$pb.TagNumber(3)
   void clearUser() => clearField(3);
   @$pb.TagNumber(3)
-  $1.User ensureUser() => $_ensure(2);
+  $0.User ensureUser() => $_ensure(2);
 
   @$pb.TagNumber(4)
   $fixnum.Int64 get expiresAt => $_getI64(3);

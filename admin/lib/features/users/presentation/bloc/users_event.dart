@@ -9,33 +9,25 @@ abstract class UsersEvent extends Equatable {
 }
 
 class LoadUsersEvent extends UsersEvent {
-  final int page;
-  final int limit;
-  final String? search;
-  final bool? isActive;
+  final ListUsersRequest request;
 
   const LoadUsersEvent({
-    this.page = 1,
-    this.limit = 50,
-    this.search,
-    this.isActive,
+    required this.request,
   });
 
   @override
-  List<Object?> get props => [page, limit, search, isActive];
+  List<Object?> get props => [request];
 }
 
 class RefreshUsersEvent extends UsersEvent {
-  final String? search;
-  final bool? isActive;
+  final ListUsersRequest request;
 
   const RefreshUsersEvent({
-    this.search,
-    this.isActive,
+    required this.request,
   });
 
   @override
-  List<Object?> get props => [search, isActive];
+  List<Object?> get props => [request];
 }
 
 class CreateUserEvent extends UsersEvent {

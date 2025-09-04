@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../widgets/users_header.dart';
 import '../widgets/users_table.dart';
 import '../widgets/create_user_dialog.dart';
@@ -24,7 +25,7 @@ class _UsersPageState extends State<UsersPage> {
     super.initState();
     // Load users when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UsersBloc>().add(const LoadUsersEvent());
+      context.read<UsersBloc>().add(LoadUsersEvent(request: ListUsersRequest()));
     });
   }
 
@@ -58,7 +59,7 @@ class _UsersPageState extends State<UsersPage> {
               setState(() {
                 _searchQuery = '';
               });
-              context.read<UsersBloc>().add(const LoadUsersEvent());
+              context.read<UsersBloc>().add(LoadUsersEvent(request: ListUsersRequest()));
             },
             onKeyStrokeChanged: (value) => {
               setState(() {
@@ -129,7 +130,7 @@ class _UsersPageState extends State<UsersPage> {
     });
 
     if (trimmedQuery.isEmpty) {
-      context.read<UsersBloc>().add(const LoadUsersEvent());
+      context.read<UsersBloc>().add(LoadUsersEvent(request: ListUsersRequest()));
     } else {
       // Check if it looks like a specific ID or UUID search
       if (UtilityFunctions.isNumber(trimmedQuery) || UtilityFunctions.isUUID(trimmedQuery)) {

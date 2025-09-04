@@ -465,24 +465,14 @@ const ListUsersRequest$json = const {
     const {'1': 'limit', '3': 1, '4': 1, '5': 5, '10': 'limit'},
     const {'1': 'offset', '3': 2, '4': 1, '5': 5, '10': 'offset'},
     const {'1': 'search', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'search', '17': true},
-    const {'1': 'is_active', '3': 4, '4': 1, '5': 8, '9': 1, '10': 'isActive', '17': true},
-    const {'1': 'email_verified', '3': 5, '4': 1, '5': 8, '9': 2, '10': 'emailVerified', '17': true},
-    const {'1': 'phone_verified', '3': 6, '4': 1, '5': 8, '9': 3, '10': 'phoneVerified', '17': true},
-    const {'1': 'sort_by', '3': 7, '4': 1, '5': 9, '9': 4, '10': 'sortBy', '17': true},
-    const {'1': 'sort_order', '3': 8, '4': 1, '5': 14, '6': '.v1.SortOrder', '9': 5, '10': 'sortOrder', '17': true},
   ],
   '8': const [
     const {'1': '_search'},
-    const {'1': '_is_active'},
-    const {'1': '_email_verified'},
-    const {'1': '_phone_verified'},
-    const {'1': '_sort_by'},
-    const {'1': '_sort_order'},
   ],
 };
 
 /// Descriptor for `ListUsersRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listUsersRequestDescriptor = $convert.base64Decode('ChBMaXN0VXNlcnNSZXF1ZXN0EhQKBWxpbWl0GAEgASgFUgVsaW1pdBIWCgZvZmZzZXQYAiABKAVSBm9mZnNldBIbCgZzZWFyY2gYAyABKAlIAFIGc2VhcmNoiAEBEiAKCWlzX2FjdGl2ZRgEIAEoCEgBUghpc0FjdGl2ZYgBARIqCg5lbWFpbF92ZXJpZmllZBgFIAEoCEgCUg1lbWFpbFZlcmlmaWVkiAEBEioKDnBob25lX3ZlcmlmaWVkGAYgASgISANSDXBob25lVmVyaWZpZWSIAQESHAoHc29ydF9ieRgHIAEoCUgEUgZzb3J0QnmIAQESMQoKc29ydF9vcmRlchgIIAEoDjINLnYxLlNvcnRPcmRlckgFUglzb3J0T3JkZXKIAQFCCQoHX3NlYXJjaEIMCgpfaXNfYWN0aXZlQhEKD19lbWFpbF92ZXJpZmllZEIRCg9fcGhvbmVfdmVyaWZpZWRCCgoIX3NvcnRfYnlCDQoLX3NvcnRfb3JkZXI=');
+final $typed_data.Uint8List listUsersRequestDescriptor = $convert.base64Decode('ChBMaXN0VXNlcnNSZXF1ZXN0EhQKBWxpbWl0GAEgASgFUgVsaW1pdBIWCgZvZmZzZXQYAiABKAVSBm9mZnNldBIbCgZzZWFyY2gYAyABKAlIAFIGc2VhcmNoiAEBQgkKB19zZWFyY2g=');
 @$core.Deprecated('Use listUsersResponseDescriptor instead')
 const ListUsersResponse$json = const {
   '1': 'ListUsersResponse',

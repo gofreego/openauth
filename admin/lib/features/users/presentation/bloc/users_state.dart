@@ -15,15 +15,15 @@ class UsersLoading extends UsersState {}
 
 class UsersLoaded extends UsersState {
   final List<pb.User> users;
+  final bool hasReachedMax;
   final String? currentSearch;
   final bool? currentFilter;
-  final bool hasReachedMax;
 
   const UsersLoaded({
     required this.users,
+    this.hasReachedMax = true,
     this.currentSearch,
     this.currentFilter,
-    this.hasReachedMax = true,
   });
 
   UsersLoaded copyWith({
@@ -34,14 +34,14 @@ class UsersLoaded extends UsersState {
   }) {
     return UsersLoaded(
       users: users ?? this.users,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       currentSearch: currentSearch ?? this.currentSearch,
       currentFilter: currentFilter ?? this.currentFilter,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );
   }
 
   @override
-  List<Object?> get props => [users, currentSearch, currentFilter, hasReachedMax];
+  List<Object?> get props => [users, hasReachedMax, currentSearch, currentFilter];
 }
 
 class UsersError extends UsersState {

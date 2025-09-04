@@ -88,7 +88,7 @@ class UsersTable extends StatelessWidget {
                   return shared.ErrorWidget(
                     failure: state.failure,
                     onRetry: () {
-                      context.read<UsersBloc>().add(const RefreshUsersEvent());
+                      context.read<UsersBloc>().add(RefreshUsersEvent(request: ListUsersRequest()));
                     },
                   );
                 } else if (state is UsersLoaded) {
