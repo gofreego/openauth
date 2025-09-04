@@ -10,6 +10,8 @@ class CustomSearchBar extends StatefulWidget {
   
   /// Callback when search is triggered (click or Enter key)
   final ValueChanged<String>? onSearch;
+
+  final VoidCallback? onClear;
   
   /// Optional controller for external control
   
@@ -20,7 +22,9 @@ class CustomSearchBar extends StatefulWidget {
   final double? width;
   
   /// Whether to call onSearch on each keystroke
-  final bool onKeyStroke;
+  final bool triggerSearchOnKeyStroke;
+
+  final ValueChanged<String>? onKeyStrokeChanged;
 
   const CustomSearchBar({
     super.key,
@@ -29,7 +33,9 @@ class CustomSearchBar extends StatefulWidget {
     this.onSearch,
     this.showSearchIcon = true,
     this.width,
-    this.onKeyStroke = false,
+    this.triggerSearchOnKeyStroke = false,
+    this.onKeyStrokeChanged,
+    this.onClear,
   });
 
   @override
@@ -51,63 +57,44 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     super.dispose();
   }
 
-  void _performSearch() {
-    widget.onSearch?.call(_controller.text);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final searchBar = Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: .3),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: .15),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: _controller,
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(28),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(28),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(28),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.surface,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          suffixIcon: widget.showSearchIcon
-              ? IconButton(
-                  icon: const Icon(Icons.search, size: 30),
-                  onPressed: _performSearch,
-                  tooltip: 'Search',
-                  iconSize: 20,
-                )
-              : null,
-        ),
-        onSubmitted: (_) => _performSearch(),
-        onChanged: widget.onKeyStroke ? (value) => widget.onSearch?.call(value) : null,
-      ),
-    );
 
-    return widget.width != null 
-        ? SizedBox(width: widget.width, child: searchBar)
-        : searchBar;
+    return Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: widget.hintText,
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _controller.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _controller.clear();
+                              widget.onClear?.call();
+                            },
+                          )
+                        : null,
+                    border: const OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                      if (widget.triggerSearchOnKeyStroke) {
+                        widget.onSearch?.call(_controller.text);
+                      }
+                      widget.onKeyStrokeChanged?.call(_controller.text);
+                  },
+                  onSubmitted: (value) => widget.onSearch?.call(value),
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () => widget.onSearch?.call(_controller.text),
+                // icon: const Icon(Icons.search),
+                label: const Text('Search'),
+              ),
+            ],
+          );
   }
 }

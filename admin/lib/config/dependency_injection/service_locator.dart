@@ -17,6 +17,7 @@ import '../../features/users/data/datasources/users_remote_datasource_impl.dart'
 import '../../features/users/data/repositories/users_repository_impl.dart';
 import '../../features/users/data/repositories/users_repository.dart';
 import '../../features/users/domain/usecases/get_users_usecase.dart';
+import '../../features/users/domain/usecases/get_user_usecase.dart';
 import '../../features/users/domain/usecases/create_user_usecase.dart';
 import '../../features/users/domain/usecases/update_user_usecase.dart';
 import '../../features/users/domain/usecases/delete_user_usecase.dart';
@@ -120,6 +121,10 @@ Future<void> initializeDependencies({
   // Users use cases
   serviceLocator.registerLazySingleton<GetUsersUseCase>(
     () => GetUsersUseCase(serviceLocator<UsersRepository>()),
+  );
+
+  serviceLocator.registerLazySingleton<GetUserUseCase>(
+    () => GetUserUseCase(serviceLocator<UsersRepository>()),
   );
 
   serviceLocator.registerLazySingleton<CreateUserUseCase>(
@@ -245,6 +250,7 @@ Future<void> initializeDependencies({
   serviceLocator.registerLazySingleton<UsersBloc>(
     () => UsersBloc(
       getUsersUseCase: serviceLocator<GetUsersUseCase>(),
+      getUserUseCase: serviceLocator<GetUserUseCase>(),
       createUserUseCase: serviceLocator<CreateUserUseCase>(),
       updateUserUseCase: serviceLocator<UpdateUserUseCase>(),
       deleteUserUseCase: serviceLocator<DeleteUserUseCase>(),

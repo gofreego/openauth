@@ -78,6 +78,15 @@ class SearchUsersEvent extends UsersEvent {
   List<Object> get props => [query];
 }
 
+class SearchUserByIdEvent extends UsersEvent {
+  final String idOrUuid;
+
+  const SearchUserByIdEvent(this.idOrUuid);
+
+  @override
+  List<Object> get props => [idOrUuid];
+}
+
 class FilterUsersEvent extends UsersEvent {
   final bool? isActive;
 

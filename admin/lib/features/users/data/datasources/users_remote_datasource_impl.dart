@@ -1,14 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pbserver.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_service.dart';
 
 abstract class UsersRemoteDataSource {
   Future<pb.ListUsersResponse> getUsers({
-    int page = 1,
-    int limit = 50,
-    String? search,
-    bool? isActive,
+    required pb.ListUsersRequest request,
   });
 
   Future<pb.GetUserResponse> getUser(String userIdOrUuid);
@@ -33,23 +31,20 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
 
   @override
   Future<pb.ListUsersResponse> getUsers({
-    int page = 1,
-    int limit = 50,
-    String? search,
-    bool? isActive,
+    required ListUsersRequest request,
   }) async {
     try {
       final queryParams = <String, dynamic>{
-        'page': page,
-        'limit': limit,
+        'offset': request.offset,
+        'limit': request.limit,
       };
 
-      if (search != null && search.isNotEmpty) {
-        queryParams['search'] = search;
+      if (request.search.isNotEmpty) {
+        queryParams['search'] = request.search;
       }
 
-      if (isActive != null) {
-        queryParams['is_active'] = isActive;
+      if (request.isActive) {
+        queryParams['is_active'] = request.isActive;
       }
 
       // For now, return mock data until backend is ready

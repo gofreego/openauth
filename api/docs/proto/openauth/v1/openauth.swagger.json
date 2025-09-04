@@ -1015,47 +1015,6 @@
             "in": "query",
             "required": false,
             "type": "string"
-          },
-          {
-            "name": "isActive",
-            "description": "Filter by active status",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "emailVerified",
-            "description": "Filter by email verification status",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "phoneVerified",
-            "description": "Filter by phone verification status",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "sortBy",
-            "description": "Sort by field (username, email, created_at, etc.)",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sortOrder",
-            "description": "asc or desc",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "NONE",
-              "ASC",
-              "DESC"
-            ],
-            "default": "NONE"
           }
         ],
         "tags": [
@@ -2901,15 +2860,6 @@
         }
       },
       "title": "SignUpResponse after successful registration - only user data"
-    },
-    "v1SortOrder": {
-      "type": "string",
-      "enum": [
-        "NONE",
-        "ASC",
-        "DESC"
-      ],
-      "default": "NONE"
     },
     "v1StatsResponse": {
       "type": "object",

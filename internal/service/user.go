@@ -511,16 +511,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	if req.Search != nil {
 		filters.Search = req.Search
 	}
-	if req.IsActive != nil {
-		filters.IsActive = req.IsActive
-	}
-	if req.EmailVerified != nil {
-		filters.EmailVerified = req.EmailVerified
-	}
-	if req.PhoneVerified != nil {
-		filters.PhoneVerified = req.PhoneVerified
-	}
-
+	// TODO add filter based on req.Search pattern type like, mobile, email, id, etc.
 	// Get users from repository
 	users, err := s.repo.ListUsers(ctx, filters)
 	if err != nil {

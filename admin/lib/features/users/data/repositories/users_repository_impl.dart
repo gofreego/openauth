@@ -12,17 +12,11 @@ class UsersRepositoryImpl implements UsersRepository {
 
   @override
   Future<Either<Failure, List<pb.User>>> getUsers({
-    int page = 1,
-    int limit = 50,
-    String? search,
-    bool? isActive,
+   required pb.ListUsersRequest request,
   }) async {
     try {
       final response = await remoteDataSource.getUsers(
-        page: page,
-        limit: limit,
-        search: search,
-        isActive: isActive,
+        request: request,
       );
 
       return Right(response.users);

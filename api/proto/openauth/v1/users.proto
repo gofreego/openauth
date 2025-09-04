@@ -255,11 +255,6 @@ message ListUsersRequest {
     int32 limit = 1;
     int32 offset = 2;
     optional string search = 3;        // Search in username, email, first_name, last_name
-    optional bool is_active = 4;       // Filter by active status
-    optional bool email_verified = 5;  // Filter by email verification status
-    optional bool phone_verified = 6;  // Filter by phone verification status
-    optional string sort_by = 7;       // Sort by field (username, email, created_at, etc.)
-    optional SortOrder sort_order = 8;    // asc or desc
 }
 
 // ListUsersResponse

@@ -3,16 +3,12 @@ import '../../../../core/errors/failures.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../data/repositories/users_repository.dart';
 
-class GetUsersUseCase {
+class GetUserUseCase {
   final UsersRepository repository;
 
-  GetUsersUseCase(this.repository);
+  GetUserUseCase(this.repository);
 
-  Future<Either<Failure, List<pb.User>>> call({
-    required pb.ListUsersRequest request,
-  }) async {
-    return await repository.getUsers(
-      request: request,
-    );
+  Future<Either<Failure, pb.User>> call(String userIdOrUuid) async {
+    return await repository.getUser(userIdOrUuid);
   }
 }

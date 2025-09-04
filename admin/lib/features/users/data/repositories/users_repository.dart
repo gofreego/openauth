@@ -4,10 +4,7 @@ import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 
 abstract class UsersRepository {
   Future<Either<Failure, List<pb.User>>> getUsers({
-    int page = 1,
-    int limit = 50,
-    String? search,
-    bool? isActive,
+    required pb.ListUsersRequest request,
   });
 
   Future<Either<Failure, pb.User>> getUser(String userIdOrUuid);

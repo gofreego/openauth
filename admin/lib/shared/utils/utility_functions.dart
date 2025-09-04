@@ -1,12 +1,14 @@
 import 'package:fixnum/fixnum.dart';
 
+
+
 class UtilityFunctions {
-    static String formatDate(Int64 millis) {
+  static String formatDate(Int64 millis) {
     final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
-   static String  formatDateInWords(Int64 millis) {
+  static String formatDateInWords(Int64 millis) {
     if (millis == 0) return 'Never';
     final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
     final now = DateTime.now();
@@ -27,5 +29,22 @@ class UtilityFunctions {
     } else {
       return '${difference.inDays ~/ 365} years ago';
     }
+  }
+
+  static bool isUUID(String query) {
+      return RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$').hasMatch(query);
+  }
+
+  static bool isNumber(String query) {
+    return RegExp(r'^\d+$').hasMatch(query);
+  }
+
+  static bool isEmail(String query) {
+    return RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(query);
+  }
+
+  static bool isMobile(String query) {
+    final mobileNumberRegex = RegExp(r'^(\+91[\-\s]?)?[6-9]\d{9}$');
+    return mobileNumberRegex.hasMatch(query);
   }
 }
