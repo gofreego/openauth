@@ -23,12 +23,12 @@ abstract class GroupsRemoteDataSource {
 
   Future<ListGroupUsersResponse> getGroupUsers(Int64 groupId);
 
-  Future<AssignUserToGroupResponse> assignUserToGroup({
-    required AssignUserToGroupRequest request,
+  Future<AssignUsersToGroupResponse> assignUserToGroup({
+    required AssignUsersToGroupRequest request,
   });
 
-  Future<RemoveUserFromGroupResponse> removeUserFromGroup({
-    required RemoveUserFromGroupRequest request,
+  Future<RemoveUsersFromGroupResponse> removeUserFromGroup({
+    required RemoveUsersFromGroupRequest request,
   });
 }
 
@@ -181,8 +181,8 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<AssignUserToGroupResponse> assignUserToGroup({
-    required AssignUserToGroupRequest request,
+  Future<AssignUsersToGroupResponse> assignUserToGroup({
+    required AssignUsersToGroupRequest request,
   }) async {
     try {
       final response = await _apiService.post(
@@ -190,7 +190,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
         data: request.toProto3Json(),
       );
       
-      final pbResponse = AssignUserToGroupResponse();
+      final pbResponse = AssignUsersToGroupResponse();
       if (response.data != null) {
         pbResponse.mergeFromProto3Json(response.data);
       }
@@ -206,15 +206,16 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<RemoveUserFromGroupResponse> removeUserFromGroup({
-    required RemoveUserFromGroupRequest request,
+  Future<RemoveUsersFromGroupResponse> removeUserFromGroup({
+    required RemoveUsersFromGroupRequest request,
   }) async {
     try {
       final response = await _apiService.delete(
-        '/openauth/v1/groups/${request.groupId}/users/${request.userId}',
+        '/openauth/v1/groups/${request.groupId}/users',
+        data: request.toProto3Json(),
       );
       
-      final pbResponse = RemoveUserFromGroupResponse();
+      final pbResponse = RemoveUsersFromGroupResponse();
       if (response.data != null) {
         pbResponse.mergeFromProto3Json(response.data);
       }

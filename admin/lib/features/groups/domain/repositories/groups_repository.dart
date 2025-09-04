@@ -23,10 +23,10 @@ abstract class GroupsRepository {
   Future<Either<Failure, List<GroupUser>>> getGroupUsers(Int64 groupId);
 
   Future<Either<Failure, void>> assignUserToGroup({
-  required AssignUserToGroupRequest request,
+  required AssignUsersToGroupRequest request,
   });
 
   Future<Either<Failure, void>> removeUserFromGroup({
-    required RemoveUserFromGroupRequest request,
+    required RemoveUsersFromGroupRequest request,
   });
 }

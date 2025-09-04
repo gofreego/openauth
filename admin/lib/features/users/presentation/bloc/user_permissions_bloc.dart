@@ -49,9 +49,9 @@ class UserPermissionsBloc extends Bloc<UserPermissionsEvent, UserPermissionsStat
     emit(UserPermissionAssigning());
 
     try {
-      final request = pb.AssignPermissionToUserRequest(
+      final request = pb.AssignPermissionsToUserRequest(
         userId: Int64(event.userId),
-        permissionId: Int64(event.permissionId),
+        permissionsIds: [Int64(event.permissionId)],
       );
 
       await _apiService.post(
@@ -80,7 +80,7 @@ class UserPermissionsBloc extends Bloc<UserPermissionsEvent, UserPermissionsStat
         '/openauth/v1/users/${event.userId}/permissions/${event.permissionId}',
       );
 
-      final removeResponse = pb.RemovePermissionFromUserResponse()
+      final removeResponse = pb.RemovePermissionsFromUserResponse()
         ..mergeFromProto3Json(response.data);
       
       emit(UserPermissionRemoved(removeResponse.message));

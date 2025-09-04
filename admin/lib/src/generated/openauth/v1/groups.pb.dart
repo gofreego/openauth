@@ -793,23 +793,23 @@ class ListGroupsResponse extends $pb.GeneratedMessage {
   $core.List<Group> get groups => $_getList(0);
 }
 
-class AssignUserToGroupRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignUserToGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
+class AssignUsersToGroupRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignUsersToGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..p<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userIds', $pb.PbFieldType.K6)
     ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt')
     ..hasRequiredFields = false
   ;
 
-  AssignUserToGroupRequest._() : super();
-  factory AssignUserToGroupRequest({
-    $fixnum.Int64? userId,
+  AssignUsersToGroupRequest._() : super();
+  factory AssignUsersToGroupRequest({
+    $core.Iterable<$fixnum.Int64>? userIds,
     $fixnum.Int64? groupId,
     $fixnum.Int64? expiresAt,
   }) {
     final _result = create();
-    if (userId != null) {
-      _result.userId = userId;
+    if (userIds != null) {
+      _result.userIds.addAll(userIds);
     }
     if (groupId != null) {
       _result.groupId = groupId;
@@ -819,35 +819,29 @@ class AssignUserToGroupRequest extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory AssignUserToGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AssignUserToGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory AssignUsersToGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AssignUsersToGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  AssignUserToGroupRequest clone() => AssignUserToGroupRequest()..mergeFromMessage(this);
+  AssignUsersToGroupRequest clone() => AssignUsersToGroupRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  AssignUserToGroupRequest copyWith(void Function(AssignUserToGroupRequest) updates) => super.copyWith((message) => updates(message as AssignUserToGroupRequest)) as AssignUserToGroupRequest; // ignore: deprecated_member_use
+  AssignUsersToGroupRequest copyWith(void Function(AssignUsersToGroupRequest) updates) => super.copyWith((message) => updates(message as AssignUsersToGroupRequest)) as AssignUsersToGroupRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static AssignUserToGroupRequest create() => AssignUserToGroupRequest._();
-  AssignUserToGroupRequest createEmptyInstance() => create();
-  static $pb.PbList<AssignUserToGroupRequest> createRepeated() => $pb.PbList<AssignUserToGroupRequest>();
+  static AssignUsersToGroupRequest create() => AssignUsersToGroupRequest._();
+  AssignUsersToGroupRequest createEmptyInstance() => create();
+  static $pb.PbList<AssignUsersToGroupRequest> createRepeated() => $pb.PbList<AssignUsersToGroupRequest>();
   @$core.pragma('dart2js:noInline')
-  static AssignUserToGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignUserToGroupRequest>(create);
-  static AssignUserToGroupRequest? _defaultInstance;
+  static AssignUsersToGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignUsersToGroupRequest>(create);
+  static AssignUsersToGroupRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $fixnum.Int64 get userId => $_getI64(0);
-  @$pb.TagNumber(1)
-  set userId($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasUserId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearUserId() => clearField(1);
+  $core.List<$fixnum.Int64> get userIds => $_getList(0);
 
   @$pb.TagNumber(2)
   $fixnum.Int64 get groupId => $_getI64(1);
@@ -868,15 +862,15 @@ class AssignUserToGroupRequest extends $pb.GeneratedMessage {
   void clearExpiresAt() => clearField(3);
 }
 
-class AssignUserToGroupResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignUserToGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class AssignUsersToGroupResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignUsersToGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'success')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  AssignUserToGroupResponse._() : super();
-  factory AssignUserToGroupResponse({
+  AssignUsersToGroupResponse._() : super();
+  factory AssignUsersToGroupResponse({
     $core.bool? success,
     $core.String? message,
   }) {
@@ -889,26 +883,26 @@ class AssignUserToGroupResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory AssignUserToGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AssignUserToGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory AssignUsersToGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AssignUsersToGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  AssignUserToGroupResponse clone() => AssignUserToGroupResponse()..mergeFromMessage(this);
+  AssignUsersToGroupResponse clone() => AssignUsersToGroupResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  AssignUserToGroupResponse copyWith(void Function(AssignUserToGroupResponse) updates) => super.copyWith((message) => updates(message as AssignUserToGroupResponse)) as AssignUserToGroupResponse; // ignore: deprecated_member_use
+  AssignUsersToGroupResponse copyWith(void Function(AssignUsersToGroupResponse) updates) => super.copyWith((message) => updates(message as AssignUsersToGroupResponse)) as AssignUsersToGroupResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static AssignUserToGroupResponse create() => AssignUserToGroupResponse._();
-  AssignUserToGroupResponse createEmptyInstance() => create();
-  static $pb.PbList<AssignUserToGroupResponse> createRepeated() => $pb.PbList<AssignUserToGroupResponse>();
+  static AssignUsersToGroupResponse create() => AssignUsersToGroupResponse._();
+  AssignUsersToGroupResponse createEmptyInstance() => create();
+  static $pb.PbList<AssignUsersToGroupResponse> createRepeated() => $pb.PbList<AssignUsersToGroupResponse>();
   @$core.pragma('dart2js:noInline')
-  static AssignUserToGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignUserToGroupResponse>(create);
-  static AssignUserToGroupResponse? _defaultInstance;
+  static AssignUsersToGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignUsersToGroupResponse>(create);
+  static AssignUsersToGroupResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get success => $_getBF(0);
@@ -929,56 +923,50 @@ class AssignUserToGroupResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(2);
 }
 
-class RemoveUserFromGroupRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemoveUserFromGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
+class RemoveUsersFromGroupRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemoveUsersFromGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..p<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userIds', $pb.PbFieldType.K6)
     ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
     ..hasRequiredFields = false
   ;
 
-  RemoveUserFromGroupRequest._() : super();
-  factory RemoveUserFromGroupRequest({
-    $fixnum.Int64? userId,
+  RemoveUsersFromGroupRequest._() : super();
+  factory RemoveUsersFromGroupRequest({
+    $core.Iterable<$fixnum.Int64>? userIds,
     $fixnum.Int64? groupId,
   }) {
     final _result = create();
-    if (userId != null) {
-      _result.userId = userId;
+    if (userIds != null) {
+      _result.userIds.addAll(userIds);
     }
     if (groupId != null) {
       _result.groupId = groupId;
     }
     return _result;
   }
-  factory RemoveUserFromGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RemoveUserFromGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RemoveUsersFromGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RemoveUsersFromGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RemoveUserFromGroupRequest clone() => RemoveUserFromGroupRequest()..mergeFromMessage(this);
+  RemoveUsersFromGroupRequest clone() => RemoveUsersFromGroupRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RemoveUserFromGroupRequest copyWith(void Function(RemoveUserFromGroupRequest) updates) => super.copyWith((message) => updates(message as RemoveUserFromGroupRequest)) as RemoveUserFromGroupRequest; // ignore: deprecated_member_use
+  RemoveUsersFromGroupRequest copyWith(void Function(RemoveUsersFromGroupRequest) updates) => super.copyWith((message) => updates(message as RemoveUsersFromGroupRequest)) as RemoveUsersFromGroupRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static RemoveUserFromGroupRequest create() => RemoveUserFromGroupRequest._();
-  RemoveUserFromGroupRequest createEmptyInstance() => create();
-  static $pb.PbList<RemoveUserFromGroupRequest> createRepeated() => $pb.PbList<RemoveUserFromGroupRequest>();
+  static RemoveUsersFromGroupRequest create() => RemoveUsersFromGroupRequest._();
+  RemoveUsersFromGroupRequest createEmptyInstance() => create();
+  static $pb.PbList<RemoveUsersFromGroupRequest> createRepeated() => $pb.PbList<RemoveUsersFromGroupRequest>();
   @$core.pragma('dart2js:noInline')
-  static RemoveUserFromGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemoveUserFromGroupRequest>(create);
-  static RemoveUserFromGroupRequest? _defaultInstance;
+  static RemoveUsersFromGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemoveUsersFromGroupRequest>(create);
+  static RemoveUsersFromGroupRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $fixnum.Int64 get userId => $_getI64(0);
-  @$pb.TagNumber(1)
-  set userId($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasUserId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearUserId() => clearField(1);
+  $core.List<$fixnum.Int64> get userIds => $_getList(0);
 
   @$pb.TagNumber(2)
   $fixnum.Int64 get groupId => $_getI64(1);
@@ -990,15 +978,15 @@ class RemoveUserFromGroupRequest extends $pb.GeneratedMessage {
   void clearGroupId() => clearField(2);
 }
 
-class RemoveUserFromGroupResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemoveUserFromGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class RemoveUsersFromGroupResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemoveUsersFromGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'success')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  RemoveUserFromGroupResponse._() : super();
-  factory RemoveUserFromGroupResponse({
+  RemoveUsersFromGroupResponse._() : super();
+  factory RemoveUsersFromGroupResponse({
     $core.bool? success,
     $core.String? message,
   }) {
@@ -1011,26 +999,26 @@ class RemoveUserFromGroupResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory RemoveUserFromGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RemoveUserFromGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RemoveUsersFromGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RemoveUsersFromGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RemoveUserFromGroupResponse clone() => RemoveUserFromGroupResponse()..mergeFromMessage(this);
+  RemoveUsersFromGroupResponse clone() => RemoveUsersFromGroupResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RemoveUserFromGroupResponse copyWith(void Function(RemoveUserFromGroupResponse) updates) => super.copyWith((message) => updates(message as RemoveUserFromGroupResponse)) as RemoveUserFromGroupResponse; // ignore: deprecated_member_use
+  RemoveUsersFromGroupResponse copyWith(void Function(RemoveUsersFromGroupResponse) updates) => super.copyWith((message) => updates(message as RemoveUsersFromGroupResponse)) as RemoveUsersFromGroupResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static RemoveUserFromGroupResponse create() => RemoveUserFromGroupResponse._();
-  RemoveUserFromGroupResponse createEmptyInstance() => create();
-  static $pb.PbList<RemoveUserFromGroupResponse> createRepeated() => $pb.PbList<RemoveUserFromGroupResponse>();
+  static RemoveUsersFromGroupResponse create() => RemoveUsersFromGroupResponse._();
+  RemoveUsersFromGroupResponse createEmptyInstance() => create();
+  static $pb.PbList<RemoveUsersFromGroupResponse> createRepeated() => $pb.PbList<RemoveUsersFromGroupResponse>();
   @$core.pragma('dart2js:noInline')
-  static RemoveUserFromGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemoveUserFromGroupResponse>(create);
-  static RemoveUserFromGroupResponse? _defaultInstance;
+  static RemoveUsersFromGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemoveUsersFromGroupResponse>(create);
+  static RemoveUsersFromGroupResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get success => $_getBF(0);

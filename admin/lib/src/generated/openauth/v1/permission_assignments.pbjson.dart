@@ -8,49 +8,49 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
-@$core.Deprecated('Use assignPermissionToGroupRequestDescriptor instead')
-const AssignPermissionToGroupRequest$json = const {
-  '1': 'AssignPermissionToGroupRequest',
+@$core.Deprecated('Use assignPermissionsToGroupRequestDescriptor instead')
+const AssignPermissionsToGroupRequest$json = const {
+  '1': 'AssignPermissionsToGroupRequest',
   '2': const [
     const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '10': 'groupId'},
-    const {'1': 'permission_id', '3': 2, '4': 1, '5': 3, '10': 'permissionId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
   ],
 };
 
-/// Descriptor for `AssignPermissionToGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignPermissionToGroupRequestDescriptor = $convert.base64Decode('Ch5Bc3NpZ25QZXJtaXNzaW9uVG9Hcm91cFJlcXVlc3QSGQoIZ3JvdXBfaWQYASABKANSB2dyb3VwSWQSIwoNcGVybWlzc2lvbl9pZBgCIAEoA1IMcGVybWlzc2lvbklk');
-@$core.Deprecated('Use assignPermissionToGroupResponseDescriptor instead')
-const AssignPermissionToGroupResponse$json = const {
-  '1': 'AssignPermissionToGroupResponse',
+/// Descriptor for `AssignPermissionsToGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List assignPermissionsToGroupRequestDescriptor = $convert.base64Decode('Ch9Bc3NpZ25QZXJtaXNzaW9uc1RvR3JvdXBSZXF1ZXN0EhkKCGdyb3VwX2lkGAEgASgDUgdncm91cElkEicKD3Blcm1pc3Npb25zX2lkcxgCIAMoA1IOcGVybWlzc2lvbnNJZHM=');
+@$core.Deprecated('Use assignPermissionsToGroupResponseDescriptor instead')
+const AssignPermissionsToGroupResponse$json = const {
+  '1': 'AssignPermissionsToGroupResponse',
   '2': const [
     const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
-/// Descriptor for `AssignPermissionToGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignPermissionToGroupResponseDescriptor = $convert.base64Decode('Ch9Bc3NpZ25QZXJtaXNzaW9uVG9Hcm91cFJlc3BvbnNlEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2U=');
-@$core.Deprecated('Use removePermissionFromGroupRequestDescriptor instead')
-const RemovePermissionFromGroupRequest$json = const {
-  '1': 'RemovePermissionFromGroupRequest',
+/// Descriptor for `AssignPermissionsToGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List assignPermissionsToGroupResponseDescriptor = $convert.base64Decode('CiBBc3NpZ25QZXJtaXNzaW9uc1RvR3JvdXBSZXNwb25zZRIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
+@$core.Deprecated('Use removePermissionsFromGroupRequestDescriptor instead')
+const RemovePermissionsFromGroupRequest$json = const {
+  '1': 'RemovePermissionsFromGroupRequest',
   '2': const [
     const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '10': 'groupId'},
-    const {'1': 'permission_id', '3': 2, '4': 1, '5': 3, '10': 'permissionId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
   ],
 };
 
-/// Descriptor for `RemovePermissionFromGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removePermissionFromGroupRequestDescriptor = $convert.base64Decode('CiBSZW1vdmVQZXJtaXNzaW9uRnJvbUdyb3VwUmVxdWVzdBIZCghncm91cF9pZBgBIAEoA1IHZ3JvdXBJZBIjCg1wZXJtaXNzaW9uX2lkGAIgASgDUgxwZXJtaXNzaW9uSWQ=');
-@$core.Deprecated('Use removePermissionFromGroupResponseDescriptor instead')
-const RemovePermissionFromGroupResponse$json = const {
-  '1': 'RemovePermissionFromGroupResponse',
+/// Descriptor for `RemovePermissionsFromGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List removePermissionsFromGroupRequestDescriptor = $convert.base64Decode('CiFSZW1vdmVQZXJtaXNzaW9uc0Zyb21Hcm91cFJlcXVlc3QSGQoIZ3JvdXBfaWQYASABKANSB2dyb3VwSWQSJwoPcGVybWlzc2lvbnNfaWRzGAIgAygDUg5wZXJtaXNzaW9uc0lkcw==');
+@$core.Deprecated('Use removePermissionsFromGroupResponseDescriptor instead')
+const RemovePermissionsFromGroupResponse$json = const {
+  '1': 'RemovePermissionsFromGroupResponse',
   '2': const [
     const {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
     const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
-/// Descriptor for `RemovePermissionFromGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removePermissionFromGroupResponseDescriptor = $convert.base64Decode('CiFSZW1vdmVQZXJtaXNzaW9uRnJvbUdyb3VwUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
+/// Descriptor for `RemovePermissionsFromGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List removePermissionsFromGroupResponseDescriptor = $convert.base64Decode('CiJSZW1vdmVQZXJtaXNzaW9uc0Zyb21Hcm91cFJlc3BvbnNlEhgKB3N1Y2Nlc3MYASABKAhSB3N1Y2Nlc3MSGAoHbWVzc2FnZRgCIAEoCVIHbWVzc2FnZQ==');
 @$core.Deprecated('Use listGroupPermissionsRequestDescriptor instead')
 const ListGroupPermissionsRequest$json = const {
   '1': 'ListGroupPermissionsRequest',
@@ -71,12 +71,12 @@ const ListGroupPermissionsResponse$json = const {
 
 /// Descriptor for `ListGroupPermissionsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listGroupPermissionsResponseDescriptor = $convert.base64Decode('ChxMaXN0R3JvdXBQZXJtaXNzaW9uc1Jlc3BvbnNlEjkKC3Blcm1pc3Npb25zGAEgAygLMhcudjEuRWZmZWN0aXZlUGVybWlzc2lvblILcGVybWlzc2lvbnM=');
-@$core.Deprecated('Use assignPermissionToUserRequestDescriptor instead')
-const AssignPermissionToUserRequest$json = const {
-  '1': 'AssignPermissionToUserRequest',
+@$core.Deprecated('Use assignPermissionsToUserRequestDescriptor instead')
+const AssignPermissionsToUserRequest$json = const {
+  '1': 'AssignPermissionsToUserRequest',
   '2': const [
     const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
-    const {'1': 'permission_id', '3': 2, '4': 1, '5': 3, '10': 'permissionId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
     const {'1': 'expires_at', '3': 3, '4': 1, '5': 3, '9': 0, '10': 'expiresAt', '17': true},
   ],
   '8': const [
@@ -84,40 +84,40 @@ const AssignPermissionToUserRequest$json = const {
   ],
 };
 
-/// Descriptor for `AssignPermissionToUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignPermissionToUserRequestDescriptor = $convert.base64Decode('Ch1Bc3NpZ25QZXJtaXNzaW9uVG9Vc2VyUmVxdWVzdBIXCgd1c2VyX2lkGAEgASgDUgZ1c2VySWQSIwoNcGVybWlzc2lvbl9pZBgCIAEoA1IMcGVybWlzc2lvbklkEiIKCmV4cGlyZXNfYXQYAyABKANIAFIJZXhwaXJlc0F0iAEBQg0KC19leHBpcmVzX2F0');
-@$core.Deprecated('Use assignPermissionToUserResponseDescriptor instead')
-const AssignPermissionToUserResponse$json = const {
-  '1': 'AssignPermissionToUserResponse',
+/// Descriptor for `AssignPermissionsToUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List assignPermissionsToUserRequestDescriptor = $convert.base64Decode('Ch5Bc3NpZ25QZXJtaXNzaW9uc1RvVXNlclJlcXVlc3QSFwoHdXNlcl9pZBgBIAEoA1IGdXNlcklkEicKD3Blcm1pc3Npb25zX2lkcxgCIAMoA1IOcGVybWlzc2lvbnNJZHMSIgoKZXhwaXJlc19hdBgDIAEoA0gAUglleHBpcmVzQXSIAQFCDQoLX2V4cGlyZXNfYXQ=');
+@$core.Deprecated('Use assignPermissionsToUserResponseDescriptor instead')
+const AssignPermissionsToUserResponse$json = const {
+  '1': 'AssignPermissionsToUserResponse',
   '2': const [
     const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
-/// Descriptor for `AssignPermissionToUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignPermissionToUserResponseDescriptor = $convert.base64Decode('Ch5Bc3NpZ25QZXJtaXNzaW9uVG9Vc2VyUmVzcG9uc2USGAoHbWVzc2FnZRgCIAEoCVIHbWVzc2FnZQ==');
-@$core.Deprecated('Use removePermissionFromUserRequestDescriptor instead')
-const RemovePermissionFromUserRequest$json = const {
-  '1': 'RemovePermissionFromUserRequest',
+/// Descriptor for `AssignPermissionsToUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List assignPermissionsToUserResponseDescriptor = $convert.base64Decode('Ch9Bc3NpZ25QZXJtaXNzaW9uc1RvVXNlclJlc3BvbnNlEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2U=');
+@$core.Deprecated('Use removePermissionsFromUserRequestDescriptor instead')
+const RemovePermissionsFromUserRequest$json = const {
+  '1': 'RemovePermissionsFromUserRequest',
   '2': const [
     const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
-    const {'1': 'permission_id', '3': 2, '4': 1, '5': 3, '10': 'permissionId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
   ],
 };
 
-/// Descriptor for `RemovePermissionFromUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removePermissionFromUserRequestDescriptor = $convert.base64Decode('Ch9SZW1vdmVQZXJtaXNzaW9uRnJvbVVzZXJSZXF1ZXN0EhcKB3VzZXJfaWQYASABKANSBnVzZXJJZBIjCg1wZXJtaXNzaW9uX2lkGAIgASgDUgxwZXJtaXNzaW9uSWQ=');
-@$core.Deprecated('Use removePermissionFromUserResponseDescriptor instead')
-const RemovePermissionFromUserResponse$json = const {
-  '1': 'RemovePermissionFromUserResponse',
+/// Descriptor for `RemovePermissionsFromUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List removePermissionsFromUserRequestDescriptor = $convert.base64Decode('CiBSZW1vdmVQZXJtaXNzaW9uc0Zyb21Vc2VyUmVxdWVzdBIXCgd1c2VyX2lkGAEgASgDUgZ1c2VySWQSJwoPcGVybWlzc2lvbnNfaWRzGAIgAygDUg5wZXJtaXNzaW9uc0lkcw==');
+@$core.Deprecated('Use removePermissionsFromUserResponseDescriptor instead')
+const RemovePermissionsFromUserResponse$json = const {
+  '1': 'RemovePermissionsFromUserResponse',
   '2': const [
     const {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
     const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
-/// Descriptor for `RemovePermissionFromUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removePermissionFromUserResponseDescriptor = $convert.base64Decode('CiBSZW1vdmVQZXJtaXNzaW9uRnJvbVVzZXJSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2U=');
+/// Descriptor for `RemovePermissionsFromUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List removePermissionsFromUserResponseDescriptor = $convert.base64Decode('CiFSZW1vdmVQZXJtaXNzaW9uc0Zyb21Vc2VyUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
 @$core.Deprecated('Use listUserPermissionsRequestDescriptor instead')
 const ListUserPermissionsRequest$json = const {
   '1': 'ListUserPermissionsRequest',

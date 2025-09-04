@@ -152,11 +152,11 @@ const ListGroupsResponse$json = const {
 
 /// Descriptor for `ListGroupsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listGroupsResponseDescriptor = $convert.base64Decode('ChJMaXN0R3JvdXBzUmVzcG9uc2USIQoGZ3JvdXBzGAEgAygLMgkudjEuR3JvdXBSBmdyb3Vwcw==');
-@$core.Deprecated('Use assignUserToGroupRequestDescriptor instead')
-const AssignUserToGroupRequest$json = const {
-  '1': 'AssignUserToGroupRequest',
+@$core.Deprecated('Use assignUsersToGroupRequestDescriptor instead')
+const AssignUsersToGroupRequest$json = const {
+  '1': 'AssignUsersToGroupRequest',
   '2': const [
-    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
+    const {'1': 'user_ids', '3': 1, '4': 3, '5': 3, '10': 'userIds'},
     const {'1': 'group_id', '3': 2, '4': 1, '5': 3, '10': 'groupId'},
     const {'1': 'expires_at', '3': 3, '4': 1, '5': 3, '9': 0, '10': 'expiresAt', '17': true},
   ],
@@ -165,41 +165,41 @@ const AssignUserToGroupRequest$json = const {
   ],
 };
 
-/// Descriptor for `AssignUserToGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignUserToGroupRequestDescriptor = $convert.base64Decode('ChhBc3NpZ25Vc2VyVG9Hcm91cFJlcXVlc3QSFwoHdXNlcl9pZBgBIAEoA1IGdXNlcklkEhkKCGdyb3VwX2lkGAIgASgDUgdncm91cElkEiIKCmV4cGlyZXNfYXQYAyABKANIAFIJZXhwaXJlc0F0iAEBQg0KC19leHBpcmVzX2F0');
-@$core.Deprecated('Use assignUserToGroupResponseDescriptor instead')
-const AssignUserToGroupResponse$json = const {
-  '1': 'AssignUserToGroupResponse',
+/// Descriptor for `AssignUsersToGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List assignUsersToGroupRequestDescriptor = $convert.base64Decode('ChlBc3NpZ25Vc2Vyc1RvR3JvdXBSZXF1ZXN0EhkKCHVzZXJfaWRzGAEgAygDUgd1c2VySWRzEhkKCGdyb3VwX2lkGAIgASgDUgdncm91cElkEiIKCmV4cGlyZXNfYXQYAyABKANIAFIJZXhwaXJlc0F0iAEBQg0KC19leHBpcmVzX2F0');
+@$core.Deprecated('Use assignUsersToGroupResponseDescriptor instead')
+const AssignUsersToGroupResponse$json = const {
+  '1': 'AssignUsersToGroupResponse',
   '2': const [
     const {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
     const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
-/// Descriptor for `AssignUserToGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignUserToGroupResponseDescriptor = $convert.base64Decode('ChlBc3NpZ25Vc2VyVG9Hcm91cFJlc3BvbnNlEhgKB3N1Y2Nlc3MYASABKAhSB3N1Y2Nlc3MSGAoHbWVzc2FnZRgCIAEoCVIHbWVzc2FnZQ==');
-@$core.Deprecated('Use removeUserFromGroupRequestDescriptor instead')
-const RemoveUserFromGroupRequest$json = const {
-  '1': 'RemoveUserFromGroupRequest',
+/// Descriptor for `AssignUsersToGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List assignUsersToGroupResponseDescriptor = $convert.base64Decode('ChpBc3NpZ25Vc2Vyc1RvR3JvdXBSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2U=');
+@$core.Deprecated('Use removeUsersFromGroupRequestDescriptor instead')
+const RemoveUsersFromGroupRequest$json = const {
+  '1': 'RemoveUsersFromGroupRequest',
   '2': const [
-    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
+    const {'1': 'user_ids', '3': 1, '4': 3, '5': 3, '10': 'userIds'},
     const {'1': 'group_id', '3': 2, '4': 1, '5': 3, '10': 'groupId'},
   ],
 };
 
-/// Descriptor for `RemoveUserFromGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removeUserFromGroupRequestDescriptor = $convert.base64Decode('ChpSZW1vdmVVc2VyRnJvbUdyb3VwUmVxdWVzdBIXCgd1c2VyX2lkGAEgASgDUgZ1c2VySWQSGQoIZ3JvdXBfaWQYAiABKANSB2dyb3VwSWQ=');
-@$core.Deprecated('Use removeUserFromGroupResponseDescriptor instead')
-const RemoveUserFromGroupResponse$json = const {
-  '1': 'RemoveUserFromGroupResponse',
+/// Descriptor for `RemoveUsersFromGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List removeUsersFromGroupRequestDescriptor = $convert.base64Decode('ChtSZW1vdmVVc2Vyc0Zyb21Hcm91cFJlcXVlc3QSGQoIdXNlcl9pZHMYASADKANSB3VzZXJJZHMSGQoIZ3JvdXBfaWQYAiABKANSB2dyb3VwSWQ=');
+@$core.Deprecated('Use removeUsersFromGroupResponseDescriptor instead')
+const RemoveUsersFromGroupResponse$json = const {
+  '1': 'RemoveUsersFromGroupResponse',
   '2': const [
     const {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
     const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
-/// Descriptor for `RemoveUserFromGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removeUserFromGroupResponseDescriptor = $convert.base64Decode('ChtSZW1vdmVVc2VyRnJvbUdyb3VwUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
+/// Descriptor for `RemoveUsersFromGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List removeUsersFromGroupResponseDescriptor = $convert.base64Decode('ChxSZW1vdmVVc2Vyc0Zyb21Hcm91cFJlc3BvbnNlEhgKB3N1Y2Nlc3MYASABKAhSB3N1Y2Nlc3MSGAoHbWVzc2FnZRgCIAEoCVIHbWVzc2FnZQ==');
 @$core.Deprecated('Use listGroupUsersRequestDescriptor instead')
 const ListGroupUsersRequest$json = const {
   '1': 'ListGroupUsersRequest',

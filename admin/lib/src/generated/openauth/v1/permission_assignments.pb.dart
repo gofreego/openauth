@@ -10,47 +10,47 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class AssignPermissionToGroupRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionToGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class AssignPermissionsToGroupRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionsToGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionId')
+    ..p<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionsIds', $pb.PbFieldType.K6)
     ..hasRequiredFields = false
   ;
 
-  AssignPermissionToGroupRequest._() : super();
-  factory AssignPermissionToGroupRequest({
+  AssignPermissionsToGroupRequest._() : super();
+  factory AssignPermissionsToGroupRequest({
     $fixnum.Int64? groupId,
-    $fixnum.Int64? permissionId,
+    $core.Iterable<$fixnum.Int64>? permissionsIds,
   }) {
     final _result = create();
     if (groupId != null) {
       _result.groupId = groupId;
     }
-    if (permissionId != null) {
-      _result.permissionId = permissionId;
+    if (permissionsIds != null) {
+      _result.permissionsIds.addAll(permissionsIds);
     }
     return _result;
   }
-  factory AssignPermissionToGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AssignPermissionToGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory AssignPermissionsToGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AssignPermissionsToGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  AssignPermissionToGroupRequest clone() => AssignPermissionToGroupRequest()..mergeFromMessage(this);
+  AssignPermissionsToGroupRequest clone() => AssignPermissionsToGroupRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  AssignPermissionToGroupRequest copyWith(void Function(AssignPermissionToGroupRequest) updates) => super.copyWith((message) => updates(message as AssignPermissionToGroupRequest)) as AssignPermissionToGroupRequest; // ignore: deprecated_member_use
+  AssignPermissionsToGroupRequest copyWith(void Function(AssignPermissionsToGroupRequest) updates) => super.copyWith((message) => updates(message as AssignPermissionsToGroupRequest)) as AssignPermissionsToGroupRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToGroupRequest create() => AssignPermissionToGroupRequest._();
-  AssignPermissionToGroupRequest createEmptyInstance() => create();
-  static $pb.PbList<AssignPermissionToGroupRequest> createRepeated() => $pb.PbList<AssignPermissionToGroupRequest>();
+  static AssignPermissionsToGroupRequest create() => AssignPermissionsToGroupRequest._();
+  AssignPermissionsToGroupRequest createEmptyInstance() => create();
+  static $pb.PbList<AssignPermissionsToGroupRequest> createRepeated() => $pb.PbList<AssignPermissionsToGroupRequest>();
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionToGroupRequest>(create);
-  static AssignPermissionToGroupRequest? _defaultInstance;
+  static AssignPermissionsToGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionsToGroupRequest>(create);
+  static AssignPermissionsToGroupRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get groupId => $_getI64(0);
@@ -62,23 +62,17 @@ class AssignPermissionToGroupRequest extends $pb.GeneratedMessage {
   void clearGroupId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get permissionId => $_getI64(1);
-  @$pb.TagNumber(2)
-  set permissionId($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasPermissionId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearPermissionId() => clearField(2);
+  $core.List<$fixnum.Int64> get permissionsIds => $_getList(1);
 }
 
-class AssignPermissionToGroupResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionToGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class AssignPermissionsToGroupResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionsToGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  AssignPermissionToGroupResponse._() : super();
-  factory AssignPermissionToGroupResponse({
+  AssignPermissionsToGroupResponse._() : super();
+  factory AssignPermissionsToGroupResponse({
     $core.String? message,
   }) {
     final _result = create();
@@ -87,26 +81,26 @@ class AssignPermissionToGroupResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory AssignPermissionToGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AssignPermissionToGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory AssignPermissionsToGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AssignPermissionsToGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  AssignPermissionToGroupResponse clone() => AssignPermissionToGroupResponse()..mergeFromMessage(this);
+  AssignPermissionsToGroupResponse clone() => AssignPermissionsToGroupResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  AssignPermissionToGroupResponse copyWith(void Function(AssignPermissionToGroupResponse) updates) => super.copyWith((message) => updates(message as AssignPermissionToGroupResponse)) as AssignPermissionToGroupResponse; // ignore: deprecated_member_use
+  AssignPermissionsToGroupResponse copyWith(void Function(AssignPermissionsToGroupResponse) updates) => super.copyWith((message) => updates(message as AssignPermissionsToGroupResponse)) as AssignPermissionsToGroupResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToGroupResponse create() => AssignPermissionToGroupResponse._();
-  AssignPermissionToGroupResponse createEmptyInstance() => create();
-  static $pb.PbList<AssignPermissionToGroupResponse> createRepeated() => $pb.PbList<AssignPermissionToGroupResponse>();
+  static AssignPermissionsToGroupResponse create() => AssignPermissionsToGroupResponse._();
+  AssignPermissionsToGroupResponse createEmptyInstance() => create();
+  static $pb.PbList<AssignPermissionsToGroupResponse> createRepeated() => $pb.PbList<AssignPermissionsToGroupResponse>();
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionToGroupResponse>(create);
-  static AssignPermissionToGroupResponse? _defaultInstance;
+  static AssignPermissionsToGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionsToGroupResponse>(create);
+  static AssignPermissionsToGroupResponse? _defaultInstance;
 
   @$pb.TagNumber(2)
   $core.String get message => $_getSZ(0);
@@ -118,47 +112,47 @@ class AssignPermissionToGroupResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(2);
 }
 
-class RemovePermissionFromGroupRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionFromGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class RemovePermissionsFromGroupRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionsFromGroupRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionId')
+    ..p<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionsIds', $pb.PbFieldType.K6)
     ..hasRequiredFields = false
   ;
 
-  RemovePermissionFromGroupRequest._() : super();
-  factory RemovePermissionFromGroupRequest({
+  RemovePermissionsFromGroupRequest._() : super();
+  factory RemovePermissionsFromGroupRequest({
     $fixnum.Int64? groupId,
-    $fixnum.Int64? permissionId,
+    $core.Iterable<$fixnum.Int64>? permissionsIds,
   }) {
     final _result = create();
     if (groupId != null) {
       _result.groupId = groupId;
     }
-    if (permissionId != null) {
-      _result.permissionId = permissionId;
+    if (permissionsIds != null) {
+      _result.permissionsIds.addAll(permissionsIds);
     }
     return _result;
   }
-  factory RemovePermissionFromGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RemovePermissionFromGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RemovePermissionsFromGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RemovePermissionsFromGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromGroupRequest clone() => RemovePermissionFromGroupRequest()..mergeFromMessage(this);
+  RemovePermissionsFromGroupRequest clone() => RemovePermissionsFromGroupRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromGroupRequest copyWith(void Function(RemovePermissionFromGroupRequest) updates) => super.copyWith((message) => updates(message as RemovePermissionFromGroupRequest)) as RemovePermissionFromGroupRequest; // ignore: deprecated_member_use
+  RemovePermissionsFromGroupRequest copyWith(void Function(RemovePermissionsFromGroupRequest) updates) => super.copyWith((message) => updates(message as RemovePermissionsFromGroupRequest)) as RemovePermissionsFromGroupRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromGroupRequest create() => RemovePermissionFromGroupRequest._();
-  RemovePermissionFromGroupRequest createEmptyInstance() => create();
-  static $pb.PbList<RemovePermissionFromGroupRequest> createRepeated() => $pb.PbList<RemovePermissionFromGroupRequest>();
+  static RemovePermissionsFromGroupRequest create() => RemovePermissionsFromGroupRequest._();
+  RemovePermissionsFromGroupRequest createEmptyInstance() => create();
+  static $pb.PbList<RemovePermissionsFromGroupRequest> createRepeated() => $pb.PbList<RemovePermissionsFromGroupRequest>();
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionFromGroupRequest>(create);
-  static RemovePermissionFromGroupRequest? _defaultInstance;
+  static RemovePermissionsFromGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionsFromGroupRequest>(create);
+  static RemovePermissionsFromGroupRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get groupId => $_getI64(0);
@@ -170,24 +164,18 @@ class RemovePermissionFromGroupRequest extends $pb.GeneratedMessage {
   void clearGroupId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get permissionId => $_getI64(1);
-  @$pb.TagNumber(2)
-  set permissionId($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasPermissionId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearPermissionId() => clearField(2);
+  $core.List<$fixnum.Int64> get permissionsIds => $_getList(1);
 }
 
-class RemovePermissionFromGroupResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionFromGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class RemovePermissionsFromGroupResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionsFromGroupResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'success')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  RemovePermissionFromGroupResponse._() : super();
-  factory RemovePermissionFromGroupResponse({
+  RemovePermissionsFromGroupResponse._() : super();
+  factory RemovePermissionsFromGroupResponse({
     $core.bool? success,
     $core.String? message,
   }) {
@@ -200,26 +188,26 @@ class RemovePermissionFromGroupResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory RemovePermissionFromGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RemovePermissionFromGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RemovePermissionsFromGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RemovePermissionsFromGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromGroupResponse clone() => RemovePermissionFromGroupResponse()..mergeFromMessage(this);
+  RemovePermissionsFromGroupResponse clone() => RemovePermissionsFromGroupResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromGroupResponse copyWith(void Function(RemovePermissionFromGroupResponse) updates) => super.copyWith((message) => updates(message as RemovePermissionFromGroupResponse)) as RemovePermissionFromGroupResponse; // ignore: deprecated_member_use
+  RemovePermissionsFromGroupResponse copyWith(void Function(RemovePermissionsFromGroupResponse) updates) => super.copyWith((message) => updates(message as RemovePermissionsFromGroupResponse)) as RemovePermissionsFromGroupResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromGroupResponse create() => RemovePermissionFromGroupResponse._();
-  RemovePermissionFromGroupResponse createEmptyInstance() => create();
-  static $pb.PbList<RemovePermissionFromGroupResponse> createRepeated() => $pb.PbList<RemovePermissionFromGroupResponse>();
+  static RemovePermissionsFromGroupResponse create() => RemovePermissionsFromGroupResponse._();
+  RemovePermissionsFromGroupResponse createEmptyInstance() => create();
+  static $pb.PbList<RemovePermissionsFromGroupResponse> createRepeated() => $pb.PbList<RemovePermissionsFromGroupResponse>();
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionFromGroupResponse>(create);
-  static RemovePermissionFromGroupResponse? _defaultInstance;
+  static RemovePermissionsFromGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionsFromGroupResponse>(create);
+  static RemovePermissionsFromGroupResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get success => $_getBF(0);
@@ -328,52 +316,52 @@ class ListGroupPermissionsResponse extends $pb.GeneratedMessage {
   $core.List<EffectivePermission> get permissions => $_getList(0);
 }
 
-class AssignPermissionToUserRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionToUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class AssignPermissionsToUserRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionsToUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionId')
+    ..p<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionsIds', $pb.PbFieldType.K6)
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt')
     ..hasRequiredFields = false
   ;
 
-  AssignPermissionToUserRequest._() : super();
-  factory AssignPermissionToUserRequest({
+  AssignPermissionsToUserRequest._() : super();
+  factory AssignPermissionsToUserRequest({
     $fixnum.Int64? userId,
-    $fixnum.Int64? permissionId,
+    $core.Iterable<$fixnum.Int64>? permissionsIds,
     $fixnum.Int64? expiresAt,
   }) {
     final _result = create();
     if (userId != null) {
       _result.userId = userId;
     }
-    if (permissionId != null) {
-      _result.permissionId = permissionId;
+    if (permissionsIds != null) {
+      _result.permissionsIds.addAll(permissionsIds);
     }
     if (expiresAt != null) {
       _result.expiresAt = expiresAt;
     }
     return _result;
   }
-  factory AssignPermissionToUserRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AssignPermissionToUserRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory AssignPermissionsToUserRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AssignPermissionsToUserRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  AssignPermissionToUserRequest clone() => AssignPermissionToUserRequest()..mergeFromMessage(this);
+  AssignPermissionsToUserRequest clone() => AssignPermissionsToUserRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  AssignPermissionToUserRequest copyWith(void Function(AssignPermissionToUserRequest) updates) => super.copyWith((message) => updates(message as AssignPermissionToUserRequest)) as AssignPermissionToUserRequest; // ignore: deprecated_member_use
+  AssignPermissionsToUserRequest copyWith(void Function(AssignPermissionsToUserRequest) updates) => super.copyWith((message) => updates(message as AssignPermissionsToUserRequest)) as AssignPermissionsToUserRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToUserRequest create() => AssignPermissionToUserRequest._();
-  AssignPermissionToUserRequest createEmptyInstance() => create();
-  static $pb.PbList<AssignPermissionToUserRequest> createRepeated() => $pb.PbList<AssignPermissionToUserRequest>();
+  static AssignPermissionsToUserRequest create() => AssignPermissionsToUserRequest._();
+  AssignPermissionsToUserRequest createEmptyInstance() => create();
+  static $pb.PbList<AssignPermissionsToUserRequest> createRepeated() => $pb.PbList<AssignPermissionsToUserRequest>();
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToUserRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionToUserRequest>(create);
-  static AssignPermissionToUserRequest? _defaultInstance;
+  static AssignPermissionsToUserRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionsToUserRequest>(create);
+  static AssignPermissionsToUserRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get userId => $_getI64(0);
@@ -385,13 +373,7 @@ class AssignPermissionToUserRequest extends $pb.GeneratedMessage {
   void clearUserId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get permissionId => $_getI64(1);
-  @$pb.TagNumber(2)
-  set permissionId($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasPermissionId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearPermissionId() => clearField(2);
+  $core.List<$fixnum.Int64> get permissionsIds => $_getList(1);
 
   @$pb.TagNumber(3)
   $fixnum.Int64 get expiresAt => $_getI64(2);
@@ -403,14 +385,14 @@ class AssignPermissionToUserRequest extends $pb.GeneratedMessage {
   void clearExpiresAt() => clearField(3);
 }
 
-class AssignPermissionToUserResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionToUserResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class AssignPermissionsToUserResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AssignPermissionsToUserResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  AssignPermissionToUserResponse._() : super();
-  factory AssignPermissionToUserResponse({
+  AssignPermissionsToUserResponse._() : super();
+  factory AssignPermissionsToUserResponse({
     $core.String? message,
   }) {
     final _result = create();
@@ -419,26 +401,26 @@ class AssignPermissionToUserResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory AssignPermissionToUserResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AssignPermissionToUserResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory AssignPermissionsToUserResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AssignPermissionsToUserResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  AssignPermissionToUserResponse clone() => AssignPermissionToUserResponse()..mergeFromMessage(this);
+  AssignPermissionsToUserResponse clone() => AssignPermissionsToUserResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  AssignPermissionToUserResponse copyWith(void Function(AssignPermissionToUserResponse) updates) => super.copyWith((message) => updates(message as AssignPermissionToUserResponse)) as AssignPermissionToUserResponse; // ignore: deprecated_member_use
+  AssignPermissionsToUserResponse copyWith(void Function(AssignPermissionsToUserResponse) updates) => super.copyWith((message) => updates(message as AssignPermissionsToUserResponse)) as AssignPermissionsToUserResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToUserResponse create() => AssignPermissionToUserResponse._();
-  AssignPermissionToUserResponse createEmptyInstance() => create();
-  static $pb.PbList<AssignPermissionToUserResponse> createRepeated() => $pb.PbList<AssignPermissionToUserResponse>();
+  static AssignPermissionsToUserResponse create() => AssignPermissionsToUserResponse._();
+  AssignPermissionsToUserResponse createEmptyInstance() => create();
+  static $pb.PbList<AssignPermissionsToUserResponse> createRepeated() => $pb.PbList<AssignPermissionsToUserResponse>();
   @$core.pragma('dart2js:noInline')
-  static AssignPermissionToUserResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionToUserResponse>(create);
-  static AssignPermissionToUserResponse? _defaultInstance;
+  static AssignPermissionsToUserResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AssignPermissionsToUserResponse>(create);
+  static AssignPermissionsToUserResponse? _defaultInstance;
 
   @$pb.TagNumber(2)
   $core.String get message => $_getSZ(0);
@@ -450,47 +432,47 @@ class AssignPermissionToUserResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(2);
 }
 
-class RemovePermissionFromUserRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionFromUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class RemovePermissionsFromUserRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionsFromUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionId')
+    ..p<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissionsIds', $pb.PbFieldType.K6)
     ..hasRequiredFields = false
   ;
 
-  RemovePermissionFromUserRequest._() : super();
-  factory RemovePermissionFromUserRequest({
+  RemovePermissionsFromUserRequest._() : super();
+  factory RemovePermissionsFromUserRequest({
     $fixnum.Int64? userId,
-    $fixnum.Int64? permissionId,
+    $core.Iterable<$fixnum.Int64>? permissionsIds,
   }) {
     final _result = create();
     if (userId != null) {
       _result.userId = userId;
     }
-    if (permissionId != null) {
-      _result.permissionId = permissionId;
+    if (permissionsIds != null) {
+      _result.permissionsIds.addAll(permissionsIds);
     }
     return _result;
   }
-  factory RemovePermissionFromUserRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RemovePermissionFromUserRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RemovePermissionsFromUserRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RemovePermissionsFromUserRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromUserRequest clone() => RemovePermissionFromUserRequest()..mergeFromMessage(this);
+  RemovePermissionsFromUserRequest clone() => RemovePermissionsFromUserRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromUserRequest copyWith(void Function(RemovePermissionFromUserRequest) updates) => super.copyWith((message) => updates(message as RemovePermissionFromUserRequest)) as RemovePermissionFromUserRequest; // ignore: deprecated_member_use
+  RemovePermissionsFromUserRequest copyWith(void Function(RemovePermissionsFromUserRequest) updates) => super.copyWith((message) => updates(message as RemovePermissionsFromUserRequest)) as RemovePermissionsFromUserRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromUserRequest create() => RemovePermissionFromUserRequest._();
-  RemovePermissionFromUserRequest createEmptyInstance() => create();
-  static $pb.PbList<RemovePermissionFromUserRequest> createRepeated() => $pb.PbList<RemovePermissionFromUserRequest>();
+  static RemovePermissionsFromUserRequest create() => RemovePermissionsFromUserRequest._();
+  RemovePermissionsFromUserRequest createEmptyInstance() => create();
+  static $pb.PbList<RemovePermissionsFromUserRequest> createRepeated() => $pb.PbList<RemovePermissionsFromUserRequest>();
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromUserRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionFromUserRequest>(create);
-  static RemovePermissionFromUserRequest? _defaultInstance;
+  static RemovePermissionsFromUserRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionsFromUserRequest>(create);
+  static RemovePermissionsFromUserRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get userId => $_getI64(0);
@@ -502,24 +484,18 @@ class RemovePermissionFromUserRequest extends $pb.GeneratedMessage {
   void clearUserId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get permissionId => $_getI64(1);
-  @$pb.TagNumber(2)
-  set permissionId($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasPermissionId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearPermissionId() => clearField(2);
+  $core.List<$fixnum.Int64> get permissionsIds => $_getList(1);
 }
 
-class RemovePermissionFromUserResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionFromUserResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+class RemovePermissionsFromUserResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RemovePermissionsFromUserResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'success')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  RemovePermissionFromUserResponse._() : super();
-  factory RemovePermissionFromUserResponse({
+  RemovePermissionsFromUserResponse._() : super();
+  factory RemovePermissionsFromUserResponse({
     $core.bool? success,
     $core.String? message,
   }) {
@@ -532,26 +508,26 @@ class RemovePermissionFromUserResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory RemovePermissionFromUserResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RemovePermissionFromUserResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RemovePermissionsFromUserResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RemovePermissionsFromUserResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromUserResponse clone() => RemovePermissionFromUserResponse()..mergeFromMessage(this);
+  RemovePermissionsFromUserResponse clone() => RemovePermissionsFromUserResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RemovePermissionFromUserResponse copyWith(void Function(RemovePermissionFromUserResponse) updates) => super.copyWith((message) => updates(message as RemovePermissionFromUserResponse)) as RemovePermissionFromUserResponse; // ignore: deprecated_member_use
+  RemovePermissionsFromUserResponse copyWith(void Function(RemovePermissionsFromUserResponse) updates) => super.copyWith((message) => updates(message as RemovePermissionsFromUserResponse)) as RemovePermissionsFromUserResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromUserResponse create() => RemovePermissionFromUserResponse._();
-  RemovePermissionFromUserResponse createEmptyInstance() => create();
-  static $pb.PbList<RemovePermissionFromUserResponse> createRepeated() => $pb.PbList<RemovePermissionFromUserResponse>();
+  static RemovePermissionsFromUserResponse create() => RemovePermissionsFromUserResponse._();
+  RemovePermissionsFromUserResponse createEmptyInstance() => create();
+  static $pb.PbList<RemovePermissionsFromUserResponse> createRepeated() => $pb.PbList<RemovePermissionsFromUserResponse>();
   @$core.pragma('dart2js:noInline')
-  static RemovePermissionFromUserResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionFromUserResponse>(create);
-  static RemovePermissionFromUserResponse? _defaultInstance;
+  static RemovePermissionsFromUserResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RemovePermissionsFromUserResponse>(create);
+  static RemovePermissionsFromUserResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get success => $_getBF(0);

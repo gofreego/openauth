@@ -70,13 +70,13 @@ class OpenAuthApi {
     var emptyResponse = $4.DeleteGroupResponse();
     return _client.invoke<$4.DeleteGroupResponse>(ctx, 'OpenAuth', 'DeleteGroup', request, emptyResponse);
   }
-  $async.Future<$4.AssignUserToGroupResponse> assignUserToGroup($pb.ClientContext? ctx, $4.AssignUserToGroupRequest request) {
-    var emptyResponse = $4.AssignUserToGroupResponse();
-    return _client.invoke<$4.AssignUserToGroupResponse>(ctx, 'OpenAuth', 'AssignUserToGroup', request, emptyResponse);
+  $async.Future<$4.AssignUsersToGroupResponse> assignUsersToGroup($pb.ClientContext? ctx, $4.AssignUsersToGroupRequest request) {
+    var emptyResponse = $4.AssignUsersToGroupResponse();
+    return _client.invoke<$4.AssignUsersToGroupResponse>(ctx, 'OpenAuth', 'AssignUsersToGroup', request, emptyResponse);
   }
-  $async.Future<$4.RemoveUserFromGroupResponse> removeUserFromGroup($pb.ClientContext? ctx, $4.RemoveUserFromGroupRequest request) {
-    var emptyResponse = $4.RemoveUserFromGroupResponse();
-    return _client.invoke<$4.RemoveUserFromGroupResponse>(ctx, 'OpenAuth', 'RemoveUserFromGroup', request, emptyResponse);
+  $async.Future<$4.RemoveUsersFromGroupResponse> removeUsersFromGroup($pb.ClientContext? ctx, $4.RemoveUsersFromGroupRequest request) {
+    var emptyResponse = $4.RemoveUsersFromGroupResponse();
+    return _client.invoke<$4.RemoveUsersFromGroupResponse>(ctx, 'OpenAuth', 'RemoveUsersFromGroup', request, emptyResponse);
   }
   $async.Future<$4.ListGroupUsersResponse> listGroupUsers($pb.ClientContext? ctx, $4.ListGroupUsersRequest request) {
     var emptyResponse = $4.ListGroupUsersResponse();
@@ -86,25 +86,25 @@ class OpenAuthApi {
     var emptyResponse = $4.ListUserGroupsResponse();
     return _client.invoke<$4.ListUserGroupsResponse>(ctx, 'OpenAuth', 'ListUserGroups', request, emptyResponse);
   }
-  $async.Future<$5.AssignPermissionToGroupResponse> assignPermissionToGroup($pb.ClientContext? ctx, $5.AssignPermissionToGroupRequest request) {
-    var emptyResponse = $5.AssignPermissionToGroupResponse();
-    return _client.invoke<$5.AssignPermissionToGroupResponse>(ctx, 'OpenAuth', 'AssignPermissionToGroup', request, emptyResponse);
+  $async.Future<$5.AssignPermissionsToGroupResponse> assignPermissionsToGroup($pb.ClientContext? ctx, $5.AssignPermissionsToGroupRequest request) {
+    var emptyResponse = $5.AssignPermissionsToGroupResponse();
+    return _client.invoke<$5.AssignPermissionsToGroupResponse>(ctx, 'OpenAuth', 'AssignPermissionsToGroup', request, emptyResponse);
   }
-  $async.Future<$5.RemovePermissionFromGroupResponse> removePermissionFromGroup($pb.ClientContext? ctx, $5.RemovePermissionFromGroupRequest request) {
-    var emptyResponse = $5.RemovePermissionFromGroupResponse();
-    return _client.invoke<$5.RemovePermissionFromGroupResponse>(ctx, 'OpenAuth', 'RemovePermissionFromGroup', request, emptyResponse);
+  $async.Future<$5.RemovePermissionsFromGroupResponse> removePermissionsFromGroup($pb.ClientContext? ctx, $5.RemovePermissionsFromGroupRequest request) {
+    var emptyResponse = $5.RemovePermissionsFromGroupResponse();
+    return _client.invoke<$5.RemovePermissionsFromGroupResponse>(ctx, 'OpenAuth', 'RemovePermissionsFromGroup', request, emptyResponse);
   }
   $async.Future<$5.ListGroupPermissionsResponse> listGroupPermissions($pb.ClientContext? ctx, $5.ListGroupPermissionsRequest request) {
     var emptyResponse = $5.ListGroupPermissionsResponse();
     return _client.invoke<$5.ListGroupPermissionsResponse>(ctx, 'OpenAuth', 'ListGroupPermissions', request, emptyResponse);
   }
-  $async.Future<$5.AssignPermissionToUserResponse> assignPermissionToUser($pb.ClientContext? ctx, $5.AssignPermissionToUserRequest request) {
-    var emptyResponse = $5.AssignPermissionToUserResponse();
-    return _client.invoke<$5.AssignPermissionToUserResponse>(ctx, 'OpenAuth', 'AssignPermissionToUser', request, emptyResponse);
+  $async.Future<$5.AssignPermissionsToUserResponse> assignPermissionsToUser($pb.ClientContext? ctx, $5.AssignPermissionsToUserRequest request) {
+    var emptyResponse = $5.AssignPermissionsToUserResponse();
+    return _client.invoke<$5.AssignPermissionsToUserResponse>(ctx, 'OpenAuth', 'AssignPermissionsToUser', request, emptyResponse);
   }
-  $async.Future<$5.RemovePermissionFromUserResponse> removePermissionFromUser($pb.ClientContext? ctx, $5.RemovePermissionFromUserRequest request) {
-    var emptyResponse = $5.RemovePermissionFromUserResponse();
-    return _client.invoke<$5.RemovePermissionFromUserResponse>(ctx, 'OpenAuth', 'RemovePermissionFromUser', request, emptyResponse);
+  $async.Future<$5.RemovePermissionsFromUserResponse> removePermissionsFromUser($pb.ClientContext? ctx, $5.RemovePermissionsFromUserRequest request) {
+    var emptyResponse = $5.RemovePermissionsFromUserResponse();
+    return _client.invoke<$5.RemovePermissionsFromUserResponse>(ctx, 'OpenAuth', 'RemovePermissionsFromUser', request, emptyResponse);
   }
   $async.Future<$5.ListUserPermissionsResponse> listUserPermissions($pb.ClientContext? ctx, $5.ListUserPermissionsRequest request) {
     var emptyResponse = $5.ListUserPermissionsResponse();
