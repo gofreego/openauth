@@ -23,6 +23,8 @@ abstract class GroupsRemoteDataSource {
 
   Future<ListGroupUsersResponse> getGroupUsers(Int64 groupId);
 
+  Future<ListUserGroupsResponse> getUserGroups(Int64 userId);
+
   Future<AssignUsersToGroupResponse> assignUserToGroup({
     required AssignUsersToGroupRequest request,
   });
@@ -173,6 +175,24 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to fetch group users',
+        statusCode: e.response?.statusCode,
+      );
+    } catch (e) {
+      throw NetworkException(message: 'Network error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<ListUserGroupsResponse> getUserGroups(Int64 userId) async {
+    try {
+      final response = await _apiService.get('/openauth/v1/users/$userId/groups');
+      
+      final pbResponse = ListUserGroupsResponse();
+      pbResponse.mergeFromProto3Json(response.data);
+      return pbResponse;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: e.message ?? 'Failed to fetch user groups',
         statusCode: e.response?.statusCode,
       );
     } catch (e) {

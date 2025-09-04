@@ -102,6 +102,20 @@ class GroupsRepositoryImpl implements GroupsRepository {
   }
 
   @override
+  Future<Either<Failure, List<UserGroup>>> getUserGroups(Int64 userId) async {
+    try {
+      final response = await remoteDataSource.getUserGroups(userId);
+      return Right(response.groups);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> assignUserToGroup({
     required AssignUsersToGroupRequest request,
   }) async {

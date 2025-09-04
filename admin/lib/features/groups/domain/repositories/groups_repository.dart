@@ -22,6 +22,8 @@ abstract class GroupsRepository {
 
   Future<Either<Failure, List<GroupUser>>> getGroupUsers(Int64 groupId);
 
+  Future<Either<Failure, List<UserGroup>>> getUserGroups(Int64 userId);
+
   Future<Either<Failure, void>> assignUserToGroup({
   required AssignUsersToGroupRequest request,
   });

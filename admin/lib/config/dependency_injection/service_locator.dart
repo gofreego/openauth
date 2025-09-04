@@ -42,6 +42,7 @@ import '../../features/groups/domain/repositories/groups_repository.dart';
 import '../../features/groups/domain/usecases/get_groups_usecase.dart';
 import '../../features/groups/domain/usecases/get_group_usecase.dart';
 import '../../features/groups/domain/usecases/get_group_users_usecase.dart';
+import '../../features/groups/domain/usecases/get_user_groups_usecase.dart';
 import '../../features/groups/domain/usecases/create_group_usecase.dart';
 import '../../features/groups/domain/usecases/update_group_usecase.dart';
 import '../../features/groups/domain/usecases/delete_group_usecase.dart';
@@ -197,6 +198,10 @@ Future<void> initializeDependencies({
     () => GetGroupUsersUseCase(serviceLocator<GroupsRepository>()),
   );
 
+  serviceLocator.registerLazySingleton<GetUserGroupsUseCase>(
+    () => GetUserGroupsUseCase(serviceLocator<GroupsRepository>()),
+  );
+
   serviceLocator.registerLazySingleton<CreateGroupUseCase>(
     () => CreateGroupUseCase(serviceLocator<GroupsRepository>()),
   );
@@ -278,6 +283,7 @@ Future<void> initializeDependencies({
       getGroupsUseCase: serviceLocator<GetGroupsUseCase>(),
       getGroupUseCase: serviceLocator<GetGroupUseCase>(),
       getGroupUsersUseCase: serviceLocator<GetGroupUsersUseCase>(),
+      getUserGroupsUseCase: serviceLocator<GetUserGroupsUseCase>(),
       createGroupUseCase: serviceLocator<CreateGroupUseCase>(),
       updateGroupUseCase: serviceLocator<UpdateGroupUseCase>(),
       deleteGroupUseCase: serviceLocator<DeleteGroupUseCase>(),

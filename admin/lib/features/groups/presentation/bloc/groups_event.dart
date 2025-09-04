@@ -124,3 +124,12 @@ class RemoveUserFromGroup extends GroupsEvent {
   @override
   List<Object?> get props => [groupId, userId];
 }
+
+class LoadUserGroups extends GroupsEvent {
+  final Int64 userId;
+
+  const LoadUserGroups(this.userId);
+
+  @override
+  List<Object?> get props => [userId];
+}

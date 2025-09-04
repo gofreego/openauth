@@ -8,6 +8,7 @@ import '../bloc/users_event.dart';
 import 'user_row.dart';
 import 'edit_user_dialog.dart';
 import 'user_permissions_dialog.dart';
+import 'user_groups_dialog.dart';
 import '../../../sessions/presentation/widgets/user_sessions_dialog.dart';
 import '../../../../shared/widgets/error_widget.dart' as shared;
 
@@ -150,6 +151,9 @@ class UsersTable extends StatelessWidget {
       case 'permissions':
         _showUserPermissionsDialog(user, context);
         break;
+      case 'groups':
+        _showUserGroupsDialog(user, context);
+        break;
       case 'sessions':
         _showUserSessionsDialog(user, context);
         break;
@@ -263,6 +267,13 @@ class UsersTable extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => UserPermissionsDialog(user: user),
+    );
+  }
+
+  void _showUserGroupsDialog(pb.User user, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => UserGroupsDialog(user: user),
     );
   }
 }

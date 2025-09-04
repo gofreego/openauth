@@ -359,7 +359,7 @@ func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUs
 func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGroupsFilter) ([]*dao.Group, error) {
 	// Get groups with pagination
 	query := `
-		SELECT g.id, g.name, g.display_name, g.description, g.is_system, g.is_default, g.created_at, g.updated_at
+		SELECT g.id, g.name, g.display_name, g.description, g.is_system, g.is_default,g.created_by, g.created_at, g.updated_at
 		FROM groups g
 		INNER JOIN user_groups ug ON g.id = ug.group_id
 		WHERE ug.user_id = $1

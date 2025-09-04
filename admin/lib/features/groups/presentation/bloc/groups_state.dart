@@ -134,3 +134,12 @@ class UserRemoving extends GroupsState {
 class UserRemoved extends GroupsState {
   const UserRemoved();
 }
+
+class UserGroupsLoaded extends GroupsState {
+  final List<UserGroup> groups;
+
+  const UserGroupsLoaded(this.groups);
+
+  @override
+  List<Object?> get props => [groups];
+}

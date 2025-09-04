@@ -5,6 +5,7 @@ import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import '../../domain/usecases/get_groups_usecase.dart';
 import '../../domain/usecases/get_group_usecase.dart';
 import '../../domain/usecases/get_group_users_usecase.dart';
+import '../../domain/usecases/get_user_groups_usecase.dart';
 import '../../domain/usecases/create_group_usecase.dart';
 import '../../domain/usecases/update_group_usecase.dart';
 import '../../domain/usecases/delete_group_usecase.dart';
@@ -16,6 +17,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
   final GetGroupsUseCase getGroupsUseCase;
   final GetGroupUseCase getGroupUseCase;
   final GetGroupUsersUseCase getGroupUsersUseCase;
+  final GetUserGroupsUseCase getUserGroupsUseCase;
   final CreateGroupUseCase createGroupUseCase;
   final UpdateGroupUseCase updateGroupUseCase;
   final DeleteGroupUseCase deleteGroupUseCase;
@@ -26,6 +28,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     required this.getGroupsUseCase,
     required this.getGroupUseCase,
     required this.getGroupUsersUseCase,
+    required this.getUserGroupsUseCase,
     required this.createGroupUseCase,
     required this.updateGroupUseCase,
     required this.deleteGroupUseCase,
@@ -35,6 +38,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     on<SearchGroups>(_onSearchGroups);
     on<LoadGroup>(_onLoadGroup);
     on<LoadGroupUsers>(_onLoadGroupUsers);
+    on<LoadUserGroups>(_onLoadUserGroups);
     on<CreateGroup>(_onCreateGroup);
     on<UpdateGroup>(_onUpdateGroup);
     on<DeleteGroup>(_onDeleteGroup);
@@ -201,6 +205,22 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
           // Refresh the groups list
           add(LoadGroups(search: _currentSearchQuery));
         },
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onLoadUserGroups(
+      LoadUserGroups event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const GroupsLoading());
+
+      final result = await getUserGroupsUseCase.call(userId: event.userId);
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (userGroups) => emit(UserGroupsLoaded(userGroups)),
       );
     } catch (e) {
       emit(GroupsError(e.toString()));

@@ -329,6 +329,11 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           label: const Text('Permissions'),
                         ),
                         ElevatedButton.icon(
+                          onPressed: () => widget.onUserAction?.call('groups', widget.user, context),
+                          icon: const Icon(Icons.group_outlined, size: 16),
+                          label: const Text('Groups'),
+                        ),
+                        ElevatedButton.icon(
                           onPressed: () => widget.onUserAction?.call('sessions', widget.user, context),
                           icon: const Icon(Icons.schedule_outlined, size: 16),
                           label: const Text('Sessions'),
