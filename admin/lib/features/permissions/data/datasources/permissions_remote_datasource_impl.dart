@@ -30,7 +30,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
 
       // For now, return mock data until backend is ready
       var response = await _apiService.get(
-        '/openauth/v1/permissions?search=${request.search}&limit=${request.limit}&offset=${request.offset}&all?=${request.all}',
+        '/openauth/v1/permissions?search=${request.search}&limit=${request.limit}&offset=${request.offset}&all=${request.all}',
       );
       var pbResponse = ListPermissionsResponse();
       pbResponse.mergeFromProto3Json(response.data);

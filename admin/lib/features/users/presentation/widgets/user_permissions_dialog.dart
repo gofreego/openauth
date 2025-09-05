@@ -575,10 +575,10 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
         leading: CircleAvatar(
           backgroundColor: isSelected
               ? theme.colorScheme.primary
-              : theme.colorScheme.secondary.withValues(alpha: 0.1),
+              : Colors.green.withValues(alpha: 0.1),
           child: Icon(
             isSelected ? Icons.check_circle : Icons.add_circle_outline,
-            color: isSelected ? Colors.white : theme.colorScheme.secondary,
+            color: isSelected ? Colors.white : Colors.green,
           ),
         ),
         title: Text(
@@ -804,7 +804,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             : IconButton(
                 icon: Icon(
                   isSelected ? Icons.check_circle : Icons.remove_circle_outline,
-                  color: isSelected ? Colors.red : Colors.red,
+                  color:  Colors.red,
                 ),
                 tooltip: isSelected
                     ? 'Deselect for bulk removal'
