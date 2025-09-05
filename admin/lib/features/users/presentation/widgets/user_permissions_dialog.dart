@@ -26,8 +26,12 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
   String _searchQuery = '';
   List<Permission> _availablePermissions = [];
   List<EffectivePermission> _userPermissions = [];
-  Set<Int64> selectedPermissions = <Int64>{}; // Track selected permissions to add
+  Set<Int64> selectedPermissions =
+      <Int64>{}; // Track selected permissions to add
+  Set<Int64> selectedRemovePermissions =
+      <Int64>{}; // Track selected permissions to remove
   bool _isAssigning = false;
+  bool _isRemoving = false;
 
   @override
   void initState() {
@@ -37,7 +41,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
       context.read<UserPermissionsBloc>().add(
             ListUserPermissionsRequest(userId: widget.user.id),
           );
-      context.read<PermissionsBloc>().add(ListPermissionsRequest(limit: 20, offset: 0));
+      context.read<PermissionsBloc>().add(ListPermissionsRequest(all: true));
     });
   }
 
@@ -53,207 +57,312 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             selectedPermissions.clear();
             _isAssigning = false;
           });
-            
+
           // Show success message
           ToastUtils.showSuccess(state.message);
+        } else if (state is UserPermissionRemoved) {
+          // Clear selections when permissions are successfully removed
+          setState(() {
+            selectedRemovePermissions.clear();
+            _isRemoving = false;
+          });
+
+          // Show success message
+          ToastUtils.showSuccess(state.message);
+
+          // Refresh permissions list
+          context.read<UserPermissionsBloc>().add(
+                ListUserPermissionsRequest(userId: widget.user.id),
+              );
         } else if (state is UserPermissionsError) {
           setState(() {
             _isAssigning = false;
+            _isRemoving = false;
           });
-          
+
           // Show error message
           ToastUtils.showError(state.message);
         }
       },
       child: Dialog(
-      child: Container(
-        width: 1200, // Increased width for side-by-side layout
-        height: 700,
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: theme.colorScheme.primary,
-                  backgroundImage: widget.user.avatarUrl.isNotEmpty
-                      ? NetworkImage(widget.user.avatarUrl)
-                      : null,
-                  child: widget.user.avatarUrl.isEmpty
-                      ? Text(
-                          _getInitial(),
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Manage Permissions',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'for ${widget.user.name} (@${widget.user.username})',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // Search bar
-            CustomSearchBar(
-              hintText: 'Search permissions...',
-              initialQuery: _searchQuery,
-              triggerSearchOnKeyStroke: true,
-              onSearch: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-
-            // Side by side layout
-            Expanded(
-              child: Row(
+        child: Container(
+          width: 1200, // Increased width for side-by-side layout
+          height: 700,
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
                 children: [
-                  // Current permissions (left side)
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: theme.colorScheme.primary,
+                    backgroundImage: widget.user.avatarUrl.isNotEmpty
+                        ? NetworkImage(widget.user.avatarUrl)
+                        : null,
+                    child: widget.user.avatarUrl.isEmpty
+                        ? Text(
+                            _getInitial(),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Current Permissions',
-                          style: theme.textTheme.titleLarge?.copyWith(
+                          'Manage Permissions',
+                          style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Expanded(child: _buildCurrentPermissionsPanel()),
+                        Text(
+                          'for ${widget.user.name} (@${widget.user.username})',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.7),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 24),
-                  // Available permissions (right side)
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Available Permissions',
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Spacer(),
-                            if (selectedPermissions.isNotEmpty)
-                              Chip(
-                                label: Text('${selectedPermissions.length} selected'),
-                                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Expanded(child: _buildAvailablePermissionsPanel()),
-                      ],
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 24),
 
-            // Action buttons
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (selectedPermissions.isNotEmpty)
-                  TextButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        selectedPermissions.clear();
-                      });
-                    },
-                    icon: const Icon(Icons.clear_all),
-                    label: const Text('Clear Selection'),
-                  )
-                else
-                  const SizedBox.shrink(),
-                Row(
+              // Search bar
+              CustomSearchBar(
+                hintText: 'Search permissions...',
+                initialQuery: _searchQuery,
+                triggerSearchOnKeyStroke: true,
+                onSearch: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Side by side layout
+              Expanded(
+                child: Row(
                   children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Close'),
-                    ),
-                    const SizedBox(width: 8),
-                    if (selectedPermissions.isNotEmpty)
-                      BlocConsumer<UserPermissionsBloc, UserPermissionsState>(
-                        listener: (context, state) {
-                          if (state is UserPermissionAssigned) {
-                            setState(() {
-                              selectedPermissions.clear();
-                              _isAssigning = false;
-                            });
-                            ToastUtils.showSuccess('Permissions assigned successfully');
-                            // Refresh permissions
-                            context.read<UserPermissionsBloc>().add(
-                                  ListUserPermissionsRequest(userId:  widget.user.id),
-                                );
-                          } else if (state is UserPermissionsError) {
-                            setState(() {
-                              _isAssigning = false;
-                            });
-                            ToastUtils.showError('Error: ${state.message}');
-                          }
-                        },
-                        builder: (context, state) {
-                          return ElevatedButton.icon(
-                            onPressed: _isAssigning ? null : _assignSelectedPermissions,
-                            icon: _isAssigning
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  )
-                                : const Icon(Icons.add_circle),
-                            label: Text(
-                              _isAssigning
-                                  ? 'Assigning...'
-                                  : 'Assign ${selectedPermissions.length} Permission${selectedPermissions.length == 1 ? '' : 's'}',
-                            ),
-                          );
-                        },
+                    // Current permissions (left side)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Current Permissions',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              if (selectedRemovePermissions.isNotEmpty)
+                                Chip(
+                                  label: Text(
+                                      '${selectedRemovePermissions.length} selected'),
+                                  backgroundColor:
+                                      Colors.red.withValues(alpha: 0.1),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Expanded(child: _buildCurrentPermissionsPanel()),
+                        ],
                       ),
+                    ),
+                    const SizedBox(width: 24),
+                    // Available permissions (right side)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Available Permissions',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              if (selectedPermissions.isNotEmpty)
+                                Chip(
+                                  label: Text(
+                                      '${selectedPermissions.length} selected'),
+                                  backgroundColor: theme.colorScheme.primary
+                                      .withValues(alpha: 0.1),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Expanded(child: _buildAvailablePermissionsPanel()),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
-          ],
+              ),
+
+              // Action buttons
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Left side - Clear buttons
+                  Row(
+                    children: [
+                      if (selectedPermissions.isNotEmpty)
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              selectedPermissions.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.clear_all),
+                          label: const Text('Clear Add Selection'),
+                        ),
+                      if (selectedPermissions.isNotEmpty &&
+                          selectedRemovePermissions.isNotEmpty)
+                        const SizedBox(width: 8),
+                      if (selectedRemovePermissions.isNotEmpty)
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              selectedRemovePermissions.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.clear_all),
+                          label: const Text('Clear Remove Selection'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.red,
+                          ),
+                        ),
+                    ],
+                  ),
+                  // Right side - Action buttons
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Close'),
+                      ),
+                      const SizedBox(width: 8),
+                      if (selectedRemovePermissions.isNotEmpty)
+                        BlocConsumer<UserPermissionsBloc, UserPermissionsState>(
+                          listener: (context, state) {
+                            if (state is UserPermissionRemoved) {
+                              setState(() {
+                                selectedRemovePermissions.clear();
+                                _isRemoving = false;
+                              });
+                              ToastUtils.showSuccess(
+                                  'Permissions removed successfully');
+                              // Refresh permissions
+                              context.read<UserPermissionsBloc>().add(
+                                    ListUserPermissionsRequest(
+                                        userId: widget.user.id),
+                                  );
+                            } else if (state is UserPermissionsError) {
+                              setState(() {
+                                _isRemoving = false;
+                              });
+                              ToastUtils.showError('Error: ${state.message}');
+                            }
+                          },
+                          builder: (context, state) {
+                            return ElevatedButton.icon(
+                              onPressed: _isRemoving
+                                  ? null
+                                  : _removeSelectedPermissions,
+                              icon: _isRemoving
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                    )
+                                  : const Icon(Icons.remove_circle),
+                              label: Text(
+                                _isRemoving
+                                    ? 'Removing...'
+                                    : 'Remove ${selectedRemovePermissions.length} Permission${selectedRemovePermissions.length == 1 ? '' : 's'}',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                            );
+                          },
+                        ),
+                      if (selectedRemovePermissions.isNotEmpty &&
+                          selectedPermissions.isNotEmpty)
+                        const SizedBox(width: 8),
+                      if (selectedPermissions.isNotEmpty)
+                        BlocConsumer<UserPermissionsBloc, UserPermissionsState>(
+                          listener: (context, state) {
+                            if (state is UserPermissionAssigned) {
+                              setState(() {
+                                selectedPermissions.clear();
+                                _isAssigning = false;
+                              });
+                              ToastUtils.showSuccess(
+                                  'Permissions assigned successfully');
+                              // Refresh permissions
+                              context.read<UserPermissionsBloc>().add(
+                                    ListUserPermissionsRequest(
+                                        userId: widget.user.id),
+                                  );
+                            } else if (state is UserPermissionsError) {
+                              setState(() {
+                                _isAssigning = false;
+                              });
+                              ToastUtils.showError('Error: ${state.message}');
+                            }
+                          },
+                          builder: (context, state) {
+                            return ElevatedButton.icon(
+                              onPressed: _isAssigning
+                                  ? null
+                                  : _assignSelectedPermissions,
+                              icon: _isAssigning
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                    )
+                                  : const Icon(Icons.add_circle),
+                              label: Text(
+                                _isAssigning
+                                    ? 'Assigning...'
+                                    : 'Assign ${selectedPermissions.length} Permission${selectedPermissions.length == 1 ? '' : 's'}',
+                              ),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 
@@ -350,7 +459,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const Icon(Icons.error_outline,
+                        size: 48, color: Colors.red),
                     const SizedBox(height: 16),
                     Text(
                       'Error loading available permissions',
@@ -385,70 +495,71 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 );
               }
 
-          _availablePermissions = state.permissions
-              .map((entity) => Permission(
-                    id: entity.id,
-                    name: entity.name,
-                    displayName: entity.displayName,
-                    description: entity.description,
-                  ))
-              .toList();
+              _availablePermissions = state.permissions
+                  .map((entity) => Permission(
+                        id: entity.id,
+                        name: entity.name,
+                        displayName: entity.displayName,
+                        description: entity.description,
+                      ))
+                  .toList();
 
-          // Filter out permissions already assigned to user
-          final assignedPermissionIds =
-              _userPermissions.map((p) => p.permissionId.toInt()).toSet();
-          final unassignedPermissions =
-              _availablePermissions.where((permission) {
-            return !assignedPermissionIds.contains(permission.id.toInt());
-          }).toList();
+              // Filter out permissions already assigned to user
+              final assignedPermissionIds =
+                  _userPermissions.map((p) => p.permissionId.toInt()).toSet();
+              final unassignedPermissions =
+                  _availablePermissions.where((permission) {
+                return !assignedPermissionIds.contains(permission.id.toInt());
+              }).toList();
 
-          final filteredPermissions = unassignedPermissions.where((permission) {
-            if (_searchQuery.isEmpty) return true;
-            return permission.displayName
-                    .toLowerCase()
-                    .contains(_searchQuery.toLowerCase()) ||
-                permission.description
-                    .toLowerCase()
-                    .contains(_searchQuery.toLowerCase());
-          }).toList();
+              final filteredPermissions =
+                  unassignedPermissions.where((permission) {
+                if (_searchQuery.isEmpty) return true;
+                return permission.displayName
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase()) ||
+                    permission.description
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase());
+              }).toList();
 
-          if (filteredPermissions.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.check_circle_outline,
-                      size: 48, color: Colors.green),
-                  const SizedBox(height: 16),
-                  Text(
-                    _searchQuery.isEmpty
-                        ? 'All permissions assigned'
-                        : 'No available permissions found matching "$_searchQuery"',
-                    style: Theme.of(context).textTheme.titleMedium,
+              if (filteredPermissions.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.check_circle_outline,
+                          size: 48, color: Colors.green),
+                      const SizedBox(height: 16),
+                      Text(
+                        _searchQuery.isEmpty
+                            ? 'All permissions assigned'
+                            : 'No available permissions found matching "$_searchQuery"',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _searchQuery.isEmpty
+                            ? 'This user has been assigned all available permissions.'
+                            : 'Try adjusting your search query.',
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _searchQuery.isEmpty
-                        ? 'This user has been assigned all available permissions.'
-                        : 'Try adjusting your search query.',
-                  ),
-                ],
-              ),
-            );
-          }
+                );
+              }
 
-          return ListView.builder(
-            itemCount: filteredPermissions.length,
-            itemBuilder: (context, index) {
-              final permission = filteredPermissions[index];
-              return _buildSelectablePermissionCard(permission);
-            },
-          );
-        }
-        return const SizedBox.shrink();
+              return ListView.builder(
+                itemCount: filteredPermissions.length,
+                itemBuilder: (context, index) {
+                  final permission = filteredPermissions[index];
+                  return _buildSelectablePermissionCard(permission);
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        );
       },
-    );
-  },
     );
   }
 
@@ -458,9 +569,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      color: isSelected 
-          ? theme.colorScheme.primary.withValues(alpha: 0.1)
-          : null,
+      color:
+          isSelected ? theme.colorScheme.primary.withValues(alpha: 0.1) : null,
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: isSelected
@@ -468,9 +578,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
               : theme.colorScheme.secondary.withValues(alpha: 0.1),
           child: Icon(
             isSelected ? Icons.check_circle : Icons.add_circle_outline,
-            color: isSelected
-                ? Colors.white
-                : theme.colorScheme.secondary,
+            color: isSelected ? Colors.white : theme.colorScheme.secondary,
           ),
         ),
         title: Text(
@@ -498,10 +606,12 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             final permissionId = permission.id;
             if (isSelected) {
               selectedPermissions.remove(permissionId);
-              debugPrint('Deselected permission: ${permission.displayName} (ID: $permissionId)');
+              debugPrint(
+                  'Deselected permission: ${permission.displayName} (ID: $permissionId)');
             } else {
               selectedPermissions.add(permissionId);
-              debugPrint('Selected permission: ${permission.displayName} (ID: $permissionId)');
+              debugPrint(
+                  'Selected permission: ${permission.displayName} (ID: $permissionId)');
             }
             debugPrint('Total selected: ${selectedPermissions.length}');
           });
@@ -526,18 +636,83 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
         );
   }
 
+  void _removeSelectedPermissions() {
+    if (selectedRemovePermissions.isEmpty) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Permissions'),
+        content: Text(
+          'Are you sure you want to remove ${selectedRemovePermissions.length} permission${selectedRemovePermissions.length == 1 ? '' : 's'} from ${widget.user.name}?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _isRemoving = true;
+              });
+              context.read<UserPermissionsBloc>().add(
+                    RemovePermissionsFromUserRequest(
+                      userId: widget.user.id,
+                      permissionsIds: selectedRemovePermissions.toList(),
+                    ),
+                  );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCurrentPermissionCard(EffectivePermission permission) {
     final theme = Theme.of(context);
     final bool isGroupPermission = permission.source.toLowerCase() == 'group';
+    final bool isSelected =
+        selectedRemovePermissions.contains(permission.permissionId);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
+      color: isSelected ? Colors.red.withValues(alpha: 0.1) : null,
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-          child: Icon(
-            Icons.security_outlined,
-            color: theme.colorScheme.primary,
+        leading: GestureDetector(
+          onTap: isGroupPermission
+              ? null
+              : () {
+                  setState(() {
+                    if (isSelected) {
+                      selectedRemovePermissions.remove(permission.permissionId);
+                    } else {
+                      selectedRemovePermissions.add(permission.permissionId);
+                    }
+                  });
+                },
+          child: CircleAvatar(
+            backgroundColor: isSelected
+                ? Colors.red
+                : theme.colorScheme.primary.withValues(alpha: 0.1),
+            child: Icon(
+              isSelected
+                  ? Icons.check_circle
+                  : isGroupPermission
+                      ? Icons.security_outlined
+                      : Icons.remove_circle_outline,
+              color: isSelected
+                  ? Colors.white
+                  : isGroupPermission
+                      ? theme.colorScheme.primary
+                      : Colors.red,
+            ),
           ),
         ),
         title: Text(
@@ -597,7 +772,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                   Text(
                     'Group : ${permission.groupDisplayName.isNotEmpty ? permission.groupDisplayName : permission.groupName}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -605,6 +780,17 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             ),
           ],
         ),
+        onTap: isGroupPermission
+            ? null
+            : () {
+                setState(() {
+                  if (isSelected) {
+                    selectedRemovePermissions.remove(permission.permissionId);
+                  } else {
+                    selectedRemovePermissions.add(permission.permissionId);
+                  }
+                });
+              },
         trailing: isGroupPermission
             ? IconButton(
                 icon: Icon(
@@ -616,10 +802,21 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 onPressed: null, // Disabled
               )
             : IconButton(
-                icon:
-                    const Icon(Icons.remove_circle_outline, color: Colors.red),
-                tooltip: 'Remove permission',
-                onPressed: () => _removePermission(permission),
+                icon: Icon(
+                  isSelected ? Icons.check_circle : Icons.remove_circle_outline,
+                  color: isSelected ? Colors.red : Colors.red,
+                ),
+                tooltip: isSelected
+                    ? 'Deselect for bulk removal'
+                    : 'Remove permission',
+                onPressed: isSelected
+                    ? () {
+                        setState(() {
+                          selectedRemovePermissions
+                              .remove(permission.permissionId);
+                        });
+                      }
+                    : () => _removePermission(permission),
               ),
       ),
     );
