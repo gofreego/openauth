@@ -28,7 +28,7 @@ class _AnimatedStatCardState extends State<AnimatedStatCard>
   late AnimationController _animationController;
   late AnimationController _pulseController;
   late Animation<double> _animation;
-  late Animation<double> _pulseAnimation;
+  late Animation<Offset> _pulseAnimation;
   late Animation<Color?> _colorAnimation;
   int _previousValue = 0;
   int _currentValue = 0;
@@ -54,17 +54,17 @@ class _AnimatedStatCardState extends State<AnimatedStatCard>
       curve: Curves.easeInOut,
     ));
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
+    _pulseAnimation = Tween<Offset>(
+      begin: const Offset(1.0, 0.0),
+      end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _pulseController,
-      curve: Curves.elasticOut,
+      curve: Curves.fastOutSlowIn,
     ));
 
     _colorAnimation = ColorTween(
       begin: widget.color,
-      end: widget.color.withOpacity(0.7),
+      end: widget.color.withValues(alpha: 0.9),
     ).animate(CurvedAnimation(
       parent: _pulseController,
       curve: Curves.easeInOut,
@@ -146,18 +146,20 @@ class _AnimatedStatCardState extends State<AnimatedStatCard>
                           final animatedValue = (_previousValue + 
                               (_currentValue - _previousValue) * _animation.value).round();
                           
-                          return Transform.scale(
-                            scale: _pulseAnimation.value,
-                            child: Text(
-                              animatedValue.toString(),
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: _colorAnimation.value ?? widget.color,
-                                fontSize: numberSize,
+                          return ClipRect(
+                            child: SlideTransition(
+                              position: _pulseAnimation,
+                              child: Text(
+                                animatedValue.toString(),
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: _colorAnimation.value ?? widget.color,
+                                  fontSize: numberSize,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           );
                         },

@@ -47,6 +47,14 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  void _loadStatsInBackground() {
+    context.read<DashboardBloc>().add(BackgroundStatsRequest());
+    // Reset countdown when auto-refreshing
+    if (_autoRefreshEnabled) {
+      _secondsUntilRefresh = _refreshIntervalSeconds;
+    }
+  }
+
   void _startAutoRefresh() {
     if (_autoRefreshEnabled) {
       _refreshTimer?.cancel();
@@ -58,7 +66,7 @@ class _DashboardPageState extends State<DashboardPage> {
       _refreshTimer = Timer.periodic(
         Duration(seconds: _refreshIntervalSeconds),
         (timer) {
-          _loadStats();
+          _loadStatsInBackground(); // Use background loading for auto-refresh
           _secondsUntilRefresh = _refreshIntervalSeconds;
         },
       );
@@ -133,11 +141,11 @@ class _DashboardPageState extends State<DashboardPage> {
               // Auto-refresh controls
               BlocBuilder<DashboardBloc, DashboardState>(
                 builder: (context, state) {
-                  final isLoading = state is DashboardLoading;
+                  final isLoading = state is DashboardLoading && state.isInitialLoad;
                   
                   return Row(
                     children: [
-                      // Loading indicator when refreshing
+                      // Loading indicator when refreshing (only for initial loads)
                       if (isLoading)
                         Container(
                           margin: const EdgeInsets.only(right: 8),
@@ -275,7 +283,7 @@ class _DashboardPageState extends State<DashboardPage> {
           // Stats cards
           BlocBuilder<DashboardBloc, DashboardState>(
             builder: (context, state) {
-              if (state is DashboardLoading) {
+              if (state is DashboardLoading && state.isInitialLoad) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
@@ -319,6 +327,12 @@ class _DashboardPageState extends State<DashboardPage> {
                   ? state.stats 
                   : null;
               
+              // Check if we should animate based on value changes
+              final shouldAnimateUsers = state is DashboardLoaded && state.totalUsersChanged;
+              final shouldAnimateActiveUsers = state is DashboardLoaded && state.activeUsersChanged;
+              final shouldAnimatePermissions = state is DashboardLoaded && state.totalPermissionsChanged;
+              final shouldAnimateGroups = state is DashboardLoaded && state.totalGroupsChanged;
+              
               return Row(
                 children: [
                   Expanded(
@@ -327,6 +341,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.totalUsers.toString() ?? '0',
                       icon: Icons.people,
                       color: Colors.blue,
+                      shouldAnimate: shouldAnimateUsers,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -336,6 +351,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.activeUsers.toString() ?? '0',
                       icon: Icons.access_time,
                       color: Colors.green,
+                      shouldAnimate: shouldAnimateActiveUsers,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -345,6 +361,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.totalPermissions.toString() ?? '0',
                       icon: Icons.security,
                       color: Colors.orange,
+                      shouldAnimate: shouldAnimatePermissions,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -354,6 +371,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.totalGroups.toString() ?? '0',
                       icon: Icons.group,
                       color: Colors.indigoAccent,
+                      shouldAnimate: shouldAnimateGroups,
                     ),
                   ),
                 ],
