@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/features/groups/presentation/widgets/group_card.dart';
 import 'package:openauth/features/groups/presentation/widgets/group_details_dialog.dart';
+import 'package:openauth/features/groups/presentation/widgets/manage_group_members_dialog.dart';
+import 'package:openauth/features/groups/presentation/widgets/manage_group_permissions_dialog.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import '../../../users/presentation/bloc/users_bloc.dart';
+import '../../../permissions/presentation/bloc/permissions_bloc.dart';
 import '../bloc/groups_bloc.dart';
+import '../bloc/group_permissions_bloc.dart';
 
 class GroupsGrid extends StatefulWidget {
   final List<Group> groups;
@@ -168,8 +172,11 @@ class _GroupsGridState extends State<GroupsGrid> {
       case 'delete':
         _showDeleteGroupDialog(context, group);
         break;
-      case 'manage_users':
-        _showManageUsersDialog(context, group);
+      case 'manage_members':
+        _showManageMembersDialog(context, group);
+        break;
+      case 'manage_permissions':
+        _showManagePermissionsDialog(context, group);
         break;
     }
   }
@@ -262,25 +269,35 @@ class _GroupsGridState extends State<GroupsGrid> {
     );
   }
 
-  void _showManageUsersDialog(BuildContext context, Group group) {
+  void _showManageMembersDialog(BuildContext context, Group group) {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('Manage Users - ${group.displayName}'),
-        content: const SizedBox(
-          width: 600,
-          height: 400,
-          child: Center(
-            child: Text('User management functionality coming soon...'),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
+      builder: (dialogContext) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: context.read<GroupsBloc>()),
+          BlocProvider.value(value: context.read<UsersBloc>()),
         ],
+        child: ManageGroupMembersDialog(
+          group: group,
+        ),
+      ),
+    );
+  }
+
+  void _showManagePermissionsDialog(BuildContext context, Group group) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: context.read<GroupsBloc>()),
+          BlocProvider.value(value: context.read<PermissionsBloc>()),
+          BlocProvider.value(value: context.read<GroupPermissionsBloc>()),
+        ],
+        child: ManageGroupPermissionsDialog(
+          group: group,
+        ),
       ),
     );
   }
 }
+

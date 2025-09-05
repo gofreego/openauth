@@ -58,12 +58,22 @@ class GroupCard extends StatelessWidget {
                         ),
                       ),
                       const PopupMenuItem(
-                        value: 'manage_users',
+                        value: 'manage_members',
                         child: Row(
                           children: [
                             Icon(Icons.people),
                             SizedBox(width: 8),
-                            Text('Manage Users'),
+                            Text('Manage Members'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'manage_permissions',
+                        child: Row(
+                          children: [
+                            Icon(Icons.security),
+                            SizedBox(width: 8),
+                            Text('Manage Permissions'),
                           ],
                         ),
                       ),
