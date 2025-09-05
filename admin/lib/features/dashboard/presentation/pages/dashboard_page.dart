@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/src/generated/openauth/v1/stats.pb.dart';
@@ -13,11 +14,95 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  Timer? _refreshTimer;
+  Timer? _countdownTimer;
+  bool _autoRefreshEnabled = true;
+  int _refreshIntervalSeconds = 5;
+  int _secondsUntilRefresh = 5;
+  
+  // Available refresh intervals in seconds
+  final List<int> _refreshIntervals = [1, 5, 10, 30, 60];
+
   @override
   void initState() {
     super.initState();
     // Load stats when the page initializes
+    _loadStats();
+    // Start auto-refresh
+    _startAutoRefresh();
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    _countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  void _loadStats() {
     context.read<DashboardBloc>().add(StatsRequest());
+    // Reset countdown when manually refreshing
+    if (_autoRefreshEnabled) {
+      _secondsUntilRefresh = _refreshIntervalSeconds;
+    }
+  }
+
+  void _startAutoRefresh() {
+    if (_autoRefreshEnabled) {
+      _refreshTimer?.cancel();
+      _countdownTimer?.cancel();
+      
+      _secondsUntilRefresh = _refreshIntervalSeconds;
+      
+      // Timer for actual refresh
+      _refreshTimer = Timer.periodic(
+        Duration(seconds: _refreshIntervalSeconds),
+        (timer) {
+          _loadStats();
+          _secondsUntilRefresh = _refreshIntervalSeconds;
+        },
+      );
+      
+      // Timer for countdown display
+      _countdownTimer = Timer.periodic(
+        const Duration(seconds: 1),
+        (timer) {
+          setState(() {
+            _secondsUntilRefresh--;
+            if (_secondsUntilRefresh <= 0) {
+              _secondsUntilRefresh = _refreshIntervalSeconds;
+            }
+          });
+        },
+      );
+    }
+  }
+
+  void _stopAutoRefresh() {
+    _refreshTimer?.cancel();
+    _countdownTimer?.cancel();
+    _refreshTimer = null;
+    _countdownTimer = null;
+  }
+
+  void _toggleAutoRefresh() {
+    setState(() {
+      _autoRefreshEnabled = !_autoRefreshEnabled;
+      if (_autoRefreshEnabled) {
+        _startAutoRefresh();
+      } else {
+        _stopAutoRefresh();
+      }
+    });
+  }
+
+  void _updateRefreshInterval(int newInterval) {
+    setState(() {
+      _refreshIntervalSeconds = newInterval;
+      if (_autoRefreshEnabled) {
+        _startAutoRefresh(); // Restart with new interval
+      }
+    });
   }
 
   @override
@@ -45,22 +130,145 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               const Spacer(),
-              // Refresh button
-              IconButton(
-                onPressed: () {
-                  context.read<DashboardBloc>().add(StatsRequest());
+              // Auto-refresh controls
+              BlocBuilder<DashboardBloc, DashboardState>(
+                builder: (context, state) {
+                  final isLoading = state is DashboardLoading;
+                  
+                  return Row(
+                    children: [
+                      // Loading indicator when refreshing
+                      if (isLoading)
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      // Auto-refresh toggle
+                      IconButton(
+                        onPressed: _toggleAutoRefresh,
+                        icon: Icon(
+                          _autoRefreshEnabled ? Icons.pause : Icons.play_arrow,
+                          color: _autoRefreshEnabled ? Colors.green : Colors.grey,
+                        ),
+                        tooltip: _autoRefreshEnabled ? 'Pause auto-refresh' : 'Enable auto-refresh',
+                      ),
+                      const SizedBox(width: 8),
+                      // Refresh interval dropdown
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            value: _refreshIntervalSeconds,
+                            isDense: true,
+                            items: _refreshIntervals.map((int interval) {
+                              return DropdownMenuItem<int>(
+                                value: interval,
+                                child: Text(
+                                  interval == 1 ? '1 sec' : '$interval sec',
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                _updateRefreshInterval(newValue);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Manual refresh button
+                      IconButton(
+                        onPressed: isLoading ? null : _loadStats,
+                        icon: const Icon(Icons.refresh),
+                        tooltip: 'Refresh Stats',
+                      ),
+                    ],
+                  );
                 },
-                icon: const Icon(Icons.refresh),
-                tooltip: 'Refresh Stats',
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            'Overview of your OpenAuth system',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+          Row(
+            children: [
+              Text(
+                'Overview of your OpenAuth system',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const Spacer(),
+              // Auto-refresh status
+              if (_autoRefreshEnabled)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.refresh,
+                        size: 14,
+                        color: Colors.green.shade700,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Next refresh in ${_secondsUntilRefresh}s',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.pause,
+                        size: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Auto-refresh paused',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 32),
 
@@ -98,9 +306,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () {
-                          context.read<DashboardBloc>().add( StatsRequest());
-                        },
+                        onPressed: _loadStats,
                         child: const Text('Retry'),
                       ),
                     ],
