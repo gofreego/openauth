@@ -18,7 +18,7 @@ func (r *Repository) CreateUserProfile(ctx context.Context, profile *dao.Profile
 	fmt.Printf("Repository: Creating profile with metadata: %s\n", string(profile.Metadata))
 
 	query := `
-		INSERT INTO user_profiles (uuid, profile_name, user_id, first_name, last_name, display_name, bio, 
+		INSERT INTO user_profiles (uuid, user_id, profile_name, first_name, last_name, display_name, bio, 
 			avatar_url, date_of_birth, gender, timezone, locale, country, city, address, 
 			postal_code, website_url, metadata, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
@@ -35,7 +35,7 @@ func (r *Repository) CreateUserProfile(ctx context.Context, profile *dao.Profile
 	}
 
 	row := r.connManager.Primary().QueryRowContext(ctx, query,
-		profile.UUID, profile.ProfileName, profile.UserID, profile.FirstName, profile.LastName,
+		profile.UUID, profile.UserID, profile.ProfileName, profile.FirstName, profile.LastName,
 		profile.DisplayName, profile.Bio, profile.AvatarURL, profile.DateOfBirth,
 		profile.Gender, profile.Timezone, profile.Locale, profile.Country,
 		profile.City, profile.Address, profile.PostalCode, profile.WebsiteURL,
@@ -232,7 +232,7 @@ func (r *Repository) scanProfileFromRows(rows *sql.Rows) (*dao.Profile, error) {
 	var profile dao.Profile
 	var metadataStr sql.NullString
 	err := rows.Scan(
-		&profile.ID, &profile.UUID, &profile.ProfileName, &profile.UserID, &profile.FirstName,
+		&profile.ID, &profile.UUID, &profile.UserID, &profile.ProfileName, &profile.FirstName,
 		&profile.LastName, &profile.DisplayName, &profile.Bio, &profile.AvatarURL,
 		&profile.DateOfBirth, &profile.Gender, &profile.Timezone, &profile.Locale,
 		&profile.Country, &profile.City, &profile.Address, &profile.PostalCode,
@@ -256,7 +256,7 @@ func (r *Repository) scanProfile(row *sql.Row) (*dao.Profile, error) {
 	var profile dao.Profile
 	var metadataStr sql.NullString
 	err := row.Scan(
-		&profile.ID, &profile.UUID, &profile.ProfileName, &profile.UserID, &profile.FirstName,
+		&profile.ID, &profile.UUID, &profile.UserID, &profile.ProfileName, &profile.FirstName,
 		&profile.LastName, &profile.DisplayName, &profile.Bio, &profile.AvatarURL,
 		&profile.DateOfBirth, &profile.Gender, &profile.Timezone, &profile.Locale,
 		&profile.Country, &profile.City, &profile.Address, &profile.PostalCode,
