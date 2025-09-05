@@ -7,7 +7,6 @@ import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
-import '../../domain/utils/user_utils.dart';
 
 class EditUserDialog extends StatefulWidget {
   final pb.User user;
@@ -60,11 +59,6 @@ class _EditUserDialogState extends State<EditUserDialog> {
     super.dispose();
   }
 
-  /// Get initials for avatar display, handling empty strings safely
-  String _getInitials() {
-    return UserUtils.getInitials(widget.user);
-  }
-
   /// Check if the current user is the admin user
   bool _isAdminUser() {
     return widget.user.username.toLowerCase() == 'admin';
@@ -103,7 +97,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   : null,
               child: widget.user.avatarUrl.isEmpty
                   ? Text(
-                      _getInitials(),
+                      UtilityFunctions.getInitials(widget.user.name),
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     )

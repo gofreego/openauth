@@ -3,14 +3,7 @@ import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 /// Repository interface for authentication operations
 abstract class AuthRepository {
   /// Sign in an existing user
-  Future<pb.SignInResponse> signIn({
-    required String username, // username, email, or phone
-    required String password,
-    String? deviceId,
-    String? deviceName,
-    String? deviceType,
-    bool rememberMe = false,
-  });
+  Future<pb.SignInResponse> signIn(pb.SignInRequest request);
 
   /// Refresh authentication tokens
   Future<pb.RefreshTokenResponse> refreshToken(String refreshToken);

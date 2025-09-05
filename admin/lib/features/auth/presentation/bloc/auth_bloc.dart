@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 
-import '../../domain/repositories/auth_repository.dart';
+import '../../data/repositories/auth_repository.dart';
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -91,11 +91,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
 
     try {
-      final session = await _authRepository.signIn(
-        username: event.username,
-        password: event.password,
-        rememberMe: event.rememberMe,
-      );
+      final session = await _authRepository.signIn(event.request);
 
       emit(AuthAuthenticated(session));
     } catch (e) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/src/generated/openauth/v1/sessions.pb.dart';
 import '../../../../shared/shared.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
@@ -256,10 +257,11 @@ class _SignInPageState extends State<SignInPage> {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
         AuthSignInRequested(
-          username: _usernameController.text.trim(),
-          password: _passwordController.text,
-          rememberMe: _rememberMe,
-        ),
+          request: SignInRequest(
+            username: _usernameController.text.trim(),
+            password: _passwordController.text,
+            rememberMe: _rememberMe,
+          ))
       );
     }
   }

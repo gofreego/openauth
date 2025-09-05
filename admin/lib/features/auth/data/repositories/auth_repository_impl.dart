@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../domain/repositories/auth_repository.dart';
+import 'auth_repository.dart';
 import '../../../../shared/shared.dart';
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
@@ -19,29 +19,17 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._httpClient, this._prefs, this._sessionManager);
 
   @override
-  Future<pb.SignInResponse> signIn({
-    required String username,
-    required String password,
-    String? deviceId,
-    String? deviceName,
-    String? deviceType,
-    bool rememberMe = false,
-  }) async {
+  Future<pb.SignInResponse> signIn(pb.SignInRequest request) async {
     try {
       // Get device information if not provided
       final deviceSession = await DeviceUtils.createDeviceSession();
-      
-      final request = pb.SignInRequest(
-        username: username,
-        password: password,
-        rememberMe: rememberMe,
-        includePermissions: true,
-        metadata: pb.SignInMetadata(
-          deviceId: deviceId ?? deviceSession['deviceId'],
-          deviceName: deviceName ?? deviceSession['deviceName'],
-          deviceType: deviceType ?? deviceSession['deviceType'],
-        ),
+    
+      request.metadata = pb.SignInMetadata(
+        deviceId: deviceSession['deviceId'],
+        deviceName: deviceSession['deviceName'],
+        deviceType: deviceSession['deviceType'],
       );
+
 
       final response = await _httpClient.post<Map<String, dynamic>>(
         '/openauth/v1/auth/signin',
@@ -57,13 +45,13 @@ class AuthRepositoryImpl implements AuthRepository {
         // Create enhanced session with device tracking
         await _sessionManager.createSession(
           signInResponse: signInResponse,
-          identifier: username,
-          rememberMe: rememberMe,
+          identifier: request.username,
+          rememberMe: request.rememberMe,
         );
         
         return signInResponse;
       }
-      
+
       throw Exception('Sign in failed: Invalid response');
     } catch (e) {
       throw Exception('Sign in failed: $e');

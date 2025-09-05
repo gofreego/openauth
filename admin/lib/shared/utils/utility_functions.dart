@@ -3,6 +3,25 @@ import 'package:fixnum/fixnum.dart';
 
 
 class UtilityFunctions {
+
+  static String getInitials(String name) {
+    final firstName = name.split(' ').first;
+    final lastName = name.split(' ').last;
+
+    if (firstName.isEmpty && lastName.isEmpty) {
+      return 'UN';
+    }
+
+    String initials = '';
+    if (firstName.isNotEmpty) {
+      initials += firstName[0].toUpperCase();
+    }
+    if (lastName.isNotEmpty) {
+      initials += lastName[0].toUpperCase();
+    }
+    return initials;
+  }
+  
   static String formatDate(Int64 millis) {
     final date = DateTime.fromMillisecondsSinceEpoch(millis.toInt());
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';

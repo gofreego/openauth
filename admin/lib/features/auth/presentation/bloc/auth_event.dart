@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:openauth/src/generated/openauth/v1/sessions.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 
 abstract class AuthEvent extends Equatable {
@@ -13,18 +14,13 @@ class AuthCheckRequested extends AuthEvent {
 }
 
 class AuthSignInRequested extends AuthEvent {
-  final String username;
-  final String password;
-  final bool rememberMe;
-
+  final SignInRequest request;
   const AuthSignInRequested({
-    required this.username,
-    required this.password,
-    this.rememberMe = false,
+    required this.request,
   });
 
   @override
-  List<Object?> get props => [username, password, rememberMe];
+  List<Object?> get props => [request];
 }
 
 class AuthSignOutRequested extends AuthEvent {

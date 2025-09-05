@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
-import '../../domain/utils/user_utils.dart';
 import 'edit_user_dialog.dart';
 
 class UserRow extends StatelessWidget {
@@ -182,6 +181,6 @@ class UserRow extends StatelessWidget {
   }
 
   String _getInitial() {
-    return UserUtils.getInitials(user);
+    return UtilityFunctions.getInitials(user.name);
   }
 }
