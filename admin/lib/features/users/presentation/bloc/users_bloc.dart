@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/features/users/data/repositories/users_repository.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pbserver.dart';
 import 'package:protobuf/protobuf.dart';
+import '../../../../core/constants/app_constants.dart';
 import 'users_state.dart';
 
 class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
@@ -69,7 +70,7 @@ class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
         // Refresh the users list
         if (!isClosed) {
           add(ListUsersRequest(
-            limit: 20,
+            limit: PaginationConstants.defaultPageLimit,
             offset: 0,
           ));
         }
@@ -89,7 +90,7 @@ class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
         // Refresh the users list
         if (!isClosed) {
           add(ListUsersRequest(
-            limit: 20,
+            limit: PaginationConstants.defaultPageLimit,
             offset: 0,
           ));
         }
@@ -109,7 +110,7 @@ class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
         // Refresh the users list
         if (!isClosed) {
           add(ListUsersRequest(
-            limit: 20,
+            limit: PaginationConstants.defaultPageLimit,
             offset: 0,
           ));
         }

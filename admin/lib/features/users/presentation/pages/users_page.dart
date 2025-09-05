@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../shared/shared.dart';
 import '../widgets/users_header.dart';
 import '../widgets/users_table.dart';
@@ -26,7 +26,7 @@ class _UsersPageState extends State<UsersPage> {
     // Load users when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UsersBloc>().add(ListUsersRequest(
-        limit: 20,
+        limit: PaginationConstants.defaultPageLimit,
         offset: 0,
       ));
     });
@@ -63,7 +63,7 @@ class _UsersPageState extends State<UsersPage> {
                 _searchQuery = '';
               });
               context.read<UsersBloc>().add(ListUsersRequest(
-                limit: 20,
+                limit: PaginationConstants.defaultPageLimit,
                 offset: 0,
               ));
             },
@@ -74,36 +74,6 @@ class _UsersPageState extends State<UsersPage> {
             },
           ),
           const SizedBox(height: 16),
-          
-          // Search info and results
-          if (_searchQuery.isNotEmpty) ...[
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                border: Border.all(color: Colors.blue.shade200),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, color: Colors.blue.shade600, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _getSearchInfo(_searchQuery),
-                      style: TextStyle(
-                        color: Colors.blue.shade600,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-          const SizedBox(height: 24),
-
           // Users table
           Expanded(
             child: UsersTable(
@@ -133,38 +103,9 @@ class _UsersPageState extends State<UsersPage> {
       _searchQuery = trimmedQuery;
     });
     context.read<UsersBloc>().add(ListUsersRequest(
-      limit: 20,
+      limit: PaginationConstants.defaultPageLimit,
       offset: 0,
       search: trimmedQuery.isNotEmpty ? trimmedQuery : null,
     ));
-  }
-
-  
-
-  String _getSearchInfo(String query) {
-    if (query.isEmpty) return '';
-    
-// Check if it looks like a mobile number
-    if (UtilityFunctions.isMobile(query)) {
-      return 'Searching by mobile: $query, if you are searching by id then add id:$query';
-    }
-
-    // Check if it has id: prefix
-    if (UtilityFunctions.isNumber(query) || query.startsWith("id:") && UtilityFunctions.isNumber(query.replaceAll("id:", ""))) {
-      return 'Searching by ID: ${query.replaceAll("id:", "")}';
-    }
-
-    // Check if it looks like a UUID
-    if (UtilityFunctions.isUUID(query)) {
-      return 'Searching by UUID: $query';
-    }
-    
-    // Check if it looks like an email
-    if (RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(query)) {
-      return 'Searching by email: $query';
-    }
-    
-    // Default to general search
-    return 'Searching for: $query (name, username, email, or ID)';
   }
 }

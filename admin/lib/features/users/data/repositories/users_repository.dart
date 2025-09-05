@@ -18,4 +18,6 @@ abstract class UsersRepository {
   Future<Either<Failure, UserProfile>> updateProfile(UpdateProfileRequest request);
 
   Future<Either<Failure, void>> deleteProfile(DeleteProfileRequest request);
+
+  Future<Either<Failure, List<UserProfile>>> listUserProfiles(ListUserProfilesRequest request);
 }

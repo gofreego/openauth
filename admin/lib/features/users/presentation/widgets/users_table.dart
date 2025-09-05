@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../core/constants/app_constants.dart';
 import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
@@ -9,7 +10,10 @@ import 'user_row.dart';
 import 'edit_user_dialog.dart';
 import 'user_permissions_dialog.dart';
 import 'user_groups_dialog.dart';
+import 'user_profiles_dialog.dart';
+import '../bloc/user_profiles_bloc.dart';
 import '../../../sessions/presentation/widgets/user_sessions_dialog.dart';
+import '../../../../config/dependency_injection/service_locator.dart';
 import '../../../../shared/widgets/error_widget.dart' as shared;
 
 class UsersTable extends StatelessWidget {
@@ -90,7 +94,7 @@ class UsersTable extends StatelessWidget {
                     failure: state.failure,
                     onRetry: () {
                       context.read<UsersBloc>().add(ListUsersRequest(
-                        limit: 20,
+                        limit: PaginationConstants.defaultPageLimit,
                         offset: 0,
                       ));
                     },
@@ -173,7 +177,7 @@ class UsersTable extends StatelessWidget {
   void _loadMoreUsers(BuildContext context, UsersLoaded state) {
     final searchQuery = state.currentSearch?.isNotEmpty == true ? state.currentSearch : null;
     context.read<UsersBloc>().add(ListUsersRequest(
-      limit: 20,
+      limit: PaginationConstants.defaultPageLimit,
       offset: state.users.length,
       search: searchQuery,
     ));
@@ -192,6 +196,9 @@ class UsersTable extends StatelessWidget {
         break;
       case 'sessions':
         _showUserSessionsDialog(user, context);
+        break;
+      case 'profiles':
+        _showUserProfilesDialog(user, context);
         break;
       case 'activate':
       case 'deactivate':
@@ -243,6 +250,7 @@ class UsersTable extends StatelessWidget {
           onUserUpdated: () {
             // The BlocConsumer in the dialog will handle the success message
           },
+          onUserAction: _handleUserAction,
         ),
       ),
     );
@@ -304,6 +312,16 @@ class UsersTable extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => UserGroupsDialog(user: user),
+    );
+  }
+
+  void _showUserProfilesDialog(pb.User user, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => BlocProvider(
+        create: (context) => serviceLocator<UserProfilesBloc>(),
+        child: UserProfilesDialog(user: user),
+      ),
     );
   }
 }

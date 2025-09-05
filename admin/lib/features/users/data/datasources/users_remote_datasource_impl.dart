@@ -22,6 +22,8 @@ abstract class UsersRemoteDataSource {
   Future<pb.UpdateProfileResponse> updateProfile(pb.UpdateProfileRequest request);
 
   Future<pb.DeleteProfileResponse> deleteProfile(pb.DeleteProfileRequest request);
+
+  Future<pb.ListUserProfilesResponse> listUserProfiles(pb.ListUserProfilesRequest request);
 }
 
 class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
@@ -199,6 +201,32 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to delete profile',
+        statusCode: e.response?.statusCode,
+      );
+    } catch (e) {
+      throw NetworkException(message: 'Network error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<pb.ListUserProfilesResponse> listUserProfiles(pb.ListUserProfilesRequest request) async {
+    try {
+      final queryParams = <String, dynamic>{
+        'limit': request.limit,
+        'offset': request.offset,
+      };
+
+      var response = await _apiService.get(
+        '/openauth/v1/users/${request.userUuid}/profiles',
+        queryParameters: queryParams,
+      );
+
+      var result = pb.ListUserProfilesResponse();
+      result.mergeFromProto3Json(response.data);
+      return result;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: e.message ?? 'Failed to list user profiles',
         statusCode: e.response?.statusCode,
       );
     } catch (e) {

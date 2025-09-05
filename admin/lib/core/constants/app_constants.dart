@@ -67,26 +67,16 @@ class AppImages {
   static const String logo = 'assets/images/logo.png';
 }
 
-/// Mock Authentication Constants (for testing/demo purposes)
-class MockAuthConstants {
-  // Test Credentials
-  static const String testEmail = 'pavanyewale@gmail.com';
-  static const String testMobile = '7040309988';
-  static const String testPassword = 'password123';
-  static const String testOtp = '123456';
-  
-  // Test User Data
-  static const String testUserName = 'Pavan Yewale';
-  static const String testUserPhone = '+1234567890';
-  static const String testUserAvatar = 'https://ui-avatars.com/api/?name=Pavan+Yewale';
-  
-  // OTP Configuration
-  static const int otpLength = 6;
-  static const int otpExpirySeconds = 300; // 5 minutes
-}
-
 /// App Timing Constants
 class AppTimingConstants {
   // Splash Screen
   static const Duration splashScreenMinDuration = Duration(milliseconds: 3000);
+}
+
+/// Pagination Constants
+class PaginationConstants {
+  // Default page sizes
+  static const int defaultPageLimit = 20;
+  static const int smallPageLimit = 10;
+  static const int largePageLimit = 50;
 }

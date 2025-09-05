@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../bloc/permissions_bloc.dart';
 import '../widgets/permissions_header.dart';
 import '../widgets/permissions_grid.dart';
@@ -27,7 +28,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
     // Load permissions when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PermissionsBloc>().add(ListPermissionsRequest(
-        limit: 20,
+        limit: PaginationConstants.defaultPageLimit,
         offset: 0,
       ));
     });
@@ -74,7 +75,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     if (!bloc.isClosed) {
                       bloc.add(ListPermissionsRequest(
                         search: query.isNotEmpty ? query : null,
-                        limit: 20,
+                        limit: PaginationConstants.defaultPageLimit,
                         offset: 0,
                       ));
                     }
@@ -115,7 +116,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                           if (!bloc.isClosed) {
                             final nextOffset = state.permissions.length;
                             bloc.add(ListPermissionsRequest(
-                              limit: 20, 
+                              limit: PaginationConstants.defaultPageLimit, 
                               offset: nextOffset,
                               search: _searchQuery.isNotEmpty ? _searchQuery : null,
                             ));
@@ -151,7 +152,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                                 final bloc = context.read<PermissionsBloc>();
                                 if (!bloc.isClosed) {
                                   bloc.add(ListPermissionsRequest(
-                                    limit: 20,
+                                    limit: PaginationConstants.defaultPageLimit,
                                     offset: 0,
                                     search: _searchQuery.isNotEmpty ? _searchQuery : null,
                                   ));

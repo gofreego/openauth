@@ -359,6 +359,12 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             icon: const Icon(Icons.schedule_outlined, size: 16),
                             label: const Text('Sessions'),
                           ),
+                          ElevatedButton.icon(
+                            onPressed: () => widget.onUserAction
+                                ?.call('profiles', widget.user, context),
+                            icon: const Icon(Icons.person_outline, size: 16),
+                            label: const Text('Profiles'),
+                          ),
                           Tooltip(
                             message: _isAdminUser()
                                 ? 'Admin user cannot be deactivated'

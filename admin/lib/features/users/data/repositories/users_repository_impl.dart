@@ -125,4 +125,18 @@ class UsersRepositoryImpl implements UsersRepository {
       return Left(ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<Failure, List<pb.UserProfile>>> listUserProfiles(pb.ListUserProfilesRequest request) async {
+    try {
+      final response = await remoteDataSource.listUserProfiles(request);
+      return Right(response.profiles);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'));
+    }
+  }
 }

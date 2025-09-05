@@ -16,6 +16,11 @@ import '../../features/users/data/repositories/users_repository_impl.dart';
 import '../../features/users/data/repositories/users_repository.dart';
 import '../../features/users/presentation/bloc/users_bloc.dart';
 import '../../features/users/presentation/bloc/user_permissions_bloc.dart';
+import '../../features/users/presentation/bloc/user_profiles_bloc.dart';
+
+// Profile feature dependencies
+import '../../features/profile/data/profile_repository.dart';
+import '../../features/profile/data/profile_repository_impl.dart';
 
 // Permissions feature dependencies
 import '../../features/permissions/data/datasources/permissions_remote_datasource_impl.dart';
@@ -139,6 +144,13 @@ Future<void> initializeDependencies({
     ),
   );
 
+  // Profile repositories  
+  serviceLocator.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(
+      remoteDataSource: serviceLocator<UsersRemoteDataSource>(),
+    ),
+  );
+
   // Register BLoCs
   serviceLocator.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
@@ -155,6 +167,12 @@ Future<void> initializeDependencies({
   serviceLocator.registerLazySingleton<UserPermissionsBloc>(
     () => UserPermissionsBloc(
       repository: serviceLocator<PermissionsRepository>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<UserProfilesBloc>(
+    () => UserProfilesBloc(
+      repository: serviceLocator<ProfileRepository>(),
     ),
   );
 
