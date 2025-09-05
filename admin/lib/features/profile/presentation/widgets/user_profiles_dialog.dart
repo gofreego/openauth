@@ -75,14 +75,7 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
           );
         } else if (state is ProfilesError) {
           ToastUtils.showError('Error: ${state.message}');
-          // Reload profiles after error to ensure UI is in sync
-          context.read<ProfilesBloc>().add(
-            pb.ListUserProfilesRequest(
-              userUuid: widget.user.uuid,
-              limit: 50,
-              offset: 0,
-            ),
-          );
+          // Don't automatically retry on error to prevent infinite loops
         } else if (state is ProfileCreated) {
           ToastUtils.showSuccess(state.message);
           // Reload profiles after creation
@@ -242,6 +235,20 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
                             color: Colors.grey[600],
                           ),
                           textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            context.read<ProfilesBloc>().add(
+                              pb.ListUserProfilesRequest(
+                                userUuid: widget.user.uuid,
+                                limit: 50,
+                                offset: 0,
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Retry'),
                         ),
                       ],
                     ),
