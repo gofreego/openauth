@@ -75,16 +75,26 @@ class _GroupsPageState extends State<GroupsPage> {
             Expanded(
               child: BlocConsumer<GroupsBloc, GroupsState>(
                 listener: (context, state) {
+                  // Only listen to error states and success states for actions that affect the main list
                   if (state is GroupsError) {
                     ToastUtils.showError(state.message);
                   } else if (state is GroupCreated) {
-
                     ToastUtils.showSuccess('Group created successfully');
                   } else if (state is GroupUpdated) {
                     ToastUtils.showSuccess('Group updated successfully');
                   } else if (state is GroupDeleted) {
                     ToastUtils.showSuccess('Group deleted successfully');
                   }
+                  // Ignore member management states (GroupUsersLoading, UserAssigning, UserRemoving, etc.)
+                  // as they are handled by their respective dialogs
+                },
+                buildWhen: (previous, current) {
+                  // Only rebuild when the state is relevant for displaying groups list
+                  // Ignore member management, individual group actions, etc.
+                  return current is GroupsInitial ||
+                         current is GroupsLoading ||
+                         current is GroupsLoaded ||
+                         current is GroupsError;
                 },
                 builder: (context, state) {
                   if (state is GroupsLoading) {
@@ -149,7 +159,8 @@ class _GroupsPageState extends State<GroupsPage> {
                       ),
                     );
                   }
-                  // Initial state or other states
+                  // For any other state (like initial state), show loading
+                  // This should rarely happen due to buildWhen filter
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
