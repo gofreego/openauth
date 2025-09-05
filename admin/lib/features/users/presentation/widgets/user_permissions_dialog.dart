@@ -473,7 +473,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                       onPressed: () {
                         context
                             .read<PermissionsBloc>()
-                            .add(ListPermissionsRequest(limit: 20, offset: 0));
+                            .add(ListPermissionsRequest(all: true));
                       },
                       child: const Text('Retry'),
                     ),
