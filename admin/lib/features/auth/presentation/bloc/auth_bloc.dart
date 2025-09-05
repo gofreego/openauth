@@ -1,25 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 
-import '../../domain/usecases/sign_in_usecase.dart';
-import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final SignInUseCase _signInUseCase;
-  final SignOutUseCase _signOutUseCase;
   final AuthRepository _authRepository;
 
   AuthBloc({
-    required SignInUseCase signInUseCase,
-    required SignOutUseCase signOutUseCase,
     required AuthRepository authRepository,
-  })  : _signInUseCase = signInUseCase,
-        _signOutUseCase = signOutUseCase,
-        _authRepository = authRepository,
+  })  : _authRepository = authRepository,
         super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthSignInRequested>(_onAuthSignInRequested);
@@ -99,7 +91,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
 
     try {
-      final session = await _signInUseCase(
+      final session = await _authRepository.signIn(
         username: event.username,
         password: event.password,
         rememberMe: event.rememberMe,
@@ -118,7 +110,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
 
     try {
-      await _signOutUseCase();
+      await _authRepository.signOut();
       emit(const AuthUnauthenticated());
     } catch (e) {
       // Even if sign out fails on server, clear local data

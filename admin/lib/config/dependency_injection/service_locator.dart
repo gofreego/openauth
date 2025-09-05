@@ -8,8 +8,6 @@ import '../../core/bloc/app_bloc.dart';
 import '../../shared/shared.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
-import '../../features/auth/domain/usecases/sign_in_usecase.dart';
-import '../../features/auth/domain/usecases/sign_out_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 
 // Users feature dependencies
@@ -80,15 +78,6 @@ Future<void> initializeDependencies({
     ),
   );
 
-  // Auth Use Cases
-  serviceLocator.registerLazySingleton<SignInUseCase>(
-    () => SignInUseCase(serviceLocator<AuthRepository>()),
-  );
-  
-  serviceLocator.registerLazySingleton<SignOutUseCase>(
-    () => SignOutUseCase(serviceLocator<AuthRepository>()),
-  );
-
   // Users data sources
   serviceLocator.registerLazySingleton<UsersRemoteDataSource>(
     () => UsersRemoteDataSourceImpl(serviceLocator<ApiService>()),
@@ -152,8 +141,6 @@ Future<void> initializeDependencies({
   // Register BLoCs
   serviceLocator.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
-      signInUseCase: serviceLocator<SignInUseCase>(),
-      signOutUseCase: serviceLocator<SignOutUseCase>(),
       authRepository: serviceLocator<AuthRepository>(),
     ),
   );
