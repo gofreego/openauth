@@ -139,7 +139,7 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
   Future<ListUserPermissionsResponse> getUserPermissions(ListUserPermissionsRequest request) async {
     try {
       final response = await _apiService.get(
-        '/openauth/v1/users/${request.userId}/permissions',
+        '/openauth/v1/users/${request.userId}/effective-permissions',
       );
       var permissionList = ListUserPermissionsResponse();
       permissionList.mergeFromProto3Json(response.data);

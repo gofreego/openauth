@@ -52,7 +52,7 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
     context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
     // Load all users with search query
     context.read<UsersBloc>().add(users_pb.ListUsersRequest(
-      limit: 100, // Load more users for selection
+      limit: 20, // Load 20 users for selection
       offset: 0,
       search: searchQuery?.isNotEmpty == true ? searchQuery : null,
     ));
@@ -120,34 +120,6 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
             ),
             const SizedBox(height: 24),
 
-            // System group info
-            if (widget.group.isSystem)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  border: Border.all(color: Colors.blue.shade200),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info, color: Colors.blue.shade600, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'This is a system group. You can manage members, but permissions are controlled by the system.',
-                        style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
             // Search bar
             CustomSearchBar(
               initialQuery: _searchQuery,
@@ -167,34 +139,6 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                 });
               },
             ),
-            
-            // Search info
-            if (_searchQuery.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  border: Border.all(color: Colors.blue.shade200),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.blue.shade600, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Searching for users: "$_searchQuery" - Group members are filtered locally, available users are searched from server',
-                        style: TextStyle(
-                          color: Colors.blue.shade600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
             const SizedBox(height: 16),
 
             // Side by side layout
