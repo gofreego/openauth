@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
@@ -57,6 +58,7 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 
 	createdProfile, err := s.repo.CreateUserProfile(ctx, profile)
 	if err != nil {
+		logger.Error(ctx, "Failed to create profile for user UUID %s: %v", req.UserUuid, err)
 		return nil, status.Error(codes.Internal, "failed to create profile")
 	}
 
@@ -72,12 +74,6 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 		return nil, status.Error(codes.InvalidArgument, "user_uuid is required")
 	}
 
-	// Verify user exists
-	user, err := s.repo.GetUserByUUID(ctx, req.UserUuid)
-	if err != nil {
-		return nil, status.Error(codes.NotFound, "user not found")
-	}
-
 	// Set default pagination
 	limit := req.Limit
 	if limit <= 0 || limit > 100 {
@@ -89,7 +85,7 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 	}
 
 	// Get profiles for user
-	filters := filter.NewUserProfilesFilter(user.UUID.String(), limit, offset)
+	filters := filter.NewUserProfilesFilter(req.UserUuid, limit, offset)
 	profiles, err := s.repo.ListUserProfiles(ctx, filters)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to list profiles")
@@ -178,6 +174,7 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 		updates["updated_at"] = time.Now().Unix()
 		updatedProfile, err = s.repo.UpdateProfileByUUID(ctx, req.ProfileUuid, updates)
 		if err != nil {
+			logger.Error(ctx, "Failed to update profile for user UUID %s: %v", profile.UserID, err)
 			return nil, status.Error(codes.Internal, "failed to update profile")
 		}
 	} else {
