@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
+import '../../../users/presentation/bloc/users_bloc.dart';
 import '../bloc/groups_bloc.dart';
 import 'manage_group_permissions_dialog.dart';
 import 'manage_group_members_dialog.dart';
@@ -248,8 +249,14 @@ class _GroupDetailsDialogState extends State<GroupDetailsDialog> {
   void _showManageMembersDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (dialogContext) => ManageGroupMembersDialog(
-        group: widget.group,
+      builder: (dialogContext) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: context.read<GroupsBloc>()),
+          BlocProvider.value(value: context.read<UsersBloc>()),
+        ],
+        child: ManageGroupMembersDialog(
+          group: widget.group,
+        ),
       ),
     );
   }

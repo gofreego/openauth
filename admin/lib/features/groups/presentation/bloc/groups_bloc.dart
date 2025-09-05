@@ -22,6 +22,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
     on<CreateGroupRequest>(_onCreateGroup);
     on<UpdateGroupRequest>(_onUpdateGroup);
     on<DeleteGroupRequest>(_onDeleteGroup);
+    on<AssignUsersToGroupRequest>(_onAssignUsersToGroup);
     on<RemoveUsersFromGroupRequest>(_onRemoveUsersFromGroup);
   }
 
@@ -154,6 +155,24 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         (failure) => emit(GroupsError(failure.message)),
         (_) {
           emit(const UserRemoved());
+        },
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onAssignUsersToGroup(
+      AssignUsersToGroupRequest event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const UserAssigning());
+
+      final result = await repository.assignUserToGroup(event);
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (_) {
+          emit(const UserAssigned());
         },
       );
     } catch (e) {

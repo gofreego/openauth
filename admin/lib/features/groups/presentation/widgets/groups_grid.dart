@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/features/groups/presentation/widgets/group_card.dart';
 import 'package:openauth/features/groups/presentation/widgets/group_details_dialog.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
+import '../../../users/presentation/bloc/users_bloc.dart';
 import '../bloc/groups_bloc.dart';
 
 class GroupsGrid extends StatefulWidget {
@@ -151,8 +152,11 @@ class _GroupsGridState extends State<GroupsGrid> {
   void _showGroupDetails(BuildContext context, Group group) {
     showDialog(
       context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: context.read<GroupsBloc>(),
+      builder: (dialogContext) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: context.read<GroupsBloc>()),
+          BlocProvider.value(value: context.read<UsersBloc>()),
+        ],
         child: GroupDetailsDialog(
           group: group,
         ),

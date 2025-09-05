@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
+import '../../../../src/generated/openauth/v1/users.pb.dart' as users_pb;
+import '../../../users/presentation/bloc/users_bloc.dart';
+import '../../../users/presentation/bloc/users_state.dart';
 import '../bloc/groups_bloc.dart';
 
 class ManageGroupMembersDialog extends StatefulWidget {
@@ -19,7 +22,9 @@ class ManageGroupMembersDialog extends StatefulWidget {
 
 class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
   List<GroupUser> _groupMembers = [];
+  List<users_pb.User> _availableUsers = [];
   bool _isLoading = true;
+  bool _isLoadingUsers = true;
   String _searchQuery = '';
 
   @override
@@ -29,8 +34,10 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
   }
 
   void _loadData() {
-    // For now, just load group members - we'll add full user loading later
+    // Load group members
     context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
+    // Load all users
+    context.read<UsersBloc>().add(users_pb.ListUsersRequest());
   }
 
   @override
@@ -42,6 +49,17 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
           const SizedBox(width: 8),
           Expanded(
             child: Text('Manage Members - ${widget.group.displayName}'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: () {
+              setState(() {
+                _isLoading = true;
+                _isLoadingUsers = true;
+              });
+              _loadData();
+            },
           ),
         ],
       ),
@@ -59,21 +77,38 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                   });
                 } else if (state is UserAssigned) {
                   ToastUtils.showSuccess('User added to group successfully');
-                } else if (state is UserRemoved) {
-                  ToastUtils.showSuccess('User removed from group successfully');
                   // Reload group members
                   context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
                 } else if (state is UserRemoved) {
                   ToastUtils.showSuccess('User removed from group successfully');
                   // Reload group members
                   context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
+                } else if (state is UserAssigning) {
+                  // Show loading state
+                } else if (state is UserRemoving) {
+                  // Show loading state
                 } else if (state is GroupsError) {
                   ToastUtils.showError('Error: ${state.message}');
                 }
               },
             ),
+            BlocListener<UsersBloc, UsersState>(
+              listener: (context, state) {
+                if (state is UsersLoaded) {
+                  setState(() {
+                    _availableUsers = state.users;
+                    _isLoadingUsers = false;
+                  });
+                } else if (state is UsersError) {
+                  ToastUtils.showError('Error loading users: ${state.message}');
+                  setState(() {
+                    _isLoadingUsers = false;
+                  });
+                }
+              },
+            ),
           ],
-          child: _isLoading
+          child: _isLoading || _isLoadingUsers
               ? const Center(child: CircularProgressIndicator())
               : _buildContent(),
         ),
@@ -139,10 +174,10 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
           child: Expanded(
             child: Column(
               children: [
-                const TabBar(
+                TabBar(
                   tabs: [
-                    Tab(text: 'Group Members'),
-                    Tab(text: 'Available Users'),
+                    Tab(text: 'Group Members (${_groupMembers.length})'),
+                    const Tab(text: 'Available Users'),
                   ],
                 ),
                 Expanded(
@@ -218,23 +253,65 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
   }
 
   Widget _buildAvailableUsers() {
-    // For now, show a placeholder for available users
-    // This would be implemented when the UsersBloc is properly available
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.people_outline, size: 64, color: Colors.grey),
-          SizedBox(height: 16),
-          Text('User management coming soon...'),
-          SizedBox(height: 8),
-          Text(
-            'This feature will allow you to add new users to the group.',
-            style: TextStyle(color: Colors.grey),
-            textAlign: TextAlign.center,
+    if (_isLoadingUsers) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Filter out users that are already in the group
+    final groupMemberIds = _groupMembers.map((m) => m.userId).toSet();
+    final availableUsers = _availableUsers.where((user) {
+      if (groupMemberIds.contains(user.id)) return false;
+      if (_searchQuery.isEmpty) return true;
+      return user.username.toLowerCase().contains(_searchQuery) ||
+             user.email.toLowerCase().contains(_searchQuery) ||
+             user.name.toLowerCase().contains(_searchQuery);
+    }).toList();
+
+    if (availableUsers.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('No available users to add'),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: availableUsers.length,
+      itemBuilder: (context, index) {
+        final user = availableUsers[index];
+        return Card(
+          child: ListTile(
+            leading: CircleAvatar(
+              child: Text(
+                user.name.isNotEmpty 
+                    ? user.name[0].toUpperCase()
+                    : user.username[0].toUpperCase(),
+              ),
+            ),
+            title: Text(user.name.isNotEmpty ? user.name : user.username),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('@${user.username}'),
+                if (user.email.isNotEmpty)
+                  Text(
+                    user.email,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+              ],
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.add_circle, color: Colors.green),
+              onPressed: () => _addUserToGroup(user.id),
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -259,6 +336,33 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addUserToGroup(Int64 userId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add User'),
+        content: const Text('Are you sure you want to add this user to the group?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              context.read<GroupsBloc>().add(AssignUsersToGroupRequest(
+                groupId: widget.group.id,
+                userIds: [userId],
+              ));
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.green),
+            child: const Text('Add'),
           ),
         ],
       ),
