@@ -121,9 +121,6 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.totalUsers.toString() ?? '0',
                       icon: Icons.people,
                       color: Colors.blue,
-                      onTap: () {
-                        // TODO: Navigate to users page
-                      },
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -133,9 +130,6 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.activeUsers.toString() ?? '0',
                       icon: Icons.access_time,
                       color: Colors.green,
-                      onTap: () {
-                        // TODO: Navigate to sessions page
-                      },
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -145,9 +139,6 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.totalPermissions.toString() ?? '0',
                       icon: Icons.security,
                       color: Colors.orange,
-                      onTap: () {
-                        // TODO: Navigate to permissions page
-                      },
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -157,9 +148,6 @@ class _DashboardPageState extends State<DashboardPage> {
                       value: stats?.totalGroups.toString() ?? '0',
                       icon: Icons.group,
                       color: Colors.indigoAccent,
-                      onTap: () {
-                        // TODO: Navigate to groups page
-                      },
                     ),
                   ),
                 ],
