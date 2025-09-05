@@ -25,7 +25,10 @@ class _UsersPageState extends State<UsersPage> {
     super.initState();
     // Load users when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UsersBloc>().add(ListUsersRequest());
+      context.read<UsersBloc>().add(ListUsersRequest(
+        limit: 20,
+        offset: 0,
+      ));
     });
   }
 
@@ -59,7 +62,10 @@ class _UsersPageState extends State<UsersPage> {
               setState(() {
                 _searchQuery = '';
               });
-              context.read<UsersBloc>().add(ListUsersRequest());
+              context.read<UsersBloc>().add(ListUsersRequest(
+                limit: 20,
+                offset: 0,
+              ));
             },
             onKeyStrokeChanged: (value) => {
               setState(() {
@@ -126,7 +132,11 @@ class _UsersPageState extends State<UsersPage> {
     setState(() {
       _searchQuery = trimmedQuery;
     });
-    context.read<UsersBloc>().add(ListUsersRequest());
+    context.read<UsersBloc>().add(ListUsersRequest(
+      limit: 20,
+      offset: 0,
+      search: trimmedQuery.isNotEmpty ? trimmedQuery : null,
+    ));
   }
 
   

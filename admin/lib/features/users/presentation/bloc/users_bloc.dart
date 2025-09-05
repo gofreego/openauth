@@ -17,14 +17,43 @@ class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
   }
 
   Future<void> _onLoadUsers(ListUsersRequest event, Emitter<UsersState> emit) async {
-    emit(UsersLoading());
+    final currentState = state;
+    final isLoadMore = event.hasOffset() && event.offset > 0;
+    
+    if (!isLoadMore) {
+      emit(UsersLoading());
+    } else if (currentState is UsersLoaded) {
+      // Set loading more state
+      emit(currentState.copyWith(isLoadingMore: true));
+    }
 
     final result = await repository.getUsers(event);
     result.fold(
       (failure) => emit(UsersError(failure)),
-      (users) => emit(UsersLoaded(
-        users: users,
-      )),
+      (newUsers) {
+        if (isLoadMore && currentState is UsersLoaded) {
+          // Append new users to existing list
+          final allUsers = [...currentState.users, ...newUsers];
+          final hasReachedMax = newUsers.length < (event.hasLimit() ? event.limit : 20);
+          
+          emit(UsersLoaded(
+            users: allUsers,
+            hasReachedMax: hasReachedMax,
+            currentSearch: event.hasSearch() ? event.search : null,
+            isLoadingMore: false,
+          ));
+        } else {
+          // First load or refresh
+          final hasReachedMax = newUsers.length < (event.hasLimit() ? event.limit : 20);
+          
+          emit(UsersLoaded(
+            users: newUsers,
+            hasReachedMax: hasReachedMax,
+            currentSearch: event.hasSearch() ? event.search : null,
+            isLoadingMore: false,
+          ));
+        }
+      },
     );
   }
 
@@ -39,7 +68,10 @@ class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
         emit(UserCreated(user));
         // Refresh the users list
         if (!isClosed) {
-          add(ListUsersRequest());
+          add(ListUsersRequest(
+            limit: 20,
+            offset: 0,
+          ));
         }
       },
     );
@@ -56,7 +88,10 @@ class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
         emit(UserUpdated(user));
         // Refresh the users list
         if (!isClosed) {
-          add(ListUsersRequest());
+          add(ListUsersRequest(
+            limit: 20,
+            offset: 0,
+          ));
         }
       },
     );
@@ -73,7 +108,10 @@ class UsersBloc extends Bloc<GeneratedMessage, UsersState> {
         emit(UserDeleted(event.uuid));
         // Refresh the users list
         if (!isClosed) {
-          add(ListUsersRequest());
+          add(ListUsersRequest(
+            limit: 20,
+            offset: 0,
+          ));
         }
       },
     );

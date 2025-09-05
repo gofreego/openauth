@@ -89,7 +89,10 @@ class UsersTable extends StatelessWidget {
                   return shared.ErrorWidget(
                     failure: state.failure,
                     onRetry: () {
-                      context.read<UsersBloc>().add(ListUsersRequest());
+                      context.read<UsersBloc>().add(ListUsersRequest(
+                        limit: 20,
+                        offset: 0,
+                      ));
                     },
                   );
                 } else if (state is UsersLoaded) {
@@ -122,8 +125,32 @@ class UsersTable extends StatelessWidget {
                   }
                   
                   return ListView.builder(
-                    itemCount: state.users.length,
+                    itemCount: state.users.length + (!state.hasReachedMax && state.users.isNotEmpty ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == state.users.length) {
+                        // This is the load more button at the end of the list
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: OutlinedButton.icon(
+                            onPressed: state.isLoadingMore 
+                                ? null 
+                                : () => _loadMoreUsers(context, state),
+                            icon: state.isLoadingMore 
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.expand_more),
+                            label: Text(state.isLoadingMore ? 'Loading...' : 'Load More'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+                            ),
+                          ),
+                        );
+                      }
+                      
                       final user = state.users[index];
                       return UserRow(
                         user: user,
@@ -141,6 +168,15 @@ class UsersTable extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _loadMoreUsers(BuildContext context, UsersLoaded state) {
+    final searchQuery = state.currentSearch?.isNotEmpty == true ? state.currentSearch : null;
+    context.read<UsersBloc>().add(ListUsersRequest(
+      limit: 20,
+      offset: state.users.length,
+      search: searchQuery,
+    ));
   }
 
   void _handleUserAction(String action, pb.User user, BuildContext context) {

@@ -18,12 +18,14 @@ class UsersLoaded extends UsersState {
   final bool hasReachedMax;
   final String? currentSearch;
   final bool? currentFilter;
+  final bool isLoadingMore;
 
   const UsersLoaded({
     required this.users,
     this.hasReachedMax = true,
     this.currentSearch,
     this.currentFilter,
+    this.isLoadingMore = false,
   });
 
   UsersLoaded copyWith({
@@ -31,17 +33,19 @@ class UsersLoaded extends UsersState {
     String? currentSearch,
     bool? currentFilter,
     bool? hasReachedMax,
+    bool? isLoadingMore,
   }) {
     return UsersLoaded(
       users: users ?? this.users,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       currentSearch: currentSearch ?? this.currentSearch,
       currentFilter: currentFilter ?? this.currentFilter,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
   @override
-  List<Object?> get props => [users, hasReachedMax, currentSearch, currentFilter];
+  List<Object?> get props => [users, hasReachedMax, currentSearch, currentFilter, isLoadingMore];
 }
 
 class UsersError extends UsersState {
