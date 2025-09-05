@@ -8,7 +8,6 @@ enum NavigationSection {
   permissions,
   groups,
   settings,
-  profile,
 }
 
 class AdminSidebar extends StatelessWidget {
@@ -100,13 +99,6 @@ class AdminSidebar extends StatelessWidget {
                   title: 'Groups',
                   section: NavigationSection.groups,
                 ),
-                _buildNavigationItem(
-                  context: context,
-                  icon: Icons.settings_outlined,
-                  selectedIcon: Icons.settings,
-                  title: 'Settings',
-                  section: NavigationSection.settings,
-                ),
               ],
             ),
           ),
@@ -115,7 +107,7 @@ class AdminSidebar extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(16.0),
             child: CompactUserProfile(
-              onTap: () => onSectionChanged(NavigationSection.profile),
+              onTap: () => onSectionChanged(NavigationSection.settings),
             ),
           ),
         ],

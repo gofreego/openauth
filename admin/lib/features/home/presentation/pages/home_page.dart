@@ -8,7 +8,6 @@ import '../../../users/users.dart';
 import '../../../permissions/permissions.dart';
 import '../../../groups/groups.dart';
 import '../../../settings/settings.dart';
-import '../../../profile/profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.initialSection});
@@ -39,9 +38,6 @@ class _HomePageState extends State<HomePage> {
           break;
         case 'settings':
           _currentSection = NavigationSection.settings;
-          break;
-        case 'profile':
-          _currentSection = NavigationSection.profile;
           break;
         default:
           _currentSection = NavigationSection.dashboard;
@@ -95,15 +91,7 @@ class _HomePageState extends State<HomePage> {
       case NavigationSection.groups:
         return const GroupsPage();
       case NavigationSection.settings:
-        return SettingsPage(
-          onBackToDashboard: () {
-            setState(() {
-              _currentSection = NavigationSection.dashboard;
-            });
-          },
-        );
-      case NavigationSection.profile:
-        return const ProfilePage();
+        return const SettingsPage();
     }
   }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
+import 'package:openauth/shared/utils/utility_functions.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
+import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../../core/bloc/theme_bloc.dart';
 import '../../../../core/bloc/theme_event.dart';
 import '../../../../core/bloc/theme_state.dart';
 
 class SettingsPage extends StatelessWidget {
-  final VoidCallback? onBackToDashboard;
-
-  const SettingsPage({
-    super.key,
-    this.onBackToDashboard,
-  });
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +34,15 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                if (onBackToDashboard != null)
-                  TextButton.icon(
-                    onPressed: onBackToDashboard,
-                    icon: const Icon(Icons.arrow_back),
-                    label: const Text('Back to Dashboard'),
+                OutlinedButton.icon(
+                  onPressed: () => _handleSignOut(context),
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Sign Out'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: theme.colorScheme.error,
+                    side: BorderSide(color: theme.colorScheme.error),
                   ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -51,6 +54,122 @@ class SettingsPage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
+            // Profile Section
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is! AuthAuthenticated) {
+                  return const SizedBox.shrink();
+                }
+
+                final user = state.session.user;
+                // TODO: Profile is not part of SignInResponse, need to fetch separately
+                const profile = null; // state.session.profile;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // User Information Card
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                _buildAvatar(context, user),
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        user.name,
+                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      if (user.username.isNotEmpty)
+                                        Text(
+                                          '@${user.username}',
+                                          style: theme.textTheme.bodyLarge?.copyWith(
+                                            color: theme.colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      if (user.email.isNotEmpty) ...[
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          user.email,
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: theme.colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            const Divider(),
+                            const SizedBox(height: 24),
+                            
+                            // User Details
+                            _buildInfoSection(
+                              context,
+                              'Account Information',
+                              [
+                                if (user.email.isNotEmpty)
+                                  _InfoItem('Email', user.email, 
+                                    trailing: user.emailVerified 
+                                      ? const Icon(Icons.verified, color: Colors.green, size: 20)
+                                      : const Icon(Icons.warning, color: Colors.orange, size: 20)
+                                  ),
+                                if (user.phone.isNotEmpty)
+                                  _InfoItem('Phone', user.phone,
+                                    trailing: user.phoneVerified 
+                                      ? const Icon(Icons.verified, color: Colors.green, size: 20)
+                                      : const Icon(Icons.warning, color: Colors.orange, size: 20)
+                                  ),
+                                _InfoItem('Account Status', user.isActive ? 'Active' : 'Inactive'),
+                                if (user.lastLoginAt > 0)
+                                  _InfoItem('Last Login', _formatDateTime(user.lastLoginAt.toInt())),
+                              ],
+                            ),
+                            
+                            if (profile != null && (profile.firstName.isNotEmpty || profile.lastName.isNotEmpty || profile.bio.isNotEmpty)) ...[
+                              const SizedBox(height: 32),
+                              _buildInfoSection(
+                                context,
+                                'Profile Information',
+                                [
+                                  if (profile.firstName.isNotEmpty)
+                                    _InfoItem('First Name', profile.firstName),
+                                  if (profile.lastName.isNotEmpty)
+                                    _InfoItem('Last Name', profile.lastName),
+                                  if (profile.bio.isNotEmpty)
+                                    _InfoItem('Bio', profile.bio),
+                                  if (profile.country.isNotEmpty)
+                                    _InfoItem('Country', profile.country),
+                                  if (profile.city.isNotEmpty)
+                                    _InfoItem('City', profile.city),
+                                  if (profile.timezone.isNotEmpty)
+                                    _InfoItem('Timezone', profile.timezone),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
+                  ],
+                );
+              },
+            ),
+
             // Settings Sections
             _buildSettingsSection(
               context: context,
@@ -58,107 +177,6 @@ class SettingsPage extends StatelessWidget {
               icon: Icons.palette_outlined,
               children: [
                 _buildThemeToggle(context),
-              ],
-            ),
-            
-            const SizedBox(height: 32),
-            
-            _buildSettingsSection(
-              context: context,
-              title: 'Security',
-              icon: Icons.security_outlined,
-              children: [
-                _buildSecuritySetting(
-                  context: context,
-                  title: 'Two-Factor Authentication',
-                  subtitle: 'Add an extra layer of security to your account',
-                  icon: Icons.verified_user_outlined,
-                  isEnabled: true,
-                  onChanged: (value) {
-                    // Handle 2FA toggle
-                    _showFeatureNotImplemented(context);
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildSecuritySetting(
-                  context: context,
-                  title: 'Session Timeout',
-                  subtitle: 'Automatically log out after 30 minutes of inactivity',
-                  icon: Icons.timer_outlined,
-                  isEnabled: false,
-                  onChanged: (value) {
-                    // Handle session timeout toggle
-                    _showFeatureNotImplemented(context);
-                  },
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: 32),
-            
-            _buildSettingsSection(
-              context: context,
-              title: 'Notifications',
-              icon: Icons.notifications_outlined,
-              children: [
-                _buildNotificationSetting(
-                  context: context,
-                  title: 'Email Notifications',
-                  subtitle: 'Receive email alerts for important events',
-                  isEnabled: true,
-                  onChanged: (value) {
-                    _showFeatureNotImplemented(context);
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildNotificationSetting(
-                  context: context,
-                  title: 'Push Notifications',
-                  subtitle: 'Get notified instantly about system events',
-                  isEnabled: false,
-                  onChanged: (value) {
-                    _showFeatureNotImplemented(context);
-                  },
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: 32),
-            
-            _buildSettingsSection(
-              context: context,
-              title: 'System',
-              icon: Icons.settings_outlined,
-              children: [
-                _buildSystemSetting(
-                  context: context,
-                  title: 'Export Data',
-                  subtitle: 'Download your data in CSV format',
-                  icon: Icons.download_outlined,
-                  onTap: () {
-                    _showFeatureNotImplemented(context);
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildSystemSetting(
-                  context: context,
-                  title: 'Backup Settings',
-                  subtitle: 'Configure automatic backup preferences',
-                  icon: Icons.backup_outlined,
-                  onTap: () {
-                    _showFeatureNotImplemented(context);
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildSystemSetting(
-                  context: context,
-                  title: 'API Configuration',
-                  subtitle: 'Manage API keys and integration settings',
-                  icon: Icons.api_outlined,
-                  onTap: () {
-                    _showFeatureNotImplemented(context);
-                  },
-                ),
               ],
             ),
             
@@ -318,120 +336,7 @@ class SettingsPage extends StatelessWidget {
     if (state is ThemeDark) return 'Dark';
     return 'System';
   }
-
-  Widget _buildSecuritySetting({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required bool isEnabled,
-    required ValueChanged<bool> onChanged,
-  }) {
-    final theme = Theme.of(context);
-    
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          color: theme.colorScheme.onPrimaryContainer,
-          size: 20,
-        ),
-      ),
-      title: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      subtitle: Text(subtitle),
-      trailing: Switch(
-        value: isEnabled,
-        onChanged: onChanged,
-      ),
-    );
-  }
-
-  Widget _buildNotificationSetting({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required bool isEnabled,
-    required ValueChanged<bool> onChanged,
-  }) {
-    final theme = Theme.of(context);
-    
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          isEnabled ? Icons.notifications : Icons.notifications_off,
-          color: theme.colorScheme.onPrimaryContainer,
-          size: 20,
-        ),
-      ),
-      title: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      subtitle: Text(subtitle),
-      trailing: Switch(
-        value: isEnabled,
-        onChanged: onChanged,
-      ),
-    );
-  }
-
-  Widget _buildSystemSetting({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    VoidCallback? onTap,
-  }) {
-    final theme = Theme.of(context);
-    
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          color: theme.colorScheme.onPrimaryContainer,
-          size: 20,
-        ),
-      ),
-      title: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      subtitle: Text(subtitle),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: theme.colorScheme.onSurfaceVariant,
-      ),
-      onTap: onTap,
-    );
-  }
-
+  
   Widget _buildAboutSetting({
     required BuildContext context,
     required String title,
@@ -475,4 +380,101 @@ class SettingsPage extends StatelessWidget {
   void _showFeatureNotImplemented(BuildContext context) {
     ToastUtils.showInfo('This feature will be implemented in a future update');
   }
+
+  Widget _buildAvatar(BuildContext context, User user) {
+    final theme = Theme.of(context);
+    
+    return CircleAvatar(
+      radius: 40,
+      backgroundImage: NetworkImage(user.avatarUrl),
+      onBackgroundImageError: (_, __) {
+       Text(
+      UtilityFunctions.getInitials(user.name),
+      style: theme.textTheme.headlineSmall?.copyWith(
+        color: theme.colorScheme.onPrimary,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+      },
+    );
+  }
+
+  Widget _buildInfoSection(BuildContext context, String title, List<_InfoItem> items) {
+    final theme = Theme.of(context);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...items.map((item) => Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 120,
+                child: Text(
+                  item.label,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  item.value,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+              if (item.trailing != null) item.trailing!,
+            ],
+          ),
+        )),
+      ],
+    );
+  }
+
+  String _formatDateTime(int timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  void _handleSignOut(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Sign Out'),
+          ),
+        ],
+      ),
+    );
+    
+    if (confirmed == true && context.mounted) {
+      context.read<AuthBloc>().add(const AuthSignOutRequested());
+    }
+  }
+}
+
+class _InfoItem {
+  final String label;
+  final String value;
+  final Widget? trailing;
+
+  _InfoItem(this.label, this.value, {this.trailing});
 }
