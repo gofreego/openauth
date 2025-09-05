@@ -4,6 +4,7 @@ import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart' as pb;
+import '../../../../config/dependency_injection/service_locator.dart';
 import '../bloc/user_profiles_bloc.dart';
 import '../bloc/user_profiles_state.dart';
 
@@ -114,8 +115,8 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
         ),
         content: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: 800,
-            maxHeight: MediaQuery.of(context).size.height * 0.7,
+            maxWidth: 1000,
+            maxHeight: MediaQuery.of(context).size.height * 0.8,
           ),
           child: BlocBuilder<UserProfilesBloc, UserProfilesState>(
             builder: (context, state) {
@@ -414,8 +415,8 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
   void _showCreateProfileDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => BlocProvider.value(
-        value: context.read<UserProfilesBloc>(),
+      builder: (context) => BlocProvider(
+        create: (context) => serviceLocator<UserProfilesBloc>(),
         child: CreateEditProfileDialog(
           userUuid: widget.user.uuid,
         ),
@@ -426,8 +427,8 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
   void _showEditProfileDialog(BuildContext context, pb.UserProfile profile) {
     showDialog(
       context: context,
-      builder: (context) => BlocProvider.value(
-        value: context.read<UserProfilesBloc>(),
+      builder: (context) => BlocProvider(
+        create: (context) => serviceLocator<UserProfilesBloc>(),
         child: CreateEditProfileDialog(
           userUuid: widget.user.uuid,
           profile: profile,
@@ -537,8 +538,8 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
       title: Text(isEditing ? 'Edit Profile' : 'Create Profile'),
       content: ConstrainedBox(
         constraints: const BoxConstraints(
-          maxWidth: 500,
-          maxHeight: 600,
+          maxWidth: 700,
+          maxHeight: 750,
         ),
         child: Form(
           key: _formKey,
