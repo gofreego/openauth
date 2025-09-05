@@ -11,9 +11,7 @@ import 'edit_user_dialog.dart';
 import 'user_permissions_dialog.dart';
 import 'user_groups_dialog.dart';
 import 'user_profiles_dialog.dart';
-import '../bloc/user_profiles_bloc.dart';
 import '../../../sessions/presentation/widgets/user_sessions_dialog.dart';
-import '../../../../config/dependency_injection/service_locator.dart';
 import '../../../../shared/widgets/error_widget.dart' as shared;
 
 class UsersTable extends StatelessWidget {
@@ -318,10 +316,7 @@ class UsersTable extends StatelessWidget {
   void _showUserProfilesDialog(pb.User user, BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => BlocProvider(
-        create: (context) => serviceLocator<UserProfilesBloc>(),
-        child: UserProfilesDialog(user: user),
-      ),
+      builder: (context) => UserProfilesDialogWrapper(user: user),
     );
   }
 }
