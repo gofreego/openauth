@@ -66,22 +66,20 @@ message ListPermissionsRequest {
     
     // Number of permissions to skip for pagination (default: 0)
     optional int32 offset = 2;
+
+    optional int64 id = 3;
     
     // Search term to filter permissions by name, display_name, or description
     // Uses case-insensitive partial matching
-    optional string search = 3;
+    optional string search = 4;
+
+    optional bool all = 5;
 }
 
 // Response containing a list of permissions with pagination metadata
 message ListPermissionsResponse {
     // Array of permissions matching the request criteria
     repeated Permission permissions = 1;
-   
-    // The limit value used for this request
-    int32 limit = 2;
-
-    // The offset value used for this request
-    int32 offset = 3;
 }
 
 // Request to update an existing permission

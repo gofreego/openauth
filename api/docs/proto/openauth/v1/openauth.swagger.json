@@ -246,6 +246,12 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "all",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -474,6 +480,12 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "all",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -660,11 +672,24 @@
             "format": "int32"
           },
           {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
             "name": "search",
             "description": "Search term to filter permissions by name, display_name, or description\nUses case-insensitive partial matching",
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "all",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1282,7 +1307,6 @@
           },
           {
             "name": "limit",
-            "description": "Pagination",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1294,6 +1318,12 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "all",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -2431,16 +2461,6 @@
             "$ref": "#/definitions/v1Permission"
           },
           "title": "Array of permissions matching the request criteria"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The limit value used for this request"
-        },
-        "offset": {
-          "type": "integer",
-          "format": "int32",
-          "title": "The offset value used for this request"
         }
       },
       "title": "Response containing a list of permissions with pagination metadata"

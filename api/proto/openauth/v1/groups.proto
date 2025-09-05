@@ -101,6 +101,8 @@ message ListGroupsRequest {
 
     // Optional search query (searches name, display_name, description)
     optional string search = 4;
+
+    optional bool all = 5;
 }
 
 // ListGroupsResponse
@@ -140,6 +142,7 @@ message ListGroupUsersRequest {
     // Pagination
     int32 limit = 2;
     int32 offset = 3;
+    bool all = 4;
 }
 
 // ListGroupUsersResponse
@@ -163,9 +166,9 @@ message GroupUser {
 // ListUserGroupsRequest to get all groups for a user
 message ListUserGroupsRequest {
     int64 user_id = 1;
-    // Pagination
     int32 limit = 2;
     int32 offset = 3;
+    bool all = 4;
 }
 
 // ListUserGroupsResponse

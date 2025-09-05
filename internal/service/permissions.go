@@ -95,8 +95,6 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 
 	return &openauth_v1.ListPermissionsResponse{
 		Permissions: protoPermissions,
-		Limit:       filters.Limit,
-		Offset:      filters.Offset,
 	}, nil
 }
 
