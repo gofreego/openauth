@@ -197,7 +197,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                           Row(
                             children: [
                               Text(
-                                'Current Permissions (${_groupPermissions.length})',
+                                'Current Permissions',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
