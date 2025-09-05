@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/utility_functions.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
@@ -66,14 +68,14 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            _buildAvatar(context, user, profile),
+                            _buildAvatar(context, user),
                             const SizedBox(width: 20),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _getDisplayName(user, profile),
+                                    user.name,
                                     style: theme.textTheme.headlineSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -224,75 +226,22 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(BuildContext context, dynamic user, dynamic profile) {
+  Widget _buildAvatar(BuildContext context, User user) {
     final theme = Theme.of(context);
     
-    // Check if profile has an avatar URL
-    String? avatarUrl;
-    if (profile != null && profile.avatarUrl.isNotEmpty) {
-      avatarUrl = profile.avatarUrl;
-    }
-    
-    if (avatarUrl != null && avatarUrl.isNotEmpty) {
       return CircleAvatar(
         radius: 40,
-        backgroundImage: NetworkImage(avatarUrl),
+        backgroundImage: NetworkImage(user.avatarUrl),
         onBackgroundImageError: (_, __) {
-          // Fallback to initials if image fails to load
-        },
-      );
-    }
-    
-    // Fallback to initials avatar
-    final initials = _getInitials(_getDisplayName(user, profile));
-    return CircleAvatar(
-      radius: 40,
-      backgroundColor: theme.colorScheme.primary,
-      child: Text(
-        initials,
+         Text(
+        UtilityFunctions.getInitials(user.name),
         style: theme.textTheme.headlineSmall?.copyWith(
           color: theme.colorScheme.onPrimary,
           fontWeight: FontWeight.w600,
         ),
-      ),
-    );
-  }
-
-  String _getDisplayName(dynamic user, dynamic profile) {
-    // Try to get display name from profile first
-    if (profile != null) {
-      if (profile.displayName.isNotEmpty) {
-        return profile.displayName;
-      }
-      if (profile.firstName.isNotEmpty) {
-        String name = profile.firstName;
-        if (profile.lastName.isNotEmpty) {
-          name += ' ${profile.lastName}';
-        }
-        return name;
-      }
-    }
-    
-    // Fallback to username or email
-    if (user.username.isNotEmpty) {
-      return user.username;
-    }
-    if (user.email.isNotEmpty) {
-      return user.email;
-    }
-    
-    return 'User';
-  }
-
-  String _getInitials(String name) {
-    if (name.isEmpty) return 'U';
-    
-    final parts = name.split(' ');
-    if (parts.length >= 2) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    }
-    
-    return name.substring(0, 1).toUpperCase();
+      );
+        },
+      );
   }
 
   Widget _buildInfoSection(BuildContext context, String title, List<_InfoItem> items) {

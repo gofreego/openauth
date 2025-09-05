@@ -23,6 +23,27 @@ class UserProfilesDialog extends StatefulWidget {
 
 class _UserProfilesDialogState extends State<UserProfilesDialog> {
   @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => serviceLocator<ProfilesBloc>(),
+      child: _UserProfilesDialogContent(user: widget.user),
+    );
+  }
+}
+
+class _UserProfilesDialogContent extends StatefulWidget {
+  final pb.User user;
+
+  const _UserProfilesDialogContent({
+    required this.user,
+  });
+
+  @override
+  State<_UserProfilesDialogContent> createState() => _UserProfilesDialogContentState();
+}
+
+class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> {
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -116,6 +137,7 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
         ),
         content: ConstrainedBox(
           constraints: BoxConstraints(
+            minWidth: 700,
             maxWidth: 1000,
             maxHeight: MediaQuery.of(context).size.height * 0.8,
           ),
@@ -414,10 +436,11 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
   }
 
   void _showCreateProfileDialog(BuildContext context) {
+    final profilesBloc = context.read<ProfilesBloc>();
     showDialog(
       context: context,
-      builder: (context) => BlocProvider(
-        create: (context) => serviceLocator<ProfilesBloc>(),
+      builder: (context) => BlocProvider.value(
+        value: profilesBloc,
         child: CreateEditProfileDialog(
           userUuid: widget.user.uuid,
         ),
@@ -426,10 +449,11 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
   }
 
   void _showEditProfileDialog(BuildContext context, pb.UserProfile profile) {
+    final profilesBloc = context.read<ProfilesBloc>();
     showDialog(
       context: context,
-      builder: (context) => BlocProvider(
-        create: (context) => serviceLocator<ProfilesBloc>(),
+      builder: (context) => BlocProvider.value(
+        value: profilesBloc,
         child: CreateEditProfileDialog(
           userUuid: widget.user.uuid,
           profile: profile,

@@ -69,16 +69,28 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(isEditing ? 'Edit Profile' : 'Create Profile'),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 700,
-          maxHeight: 750,
-        ),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final dialogWidth = screenWidth * 0.6 < 600 ? 600.0 : screenWidth * 0.6 > 700 ? 700.0 : screenWidth * 0.6;
+    
+    return BlocListener<ProfilesBloc, ProfilesState>(
+      listener: (context, state) {
+        if (state is ProfileCreated || state is ProfileUpdated) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: AlertDialog(
+        title: Text(isEditing ? 'Edit Profile' : 'Create Profile'),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: 600,
+            maxWidth: 700,
+            maxHeight: 750,
+          ),
+          child: SizedBox(
+            width: dialogWidth,
+            child: Form(
+              key: _formKey,
+            child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -216,6 +228,7 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
           ),
         ),
       ),
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -237,6 +250,7 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
           },
         ),
       ],
+      ),
     );
   }
 
@@ -321,7 +335,6 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
           ),
         );
       }
-      Navigator.of(context).pop();
     }
   }
 }

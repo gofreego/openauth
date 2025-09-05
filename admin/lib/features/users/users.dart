@@ -15,4 +15,3 @@ export 'presentation/widgets/users_header.dart';
 export 'presentation/widgets/users_table.dart';
 export 'presentation/widgets/user_row.dart';
 export 'presentation/widgets/create_user_dialog.dart';
-export 'presentation/widgets/user_profiles_dialog.dart';

@@ -144,7 +144,7 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   Future<pb.CreateProfileResponse> createProfile(pb.CreateProfileRequest request) async {
     try {
       var response = await _apiService.post(
-        '/openauth/v1/profiles',
+        '/openauth/v1/users/${request.userUuid}/profiles',
         data: request.toProto3Json(),
       );
 
