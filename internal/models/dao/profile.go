@@ -31,6 +31,35 @@ type Profile struct {
 	UpdatedAt   int64      `db:"updated_at" json:"updatedAt"`
 }
 
+func (p *Profile) FromCreateProfileRequest(req *openauth_v1.CreateProfileRequest, userId int64) *Profile {
+	var dob *time.Time
+	if req.DateOfBirth != nil {
+		d := time.UnixMilli(*req.DateOfBirth)
+		dob = &d
+	}
+	now := time.Now().Unix()
+	p.UUID = uuid.New()
+	p.UserID = userId
+	p.ProfileName = req.ProfileName
+	p.FirstName = req.FirstName
+	p.LastName = req.LastName
+	p.DisplayName = req.DisplayName
+	p.Bio = req.Bio
+	p.AvatarURL = req.AvatarUrl
+	p.Gender = req.Gender
+	p.DateOfBirth = dob
+	p.Timezone = req.Timezone
+	p.Locale = req.Locale
+	p.Country = req.Country
+	p.City = req.City
+	p.Address = req.Address
+	p.PostalCode = req.PostalCode
+	p.WebsiteURL = req.WebsiteUrl
+	p.CreatedAt = now
+	p.UpdatedAt = now
+	return p
+}
+
 // ToProtoUserProfile converts a Profile DAO to protobuf UserProfile
 func (p *Profile) ToProtoUserProfile() *openauth_v1.UserProfile {
 	var dateOfBirth *int64

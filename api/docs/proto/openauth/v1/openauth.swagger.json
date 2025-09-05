@@ -2508,21 +2508,6 @@
             "type": "object",
             "$ref": "#/definitions/v1UserProfile"
           }
-        },
-        "totalCount": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "offset": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "hasMore": {
-          "type": "boolean"
         }
       },
       "title": "ListUserProfilesResponse"

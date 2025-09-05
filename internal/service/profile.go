@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/gofreego/goutils/logger"
@@ -9,7 +10,6 @@ import (
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
-	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -26,28 +26,26 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 		return nil, status.Error(codes.NotFound, "user not found")
 	}
 
-	// Create profile
-	now := time.Now().Unix()
-	profile := &dao.Profile{
-		UUID:        uuid.New(),
-		UserID:      user.ID,
-		ProfileName: req.ProfileName,
-		FirstName:   req.FirstName,
-		LastName:    req.LastName,
-		DisplayName: req.DisplayName,
-		Bio:         req.Bio,
-		AvatarURL:   req.AvatarUrl,
-		Gender:      req.Gender,
-		Timezone:    req.Timezone,
-		Locale:      req.Locale,
-		Country:     req.Country,
-		City:        req.City,
-		Address:     req.Address,
-		PostalCode:  req.PostalCode,
-		WebsiteURL:  req.WebsiteUrl,
-		Metadata:    req.Metadata,
-		CreatedAt:   now,
-		UpdatedAt:   now,
+	profile := new(dao.Profile).FromCreateProfileRequest(req, user.ID)
+
+	// Validate country field - must be 2-character ISO code or empty
+	if req.Country != nil && len(*req.Country) > 2 {
+		logger.Error(ctx, "Invalid country code provided for user UUID %s: %s (must be 2 characters or less)", req.UserUuid, *req.Country)
+		return nil, status.Error(codes.InvalidArgument, "country must be a 2-character ISO country code")
+	}
+
+	// Handle metadata - ensure it's valid JSON or null
+	if len(req.Metadata) > 0 {
+		// Validate that the metadata is valid JSON
+		if json.Valid(req.Metadata) {
+			profile.Metadata = req.Metadata
+		} else {
+			logger.Error(ctx, "Invalid JSON metadata provided for user UUID %s", req.UserUuid)
+			return nil, status.Error(codes.InvalidArgument, "invalid JSON metadata")
+		}
+	} else {
+		// Set to nil for NULL in database
+		profile.Metadata = nil
 	}
 
 	// Handle date of birth conversion
@@ -55,6 +53,9 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 		dob := time.Unix(*req.DateOfBirth, 0)
 		profile.DateOfBirth = &dob
 	}
+
+	// Debug: Log the metadata being passed
+	logger.Info(ctx, "Creating profile with metadata: %s", string(profile.Metadata))
 
 	createdProfile, err := s.repo.CreateUserProfile(ctx, profile)
 	if err != nil {
@@ -88,6 +89,7 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 	filters := filter.NewUserProfilesFilter(req.UserUuid, limit, offset)
 	profiles, err := s.repo.ListUserProfiles(ctx, filters)
 	if err != nil {
+		logger.Error(ctx, "Failed to list profiles for user UUID %s: %v", req.UserUuid, err)
 		return nil, status.Error(codes.Internal, "failed to list profiles")
 	}
 
@@ -99,8 +101,6 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 
 	return &openauth_v1.ListUserProfilesResponse{
 		Profiles: protoProfiles,
-		Limit:    limit,
-		Offset:   offset,
 	}, nil
 }
 
@@ -150,6 +150,10 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 		updates["locale"] = *req.Locale
 	}
 	if req.Country != nil {
+		if len(*req.Country) > 2 {
+			logger.Error(ctx, "Invalid country code provided: %s (must be 2 characters or less)", *req.Country)
+			return nil, status.Error(codes.InvalidArgument, "country must be a 2-character ISO country code")
+		}
 		updates["country"] = *req.Country
 	}
 	if req.City != nil {
@@ -165,7 +169,18 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 		updates["website_url"] = *req.WebsiteUrl
 	}
 	if req.Metadata != nil {
-		updates["metadata"] = req.Metadata
+		// Validate that the metadata is valid JSON if it's not empty
+		if len(req.Metadata) > 0 {
+			if json.Valid(req.Metadata) {
+				updates["metadata"] = req.Metadata
+			} else {
+				logger.Error(ctx, "Invalid JSON metadata provided for profile UUID %s", req.ProfileUuid)
+				return nil, status.Error(codes.InvalidArgument, "invalid JSON metadata")
+			}
+		} else {
+			// Set to nil for NULL in database when empty
+			updates["metadata"] = nil
+		}
 	}
 
 	// Update profile if there are changes
@@ -202,12 +217,14 @@ func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProf
 	// Get user to get UUID for counting profiles
 	user, err := s.repo.GetUserByID(ctx, profile.UserID)
 	if err != nil {
+		logger.Error(ctx, "Failed to get user for profile UUID %s: %v", req.ProfileUuid, err)
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
 	// Check if this is the user's last profile (optional business rule)
 	userProfileCount, err := s.repo.CountUserProfiles(ctx, user.UUID.String())
 	if err != nil {
+		logger.Error(ctx, "Failed to count profiles for user UUID %s: %v", user.UUID.String(), err)
 		return nil, status.Error(codes.Internal, "failed to check profile count")
 	}
 	if userProfileCount <= 1 {
@@ -217,6 +234,7 @@ func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProf
 	// Delete profile
 	err = s.repo.DeleteProfileByUUID(ctx, req.ProfileUuid)
 	if err != nil {
+		logger.Error(ctx, "Failed to delete profile UUID %s: %v", req.ProfileUuid, err)
 		return nil, status.Error(codes.Internal, "failed to delete profile")
 	}
 

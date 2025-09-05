@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
-import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../../../config/dependency_injection/service_locator.dart';
 import '../bloc/profiles_bloc.dart';
 import '../bloc/profiles_state.dart';
 import 'create_edit_profile_dialog.dart';
+import 'profile_card.dart';
 
 class UserProfilesDialog extends StatefulWidget {
   final pb.User user;
@@ -75,6 +75,14 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
           );
         } else if (state is ProfilesError) {
           ToastUtils.showError('Error: ${state.message}');
+          // Reload profiles after error to ensure UI is in sync
+          context.read<ProfilesBloc>().add(
+            pb.ListUserProfilesRequest(
+              userUuid: widget.user.uuid,
+              limit: 50,
+              offset: 0,
+            ),
+          );
         } else if (state is ProfileCreated) {
           ToastUtils.showSuccess(state.message);
           // Reload profiles after creation
@@ -197,7 +205,10 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
                           ),
                         ),
                         const SizedBox(height: 16),
-                        ...state.profiles.map((profile) => _buildProfileCard(context, profile)),
+                        ...state.profiles.map((profile) => ProfileCard(
+                          profile: profile,
+                          onProfileAction: _handleProfileAction,
+                        )),
                       ],
                     ),
                   ),
@@ -263,169 +274,11 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
     );
   }
 
-  Widget _buildProfileCard(BuildContext context, pb.UserProfile profile) {
-    final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  backgroundImage: profile.avatarUrl.isNotEmpty 
-                      ? NetworkImage(profile.avatarUrl)
-                      : null,
-                  child: profile.avatarUrl.isEmpty
-                      ? Icon(
-                          Icons.person,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        )
-                      : null,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        profile.displayName.isNotEmpty 
-                            ? profile.displayName 
-                            : profile.profileName.isNotEmpty 
-                                ? profile.profileName 
-                                : 'Unnamed Profile',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (profile.profileName.isNotEmpty && profile.displayName.isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          profile.profileName,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (value) => _handleProfileAction(value, profile),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, size: 16),
-                          SizedBox(width: 8),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete_outline, size: 16, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Delete', style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                  ],
-                  child: const Icon(Icons.more_vert),
-                ),
-              ],
-            ),
-            if (profile.bio.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                profile.bio,
-                style: theme.textTheme.bodyMedium,
-              ),
-            ],
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 16,
-              runSpacing: 8,
-              children: [
-                if (profile.firstName.isNotEmpty || profile.lastName.isNotEmpty)
-                  InfoRowWithCopy(
-                    label: 'Name',
-                    value: '${profile.firstName} ${profile.lastName}'.trim(),
-                  ),
-                if (profile.country.isNotEmpty)
-                  InfoRowWithCopy(
-                    label: 'Country',
-                    value: profile.country,
-                  ),
-                if (profile.city.isNotEmpty)
-                  InfoRowWithCopy(
-                    label: 'City',
-                    value: profile.city,
-                  ),
-                if (profile.timezone.isNotEmpty)
-                  InfoRowWithCopy(
-                    label: 'Timezone',
-                    value: profile.timezone,
-                  ),
-                if (profile.locale.isNotEmpty)
-                  InfoRowWithCopy(
-                    label: 'Locale',
-                    value: profile.locale,
-                  ),
-                if (profile.websiteUrl.isNotEmpty)
-                  InfoRowWithCopy(
-                    label: 'Website',
-                    value: profile.websiteUrl,
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(
-                  Icons.access_time,
-                  size: 14,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Created ${UtilityFunctions.formatDateInWords(profile.createdAt)}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                ),
-                if (profile.updatedAt != profile.createdAt) ...[
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.edit,
-                    size: 14,
-                    color: Colors.grey[600],
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Updated ${UtilityFunctions.formatDateInWords(profile.updatedAt)}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _handleProfileAction(String action, pb.UserProfile profile) {
     switch (action) {
+      case 'view':
+        _showViewProfileDialog(context, profile);
+        break;
       case 'edit':
         _showEditProfileDialog(context, profile);
         break;
@@ -462,13 +315,68 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
     );
   }
 
+  void _showViewProfileDialog(BuildContext context, pb.UserProfile profile) {
+    final profilesBloc = context.read<ProfilesBloc>();
+    showDialog(
+      context: context,
+      builder: (context) => BlocProvider.value(
+        value: profilesBloc,
+        child: CreateEditProfileDialog(
+          userUuid: widget.user.uuid,
+          profile: profile,
+          isViewMode: true,
+        ),
+      ),
+    );
+  }
+
   void _showDeleteProfileDialog(BuildContext context, pb.UserProfile profile) {
+    final profilesBloc = context.read<ProfilesBloc>();
+    final currentState = profilesBloc.state;
+    
+    // Check if this is the last profile
+    final isLastProfile = currentState is ProfilesLoaded && currentState.profiles.length == 1;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Profile'),
-        content: Text(
-          'Are you sure you want to delete the profile "${profile.displayName.isNotEmpty ? profile.displayName : profile.profileName}"? This action cannot be undone.',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Are you sure you want to delete the profile "${profile.displayName.isNotEmpty ? profile.displayName : profile.profileName}"?',
+            ),
+            if (isLastProfile) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  border: Border.all(color: Colors.orange.shade200),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.warning_amber, color: Colors.orange.shade700),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'This is the last profile. Some systems may not allow deletion of the last profile.',
+                        style: TextStyle(color: Colors.orange.shade700),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            const Text(
+              'This action cannot be undone.',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -478,7 +386,7 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
           FilledButton(
             onPressed: () {
               Navigator.of(context).pop();
-              context.read<ProfilesBloc>().add(
+              profilesBloc.add(
                 pb.DeleteProfileRequest(profileUuid: profile.uuid),
               );
             },

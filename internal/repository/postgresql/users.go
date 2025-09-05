@@ -43,6 +43,9 @@ func (r *Repository) CreateUser(ctx context.Context, user *dao.User) (*dao.User,
 
 // CreateUserProfile creates a new user profile in the database
 func (r *Repository) CreateUserProfile(ctx context.Context, profile *dao.Profile) (*dao.Profile, error) {
+	// Debug: Log the metadata being passed to PostgreSQL
+	fmt.Printf("Repository: Creating profile with metadata: %s\n", string(profile.Metadata))
+
 	query := `
 		INSERT INTO user_profiles (uuid, user_id, first_name, last_name, display_name, bio, 
 			avatar_url, date_of_birth, gender, timezone, locale, country, city, address, 
@@ -52,25 +55,41 @@ func (r *Repository) CreateUserProfile(ctx context.Context, profile *dao.Profile
 			date_of_birth, gender, timezone, locale, country, city, address, postal_code,
 			website_url, metadata, created_at, updated_at`
 
+	// Handle metadata properly for JSONB column
+	var metadataParam interface{}
+	if len(profile.Metadata) == 0 {
+		metadataParam = nil
+	} else {
+		metadataParam = string(profile.Metadata)
+	}
+
 	row := r.connManager.Primary().QueryRowContext(ctx, query,
 		profile.UUID, profile.UserID, profile.FirstName, profile.LastName,
 		profile.DisplayName, profile.Bio, profile.AvatarURL, profile.DateOfBirth,
 		profile.Gender, profile.Timezone, profile.Locale, profile.Country,
 		profile.City, profile.Address, profile.PostalCode, profile.WebsiteURL,
-		profile.Metadata, profile.CreatedAt, profile.UpdatedAt)
+		metadataParam, profile.CreatedAt, profile.UpdatedAt)
 
 	var createdProfile dao.Profile
+	var metadataStr sql.NullString
 	err := row.Scan(
 		&createdProfile.ID, &createdProfile.UUID, &createdProfile.UserID,
 		&createdProfile.FirstName, &createdProfile.LastName, &createdProfile.DisplayName,
 		&createdProfile.Bio, &createdProfile.AvatarURL, &createdProfile.DateOfBirth,
 		&createdProfile.Gender, &createdProfile.Timezone, &createdProfile.Locale,
 		&createdProfile.Country, &createdProfile.City, &createdProfile.Address,
-		&createdProfile.PostalCode, &createdProfile.WebsiteURL, &createdProfile.Metadata,
+		&createdProfile.PostalCode, &createdProfile.WebsiteURL, &metadataStr,
 		&createdProfile.CreatedAt, &createdProfile.UpdatedAt)
 
 	if err != nil {
 		return nil, err
+	}
+
+	// Convert metadata back to []byte
+	if metadataStr.Valid {
+		createdProfile.Metadata = []byte(metadataStr.String)
+	} else {
+		createdProfile.Metadata = nil
 	}
 
 	return &createdProfile, nil
@@ -189,7 +208,23 @@ func (r *Repository) UpdateUserProfile(ctx context.Context, userID int64, update
 
 	for field, value := range updates {
 		setParts = append(setParts, fmt.Sprintf("%s = $%d", field, argIndex))
-		args = append(args, value)
+
+		// Handle metadata field specially for JSONB
+		if field == "metadata" {
+			if value == nil {
+				args = append(args, nil)
+			} else if metadataBytes, ok := value.([]byte); ok {
+				if len(metadataBytes) == 0 {
+					args = append(args, nil)
+				} else {
+					args = append(args, string(metadataBytes))
+				}
+			} else {
+				args = append(args, value)
+			}
+		} else {
+			args = append(args, value)
+		}
 		argIndex++
 	}
 
@@ -435,15 +470,23 @@ func (r *Repository) scanUserFromRows(rows *sql.Rows) (*dao.User, error) {
 
 func (r *Repository) scanProfile(row *sql.Row) (*dao.Profile, error) {
 	var profile dao.Profile
+	var metadataStr sql.NullString
 	err := row.Scan(
 		&profile.ID, &profile.UUID, &profile.UserID, &profile.FirstName,
 		&profile.LastName, &profile.DisplayName, &profile.Bio, &profile.AvatarURL,
 		&profile.DateOfBirth, &profile.Gender, &profile.Timezone, &profile.Locale,
 		&profile.Country, &profile.City, &profile.Address, &profile.PostalCode,
-		&profile.WebsiteURL, &profile.Metadata, &profile.CreatedAt, &profile.UpdatedAt)
+		&profile.WebsiteURL, &metadataStr, &profile.CreatedAt, &profile.UpdatedAt)
 
 	if err != nil {
 		return nil, err
+	}
+
+	// Convert metadata back to []byte
+	if metadataStr.Valid {
+		profile.Metadata = []byte(metadataStr.String)
+	} else {
+		profile.Metadata = nil
 	}
 
 	return &profile, nil
@@ -510,7 +553,23 @@ func (r *Repository) UpdateProfileByUUID(ctx context.Context, uuid string, updat
 
 	for field, value := range updates {
 		setParts = append(setParts, fmt.Sprintf("%s = $%d", field, argIndex))
-		args = append(args, value)
+
+		// Handle metadata field specially for JSONB
+		if field == "metadata" {
+			if value == nil {
+				args = append(args, nil)
+			} else if metadataBytes, ok := value.([]byte); ok {
+				if len(metadataBytes) == 0 {
+					args = append(args, nil)
+				} else {
+					args = append(args, string(metadataBytes))
+				}
+			} else {
+				args = append(args, value)
+			}
+		} else {
+			args = append(args, value)
+		}
 		argIndex++
 	}
 
@@ -571,15 +630,23 @@ func (r *Repository) DeleteProfileByUUID(ctx context.Context, uuid string) error
 // scanProfileFromRows scans a profile from sql.Rows
 func (r *Repository) scanProfileFromRows(rows *sql.Rows) (*dao.Profile, error) {
 	var profile dao.Profile
+	var metadataStr sql.NullString
 	err := rows.Scan(
 		&profile.ID, &profile.UUID, &profile.UserID, &profile.FirstName,
 		&profile.LastName, &profile.DisplayName, &profile.Bio, &profile.AvatarURL,
 		&profile.DateOfBirth, &profile.Gender, &profile.Timezone, &profile.Locale,
 		&profile.Country, &profile.City, &profile.Address, &profile.PostalCode,
-		&profile.WebsiteURL, &profile.Metadata, &profile.CreatedAt, &profile.UpdatedAt)
+		&profile.WebsiteURL, &metadataStr, &profile.CreatedAt, &profile.UpdatedAt)
 
 	if err != nil {
 		return nil, err
+	}
+
+	// Convert metadata back to []byte
+	if metadataStr.Valid {
+		profile.Metadata = []byte(metadataStr.String)
+	} else {
+		profile.Metadata = nil
 	}
 
 	return &profile, nil

@@ -162,10 +162,6 @@ message ListUserProfilesRequest {
 // ListUserProfilesResponse
 message ListUserProfilesResponse {
     repeated UserProfile profiles = 1;
-    int32 total_count = 2;
-    int32 limit = 3;
-    int32 offset = 4;
-    bool has_more = 5;
 }
 
 // UpdateProfileRequest to update a specific profile
