@@ -36,12 +36,15 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
   @override
   void initState() {
     super.initState();
-    // Load group permissions and available permissions
+    // Load group permissions and available permissions (only if not system group)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<GroupPermissionsBloc>().add(
             ListGroupPermissionsRequest(groupId: widget.group.id),
           );
-      context.read<PermissionsBloc>().add(ListPermissionsRequest(all: true));
+      // Only fetch available permissions if this is not a system group
+      if (!widget.group.isSystem) {
+        context.read<PermissionsBloc>().add(ListPermissionsRequest(all: true));
+      }
     });
   }
 
@@ -60,6 +63,11 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
 
           // Show success message
           ToastUtils.showSuccess(state.message);
+
+          // Refresh group permissions list to update available permissions
+          context.read<GroupPermissionsBloc>().add(
+                ListGroupPermissionsRequest(groupId: widget.group.id),
+              );
         } else if (state is GroupPermissionRemoved) {
           // Clear selections when permissions are successfully removed
           setState(() {
@@ -145,6 +153,38 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
               ),
               const SizedBox(height: 16),
 
+              // System group warning
+              if (widget.group.isSystem)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    border: Border.all(color: Colors.orange.shade200),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.warning_amber,
+                        color: Colors.orange.shade700,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'This is a system group. Permissions cannot be modified.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.orange.shade800,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (widget.group.isSystem) const SizedBox(height: 16),
+
               // Side by side layout
               Expanded(
                 child: Row(
@@ -163,7 +203,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                                 ),
                               ),
                               const Spacer(),
-                              if (selectedRemovePermissions.isNotEmpty)
+                              if (selectedRemovePermissions.isNotEmpty && !widget.group.isSystem)
                                 Chip(
                                   label: Text('${selectedRemovePermissions.length} selected'),
                                   backgroundColor: Colors.red.withValues(alpha: 0.1),
@@ -175,33 +215,35 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                         ],
                       ),
                     ),
-                    const SizedBox(width: 24),
-                    // Available permissions (right side)
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Available Permissions',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                    // Available permissions (right side) - only show for non-system groups
+                    if (!widget.group.isSystem) ...[
+                      const SizedBox(width: 24),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Available Permissions',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const Spacer(),
-                              if (selectedPermissions.isNotEmpty)
-                                Chip(
-                                  label: Text('${selectedPermissions.length} selected'),
-                                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Expanded(child: _buildAvailablePermissionsPanel()),
-                        ],
+                                const Spacer(),
+                                if (selectedPermissions.isNotEmpty && !widget.group.isSystem)
+                                  Chip(
+                                    label: Text('${selectedPermissions.length} selected'),
+                                    backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Expanded(child: _buildAvailablePermissionsPanel()),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
@@ -216,7 +258,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        if (selectedPermissions.isNotEmpty)
+                        if (selectedPermissions.isNotEmpty && !widget.group.isSystem)
                           TextButton.icon(
                             onPressed: () {
                               setState(() {
@@ -226,7 +268,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                             icon: const Icon(Icons.clear_all),
                             label: const Text('Clear Add'),
                           ),
-                        if (selectedRemovePermissions.isNotEmpty)
+                        if (selectedRemovePermissions.isNotEmpty && !widget.group.isSystem)
                           TextButton.icon(
                             onPressed: () {
                               setState(() {
@@ -251,7 +293,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                         onPressed: () => Navigator.of(context).pop(),
                         child: const Text('Close'),
                       ),
-                      if (selectedRemovePermissions.isNotEmpty)
+                      if (selectedRemovePermissions.isNotEmpty && !widget.group.isSystem)
                         BlocConsumer<GroupPermissionsBloc, GroupPermissionsState>(
                           listener: (context, state) {
                             if (state is GroupPermissionRemoved) {
@@ -282,7 +324,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                             );
                           },
                         ),
-                      if (selectedPermissions.isNotEmpty)
+                      if (selectedPermissions.isNotEmpty && !widget.group.isSystem)
                         BlocConsumer<GroupPermissionsBloc, GroupPermissionsState>(
                           listener: (context, state) {
                             if (state is GroupPermissionAssigned) {
@@ -442,8 +484,8 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                 ),
               );
             } else if (state is PermissionsLoaded) {
-              // Only process if group permissions state is loaded (not necessarily non-empty)
-              if (groupPermissionsState is! GroupPermissionsLoaded) {
+              // Only process if group permissions state is loaded or if we have cached group permissions
+              if (groupPermissionsState is! GroupPermissionsLoaded && _groupPermissions.isEmpty) {
                 return const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -562,7 +604,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
                 color: theme.colorScheme.primary,
               )
             : null,
-        onTap: () {
+        onTap: widget.group.isSystem ? null : () {
           setState(() {
             final permissionId = permission.id;
             if (isSelected) {
@@ -583,37 +625,45 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
 
   Widget _buildCurrentPermissionCard(EffectivePermission permission) {
     final theme = Theme.of(context);
-    final bool isSelected =
+    final bool isSelected = !widget.group.isSystem &&
         selectedRemovePermissions.contains(permission.permissionId);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       color: isSelected ? Colors.red.withValues(alpha: 0.1) : null,
       child: ListTile(
-        leading: GestureDetector(
-          onTap: () {
-            setState(() {
-              if (isSelected) {
-                selectedRemovePermissions.remove(permission.permissionId);
-              } else {
-                selectedRemovePermissions.add(permission.permissionId);
-              }
-            });
-          },
-          child: CircleAvatar(
-            backgroundColor: isSelected
-                ? Colors.red
-                : theme.colorScheme.primary.withValues(alpha: 0.1),
-            child: Icon(
-              isSelected
-                  ? Icons.check_circle
-                  : Icons.remove_circle_outline,
-              color: isSelected
-                  ? Colors.white
-                  : Colors.red,
-            ),
-          ),
-        ),
+        leading: widget.group.isSystem 
+            ? CircleAvatar(
+                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                child: Icon(
+                  Icons.security,
+                  color: theme.colorScheme.primary,
+                ),
+              )
+            : GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (isSelected) {
+                      selectedRemovePermissions.remove(permission.permissionId);
+                    } else {
+                      selectedRemovePermissions.add(permission.permissionId);
+                    }
+                  });
+                },
+                child: CircleAvatar(
+                  backgroundColor: isSelected
+                      ? Colors.red
+                      : theme.colorScheme.primary.withValues(alpha: 0.1),
+                  child: Icon(
+                    isSelected
+                        ? Icons.check_circle
+                        : Icons.remove_circle_outline,
+                    color: isSelected
+                        ? Colors.white
+                        : Colors.red,
+                  ),
+                ),
+              ),
         title: Text(
           permission.permissionDisplayName.isEmpty
               ? permission.permissionName
@@ -664,7 +714,7 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
             ),
           ],
         ),
-        onTap: () {
+        onTap: widget.group.isSystem ? null : () {
           setState(() {
             if (isSelected) {
               selectedRemovePermissions.remove(permission.permissionId);
@@ -673,23 +723,28 @@ class _ManageGroupPermissionsDialogState extends State<ManageGroupPermissionsDia
             }
           });
         },
-        trailing: IconButton(
-          icon: Icon(
-            isSelected ? Icons.check_circle : Icons.remove_circle_outline,
-            color: Colors.red,
-          ),
-          tooltip: isSelected
-              ? 'Deselect for bulk removal'
-              : 'Remove permission',
-          onPressed: isSelected
-              ? () {
-                  setState(() {
-                    selectedRemovePermissions
-                        .remove(permission.permissionId);
-                  });
-                }
-              : () => _removePermission(permission),
-        ),
+        trailing: widget.group.isSystem 
+            ? Icon(
+                Icons.lock,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+              )
+            : IconButton(
+                icon: Icon(
+                  isSelected ? Icons.check_circle : Icons.remove_circle_outline,
+                  color: Colors.red,
+                ),
+                tooltip: isSelected
+                    ? 'Deselect for bulk removal'
+                    : 'Remove permission',
+                onPressed: isSelected
+                    ? () {
+                        setState(() {
+                          selectedRemovePermissions
+                              .remove(permission.permissionId);
+                        });
+                      }
+                    : () => _removePermission(permission),
+              ),
       ),
     );
   }

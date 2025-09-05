@@ -96,6 +96,32 @@ class _GroupDetailsDialogState extends State<GroupDetailsDialog> {
                   maxLines: 3,
                 ),
               ] else ...[
+                // System group warning (only in view mode)
+              if (!_isEditMode && widget.group.isSystem)
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    // color: Colors.orange.shade50,
+                    border: Border.all(color: Colors.orange.shade200),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.warning, color: Colors.orange.shade600, size: 16),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'This is a system group. Group details cannot be modified.',
+                          style: TextStyle(
+                            color: Colors.orange.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                 const SizedBox(height: 12),
                 // View mode - show read-only information
                 _buildDetailRow('Name', widget.group.name),
                 const SizedBox(height: 12),
@@ -130,33 +156,7 @@ class _GroupDetailsDialogState extends State<GroupDetailsDialog> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              
-              // System group warning (only in view mode)
-              if (!_isEditMode && widget.group.isSystem)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    // color: Colors.orange.shade50,
-                    border: Border.all(color: Colors.orange.shade200),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.warning, color: Colors.orange.shade600, size: 16),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'This is a system group. Group details cannot be modified.',
-                          style: TextStyle(
-                            color: Colors.orange.shade600,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+             
             ],
           ),
         ),
