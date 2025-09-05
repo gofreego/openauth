@@ -209,7 +209,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   @override
   Future<RemoveUsersFromGroupResponse> removeUserFromGroup(RemoveUsersFromGroupRequest request) async {
     try {
-      final response = await _apiService.delete(
+      final response = await _apiService.put(
         '/openauth/v1/groups/${request.groupId}/users',
         data: request.toProto3Json(),
       );

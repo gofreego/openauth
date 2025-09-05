@@ -106,18 +106,37 @@ class _UserGroupsDialogState extends State<UserGroupsDialog> {
 
             // Groups List
             Expanded(
-              child: BlocBuilder<GroupsBloc, GroupsState>(
-                builder: (context, state) {
-                  if (state is GroupsLoading) {
-                    return const Center(child: CircularProgressIndicator());
+              child: BlocListener<GroupsBloc, GroupsState>(
+                listener: (context, state) {
+                  if (state is UserRemoved) {
+                    setState(() {
+                      _isRemoving = false;
+                    });
+                    ToastUtils.showSuccess('${widget.user.name} removed from group successfully');
+                    // Refresh the groups list
+                    context.read<GroupsBloc>().add(
+                          groups_pb.ListUserGroupsRequest(userId: widget.user.id),
+                        );
                   } else if (state is GroupsError) {
-                    return _buildErrorWidget(state.message);
-                  } else if (state is UserGroupsLoaded) {
-                    _userGroups = state.groups;
-                    return _buildGroupsList();
+                    setState(() {
+                      _isRemoving = false;
+                    });
+                    ToastUtils.showError('Failed to remove user from group: ${state.message}');
                   }
-                  return _buildEmptyState();
                 },
+                child: BlocBuilder<GroupsBloc, GroupsState>(
+                  builder: (context, state) {
+                    if (state is GroupsLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is GroupsError) {
+                      return _buildErrorWidget(state.message);
+                    } else if (state is UserGroupsLoaded) {
+                      _userGroups = state.groups;
+                      return _buildGroupsList();
+                    }
+                    return _buildEmptyState();
+                  },
+                ),
               ),
             ),
           ],
@@ -280,24 +299,13 @@ class _UserGroupsDialogState extends State<UserGroupsDialog> {
       _isRemoving = true;
     });
 
-    try {
-      // For now, let's use a placeholder until we implement the proper bloc event
-      // TODO: Create a RemoveUserFromGroup event in the GroupsBloc
-      
-      // Show success message
-      ToastUtils.showWarning('${widget.user.name} will be removed from ${group.groupName}');
+    // Create the remove request
+    final removeRequest = groups_pb.RemoveUsersFromGroupRequest(
+      groupId: group.groupId,
+      userIds: [widget.user.id],
+    );
 
-      // Refresh the groups list
-      context.read<GroupsBloc>().add(
-            groups_pb.ListUserGroupsRequest(userId: widget.user.id),
-          );
-    } catch (e) {
-      ToastUtils.showError('Failed to remove user from group: $e');
-    } finally {
-      setState(() {
-        _isRemoving = false;
-      });
-    }
+    context.read<GroupsBloc>().add(removeRequest);
   }
 
   String _getInitial() {

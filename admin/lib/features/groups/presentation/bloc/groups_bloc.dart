@@ -22,6 +22,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
     on<CreateGroupRequest>(_onCreateGroup);
     on<UpdateGroupRequest>(_onUpdateGroup);
     on<DeleteGroupRequest>(_onDeleteGroup);
+    on<RemoveUsersFromGroupRequest>(_onRemoveUsersFromGroup);
   }
 
   Future<void> _onLoadGroups(
@@ -135,6 +136,24 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
           emit(const GroupDeleted());
           // Refresh the groups list
           add(ListGroupsRequest(search: _currentSearchQuery));
+        },
+      );
+    } catch (e) {
+      emit(GroupsError(e.toString()));
+    }
+  }
+
+  Future<void> _onRemoveUsersFromGroup(
+      RemoveUsersFromGroupRequest event, Emitter<GroupsState> emit) async {
+    try {
+      emit(const UserRemoving());
+
+      final result = await repository.removeUserFromGroup(event);
+
+      result.fold(
+        (failure) => emit(GroupsError(failure.message)),
+        (_) {
+          emit(const UserRemoved());
         },
       );
     } catch (e) {
