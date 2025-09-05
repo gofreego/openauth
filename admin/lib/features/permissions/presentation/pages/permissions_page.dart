@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
 import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
@@ -17,6 +18,26 @@ class PermissionsPage extends StatefulWidget {
 
 class _PermissionsPageState extends State<PermissionsPage> {
   String _searchQuery = '';
+  Timer? _debounceTimer;
+  static const Duration _debounceDuration = Duration(milliseconds: 500);
+
+  @override
+  void initState() {
+    super.initState();
+    // Load permissions when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PermissionsBloc>().add(ListPermissionsRequest(
+        limit: 20,
+        offset: 0,
+      ));
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +63,23 @@ class _PermissionsPageState extends State<PermissionsPage> {
                 setState(() {
                   _searchQuery = query;
                 });
-                // Trigger search with new query, but only if bloc is still available
-                if (mounted) {
-                  final bloc = context.read<PermissionsBloc>();
-                  if (!bloc.isClosed) {
-                    // Use a small debounce to prevent too many requests while typing
-                    Future.delayed(const Duration(milliseconds: 300), () {
-                      if (mounted && _searchQuery == query) {
-                        bloc.add(ListPermissionsRequest(search: query));
-                      }
-                    });
+                
+                // Cancel any existing timer
+                _debounceTimer?.cancel();
+                
+                // Start a new timer for debouncing
+                _debounceTimer = Timer(_debounceDuration, () {
+                  if (mounted) {
+                    final bloc = context.read<PermissionsBloc>();
+                    if (!bloc.isClosed) {
+                      bloc.add(ListPermissionsRequest(
+                        search: query,
+                        limit: 20,
+                        offset: 0,
+                      ));
+                    }
                   }
-                }
+                });
               },
             ),
             const SizedBox(height: 24),
@@ -87,7 +113,12 @@ class _PermissionsPageState extends State<PermissionsPage> {
                         if (mounted) {
                           final bloc = context.read<PermissionsBloc>();
                           if (!bloc.isClosed) {
-                            bloc.add(ListPermissionsRequest());
+                            final nextOffset = state.permissions.length;
+                            bloc.add(ListPermissionsRequest(
+                              limit: 20, 
+                              offset: nextOffset,
+                              search: _searchQuery,
+                            ));
                           }
                         }
                       },
@@ -119,7 +150,11 @@ class _PermissionsPageState extends State<PermissionsPage> {
                               if (mounted) {
                                 final bloc = context.read<PermissionsBloc>();
                                 if (!bloc.isClosed) {
-                                  bloc.add(ListPermissionsRequest());
+                                  bloc.add(ListPermissionsRequest(
+                                    limit: 20,
+                                    offset: 0,
+                                    search: _searchQuery,
+                                  ));
                                 }
                               }
                             },

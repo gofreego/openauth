@@ -9,6 +9,7 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
   final PermissionsRepository repository;
   
   String? _currentSearchQuery; // Store current search query for pagination
+  static const int _defaultPageSize = 20;
 
   PermissionsBloc({
     required this.repository,
@@ -20,22 +21,72 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
     on<DeletePermissionRequest>(_onDeletePermission);
   }
 
+  // Helper method to create a refresh request
+  void _refreshPermissions({String? searchQuery}) {
+    if (!isClosed) {
+      add(ListPermissionsRequest(
+        limit: _defaultPageSize,
+        offset: 0,
+        search: searchQuery ?? _currentSearchQuery,
+      ));
+    }
+  }
+
   Future<void> _onLoadPermissions(
     ListPermissionsRequest event,
     Emitter<PermissionsState> emit,
   ) async {
+    final isRefresh = event.offset == 0;
+    final isNewSearch = event.search != _currentSearchQuery;
+    
     _currentSearchQuery = event.search;
-    emit(PermissionsLoading());
+
+    if (isRefresh || isNewSearch) {
+      // Fresh load or new search
+      emit(PermissionsLoading());
+    } else {
+      // Pagination - show loading indicator without replacing content
+      if (state is PermissionsLoaded) {
+        final currentState = state as PermissionsLoaded;
+        emit(currentState.copyWith(isLoadingMore: true));
+      }
+    }
 
     final result = await repository.getPermissions(event);
 
     result.fold(
       (failure) => emit(PermissionsError(failure.message)),
-      (permissions) => emit(PermissionsLoaded(
-        permissions,
-        hasReachedMax: permissions.length < event.limit,
-        currentPage: (event.offset / event.limit).floor(),
-      )),
+      (newPermissions) {
+        if (isRefresh || isNewSearch) {
+          // Replace existing permissions
+          emit(PermissionsLoaded(
+            newPermissions,
+            hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : 20),
+            currentPage: event.limit > 0 ? (event.offset / event.limit).floor() : 0,
+          ));
+        } else {
+          // Append to existing permissions (pagination)
+          if (state is PermissionsLoaded) {
+            final currentState = state as PermissionsLoaded;
+            final allPermissions = List<Permission>.from(currentState.permissions)
+              ..addAll(newPermissions);
+            
+            emit(PermissionsLoaded(
+              allPermissions,
+              hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : 20),
+              currentPage: event.limit > 0 ? (event.offset / event.limit).floor() : 0,
+              isLoadingMore: false,
+            ));
+          } else {
+            // Fallback if state is not PermissionsLoaded
+            emit(PermissionsLoaded(
+              newPermissions,
+              hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : 20),
+              currentPage: event.limit > 0 ? (event.offset / event.limit).floor() : 0,
+            ));
+          }
+        }
+      },
     );
   }
 
@@ -65,10 +116,8 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
       (failure) => emit(PermissionError(failure.message)),
       (permission) {
         emit(PermissionCreated(permission));
-        // Refresh the list after creating, but only if bloc is still open
-        if (!isClosed) {
-          add(ListPermissionsRequest(search: _currentSearchQuery));
-        }
+        // Refresh the list after creating
+        _refreshPermissions();
       },
     );
   }
@@ -85,10 +134,8 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
       (failure) => emit(PermissionError(failure.message)),
       (permission) {
         emit(PermissionUpdated(permission));
-        // Refresh the list after updating, but only if bloc is still open
-        if (!isClosed) {
-          add(ListPermissionsRequest(search: _currentSearchQuery));
-        }
+        // Refresh the list after updating
+        _refreshPermissions();
       },
     );
   }
@@ -105,14 +152,8 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
       (failure) => emit(PermissionError(failure.message)),
       (_) {
         emit(PermissionDeleted());
-        // Refresh the list after deleting, but only if bloc is still open
-        if (!isClosed) {
-          add(ListPermissionsRequest(
-            limit: 20,
-            offset: 0,
-            search: _currentSearchQuery,
-          ));
-        }
+        // Refresh the list after deleting
+        _refreshPermissions();
       },
     );
   }
