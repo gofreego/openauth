@@ -140,4 +140,54 @@ class PermissionsRepositoryImpl implements PermissionsRepository {
           message: 'An unexpected error occurred: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<Failure, ListGroupPermissionsResponse>> getGroupPermissions(
+      ListGroupPermissionsRequest request) async {
+    try {
+      final response = await remoteDataSource.getGroupPermissions(request);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AssignPermissionsToGroupResponse>>
+      assignPermissionsToGroup(AssignPermissionsToGroupRequest request) async {
+    try {
+      final response = await remoteDataSource.assignPermissionsToGroup(request);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, RemovePermissionsFromGroupResponse>>
+      removePermissionsFromGroup(
+          RemovePermissionsFromGroupRequest request) async {
+    try {
+      final response =
+          await remoteDataSource.removePermissionsFromGroup(request);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(
+          message: 'An unexpected error occurred: ${e.toString()}'));
+    }
+  }
 }

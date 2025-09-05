@@ -17,6 +17,10 @@ abstract class PermissionsRemoteDataSource {
   Future<ListUserPermissionsResponse> getUserPermissions(ListUserPermissionsRequest request);
   Future<AssignPermissionsToUserResponse> assignPermissionsToUser(AssignPermissionsToUserRequest request);
   Future<RemovePermissionsFromUserResponse> removePermissionsFromUser(RemovePermissionsFromUserRequest request);
+
+  Future<ListGroupPermissionsResponse> getGroupPermissions(ListGroupPermissionsRequest request);
+  Future<AssignPermissionsToGroupResponse> assignPermissionsToGroup(AssignPermissionsToGroupRequest request);
+  Future<RemovePermissionsFromGroupResponse> removePermissionsFromGroup(RemovePermissionsFromGroupRequest request);
 }
 
 class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
@@ -196,6 +200,74 @@ class PermissionsRemoteDataSourceImpl implements PermissionsRemoteDataSource {
     } catch (e) {
       throw ServerException(
         message: 'Unexpected error occurred while removing permission from user: $e',
+        statusCode: 500,
+      );
+    }
+  }
+
+  @override
+  Future<ListGroupPermissionsResponse> getGroupPermissions(ListGroupPermissionsRequest request) async {
+    try {
+      final response = await _apiService.get(
+        '/openauth/v1/groups/${request.groupId}/permissions',
+      );
+      var groupPermissionsResponse = ListGroupPermissionsResponse();
+      groupPermissionsResponse.mergeFromProto3Json(response.data);
+      return groupPermissionsResponse;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: 'Failed to get group permissions: ${e.message}',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    } catch (e) {
+      throw ServerException(
+        message: 'Unexpected error occurred while getting group permissions: $e',
+        statusCode: 500,
+      );
+    }
+  }
+
+  @override
+  Future<AssignPermissionsToGroupResponse> assignPermissionsToGroup(AssignPermissionsToGroupRequest request) async {
+    try {
+      final response = await _apiService.post(
+        '/openauth/v1/groups/${request.groupId}/permissions',
+        data: request.toProto3Json(),
+      );
+      var assignResponse = AssignPermissionsToGroupResponse();
+      assignResponse.mergeFromProto3Json(response.data);
+      return assignResponse;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: 'Failed to assign permissions to group: ${e.message}',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    } catch (e) {
+      throw ServerException(
+        message: 'Unexpected error occurred while assigning permissions to group: $e',
+        statusCode: 500,
+      );
+    }
+  }
+
+  @override
+  Future<RemovePermissionsFromGroupResponse> removePermissionsFromGroup(RemovePermissionsFromGroupRequest request) async {
+    try {
+      final response = await _apiService.put(
+        '/openauth/v1/groups/${request.groupId}/permissions',
+        data: request.toProto3Json(),
+      );
+      var removeResponse = RemovePermissionsFromGroupResponse();
+      removeResponse.mergeFromProto3Json(response.data);
+      return removeResponse;
+    } on DioException catch (e) {
+      throw ServerException(
+        message: 'Failed to remove permissions from group: ${e.message}',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    } catch (e) {
+      throw ServerException(
+        message: 'Unexpected error occurred while removing permissions from group: $e',
         statusCode: 500,
       );
     }

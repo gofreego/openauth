@@ -28,6 +28,7 @@ import '../../features/groups/data/datasources/groups_remote_datasource_impl.dar
 import '../../features/groups/data/repositories/groups_repository_impl.dart';
 import '../../features/groups/data/repositories/groups_repository.dart';
 import '../../features/groups/presentation/bloc/groups_bloc.dart';
+import '../../features/groups/presentation/bloc/group_permissions_bloc.dart';
 
 // Dashboard feature dependencies
 import '../../features/dashboard/data/datasources/stats_remote_datasource.dart';
@@ -153,6 +154,12 @@ Future<void> initializeDependencies({
 
   serviceLocator.registerLazySingleton<UserPermissionsBloc>(
     () => UserPermissionsBloc(
+      repository: serviceLocator<PermissionsRepository>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<GroupPermissionsBloc>(
+    () => GroupPermissionsBloc(
       repository: serviceLocator<PermissionsRepository>(),
     ),
   );

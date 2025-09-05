@@ -17,6 +17,7 @@ import 'features/users/presentation/bloc/users_bloc.dart';
 import 'features/users/presentation/bloc/user_permissions_bloc.dart';
 import 'features/permissions/presentation/bloc/permissions_bloc.dart';
 import 'features/groups/presentation/bloc/groups_bloc.dart';
+import 'features/groups/presentation/bloc/group_permissions_bloc.dart';
 import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/sessions/presentation/bloc/sessions_bloc.dart';
 import 'shared/shared.dart';
@@ -125,6 +126,9 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
         ),
         BlocProvider<UserPermissionsBloc>(
           create: (context) => serviceLocator<UserPermissionsBloc>(),
+        ),
+        BlocProvider<GroupPermissionsBloc>(
+          create: (context) => serviceLocator<GroupPermissionsBloc>(),
         ),
         BlocProvider<PermissionsBloc>(
           create: (context) => serviceLocator<PermissionsBloc>(),

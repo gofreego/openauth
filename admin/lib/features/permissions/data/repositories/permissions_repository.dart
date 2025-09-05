@@ -17,4 +17,8 @@ abstract class PermissionsRepository {
   Future<Either<Failure, ListUserPermissionsResponse>> getUserPermissions(ListUserPermissionsRequest request);
   Future<Either<Failure, AssignPermissionsToUserResponse>> assignPermissionsToUser(AssignPermissionsToUserRequest request);
   Future<Either<Failure, RemovePermissionsFromUserResponse>> removePermissionsFromUser(RemovePermissionsFromUserRequest request);
+
+  Future<Either<Failure, ListGroupPermissionsResponse>> getGroupPermissions(ListGroupPermissionsRequest request);
+  Future<Either<Failure, AssignPermissionsToGroupResponse>> assignPermissionsToGroup(AssignPermissionsToGroupRequest request);
+  Future<Either<Failure, RemovePermissionsFromGroupResponse>> removePermissionsFromGroup(RemovePermissionsFromGroupRequest request);
 }
