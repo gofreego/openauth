@@ -281,7 +281,9 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListPermissionsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
+    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
+    ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'all')
     ..hasRequiredFields = false
   ;
 
@@ -289,7 +291,9 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
   factory ListPermissionsRequest({
     $core.int? limit,
     $core.int? offset,
+    $fixnum.Int64? id,
     $core.String? search,
+    $core.bool? all,
   }) {
     final _result = create();
     if (limit != null) {
@@ -298,8 +302,14 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
     if (offset != null) {
       _result.offset = offset;
     }
+    if (id != null) {
+      _result.id = id;
+    }
     if (search != null) {
       _result.search = search;
+    }
+    if (all != null) {
+      _result.all = all;
     }
     return _result;
   }
@@ -343,38 +353,46 @@ class ListPermissionsRequest extends $pb.GeneratedMessage {
   void clearOffset() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get search => $_getSZ(2);
+  $fixnum.Int64 get id => $_getI64(2);
   @$pb.TagNumber(3)
-  set search($core.String v) { $_setString(2, v); }
+  set id($fixnum.Int64 v) { $_setInt64(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasSearch() => $_has(2);
+  $core.bool hasId() => $_has(2);
   @$pb.TagNumber(3)
-  void clearSearch() => clearField(3);
+  void clearId() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get search => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set search($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasSearch() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSearch() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.bool get all => $_getBF(4);
+  @$pb.TagNumber(5)
+  set all($core.bool v) { $_setBool(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasAll() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearAll() => clearField(5);
 }
 
 class ListPermissionsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListPermissionsResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..pc<Permission>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'permissions', $pb.PbFieldType.PM, subBuilder: Permission.create)
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
   ListPermissionsResponse._() : super();
   factory ListPermissionsResponse({
     $core.Iterable<Permission>? permissions,
-    $core.int? limit,
-    $core.int? offset,
   }) {
     final _result = create();
     if (permissions != null) {
       _result.permissions.addAll(permissions);
-    }
-    if (limit != null) {
-      _result.limit = limit;
-    }
-    if (offset != null) {
-      _result.offset = offset;
     }
     return _result;
   }
@@ -401,24 +419,6 @@ class ListPermissionsResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<Permission> get permissions => $_getList(0);
-
-  @$pb.TagNumber(2)
-  $core.int get limit => $_getIZ(1);
-  @$pb.TagNumber(2)
-  set limit($core.int v) { $_setSignedInt32(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasLimit() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearLimit() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.int get offset => $_getIZ(2);
-  @$pb.TagNumber(3)
-  set offset($core.int v) { $_setSignedInt32(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasOffset() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearOffset() => clearField(3);
 }
 
 class UpdatePermissionRequest extends $pb.GeneratedMessage {
