@@ -33,26 +33,13 @@ class _GroupsGridState extends State<GroupsGrid> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
+    // Removed automatic scroll listener for loading more
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    if (_isBottom && !widget.hasReachedMax && !widget.isLoadingMore) {
-      widget.onLoadMore?.call();
-    }
-  }
-
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9); // Trigger when 90% scrolled
   }
 
   @override
@@ -96,36 +83,45 @@ class _GroupsGridState extends State<GroupsGrid> {
           child: SingleChildScrollView(
             controller: _scrollController,
             padding: EdgeInsets.all(MediaQuery.of(context).size.width < 600 ? 8 : 16),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final crossAxisCount = (constraints.maxWidth / 320).floor().clamp(1, 10);
-                final cardWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
-                
-                return Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: [
-                    ...filteredGroups.map((group) => SizedBox(
-                      width: cardWidth,
-                      child: GroupCard(
-                        group: group,
-                        onTap: () => _showGroupDetails(context, group),
-                        onAction: (action) => _handleGroupAction(context, action, group),
-                      ),
-                    )),
-                    if (widget.isLoadingMore)
-                      SizedBox(
+            child: Column(
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final crossAxisCount = (constraints.maxWidth / 320).floor().clamp(1, 10);
+                    final cardWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
+                    
+                    return Wrap(
+                      spacing: 16,
+                      runSpacing: 16,
+                      children: filteredGroups.map((group) => SizedBox(
                         width: cardWidth,
-                        height: 120,
-                        child: const Card(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                        child: GroupCard(
+                          group: group,
+                          onTap: () => _showGroupDetails(context, group),
+                          onAction: (action) => _handleGroupAction(context, action, group),
                         ),
-                      ),
-                  ],
-                );
-              },
+                      )).toList(),
+                    );
+                  },
+                ),
+                // Load More button below all groups
+                if (!widget.hasReachedMax || widget.isLoadingMore) ...[
+                  const SizedBox(height: 32),
+                  widget.isLoadingMore
+                      ? const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(),
+                        )
+                      : OutlinedButton(
+                          onPressed: widget.onLoadMore,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                          ),
+                          child: const Text('Load More Groups'),
+                        ),
+                  const SizedBox(height: 16),
+                ],
+              ],
             ),
           ),
         ),

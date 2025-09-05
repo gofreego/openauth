@@ -29,8 +29,29 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
   Future<void> _onLoadGroups(
       ListGroupsRequest event, Emitter<GroupsState> emit) async {
     try {
-      if (state is! GroupsLoaded) {
+      // Determine if this is a load more request
+      final isLoadMore = event.offset > 0;
+      
+      if (!isLoadMore && state is! GroupsLoaded) {
         emit(const GroupsLoading());
+      }
+
+      // If this is a load more request and we already have data, show loading more state
+      if (isLoadMore && state is GroupsLoaded) {
+        final currentState = state as GroupsLoaded;
+        emit(currentState.copyWith(isLoadingMore: true));
+      }
+
+      // If this is a new search, reset offset to 0
+      if (event.search != _currentSearchQuery) {
+        _currentSearchQuery = event.search;
+        final resetEvent = ListGroupsRequest(
+          limit: event.limit,
+          offset: 0,
+          search: event.search,
+        );
+        emit(const GroupsLoading());
+        return _onLoadGroups(resetEvent, emit);
       }
 
       _currentSearchQuery = event.search;
@@ -40,7 +61,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       result.fold(
         (failure) => emit(GroupsError(failure.message)),
         (groups) {
-          if (state is GroupsLoaded) {
+          if (isLoadMore && state is GroupsLoaded) {
             // This is pagination - append to existing groups
             final currentState = state as GroupsLoaded;
             final allGroups = List<Group>.from(currentState.groups)
@@ -49,6 +70,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
               groups: allGroups,
               request: event,
               hasReachedMax: groups.length < event.limit,
+              isLoadingMore: false,
             ));
           } else {
             // This is initial load or refresh - replace groups
@@ -56,6 +78,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
               groups: groups,
               request: event,
               hasReachedMax: groups.length < event.limit,
+              isLoadingMore: false,
             ));
           }
         },
@@ -96,7 +119,11 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         (group) {
           emit(GroupCreated(group));
           // Refresh the groups list
-          add(ListGroupsRequest(search: _currentSearchQuery));
+          add(ListGroupsRequest(
+            search: _currentSearchQuery,
+            limit: listGroupsLimit,
+            offset: 0,
+          ));
         },
       );
     } catch (e) {
@@ -116,7 +143,11 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         (group) {
           emit(GroupUpdated(group));
           // Refresh the groups list
-          add(ListGroupsRequest(search: _currentSearchQuery));
+          add(ListGroupsRequest(
+            search: _currentSearchQuery,
+            limit: listGroupsLimit,
+            offset: 0,
+          ));
         },
       );
     } catch (e) {
@@ -136,7 +167,11 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         (_) {
           emit(const GroupDeleted());
           // Refresh the groups list
-          add(ListGroupsRequest(search: _currentSearchQuery));
+          add(ListGroupsRequest(
+            search: _currentSearchQuery,
+            limit: listGroupsLimit,
+            offset: 0,
+          ));
         },
       );
     } catch (e) {

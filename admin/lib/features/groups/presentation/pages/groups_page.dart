@@ -22,7 +22,10 @@ class _GroupsPageState extends State<GroupsPage> {
   void initState() {
     super.initState();
     // Load groups when page is initialized
-    context.read<GroupsBloc>().add(ListGroupsRequest());
+    context.read<GroupsBloc>().add(ListGroupsRequest(
+      limit: context.read<GroupsBloc>().listGroupsLimit,
+      offset: 0,
+    ));
   }
 
   @override
@@ -55,7 +58,11 @@ class _GroupsPageState extends State<GroupsPage> {
                     // Use a small debounce to prevent too many requests while typing
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted && _searchQuery == query) {
-                        bloc.add(ListGroupsRequest(search: query));
+                        bloc.add(ListGroupsRequest(
+                          search: query,
+                          limit: bloc.listGroupsLimit,
+                          offset: 0,
+                        ));
                       }
                     });
                   }
@@ -89,9 +96,16 @@ class _GroupsPageState extends State<GroupsPage> {
                       groups: state.groups,
                       searchQuery: _searchQuery,
                       hasReachedMax: state.hasReachedMax,
-                      isLoadingMore: false,
+                      isLoadingMore: state.isLoadingMore,
                       onLoadMore: () {
-                        // TODO: Implement load more functionality
+                        if (!state.hasReachedMax && !state.isLoadingMore) {
+                          final bloc = context.read<GroupsBloc>();
+                          bloc.add(ListGroupsRequest(
+                            search: _searchQuery.isNotEmpty ? _searchQuery : null,
+                            limit: bloc.listGroupsLimit,
+                            offset: state.groups.length,
+                          ));
+                        }
                       },
                     );
                   } else if (state is GroupsError) {
@@ -121,7 +135,11 @@ class _GroupsPageState extends State<GroupsPage> {
                               if (mounted) {
                                 final bloc = context.read<GroupsBloc>();
                                 if (!bloc.isClosed) {
-                                  bloc.add(ListGroupsRequest());
+                                  bloc.add(ListGroupsRequest(
+                                    search: _searchQuery.isNotEmpty ? _searchQuery : null,
+                                    limit: bloc.listGroupsLimit,
+                                    offset: 0,
+                                  ));
                                 }
                               }
                             },

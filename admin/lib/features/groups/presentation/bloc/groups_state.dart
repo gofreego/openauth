@@ -19,27 +19,31 @@ class GroupsLoaded extends GroupsState {
   final List<Group> groups;
   final ListGroupsRequest request;
   final bool hasReachedMax;
+  final bool isLoadingMore;
 
   const GroupsLoaded({
     required this.groups,
     required this.request,
     this.hasReachedMax = false,
+    this.isLoadingMore = false,
   });
 
   GroupsLoaded copyWith({
     List<Group>? groups,
     ListGroupsRequest? request,
     bool? hasReachedMax,
+    bool? isLoadingMore,
   }) {
     return GroupsLoaded(
       groups: groups ?? this.groups,
       request: request ?? this.request,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
   @override
-  List<Object?> get props => [groups, request, hasReachedMax];
+  List<Object?> get props => [groups, request, hasReachedMax, isLoadingMore];
 }
 
 class GroupsError extends GroupsState {
