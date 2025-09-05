@@ -36,20 +36,32 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
     ListPermissionsRequest event,
     Emitter<PermissionsState> emit,
   ) async {
-    final isRefresh = event.offset == 0;
+    // Determine if this is a load more request
+    final isLoadMore = event.offset > 0;
     final isNewSearch = event.search != _currentSearchQuery;
     
+    // If this is a new search, reset offset to 0
+    if (isNewSearch) {
+      _currentSearchQuery = event.search;
+      final resetEvent = ListPermissionsRequest(
+        limit: event.limit,
+        offset: 0,
+        search: event.search,
+      );
+      emit(PermissionsLoading());
+      return _onLoadPermissions(resetEvent, emit);
+    }
+
     _currentSearchQuery = event.search;
 
-    if (isRefresh || isNewSearch) {
-      // Fresh load or new search
+    if (!isLoadMore && state is! PermissionsLoaded) {
       emit(PermissionsLoading());
-    } else {
-      // Pagination - show loading indicator without replacing content
-      if (state is PermissionsLoaded) {
-        final currentState = state as PermissionsLoaded;
-        emit(currentState.copyWith(isLoadingMore: true));
-      }
+    }
+
+    // If this is a load more request and we already have data, show loading more state
+    if (isLoadMore && state is PermissionsLoaded) {
+      final currentState = state as PermissionsLoaded;
+      emit(currentState.copyWith(isLoadingMore: true));
     }
 
     final result = await repository.getPermissions(event);
@@ -57,34 +69,26 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
     result.fold(
       (failure) => emit(PermissionsError(failure.message)),
       (newPermissions) {
-        if (isRefresh || isNewSearch) {
-          // Replace existing permissions
+        if (isLoadMore && state is PermissionsLoaded) {
+          // This is pagination - append to existing permissions
+          final currentState = state as PermissionsLoaded;
+          final allPermissions = List<Permission>.from(currentState.permissions)
+            ..addAll(newPermissions);
+          
           emit(PermissionsLoaded(
-            newPermissions,
-            hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : 20),
+            allPermissions,
+            hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : _defaultPageSize),
             currentPage: event.limit > 0 ? (event.offset / event.limit).floor() : 0,
+            isLoadingMore: false,
           ));
         } else {
-          // Append to existing permissions (pagination)
-          if (state is PermissionsLoaded) {
-            final currentState = state as PermissionsLoaded;
-            final allPermissions = List<Permission>.from(currentState.permissions)
-              ..addAll(newPermissions);
-            
-            emit(PermissionsLoaded(
-              allPermissions,
-              hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : 20),
-              currentPage: event.limit > 0 ? (event.offset / event.limit).floor() : 0,
-              isLoadingMore: false,
-            ));
-          } else {
-            // Fallback if state is not PermissionsLoaded
-            emit(PermissionsLoaded(
-              newPermissions,
-              hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : 20),
-              currentPage: event.limit > 0 ? (event.offset / event.limit).floor() : 0,
-            ));
-          }
+          // This is initial load or refresh - replace permissions
+          emit(PermissionsLoaded(
+            newPermissions,
+            hasReachedMax: newPermissions.length < (event.limit > 0 ? event.limit : _defaultPageSize),
+            currentPage: event.limit > 0 ? (event.offset / event.limit).floor() : 0,
+            isLoadingMore: false,
+          ));
         }
       },
     );

@@ -27,34 +27,6 @@ class PermissionsGrid extends StatefulWidget {
 }
 
 class _PermissionsGridState extends State<PermissionsGrid> {
-  late ScrollController _scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_isBottom && !widget.hasReachedMax && !widget.isLoadingMore) {
-      widget.onLoadMore?.call();
-    }
-  }
-
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9); // Trigger when 90% scrolled
-  }
-
   @override
   Widget build(BuildContext context) {
     final filteredPermissions = _getFilteredPermissions();
@@ -90,46 +62,56 @@ class _PermissionsGridState extends State<PermissionsGrid> {
       );
     }
     
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width < 600 ? 8 : 16),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final crossAxisCount = (constraints.maxWidth / 320).floor().clamp(1, 10);
-                final cardWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
-                
-                return Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: [
-                    ...filteredPermissions.map((permission) => SizedBox(
-                      width: cardWidth,
-                      child: PermissionCard(
-                        permission: permission,
-                        onTap: () => _showPermissionDetails(context, permission),
-                        onAction: (action) => _handlePermissionAction(context, action, permission),
-                      ),
-                    )),
-                    if (widget.isLoadingMore)
-                      SizedBox(
-                        width: cardWidth,
-                        height: 120,
-                        child: const Card(
-                          child: Center(
-                            child: CircularProgressIndicator(),
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width < 600 ? 8 : 16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final crossAxisCount = (constraints.maxWidth / 320).floor().clamp(1, 10);
+          final cardWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
+          
+          return Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              ...filteredPermissions.map((permission) => SizedBox(
+                width: cardWidth,
+                child: PermissionCard(
+                  permission: permission,
+                  onTap: () => _showPermissionDetails(context, permission),
+                  onAction: (action) => _handlePermissionAction(context, action, permission),
+                ),
+              )),
+              // Load More button within the grid
+              if (!widget.hasReachedMax || widget.isLoadingMore)
+                SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 16),
+                    child: widget.isLoadingMore
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : Center(
+                            child: OutlinedButton(
+                              onPressed: widget.onLoadMore,
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
+                              ),
+                              child: const Text('Load More'),
+                            ),
                           ),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ),
-      ],
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 

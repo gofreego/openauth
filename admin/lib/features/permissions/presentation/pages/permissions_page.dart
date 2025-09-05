@@ -73,7 +73,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     final bloc = context.read<PermissionsBloc>();
                     if (!bloc.isClosed) {
                       bloc.add(ListPermissionsRequest(
-                        search: query,
+                        search: query.isNotEmpty ? query : null,
                         limit: 20,
                         offset: 0,
                       ));
@@ -110,14 +110,14 @@ class _PermissionsPageState extends State<PermissionsPage> {
                       hasReachedMax: state.hasReachedMax,
                       isLoadingMore: state.isLoadingMore,
                       onLoadMore: () {
-                        if (mounted) {
+                        if (mounted && !state.hasReachedMax && !state.isLoadingMore) {
                           final bloc = context.read<PermissionsBloc>();
                           if (!bloc.isClosed) {
                             final nextOffset = state.permissions.length;
                             bloc.add(ListPermissionsRequest(
                               limit: 20, 
                               offset: nextOffset,
-                              search: _searchQuery,
+                              search: _searchQuery.isNotEmpty ? _searchQuery : null,
                             ));
                           }
                         }
@@ -153,7 +153,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                                   bloc.add(ListPermissionsRequest(
                                     limit: 20,
                                     offset: 0,
-                                    search: _searchQuery,
+                                    search: _searchQuery.isNotEmpty ? _searchQuery : null,
                                   ));
                                 }
                               }
