@@ -1056,15 +1056,17 @@ class RemoveUsersFromGroupResponse extends $pb.GeneratedMessage {
 class ListGroupUsersRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListGroupUsersRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'all')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
+    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
+    ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'all')
     ..hasRequiredFields = false
   ;
 
   ListGroupUsersRequest._() : super();
   factory ListGroupUsersRequest({
     $fixnum.Int64? groupId,
+    $core.String? search,
     $core.int? limit,
     $core.int? offset,
     $core.bool? all,
@@ -1072,6 +1074,9 @@ class ListGroupUsersRequest extends $pb.GeneratedMessage {
     final _result = create();
     if (groupId != null) {
       _result.groupId = groupId;
+    }
+    if (search != null) {
+      _result.search = search;
     }
     if (limit != null) {
       _result.limit = limit;
@@ -1115,31 +1120,40 @@ class ListGroupUsersRequest extends $pb.GeneratedMessage {
   void clearGroupId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get limit => $_getIZ(1);
+  $core.String get search => $_getSZ(1);
   @$pb.TagNumber(2)
-  set limit($core.int v) { $_setSignedInt32(1, v); }
+  set search($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasLimit() => $_has(1);
+  $core.bool hasSearch() => $_has(1);
   @$pb.TagNumber(2)
-  void clearLimit() => clearField(2);
+  void clearSearch() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get offset => $_getIZ(2);
+  $core.int get limit => $_getIZ(2);
   @$pb.TagNumber(3)
-  set offset($core.int v) { $_setSignedInt32(2, v); }
+  set limit($core.int v) { $_setSignedInt32(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasOffset() => $_has(2);
+  $core.bool hasLimit() => $_has(2);
   @$pb.TagNumber(3)
-  void clearOffset() => clearField(3);
+  void clearLimit() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.bool get all => $_getBF(3);
+  $core.int get offset => $_getIZ(3);
   @$pb.TagNumber(4)
-  set all($core.bool v) { $_setBool(3, v); }
+  set offset($core.int v) { $_setSignedInt32(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasAll() => $_has(3);
+  $core.bool hasOffset() => $_has(3);
   @$pb.TagNumber(4)
-  void clearAll() => clearField(4);
+  void clearOffset() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.bool get all => $_getBF(4);
+  @$pb.TagNumber(5)
+  set all($core.bool v) { $_setBool(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasAll() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearAll() => clearField(5);
 }
 
 class ListGroupUsersResponse extends $pb.GeneratedMessage {

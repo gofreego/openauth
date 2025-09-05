@@ -42,157 +42,224 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Row(
-        children: [
-          const Icon(Icons.people),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text('Manage Members - ${widget.group.displayName}'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
-            onPressed: () {
-              setState(() {
-                _isLoading = true;
-                _isLoadingUsers = true;
-              });
-              _loadData();
-            },
-          ),
-        ],
-      ),
-      content: SizedBox(
-        width: 800,
-        height: 600,
-        child: MultiBlocListener(
-          listeners: [
-            BlocListener<GroupsBloc, GroupsState>(
-              listener: (context, state) {
-                if (state is GroupUsersLoaded && state.groupId == widget.group.id) {
-                  setState(() {
-                    _groupMembers = state.users;
-                    _isLoading = false;
-                  });
-                } else if (state is UserAssigned) {
-                  ToastUtils.showSuccess('User added to group successfully');
-                  // Reload group members
-                  context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
-                } else if (state is UserRemoved) {
-                  ToastUtils.showSuccess('User removed from group successfully');
-                  // Reload group members
-                  context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
-                } else if (state is UserAssigning) {
-                  // Show loading state
-                } else if (state is UserRemoving) {
-                  // Show loading state
-                } else if (state is GroupsError) {
-                  ToastUtils.showError('Error: ${state.message}');
-                }
-              },
-            ),
-            BlocListener<UsersBloc, UsersState>(
-              listener: (context, state) {
-                if (state is UsersLoaded) {
-                  setState(() {
-                    _availableUsers = state.users;
-                    _isLoadingUsers = false;
-                  });
-                } else if (state is UsersError) {
-                  ToastUtils.showError('Error loading users: ${state.message}');
-                  setState(() {
-                    _isLoadingUsers = false;
-                  });
-                }
-              },
-            ),
-          ],
-          child: _isLoading || _isLoadingUsers
-              ? const Center(child: CircularProgressIndicator())
-              : _buildContent(),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContent() {
-    return Column(
-      children: [
-        // System group info
-        if (widget.group.isSystem)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              border: Border.all(color: Colors.blue.shade200),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
+    final theme = Theme.of(context);
+    
+    return Dialog(
+      child: Container(
+        width: 1200, // Increased width for side-by-side layout
+        height: 700,
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
               children: [
-                Icon(Icons.info, color: Colors.blue.shade600, size: 20),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'This is a system group. You can manage members, but permissions are controlled by the system.',
-                    style: TextStyle(
-                      color: Colors.blue.shade700,
-                      fontSize: 13,
-                    ),
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: theme.colorScheme.primary,
+                  child: const Icon(
+                    Icons.people,
+                    color: Colors.white,
                   ),
                 ),
-              ],
-            ),
-          ),
-        
-        // Search bar
-        TextField(
-          decoration: const InputDecoration(
-            labelText: 'Search users',
-            prefixIcon: Icon(Icons.search),
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) {
-            setState(() {
-              _searchQuery = value.toLowerCase();
-            });
-          },
-        ),
-        const SizedBox(height: 16),
-        
-        // Tabs for members/available users
-        DefaultTabController(
-          length: 2,
-          child: Expanded(
-            child: Column(
-              children: [
-                TabBar(
-                  tabs: [
-                    Tab(text: 'Group Members (${_groupMembers.length})'),
-                    const Tab(text: 'Available Users'),
-                  ],
-                ),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: TabBarView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildGroupMembers(),
-                      _buildAvailableUsers(),
+                      Text(
+                        'Manage Members',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'for ${widget.group.displayName.isEmpty ? widget.group.name : widget.group.displayName}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'Refresh',
+                  onPressed: () {
+                    setState(() {
+                      _isLoading = true;
+                      _isLoadingUsers = true;
+                    });
+                    _loadData();
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
               ],
             ),
-          ),
+            const SizedBox(height: 24),
+
+            // System group info
+            if (widget.group.isSystem)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  border: Border.all(color: Colors.blue.shade200),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info, color: Colors.blue.shade600, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'This is a system group. You can manage members, but permissions are controlled by the system.',
+                        style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Search bar
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Search users...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Side by side layout
+            Expanded(
+              child: MultiBlocListener(
+                listeners: [
+                  BlocListener<GroupsBloc, GroupsState>(
+                    listener: (context, state) {
+                      if (state is GroupUsersLoaded && state.groupId == widget.group.id) {
+                        setState(() {
+                          _groupMembers = state.users;
+                          _isLoading = false;
+                        });
+                      } else if (state is UserAssigned) {
+                        ToastUtils.showSuccess('User added to group successfully');
+                        // Reload group members
+                        context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
+                      } else if (state is UserRemoved) {
+                        ToastUtils.showSuccess('User removed from group successfully');
+                        // Reload group members
+                        context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
+                      } else if (state is UserAssigning) {
+                        // Show loading state
+                      } else if (state is UserRemoving) {
+                        // Show loading state
+                      } else if (state is GroupsError) {
+                        ToastUtils.showError('Error: ${state.message}');
+                      }
+                    },
+                  ),
+                  BlocListener<UsersBloc, UsersState>(
+                    listener: (context, state) {
+                      if (state is UsersLoaded) {
+                        setState(() {
+                          _availableUsers = state.users;
+                          _isLoadingUsers = false;
+                        });
+                      } else if (state is UsersError) {
+                        ToastUtils.showError('Error loading users: ${state.message}');
+                        setState(() {
+                          _isLoadingUsers = false;
+                        });
+                      }
+                    },
+                  ),
+                ],
+                child: _isLoading || _isLoadingUsers
+                    ? const Center(child: CircularProgressIndicator())
+                    : Row(
+                        children: [
+                          // Group members (left side)
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.people,
+                                      size: 20,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Group Members (${_groupMembers.length})',
+                                      style: theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Expanded(child: _buildGroupMembers()),
+                              ],
+                            ),
+                          ),
+                          // Vertical divider
+                          Container(
+                            width: 1,
+                            margin: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                            ),
+                          ),
+                          // Available users (right side)
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.person_add,
+                                      size: 20,
+                                      color: Colors.green,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Available Users',
+                                      style: theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Expanded(child: _buildAvailableUsers()),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -205,13 +272,31 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
     }).toList();
 
     if (filteredMembers.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_outline, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text('No members in this group'),
+            Icon(
+              _searchQuery.isEmpty ? Icons.people_outline : Icons.search_off,
+              size: 64, 
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _searchQuery.isEmpty 
+                  ? 'No members in this group'
+                  : 'No members found matching "$_searchQuery"',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _searchQuery.isEmpty
+                  ? 'Add users from the available users list'
+                  : 'Try adjusting your search query',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
+            ),
           ],
         ),
       );
@@ -221,29 +306,52 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
       itemCount: filteredMembers.length,
       itemBuilder: (context, index) {
         final member = filteredMembers[index];
+        final theme = Theme.of(context);
+        
         return Card(
+          margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
+              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
               child: Text(
                 member.name.isNotEmpty 
                     ? member.name[0].toUpperCase()
                     : member.username[0].toUpperCase(),
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            title: Text(member.name.isNotEmpty ? member.name : member.username),
+            title: Text(
+              member.name.isNotEmpty ? member.name : member.username,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('@${member.username}'),
+                Text(
+                  '@${member.username}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
                 if (member.email.isNotEmpty)
                   Text(
                     member.email,
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.remove_circle, color: Colors.red),
+              icon: const Icon(Icons.remove_circle_outline),
+              iconSize: 24,
+              color: Colors.red,
+              tooltip: 'Remove from group',
               onPressed: () => _removeUserFromGroup(member.userId),
             ),
           ),
@@ -268,13 +376,31 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
     }).toList();
 
     if (availableUsers.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_outline, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text('No available users to add'),
+            Icon(
+              _searchQuery.isEmpty ? Icons.check_circle_outline : Icons.search_off,
+              size: 64, 
+              color: _searchQuery.isEmpty ? Colors.green : Colors.grey,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _searchQuery.isEmpty 
+                  ? 'All users are members'
+                  : 'No available users found matching "$_searchQuery"',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _searchQuery.isEmpty
+                  ? 'All registered users are already members of this group'
+                  : 'Try adjusting your search query',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
+            ),
           ],
         ),
       );
@@ -284,29 +410,52 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
       itemCount: availableUsers.length,
       itemBuilder: (context, index) {
         final user = availableUsers[index];
+        final theme = Theme.of(context);
+        
         return Card(
+          margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
+              backgroundColor: Colors.green.withValues(alpha: 0.1),
               child: Text(
                 user.name.isNotEmpty 
                     ? user.name[0].toUpperCase()
                     : user.username[0].toUpperCase(),
+                style: const TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            title: Text(user.name.isNotEmpty ? user.name : user.username),
+            title: Text(
+              user.name.isNotEmpty ? user.name : user.username,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('@${user.username}'),
+                Text(
+                  '@${user.username}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
                 if (user.email.isNotEmpty)
                   Text(
                     user.email,
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.add_circle, color: Colors.green),
+              icon: const Icon(Icons.add_circle_outline),
+              iconSize: 24,
+              color: Colors.green,
+              tooltip: 'Add to group',
               onPressed: () => _addUserToGroup(user.id),
             ),
           ),

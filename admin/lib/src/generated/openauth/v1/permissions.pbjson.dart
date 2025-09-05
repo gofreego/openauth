@@ -57,23 +57,20 @@ final $typed_data.Uint8List getPermissionRequestDescriptor = $convert.base64Deco
 const ListPermissionsRequest$json = const {
   '1': 'ListPermissionsRequest',
   '2': const [
-    const {'1': 'limit', '3': 1, '4': 1, '5': 5, '9': 0, '10': 'limit', '17': true},
-    const {'1': 'offset', '3': 2, '4': 1, '5': 5, '9': 1, '10': 'offset', '17': true},
-    const {'1': 'id', '3': 3, '4': 1, '5': 3, '9': 2, '10': 'id', '17': true},
-    const {'1': 'search', '3': 4, '4': 1, '5': 9, '9': 3, '10': 'search', '17': true},
-    const {'1': 'all', '3': 5, '4': 1, '5': 8, '9': 4, '10': 'all', '17': true},
+    const {'1': 'limit', '3': 1, '4': 1, '5': 5, '10': 'limit'},
+    const {'1': 'offset', '3': 2, '4': 1, '5': 5, '10': 'offset'},
+    const {'1': 'id', '3': 3, '4': 1, '5': 3, '9': 0, '10': 'id', '17': true},
+    const {'1': 'search', '3': 4, '4': 1, '5': 9, '9': 1, '10': 'search', '17': true},
+    const {'1': 'all', '3': 5, '4': 1, '5': 8, '10': 'all'},
   ],
   '8': const [
-    const {'1': '_limit'},
-    const {'1': '_offset'},
     const {'1': '_id'},
     const {'1': '_search'},
-    const {'1': '_all'},
   ],
 };
 
 /// Descriptor for `ListPermissionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listPermissionsRequestDescriptor = $convert.base64Decode('ChZMaXN0UGVybWlzc2lvbnNSZXF1ZXN0EhkKBWxpbWl0GAEgASgFSABSBWxpbWl0iAEBEhsKBm9mZnNldBgCIAEoBUgBUgZvZmZzZXSIAQESEwoCaWQYAyABKANIAlICaWSIAQESGwoGc2VhcmNoGAQgASgJSANSBnNlYXJjaIgBARIVCgNhbGwYBSABKAhIBFIDYWxsiAEBQggKBl9saW1pdEIJCgdfb2Zmc2V0QgUKA19pZEIJCgdfc2VhcmNoQgYKBF9hbGw=');
+final $typed_data.Uint8List listPermissionsRequestDescriptor = $convert.base64Decode('ChZMaXN0UGVybWlzc2lvbnNSZXF1ZXN0EhQKBWxpbWl0GAEgASgFUgVsaW1pdBIWCgZvZmZzZXQYAiABKAVSBm9mZnNldBITCgJpZBgDIAEoA0gAUgJpZIgBARIbCgZzZWFyY2gYBCABKAlIAVIGc2VhcmNoiAEBEhAKA2FsbBgFIAEoCFIDYWxsQgUKA19pZEIJCgdfc2VhcmNo');
 @$core.Deprecated('Use listPermissionsResponseDescriptor instead')
 const ListPermissionsResponse$json = const {
   '1': 'ListPermissionsResponse',

@@ -291,40 +291,6 @@
         ]
       }
     },
-    "/openauth/v1/groups/users": {
-      "post": {
-        "summary": "Assign user to group",
-        "description": "Add a user to a group.",
-        "operationId": "OpenAuth_AssignUsersToGroup",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1AssignUsersToGroupResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1AssignUsersToGroupRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Group Users"
-        ]
-      }
-    },
     "/openauth/v1/groups/{groupId}/permissions": {
       "get": {
         "summary": "List group permissions",
@@ -467,6 +433,12 @@
             "format": "int64"
           },
           {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "limit",
             "description": "Pagination",
             "in": "query",
@@ -486,6 +458,45 @@
             "in": "query",
             "required": false,
             "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Group Users"
+        ]
+      },
+      "post": {
+        "summary": "Assign user to group",
+        "description": "Add a user to a group.",
+        "operationId": "OpenAuth_AssignUsersToGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssignUsersToGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthAssignUsersToGroupBody"
+            }
           }
         ],
         "tags": [
@@ -1778,6 +1789,24 @@
       },
       "title": "Request to assign a permission directly to a user"
     },
+    "OpenAuthAssignUsersToGroupBody": {
+      "type": "object",
+      "properties": {
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Optional expiration time for the group membership"
+        }
+      },
+      "title": "AssignUsersToGroupRequest to add users to a group"
+    },
     "OpenAuthChangePasswordBody": {
       "type": "object",
       "properties": {
@@ -2053,28 +2082,6 @@
         }
       },
       "title": "Response after assigning a permission to a user"
-    },
-    "v1AssignUsersToGroupRequest": {
-      "type": "object",
-      "properties": {
-        "userIds": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "int64"
-          }
-        },
-        "groupId": {
-          "type": "string",
-          "format": "int64"
-        },
-        "expiresAt": {
-          "type": "string",
-          "format": "int64",
-          "title": "Optional expiration time for the group membership"
-        }
-      },
-      "title": "AssignUsersToGroupRequest to add users to a group"
     },
     "v1AssignUsersToGroupResponse": {
       "type": "object",

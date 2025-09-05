@@ -133,17 +133,16 @@ const ListGroupsRequest$json = const {
     const {'1': 'offset', '3': 2, '4': 1, '5': 5, '10': 'offset'},
     const {'1': 'id', '3': 3, '4': 1, '5': 3, '9': 0, '10': 'id', '17': true},
     const {'1': 'search', '3': 4, '4': 1, '5': 9, '9': 1, '10': 'search', '17': true},
-    const {'1': 'all', '3': 5, '4': 1, '5': 8, '9': 2, '10': 'all', '17': true},
+    const {'1': 'all', '3': 5, '4': 1, '5': 8, '10': 'all'},
   ],
   '8': const [
     const {'1': '_id'},
     const {'1': '_search'},
-    const {'1': '_all'},
   ],
 };
 
 /// Descriptor for `ListGroupsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listGroupsRequestDescriptor = $convert.base64Decode('ChFMaXN0R3JvdXBzUmVxdWVzdBIUCgVsaW1pdBgBIAEoBVIFbGltaXQSFgoGb2Zmc2V0GAIgASgFUgZvZmZzZXQSEwoCaWQYAyABKANIAFICaWSIAQESGwoGc2VhcmNoGAQgASgJSAFSBnNlYXJjaIgBARIVCgNhbGwYBSABKAhIAlIDYWxsiAEBQgUKA19pZEIJCgdfc2VhcmNoQgYKBF9hbGw=');
+final $typed_data.Uint8List listGroupsRequestDescriptor = $convert.base64Decode('ChFMaXN0R3JvdXBzUmVxdWVzdBIUCgVsaW1pdBgBIAEoBVIFbGltaXQSFgoGb2Zmc2V0GAIgASgFUgZvZmZzZXQSEwoCaWQYAyABKANIAFICaWSIAQESGwoGc2VhcmNoGAQgASgJSAFSBnNlYXJjaIgBARIQCgNhbGwYBSABKAhSA2FsbEIFCgNfaWRCCQoHX3NlYXJjaA==');
 @$core.Deprecated('Use listGroupsResponseDescriptor instead')
 const ListGroupsResponse$json = const {
   '1': 'ListGroupsResponse',
@@ -207,14 +206,15 @@ const ListGroupUsersRequest$json = const {
   '1': 'ListGroupUsersRequest',
   '2': const [
     const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '10': 'groupId'},
-    const {'1': 'limit', '3': 2, '4': 1, '5': 5, '10': 'limit'},
-    const {'1': 'offset', '3': 3, '4': 1, '5': 5, '10': 'offset'},
-    const {'1': 'all', '3': 4, '4': 1, '5': 8, '10': 'all'},
+    const {'1': 'search', '3': 2, '4': 1, '5': 9, '10': 'search'},
+    const {'1': 'limit', '3': 3, '4': 1, '5': 5, '10': 'limit'},
+    const {'1': 'offset', '3': 4, '4': 1, '5': 5, '10': 'offset'},
+    const {'1': 'all', '3': 5, '4': 1, '5': 8, '10': 'all'},
   ],
 };
 
 /// Descriptor for `ListGroupUsersRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listGroupUsersRequestDescriptor = $convert.base64Decode('ChVMaXN0R3JvdXBVc2Vyc1JlcXVlc3QSGQoIZ3JvdXBfaWQYASABKANSB2dyb3VwSWQSFAoFbGltaXQYAiABKAVSBWxpbWl0EhYKBm9mZnNldBgDIAEoBVIGb2Zmc2V0EhAKA2FsbBgEIAEoCFIDYWxs');
+final $typed_data.Uint8List listGroupUsersRequestDescriptor = $convert.base64Decode('ChVMaXN0R3JvdXBVc2Vyc1JlcXVlc3QSGQoIZ3JvdXBfaWQYASABKANSB2dyb3VwSWQSFgoGc2VhcmNoGAIgASgJUgZzZWFyY2gSFAoFbGltaXQYAyABKAVSBWxpbWl0EhYKBm9mZnNldBgEIAEoBVIGb2Zmc2V0EhAKA2FsbBgFIAEoCFIDYWxs');
 @$core.Deprecated('Use listGroupUsersResponseDescriptor instead')
 const ListGroupUsersResponse$json = const {
   '1': 'ListGroupUsersResponse',

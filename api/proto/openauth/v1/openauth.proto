@@ -287,7 +287,7 @@ service OpenAuth {
     // Supports optional expiration time for temporary group membership.
     rpc AssignUsersToGroup (AssignUsersToGroupRequest) returns (AssignUsersToGroupResponse) {
         option (google.api.http) = {
-            post: "/openauth/v1/groups/users"
+            post: "/openauth/v1/groups/{group_id}/users"
             body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
