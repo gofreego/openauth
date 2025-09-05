@@ -221,47 +221,48 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
               // Action buttons
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Left side - Clear buttons
-                  Row(
-                    children: [
-                      if (selectedPermissions.isNotEmpty)
-                        TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              selectedPermissions.clear();
-                            });
-                          },
-                          icon: const Icon(Icons.clear_all),
-                          label: const Text('Clear Add Selection'),
-                        ),
-                      if (selectedPermissions.isNotEmpty &&
-                          selectedRemovePermissions.isNotEmpty)
-                        const SizedBox(width: 8),
-                      if (selectedRemovePermissions.isNotEmpty)
-                        TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              selectedRemovePermissions.clear();
-                            });
-                          },
-                          icon: const Icon(Icons.clear_all),
-                          label: const Text('Clear Remove Selection'),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.red,
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        if (selectedPermissions.isNotEmpty)
+                          TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                selectedPermissions.clear();
+                              });
+                            },
+                            icon: const Icon(Icons.clear_all),
+                            label: const Text('Clear Add'),
                           ),
-                        ),
-                    ],
+                        if (selectedRemovePermissions.isNotEmpty)
+                          TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                selectedRemovePermissions.clear();
+                              });
+                            },
+                            icon: const Icon(Icons.clear_all),
+                            label: const Text('Clear Remove'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                   // Right side - Action buttons
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
                         child: const Text('Close'),
                       ),
-                      const SizedBox(width: 8),
                       if (selectedRemovePermissions.isNotEmpty)
                         BlocConsumer<UserPermissionsBloc, UserPermissionsState>(
                           listener: (context, state) {
@@ -300,7 +301,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                               label: Text(
                                 _isRemoving
                                     ? 'Removing...'
-                                    : 'Remove ${selectedRemovePermissions.length} Permission${selectedRemovePermissions.length == 1 ? '' : 's'}',
+                                    : 'Remove (${selectedRemovePermissions.length})',
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
@@ -309,9 +310,6 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                             );
                           },
                         ),
-                      if (selectedRemovePermissions.isNotEmpty &&
-                          selectedPermissions.isNotEmpty)
-                        const SizedBox(width: 8),
                       if (selectedPermissions.isNotEmpty)
                         BlocConsumer<UserPermissionsBloc, UserPermissionsState>(
                           listener: (context, state) {
@@ -350,7 +348,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                               label: Text(
                                 _isAssigning
                                     ? 'Assigning...'
-                                    : 'Assign ${selectedPermissions.length} Permission${selectedPermissions.length == 1 ? '' : 's'}',
+                                    : 'Assign (${selectedPermissions.length})',
                               ),
                             );
                           },
