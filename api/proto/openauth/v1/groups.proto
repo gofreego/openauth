@@ -139,10 +139,11 @@ message RemoveUsersFromGroupResponse {
 // ListGroupUsersRequest to get all users in a group
 message ListGroupUsersRequest {
     int64 group_id = 1;
+    string search = 2;
     // Pagination
-    int32 limit = 2;
-    int32 offset = 3;
-    bool all = 4;
+    int32 limit = 3;
+    int32 offset = 4;
+    bool all = 5;
 }
 
 // ListGroupUsersResponse
