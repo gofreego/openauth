@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
+import 'package:openauth/shared/widgets/custom_search_bar.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as users_pb;
 import '../../../users/presentation/bloc/users_bloc.dart';
@@ -37,11 +38,24 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
     _loadData();
   }
 
-  void _loadData() {
+  void _performSearch(String query) {
+    final trimmedQuery = query.trim();
+    setState(() {
+      _searchQuery = trimmedQuery;
+      _isLoadingUsers = true;
+    });
+    _loadData(searchQuery: trimmedQuery);
+  }
+
+  void _loadData({String? searchQuery}) {
     // Load group members
     context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
-    // Load all users
-    context.read<UsersBloc>().add(users_pb.ListUsersRequest());
+    // Load all users with search query
+    context.read<UsersBloc>().add(users_pb.ListUsersRequest(
+      limit: 100, // Load more users for selection
+      offset: 0,
+      search: searchQuery?.isNotEmpty == true ? searchQuery : null,
+    ));
   }
 
   @override
@@ -95,7 +109,7 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                       _isLoading = true;
                       _isLoadingUsers = true;
                     });
-                    _loadData();
+                    _loadData(searchQuery: _searchQuery.isNotEmpty ? _searchQuery : null);
                   },
                 ),
                 IconButton(
@@ -135,18 +149,52 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
               ),
 
             // Search bar
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search users...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
+            CustomSearchBar(
+              initialQuery: _searchQuery,
+              hintText: 'Search users by name, email, or username...',
+              onSearch: (query) {
+                _performSearch(query);
+              },
+              onClear: () {
                 setState(() {
-                  _searchQuery = value.toLowerCase();
+                  _searchQuery = '';
+                });
+                _loadData(); // Load all users without search
+              },
+              onKeyStrokeChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
                 });
               },
             ),
+            
+            // Search info
+            if (_searchQuery.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  border: Border.all(color: Colors.blue.shade200),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.blue.shade600, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Searching for users: "$_searchQuery" - Group members are filtered locally, available users are searched from server',
+                        style: TextStyle(
+                          color: Colors.blue.shade600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
 
             // Side by side layout
@@ -292,6 +340,14 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    if (_isLoadingUsers) ...[
+                                      const SizedBox(width: 8),
+                                      const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      ),
+                                    ],
                                     const SizedBox(width: 8),
                                     // Select all available users button
                                     BlocBuilder<UsersBloc, UsersState>(
@@ -299,11 +355,7 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                                         if (state is UsersLoaded) {
                                           final groupMemberIds = _groupMembers.map((m) => m.userId).toSet();
                                           final availableUsers = state.users.where((user) {
-                                            if (groupMemberIds.contains(user.id)) return false;
-                                            if (_searchQuery.isEmpty) return true;
-                                            return user.username.toLowerCase().contains(_searchQuery) ||
-                                                   user.email.toLowerCase().contains(_searchQuery) ||
-                                                   user.name.toLowerCase().contains(_searchQuery);
+                                            return !groupMemberIds.contains(user.id);
                                           }).toList();
                                           
                                           if (availableUsers.isNotEmpty) {
@@ -438,9 +490,10 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
   Widget _buildGroupMembers() {
     final filteredMembers = _groupMembers.where((member) {
       if (_searchQuery.isEmpty) return true;
-      return member.username.toLowerCase().contains(_searchQuery) ||
-             member.email.toLowerCase().contains(_searchQuery) ||
-             member.name.toLowerCase().contains(_searchQuery);
+      final searchLower = _searchQuery.toLowerCase();
+      return member.username.toLowerCase().contains(searchLower) ||
+             member.email.toLowerCase().contains(searchLower) ||
+             member.name.toLowerCase().contains(searchLower);
     }).toList();
 
     if (filteredMembers.isEmpty) {
@@ -575,11 +628,7 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
     // Filter out users that are already in the group
     final groupMemberIds = _groupMembers.map((m) => m.userId).toSet();
     final availableUsers = _availableUsers.where((user) {
-      if (groupMemberIds.contains(user.id)) return false;
-      if (_searchQuery.isEmpty) return true;
-      return user.username.toLowerCase().contains(_searchQuery) ||
-             user.email.toLowerCase().contains(_searchQuery) ||
-             user.name.toLowerCase().contains(_searchQuery);
+      return !groupMemberIds.contains(user.id);
     }).toList();
 
     if (availableUsers.isEmpty) {
