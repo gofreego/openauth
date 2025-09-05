@@ -38,7 +38,6 @@ class _StatCardState extends State<StatCard> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
     // Runner-style slide animation from right to left
     _slideAnimation = Tween<Offset>(
       begin: const Offset(1.0, 0.0),
