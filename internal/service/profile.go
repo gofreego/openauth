@@ -186,7 +186,7 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 	// Update profile if there are changes
 	var updatedProfile *dao.Profile
 	if len(updates) > 0 {
-		updates["updated_at"] = time.Now().Unix()
+		// Note: updated_at is automatically set by the repository
 		updatedProfile, err = s.repo.UpdateProfileByUUID(ctx, req.ProfileUuid, updates)
 		if err != nil {
 			logger.Error(ctx, "Failed to update profile for user UUID %s: %v", profile.UserID, err)
