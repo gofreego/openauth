@@ -24,7 +24,7 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
       final result = await repository.listUserProfiles(event);
 
       result.fold(
-        (failure) => emit(ProfilesError(failure.message)),
+        (failure) => emit(ProfilesListError(failure.message)),
         (response) => emit(ProfilesLoaded(
           profiles: response.profiles,
           totalCount: response.totalCount,
@@ -34,7 +34,7 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
         )),
       );
     } catch (e) {
-      emit(ProfilesError('Failed to load user profiles: ${e.toString()}'));
+      emit(ProfilesListError('Failed to load user profiles: ${e.toString()}'));
     }
   }
 
@@ -46,11 +46,11 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
       final result = await repository.createProfile(event);
 
       result.fold(
-        (failure) => emit(ProfilesError(failure.message)),
+        (failure) => emit(ProfileCreateError(failure.message)),
         (response) => emit(ProfileCreated(response.message)),
       );
     } catch (e) {
-      emit(ProfilesError('Failed to create profile: ${e.toString()}'));
+      emit(ProfileCreateError('Failed to create profile: ${e.toString()}'));
     }
   }
 
@@ -62,11 +62,11 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
       final result = await repository.updateProfile(event);
 
       result.fold(
-        (failure) => emit(ProfilesError(failure.message)),
+        (failure) => emit(ProfileUpdateError(failure.message)),
         (response) => emit(ProfileUpdated(response.message)),
       );
     } catch (e) {
-      emit(ProfilesError('Failed to update profile: ${e.toString()}'));
+      emit(ProfileUpdateError('Failed to update profile: ${e.toString()}'));
     }
   }
 
@@ -78,11 +78,11 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
       final result = await repository.deleteProfile(event);
 
       result.fold(
-        (failure) => emit(ProfilesError(failure.message)),
+        (failure) => emit(ProfileDeleteError(failure.message)),
         (response) => emit(ProfileDeleted(response.message)),
       );
     } catch (e) {
-      emit(ProfilesError('Failed to delete profile: ${e.toString()}'));
+      emit(ProfileDeleteError('Failed to delete profile: ${e.toString()}'));
     }
   }
 }

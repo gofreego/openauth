@@ -108,8 +108,20 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
     
     return BlocListener<ProfilesBloc, ProfilesState>(
       listener: (context, state) {
-        if (state is ProfileCreated || state is ProfileUpdated) {
-          Navigator.of(context).pop();
+        if (state is ProfileCreateError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error creating profile: ${state.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is ProfileUpdateError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error updating profile: ${state.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       },
       child: AlertDialog(

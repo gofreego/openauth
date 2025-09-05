@@ -63,39 +63,9 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
 
     return BlocListener<ProfilesBloc, ProfilesState>(
       listener: (context, state) {
-        if (state is ProfileDeleted) {
-          ToastUtils.showSuccess(state.message);
-          // Reload profiles after deletion
-          context.read<ProfilesBloc>().add(
-            pb.ListUserProfilesRequest(
-              userUuid: widget.user.uuid,
-              limit: 50,
-              offset: 0,
-            ),
-          );
-        } else if (state is ProfilesError) {
+        if (state is ProfilesListError) {
           ToastUtils.showError('Error: ${state.message}');
           // Don't automatically retry on error to prevent infinite loops
-        } else if (state is ProfileCreated) {
-          ToastUtils.showSuccess(state.message);
-          // Reload profiles after creation
-          context.read<ProfilesBloc>().add(
-            pb.ListUserProfilesRequest(
-              userUuid: widget.user.uuid,
-              limit: 50,
-              offset: 0,
-            ),
-          );
-        } else if (state is ProfileUpdated) {
-          ToastUtils.showSuccess(state.message);
-          // Reload profiles after update
-          context.read<ProfilesBloc>().add(
-            pb.ListUserProfilesRequest(
-              userUuid: widget.user.uuid,
-              limit: 50,
-              offset: 0,
-            ),
-          );
         }
       },
       child: AlertDialog(
@@ -208,7 +178,7 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
                 );
               }
 
-              if (state is ProfilesError) {
+              if (state is ProfilesListError) {
                 return SizedBox(
                   width: 600,
                   height: 300,
@@ -296,38 +266,73 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
   }
 
   void _showCreateProfileDialog(BuildContext context) {
-    final profilesBloc = context.read<ProfilesBloc>();
+    final mainProfilesBloc = context.read<ProfilesBloc>();
+    
     showDialog(
       context: context,
-      builder: (context) => BlocProvider.value(
-        value: profilesBloc,
-        child: CreateEditProfileDialog(
-          userUuid: widget.user.uuid,
+      builder: (context) => BlocProvider(
+        create: (context) => serviceLocator<ProfilesBloc>(),
+        child: BlocListener<ProfilesBloc, ProfilesState>(
+          listener: (context, state) {
+            if (state is ProfileCreated) {
+              Navigator.of(context).pop();
+              // Reload profiles in the main dialog
+              mainProfilesBloc.add(
+                pb.ListUserProfilesRequest(
+                  userUuid: widget.user.uuid,
+                  limit: 50,
+                  offset: 0,
+                ),
+              );
+            }
+          },
+          child: Builder(
+            builder: (context) => CreateEditProfileDialog(
+              userUuid: widget.user.uuid,
+            ),
+          ),
         ),
       ),
     );
   }
 
   void _showEditProfileDialog(BuildContext context, pb.UserProfile profile) {
-    final profilesBloc = context.read<ProfilesBloc>();
+    final mainProfilesBloc = context.read<ProfilesBloc>();
+    
     showDialog(
       context: context,
-      builder: (context) => BlocProvider.value(
-        value: profilesBloc,
-        child: CreateEditProfileDialog(
-          userUuid: widget.user.uuid,
-          profile: profile,
+      builder: (context) => BlocProvider(
+        create: (context) => serviceLocator<ProfilesBloc>(),
+        child: BlocListener<ProfilesBloc, ProfilesState>(
+          listener: (context, state) {
+            if (state is ProfileUpdated) {
+              Navigator.of(context).pop();
+              // Reload profiles in the main dialog
+              mainProfilesBloc.add(
+                pb.ListUserProfilesRequest(
+                  userUuid: widget.user.uuid,
+                  limit: 50,
+                  offset: 0,
+                ),
+              );
+            }
+          },
+          child: Builder(
+            builder: (context) => CreateEditProfileDialog(
+              userUuid: widget.user.uuid,
+              profile: profile,
+            ),
+          ),
         ),
       ),
     );
   }
 
   void _showViewProfileDialog(BuildContext context, pb.UserProfile profile) {
-    final profilesBloc = context.read<ProfilesBloc>();
     showDialog(
       context: context,
-      builder: (context) => BlocProvider.value(
-        value: profilesBloc,
+      builder: (context) => BlocProvider(
+        create: (context) => serviceLocator<ProfilesBloc>(),
         child: CreateEditProfileDialog(
           userUuid: widget.user.uuid,
           profile: profile,
@@ -338,71 +343,90 @@ class _UserProfilesDialogContentState extends State<_UserProfilesDialogContent> 
   }
 
   void _showDeleteProfileDialog(BuildContext context, pb.UserProfile profile) {
-    final profilesBloc = context.read<ProfilesBloc>();
-    final currentState = profilesBloc.state;
+    final mainProfilesBloc = context.read<ProfilesBloc>();
+    final currentState = mainProfilesBloc.state;
     
     // Check if this is the last profile
     final isLastProfile = currentState is ProfilesLoaded && currentState.profiles.length == 1;
     
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Profile'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Are you sure you want to delete the profile "${profile.displayName.isNotEmpty ? profile.displayName : profile.profileName}"?',
-            ),
-            if (isLastProfile) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  border: Border.all(color: Colors.orange.shade200),
-                  borderRadius: BorderRadius.circular(8),
+      builder: (context) => BlocProvider(
+        create: (context) => serviceLocator<ProfilesBloc>(),
+        child: BlocListener<ProfilesBloc, ProfilesState>(
+          listener: (context, state) {
+            if (state is ProfileDeleted) {
+              Navigator.of(context).pop();
+              // Reload profiles in the main dialog
+              mainProfilesBloc.add(
+                pb.ListUserProfilesRequest(
+                  userUuid: widget.user.uuid,
+                  limit: 50,
+                  offset: 0,
                 ),
-                child: Row(
-                  children: [
-                    Icon(Icons.warning_amber, color: Colors.orange.shade700),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'This is the last profile. Some systems may not allow deletion of the last profile.',
-                        style: TextStyle(color: Colors.orange.shade700),
+              );
+            }
+          },
+          child: Builder(
+            builder: (context) => AlertDialog(
+              title: const Text('Delete Profile'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Are you sure you want to delete the profile "${profile.displayName.isNotEmpty ? profile.displayName : profile.profileName}"?',
+                  ),
+                  if (isLastProfile) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        border: Border.all(color: Colors.orange.shade200),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.warning_amber, color: Colors.orange.shade700),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'This is the last profile. Some systems may not allow deletion of the last profile.',
+                              style: TextStyle(color: Colors.orange.shade700),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'This action cannot be undone.',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
               ),
-            ],
-            const SizedBox(height: 8),
-            const Text(
-              'This action cannot be undone.',
-              style: TextStyle(fontWeight: FontWeight.w500),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    context.read<ProfilesBloc>().add(
+                      pb.DeleteProfileRequest(profileUuid: profile.uuid),
+                    );
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  child: const Text('Delete'),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              profilesBloc.add(
-                pb.DeleteProfileRequest(profileUuid: profile.uuid),
-              );
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            child: const Text('Delete'),
-          ),
-        ],
       ),
     );
   }

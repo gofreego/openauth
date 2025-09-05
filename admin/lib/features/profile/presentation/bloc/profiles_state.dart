@@ -40,6 +40,42 @@ class ProfilesError extends ProfilesState {
   List<Object?> get props => [message];
 }
 
+class ProfilesListError extends ProfilesState {
+  final String message;
+
+  const ProfilesListError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ProfileCreateError extends ProfilesState {
+  final String message;
+
+  const ProfileCreateError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ProfileUpdateError extends ProfilesState {
+  final String message;
+
+  const ProfileUpdateError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ProfileDeleteError extends ProfilesState {
+  final String message;
+
+  const ProfileDeleteError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class ProfileCreating extends ProfilesState {}
 
 class ProfileCreated extends ProfilesState {
