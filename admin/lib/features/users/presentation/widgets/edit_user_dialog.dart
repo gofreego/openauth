@@ -145,7 +145,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       helperText:
                           _isEditMode ? 'The name shown to other users' : null,
                       filled: !_isEditMode,
-                      fillColor: !_isEditMode ? Colors.grey[100] : null,
+                      fillColor: !_isEditMode ? Theme.of(context).colorScheme.surfaceContainerHighest : null,
                     ),
                     validator: _isEditMode
                         ? (value) {
@@ -174,7 +174,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         prefixIcon: const Icon(Icons.person_outline),
                         filled: !_isEditMode || _isAdminUser(),
                         fillColor: (!_isEditMode || _isAdminUser())
-                            ? Colors.grey[100]
+                            ? Theme.of(context).colorScheme.surfaceContainerHighest
                             : null,
                       ),
                       validator: _isEditMode && !_isAdminUser()
@@ -200,7 +200,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.email_outlined),
                       filled: !_isEditMode,
-                      fillColor: !_isEditMode ? Colors.grey[100] : null,
+                      fillColor: !_isEditMode ? Theme.of(context).colorScheme.surfaceContainerHighest : null,
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: _isEditMode
@@ -225,7 +225,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.phone_outlined),
                       filled: !_isEditMode,
-                      fillColor: !_isEditMode ? Colors.grey[100] : null,
+                      fillColor: !_isEditMode ? Theme.of(context).colorScheme.surfaceContainerHighest : null,
                     ),
                     keyboardType: TextInputType.phone,
                     validator: _isEditMode
@@ -252,7 +252,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           ? 'URL to the user\'s profile picture'
                           : null,
                       filled: !_isEditMode,
-                      fillColor: !_isEditMode ? Colors.grey[100] : null,
+                      fillColor: !_isEditMode ? Theme.of(context).colorScheme.surfaceContainerHighest : null,
                       suffixIcon: _avatarUrlController.text.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.visibility),
