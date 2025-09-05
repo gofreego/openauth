@@ -1,5 +1,10 @@
 package filter
 
+import (
+	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
+)
+
 // GroupUsersFilter represents the filter criteria for listing users in a group
 type GroupUsersFilter struct {
 	// GroupID is the ID of the group to list users for
@@ -10,6 +15,9 @@ type GroupUsersFilter struct {
 
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
+
+	// All indicates whether to fetch all users without pagination
+	All bool `json:"all,omitempty"`
 }
 
 // UserGroupsFilter represents the filter criteria for listing groups for a user
@@ -22,6 +30,9 @@ type UserGroupsFilter struct {
 
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
+
+	// All indicates whether to fetch all groups without pagination
+	All bool `json:"all,omitempty"`
 }
 
 // UserSessionsFilter represents the filter criteria for listing user sessions
@@ -52,41 +63,43 @@ type UserProfilesFilter struct {
 }
 
 // NewGroupUsersFilter creates a new GroupUsersFilter with default pagination
-func NewGroupUsersFilter(groupID int64, limit, offset int32) *GroupUsersFilter {
-	if limit <= 0 || limit > 100 {
-		limit = 10
+func NewGroupUsersFilter(req *openauth_v1.ListGroupUsersRequest) *GroupUsersFilter {
+	if req.Limit <= 0 || req.Limit > 100 {
+		req.Limit = constants.DefaultPageSize
 	}
-	if offset < 0 {
-		offset = 0
+	if req.Offset < 0 {
+		req.Offset = 0
 	}
 
 	return &GroupUsersFilter{
-		GroupID: groupID,
-		Limit:   limit,
-		Offset:  offset,
+		GroupID: req.GroupId,
+		Limit:   req.Limit,
+		All:     req.All,
+		Offset:  req.Offset,
 	}
 }
 
 // NewUserGroupsFilter creates a new UserGroupsFilter with default pagination
-func NewUserGroupsFilter(userID int64, limit, offset int32) *UserGroupsFilter {
-	if limit <= 0 || limit > 100 {
-		limit = 10
+func NewUserGroupsFilter(req *openauth_v1.ListUserGroupsRequest) *UserGroupsFilter {
+	if req.Limit <= 0 || req.Limit > 100 {
+		req.Limit = constants.DefaultPageSize
 	}
-	if offset < 0 {
-		offset = 0
+	if req.Offset < 0 {
+		req.Offset = 0
 	}
 
 	return &UserGroupsFilter{
-		UserID: userID,
-		Limit:  limit,
-		Offset: offset,
+		UserID: req.UserId,
+		Limit:  req.Limit,
+		All:    req.All,
+		Offset: req.Offset,
 	}
 }
 
 // NewUserSessionsFilter creates a new UserSessionsFilter with default pagination
 func NewUserSessionsFilter(userUUID string, limit, offset int32, activeOnly bool) *UserSessionsFilter {
 	if limit <= 0 || limit > 100 {
-		limit = 10
+		limit = constants.DefaultPageSize
 	}
 	if offset < 0 {
 		offset = 0
@@ -103,7 +116,7 @@ func NewUserSessionsFilter(userUUID string, limit, offset int32, activeOnly bool
 // NewUserProfilesFilter creates a new UserProfilesFilter with default pagination
 func NewUserProfilesFilter(userUUID string, limit, offset int32) *UserProfilesFilter {
 	if limit <= 0 || limit > 100 {
-		limit = 10
+		limit = constants.DefaultPageSize
 	}
 	if offset < 0 {
 		offset = 0

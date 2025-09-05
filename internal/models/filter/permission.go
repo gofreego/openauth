@@ -24,23 +24,22 @@ type PermissionFilter struct {
 
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
+
+	// All indicates whether to fetch all permissions without pagination
+	All bool `json:"all,omitempty"`
 }
 
 // FromListPermissionsRequest creates a PermissionFilter from a ListPermissionsRequest
 func FromListPermissionsRequest(req *openauth_v1.ListPermissionsRequest) *PermissionFilter {
 	filter := &PermissionFilter{}
 
-	// Set pagination with defaults
-	if req.Limit != nil {
-		filter.Limit = *req.Limit
-	}
+	filter.Limit = req.Limit
+	filter.Offset = req.Offset
+
 	if filter.Limit <= 0 || filter.Limit > constants.MaxPageSize {
 		filter.Limit = constants.DefaultPageSize
 	}
 
-	if req.Offset != nil {
-		filter.Offset = *req.Offset
-	}
 	if filter.Offset < 0 {
 		filter.Offset = 0
 	}
@@ -49,6 +48,9 @@ func FromListPermissionsRequest(req *openauth_v1.ListPermissionsRequest) *Permis
 	if req.Search != nil && *req.Search != "" {
 		filter.Search = req.Search
 	}
+
+	// Set all filter if provided
+	filter.All = req.All
 
 	// Note: Resource, Action, and IsSystem fields don't exist in ListPermissionsRequest
 	// They can be set separately if needed

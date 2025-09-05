@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/gofreego/openauth/pkg/jwtutils"
@@ -398,18 +399,8 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
 
-	// Set default pagination
-	limit := req.Limit
-	if limit <= 0 || limit > 100 {
-		limit = 10
-	}
-	offset := req.Offset
-	if offset < 0 {
-		offset = 0
-	}
-
 	// Get users from repository
-	filters := filter.NewGroupUsersFilter(req.GroupId, limit, offset)
+	filters := filter.NewGroupUsersFilter(req)
 	users, err := s.repo.ListGroupUsers(ctx, filters)
 	if err != nil {
 		logger.Error(ctx, "Failed to list group users: %v", err)
@@ -437,7 +428,7 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 	// Set default pagination
 	limit := req.Limit
 	if limit <= 0 || limit > 100 {
-		limit = 10
+		limit = constants.DefaultPageSize
 	}
 	offset := req.Offset
 	if offset < 0 {
@@ -445,7 +436,7 @@ func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserG
 	}
 
 	// Get groups from repository
-	filters := filter.NewUserGroupsFilter(req.UserId, limit, offset)
+	filters := filter.NewUserGroupsFilter(req)
 	groups, err := s.repo.ListUserGroups(ctx, filters)
 	if err != nil {
 		logger.Error(ctx, "Failed to list user groups: %v", err)

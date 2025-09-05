@@ -102,7 +102,7 @@ message ListGroupsRequest {
     // Optional search query (searches name, display_name, description)
     optional string search = 4;
 
-    optional bool all = 5;
+    bool all = 5;
 }
 
 // ListGroupsResponse

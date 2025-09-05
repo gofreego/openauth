@@ -138,10 +138,12 @@ func (r *Repository) ListPermissions(ctx context.Context, filters *filter.Permis
 		SELECT id, name, display_name, description, is_system, created_by, created_at, updated_at
 		FROM permissions
 		%s
-		ORDER BY created_at DESC
-		LIMIT $%d OFFSET $%d`, whereClause, argIndex, argIndex+1)
+		ORDER BY created_at DESC`, whereClause)
 
-	args = append(args, filters.Limit, filters.Offset)
+	if !filters.All {
+		dataQuery += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
+		args = append(args, filters.Limit, filters.Offset)
+	}
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, dataQuery, args...)
 	if err != nil {

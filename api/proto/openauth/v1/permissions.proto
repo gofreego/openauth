@@ -62,10 +62,10 @@ message GetPermissionRequest {
 // Request to list permissions with optional filtering and pagination
 message ListPermissionsRequest {
     // Maximum number of permissions to return (default: 10, max: 100)
-    optional int32 limit = 1;
+    int32 limit = 1;
     
     // Number of permissions to skip for pagination (default: 0)
-    optional int32 offset = 2;
+    int32 offset = 2;
 
     optional int64 id = 3;
     
@@ -73,7 +73,7 @@ message ListPermissionsRequest {
     // Uses case-insensitive partial matching
     optional string search = 4;
 
-    optional bool all = 5;
+    bool all = 5;
 }
 
 // Response containing a list of permissions with pagination metadata

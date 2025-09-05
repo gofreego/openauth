@@ -99,11 +99,12 @@ func (r *Repository) ListGroups(ctx context.Context, filters *filter.GroupFilter
 		SELECT id, name, display_name, description, is_system, is_default, created_by, created_at, updated_at
 		FROM groups
 		%s
-		ORDER BY created_at DESC
-		LIMIT $%d OFFSET $%d`, whereClause, argIndex, argIndex+1)
+		ORDER BY created_at DESC`, whereClause)
 
-	args = append(args, filters.Limit, filters.Offset)
-
+	if !filters.All {
+		query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
+		args = append(args, filters.Limit, filters.Offset)
+	}
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list groups: %w", err)
@@ -330,10 +331,16 @@ func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUs
 		FROM users u
 		INNER JOIN user_groups ug ON u.id = ug.user_id
 		WHERE ug.group_id = $1
-		ORDER BY u.created_at DESC
-		LIMIT $2 OFFSET $3`
+		ORDER BY u.created_at DESC`
 
-	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.GroupID, filters.Limit, filters.Offset)
+	params := []any{filters.GroupID}
+
+	if !filters.All {
+		query += " LIMIT $2 OFFSET $3"
+		params = append(params, filters.Limit, filters.Offset)
+	}
+
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, params...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list group users: %w", err)
 	}
@@ -363,10 +370,14 @@ func (r *Repository) ListUserGroups(ctx context.Context, filters *filter.UserGro
 		FROM groups g
 		INNER JOIN user_groups ug ON g.id = ug.group_id
 		WHERE ug.user_id = $1
-		ORDER BY g.created_at DESC
-		LIMIT $2 OFFSET $3`
+		ORDER BY g.created_at DESC`
+	params := []any{filters.UserID}
 
-	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.UserID, filters.Limit, filters.Offset)
+	if !filters.All {
+		query += " LIMIT $2 OFFSET $3"
+		params = append(params, filters.Limit, filters.Offset)
+	}
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, params...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list user groups: %w", err)
 	}

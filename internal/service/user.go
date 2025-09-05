@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
 	communicationservice "github.com/gofreego/openauth/pkg/clients/communication-service"
@@ -495,7 +496,7 @@ func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersReque
 	// Set default values
 	limit := req.Limit
 	if limit <= 0 || limit > 100 {
-		limit = 10
+		limit = constants.DefaultPageSize
 	}
 	offset := req.Offset
 	if offset < 0 {
@@ -736,7 +737,7 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 	// Set default pagination
 	limit := req.Limit
 	if limit <= 0 || limit > 100 {
-		limit = 10
+		limit = constants.DefaultPageSize
 	}
 	offset := req.Offset
 	if offset < 0 {

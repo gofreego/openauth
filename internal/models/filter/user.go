@@ -1,6 +1,9 @@
 package filter
 
-import "github.com/gofreego/openauth/api/openauth_v1"
+import (
+	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
+)
 
 // UserFilter represents the filter criteria for querying users
 type UserFilter struct {
@@ -42,7 +45,7 @@ func FromListUsersRequest(req *openauth_v1.ListUsersRequest) *UserFilter {
 	// Set pagination with defaults
 	filter.Limit = req.Limit
 	if filter.Limit <= 0 || filter.Limit > 100 {
-		filter.Limit = 10
+		filter.Limit = constants.DefaultPageSize
 	}
 
 	filter.Offset = req.Offset

@@ -481,8 +481,8 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
                 ),
               );
             } else if (state is PermissionsLoaded) {
-              // Only process if user permissions are also loaded
-              if (_userPermissions.isEmpty) {
+              // Only process if user permissions state is loaded (not necessarily non-empty)
+              if (userPermissionsState is! UserPermissionsLoaded) {
                 return const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
