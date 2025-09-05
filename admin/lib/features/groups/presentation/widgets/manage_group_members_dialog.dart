@@ -26,6 +26,10 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
   bool _isLoading = true;
   bool _isLoadingUsers = true;
   String _searchQuery = '';
+  Set<Int64> selectedUsersToAdd = <Int64>{}; // Track selected users to add
+  Set<Int64> selectedUsersToRemove = <Int64>{}; // Track selected users to remove
+  bool _isAddingUsers = false;
+  bool _isRemovingUsers = false;
 
   @override
   void initState() {
@@ -157,18 +161,36 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                           _isLoading = false;
                         });
                       } else if (state is UserAssigned) {
-                        ToastUtils.showSuccess('User added to group successfully');
+                        // Clear selections when users are successfully assigned
+                        setState(() {
+                          selectedUsersToAdd.clear();
+                          _isAddingUsers = false;
+                        });
+                        ToastUtils.showSuccess('User(s) added to group successfully');
                         // Reload group members
                         context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
                       } else if (state is UserRemoved) {
-                        ToastUtils.showSuccess('User removed from group successfully');
+                        // Clear selections when users are successfully removed
+                        setState(() {
+                          selectedUsersToRemove.clear();
+                          _isRemovingUsers = false;
+                        });
+                        ToastUtils.showSuccess('User(s) removed from group successfully');
                         // Reload group members
                         context.read<GroupsBloc>().add(ListGroupUsersRequest(groupId: widget.group.id));
                       } else if (state is UserAssigning) {
-                        // Show loading state
+                        setState(() {
+                          _isAddingUsers = true;
+                        });
                       } else if (state is UserRemoving) {
-                        // Show loading state
+                        setState(() {
+                          _isRemovingUsers = true;
+                        });
                       } else if (state is GroupsError) {
+                        setState(() {
+                          _isAddingUsers = false;
+                          _isRemovingUsers = false;
+                        });
                         ToastUtils.showError('Error: ${state.message}');
                       }
                     },
@@ -212,6 +234,30 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    const SizedBox(width: 8),
+                                    if (_groupMembers.isNotEmpty)
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            if (selectedUsersToRemove.length == _groupMembers.length) {
+                                              selectedUsersToRemove.clear();
+                                            } else {
+                                              selectedUsersToRemove.clear();
+                                              selectedUsersToRemove.addAll(_groupMembers.map((m) => m.userId));
+                                            }
+                                          });
+                                        },
+                                        child: Text(
+                                          selectedUsersToRemove.length == _groupMembers.length ? 'Deselect All' : 'Select All',
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                    const Spacer(),
+                                    if (selectedUsersToRemove.isNotEmpty)
+                                      Chip(
+                                        label: Text('${selectedUsersToRemove.length} selected'),
+                                        backgroundColor: Colors.red.withValues(alpha: 0.1),
+                                      ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -246,6 +292,50 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    const SizedBox(width: 8),
+                                    // Select all available users button
+                                    BlocBuilder<UsersBloc, UsersState>(
+                                      builder: (context, state) {
+                                        if (state is UsersLoaded) {
+                                          final groupMemberIds = _groupMembers.map((m) => m.userId).toSet();
+                                          final availableUsers = state.users.where((user) {
+                                            if (groupMemberIds.contains(user.id)) return false;
+                                            if (_searchQuery.isEmpty) return true;
+                                            return user.username.toLowerCase().contains(_searchQuery) ||
+                                                   user.email.toLowerCase().contains(_searchQuery) ||
+                                                   user.name.toLowerCase().contains(_searchQuery);
+                                          }).toList();
+                                          
+                                          if (availableUsers.isNotEmpty) {
+                                            final availableUserIds = availableUsers.map((u) => u.id).toSet();
+                                            final allSelected = availableUserIds.every((id) => selectedUsersToAdd.contains(id));
+                                            
+                                            return TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  if (allSelected) {
+                                                    selectedUsersToAdd.removeAll(availableUserIds);
+                                                  } else {
+                                                    selectedUsersToAdd.addAll(availableUserIds);
+                                                  }
+                                                });
+                                              },
+                                              child: Text(
+                                                allSelected ? 'Deselect All' : 'Select All',
+                                                style: const TextStyle(fontSize: 12),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                        return const SizedBox.shrink();
+                                      },
+                                    ),
+                                    const Spacer(),
+                                    if (selectedUsersToAdd.isNotEmpty)
+                                      Chip(
+                                        label: Text('${selectedUsersToAdd.length} selected'),
+                                        backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                      ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -256,6 +346,88 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                         ],
                       ),
               ),
+            ),
+
+            // Action buttons
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                // Left side - Clear buttons
+                Expanded(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (selectedUsersToAdd.isNotEmpty)
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              selectedUsersToAdd.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.clear_all),
+                          label: const Text('Clear Add'),
+                        ),
+                      if (selectedUsersToRemove.isNotEmpty)
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              selectedUsersToRemove.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.clear_all),
+                          label: const Text('Clear Remove'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.red,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                // Right side - Action buttons
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Close'),
+                    ),
+                    if (selectedUsersToRemove.isNotEmpty)
+                      ElevatedButton.icon(
+                        onPressed: _isRemovingUsers ? null : _removeSelectedUsers,
+                        icon: _isRemovingUsers
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(Icons.remove),
+                        label: Text(_isRemovingUsers ? 'Removing...' : 'Remove'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    if (selectedUsersToAdd.isNotEmpty)
+                      ElevatedButton.icon(
+                        onPressed: _isAddingUsers ? null : _addSelectedUsers,
+                        icon: _isAddingUsers
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(Icons.add),
+                        label: Text(_isAddingUsers ? 'Adding...' : 'Add'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
@@ -307,20 +479,37 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
       itemBuilder: (context, index) {
         final member = filteredMembers[index];
         final theme = Theme.of(context);
+        final isSelected = selectedUsersToRemove.contains(member.userId);
         
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
+          color: isSelected ? Colors.red.withValues(alpha: 0.1) : null,
           child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-              child: Text(
-                member.name.isNotEmpty 
-                    ? member.name[0].toUpperCase()
-                    : member.username[0].toUpperCase(),
-                style: TextStyle(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+            leading: GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedUsersToRemove.remove(member.userId);
+                  } else {
+                    selectedUsersToRemove.add(member.userId);
+                  }
+                });
+              },
+              child: CircleAvatar(
+                backgroundColor: isSelected
+                    ? Colors.red
+                    : theme.colorScheme.primary.withValues(alpha: 0.1),
+                child: isSelected
+                    ? const Icon(Icons.check_circle, color: Colors.white)
+                    : Text(
+                        member.name.isNotEmpty 
+                            ? member.name[0].toUpperCase()
+                            : member.username[0].toUpperCase(),
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
             title: Text(
@@ -347,12 +536,30 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                   ),
               ],
             ),
+            onTap: () {
+              setState(() {
+                if (isSelected) {
+                  selectedUsersToRemove.remove(member.userId);
+                } else {
+                  selectedUsersToRemove.add(member.userId);
+                }
+              });
+            },
             trailing: IconButton(
-              icon: const Icon(Icons.remove_circle_outline),
-              iconSize: 24,
-              color: Colors.red,
-              tooltip: 'Remove from group',
-              onPressed: () => _removeUserFromGroup(member.userId),
+              icon: Icon(
+                isSelected ? Icons.check_circle : Icons.remove_circle_outline,
+                color: Colors.red,
+              ),
+              tooltip: isSelected
+                  ? 'Deselect for bulk removal'
+                  : 'Remove user',
+              onPressed: isSelected
+                  ? () {
+                      setState(() {
+                        selectedUsersToRemove.remove(member.userId);
+                      });
+                    }
+                  : () => _removeUserFromGroup(member.userId),
             ),
           ),
         );
@@ -411,21 +618,27 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
       itemBuilder: (context, index) {
         final user = availableUsers[index];
         final theme = Theme.of(context);
+        final isSelected = selectedUsersToAdd.contains(user.id);
         
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
+          color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.1) : null,
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Colors.green.withValues(alpha: 0.1),
-              child: Text(
-                user.name.isNotEmpty 
-                    ? user.name[0].toUpperCase()
-                    : user.username[0].toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              backgroundColor: isSelected
+                  ? theme.colorScheme.primary
+                  : Colors.green.withValues(alpha: 0.1),
+              child: isSelected
+                  ? const Icon(Icons.check_circle, color: Colors.white)
+                  : Text(
+                      user.name.isNotEmpty 
+                          ? user.name[0].toUpperCase()
+                          : user.username[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
             title: Text(
               user.name.isNotEmpty ? user.name : user.username,
@@ -451,12 +664,30 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                   ),
               ],
             ),
+            onTap: () {
+              setState(() {
+                if (isSelected) {
+                  selectedUsersToAdd.remove(user.id);
+                } else {
+                  selectedUsersToAdd.add(user.id);
+                }
+              });
+            },
             trailing: IconButton(
-              icon: const Icon(Icons.add_circle_outline),
-              iconSize: 24,
-              color: Colors.green,
-              tooltip: 'Add to group',
-              onPressed: () => _addUserToGroup(user.id),
+              icon: Icon(
+                isSelected ? Icons.check_circle : Icons.add_circle_outline,
+                color: isSelected ? theme.colorScheme.primary : Colors.green,
+              ),
+              tooltip: isSelected
+                  ? 'Deselect for bulk addition'
+                  : 'Add to group',
+              onPressed: isSelected
+                  ? () {
+                      setState(() {
+                        selectedUsersToAdd.remove(user.id);
+                      });
+                    }
+                  : () => _addUserToGroup(user.id),
             ),
           ),
         );
@@ -512,6 +743,58 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.green),
             child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addSelectedUsers() {
+    if (selectedUsersToAdd.isEmpty) return;
+
+    setState(() {
+      _isAddingUsers = true;
+    });
+
+    context.read<GroupsBloc>().add(AssignUsersToGroupRequest(
+      groupId: widget.group.id,
+      userIds: selectedUsersToAdd.toList(),
+    ));
+  }
+
+  void _removeSelectedUsers() {
+    if (selectedUsersToRemove.isEmpty) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Users'),
+        content: Text(
+          'Are you sure you want to remove ${selectedUsersToRemove.length} user${selectedUsersToRemove.length == 1 ? '' : 's'} from ${widget.group.displayName.isEmpty ? widget.group.name : widget.group.displayName}?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _isRemovingUsers = true;
+              });
+              context.read<GroupsBloc>().add(
+                RemoveUsersFromGroupRequest(
+                  groupId: widget.group.id,
+                  userIds: selectedUsersToRemove.toList(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Remove'),
           ),
         ],
       ),

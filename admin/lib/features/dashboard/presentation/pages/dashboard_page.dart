@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:openauth/src/generated/openauth/v1/stats.pb.dart' as statsPb;
+import 'package:openauth/src/generated/openauth/v1/stats.pb.dart';
 import '../widgets/stat_card.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_state.dart';
@@ -17,7 +17,7 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     // Load stats when the page initializes
-    context.read<DashboardBloc>().add(statsPb.StatsRequest());
+    context.read<DashboardBloc>().add(StatsRequest());
   }
 
   @override
@@ -48,7 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
               // Refresh button
               IconButton(
                 onPressed: () {
-                  context.read<DashboardBloc>().add(statsPb.StatsRequest());
+                  context.read<DashboardBloc>().add(StatsRequest());
                 },
                 icon: const Icon(Icons.refresh),
                 tooltip: 'Refresh Stats',
@@ -99,7 +99,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          context.read<DashboardBloc>().add( statsPb.StatsRequest());
+                          context.read<DashboardBloc>().add( StatsRequest());
                         },
                         child: const Text('Retry'),
                       ),
