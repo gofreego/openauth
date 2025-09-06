@@ -78,7 +78,6 @@ Future<void> initializeDependencies({
   serviceLocator.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       serviceLocator<HTTPServiceClient>(),
-      serviceLocator<SharedPreferences>(),
       serviceLocator<SessionManager>(),
     ),
   );

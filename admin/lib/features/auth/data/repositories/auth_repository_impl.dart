@@ -1,6 +1,6 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer' as dev;
+
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 import 'auth_repository.dart';
 import '../../../../shared/shared.dart';
@@ -9,14 +9,9 @@ import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 /// Implementation of AuthRepository using HTTP API calls
 class AuthRepositoryImpl implements AuthRepository {
   final HTTPServiceClient _httpClient;
-  final SharedPreferences _prefs;
   final SessionManager _sessionManager;
 
-  static const String _tokenKey = 'auth_token';
-  static const String _refreshTokenKey = 'refresh_token';
-  static const String _sessionIdKey = 'session_id';
-
-  AuthRepositoryImpl(this._httpClient, this._prefs, this._sessionManager);
+  AuthRepositoryImpl(this._httpClient, this._sessionManager);
 
   @override
   Future<pb.SignInResponse> signIn(pb.SignInRequest request) async {
@@ -39,9 +34,6 @@ class AuthRepositoryImpl implements AuthRepository {
       final signInResponse = pb.SignInResponse()..mergeFromProto3Json(response);
       
       if (signInResponse.hasAccessToken()) {
-        // Store tokens using legacy method for backward compatibility
-        await _storeTokens(signInResponse);
-        
         // Create enhanced session with device tracking
         await _sessionManager.createSession(
           signInResponse: signInResponse,
@@ -70,14 +62,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final refreshResponse = pb.RefreshTokenResponse()..mergeFromProto3Json(response);
       
-      if (refreshResponse.hasAccessToken()) {
-        // Update stored tokens
-        await _prefs.setString(_tokenKey, refreshResponse.accessToken);
-        if (refreshResponse.hasRefreshToken()) {
-          await _prefs.setString(_refreshTokenKey, refreshResponse.refreshToken);
-        }
-        return refreshResponse;
+      if (refreshResponse.hasAccessToken()){
+        _sessionManager.updateAuthTokens(refreshResponse);
       }
+      
       
       throw Exception('Token refresh failed: Invalid response');
     } catch (e) {
@@ -102,7 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
       }
     } catch (e) {
       // Continue with local cleanup even if server logout fails
-      debugPrint('Server logout failed: $e');
+      dev.log('Server logout failed: $e');
     } finally {
       await clearAuthData();
     }
@@ -133,19 +121,6 @@ class AuthRepositoryImpl implements AuthRepository {
       if (sessionTokens != null) {
         return sessionTokens;
       }
-      
-      // Fallback to legacy storage
-      final accessToken = _prefs.getString(_tokenKey);
-      final refreshToken = _prefs.getString(_refreshTokenKey);
-      final sessionId = _prefs.getString(_sessionIdKey);
-      
-      if (accessToken != null) {
-        return {
-          'accessToken': accessToken,
-          'refreshToken': refreshToken ?? '',
-          'sessionId': sessionId ?? '',
-        };
-      }
       return null;
     } catch (e) {
       return null;
@@ -171,18 +146,5 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> clearAuthData() async {
     // Clear session manager data
     await _sessionManager.clearSession();
-    
-    // Clear legacy storage
-    await _prefs.remove(_tokenKey);
-    await _prefs.remove(_refreshTokenKey);
-    await _prefs.remove(_sessionIdKey);
-  }
-
-  Future<void> _storeTokens(pb.SignInResponse response) async {
-    await _prefs.setString(_tokenKey, response.accessToken);
-    await _prefs.setString(_refreshTokenKey, response.refreshToken);
-    if (response.hasSessionId()) {
-      await _prefs.setString(_sessionIdKey, response.sessionId);
-    }
   }
 }
