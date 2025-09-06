@@ -11,15 +11,6 @@ abstract class AuthRepository {
   /// Sign out user
   Future<void> signOut();
 
-  /// Validate current token
-  Future<pb.ValidateTokenResponse?> validateToken(String token);
-
-  /// Get current stored tokens
-  Future<Map<String, String>?> getStoredTokens();
-
-  /// Check if user is authenticated
-  Future<bool> isAuthenticated();
-
   /// Clear stored authentication data
   Future<void> clearAuthData();
 }
