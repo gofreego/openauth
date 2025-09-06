@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
+import 'package:openauth/shared/widgets/avatar_preview_dialog.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../shared/shared.dart';
@@ -270,7 +271,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       suffixIcon: _avatarUrlController.text.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.visibility),
-                              onPressed: () => _showAvatarPreview(),
+                              onPressed: () => AvatarPreviewDialog.show(context, _avatarUrlController.text.trim()),
                               tooltip: 'Preview avatar',
                             )
                           : null,
@@ -532,41 +533,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     }
   }
 
-  void _showAvatarPreview() {
-    final url = _avatarUrlController.text.trim();
-    if (url.isEmpty) return;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Avatar Preview'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(url),
-              onBackgroundImageError: (_, __) {
-                // Error loading image
-              },
-              child: null,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'This is how the avatar will appear',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
+  
 
 
   
