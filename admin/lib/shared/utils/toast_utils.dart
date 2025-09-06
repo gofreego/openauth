@@ -82,17 +82,7 @@ class ToastUtils {
 class ErrorToast {
   static void show(Failure failure) {
     final message = _getErrorMessage(failure);
-    final backgroundColor = _getErrorColor(failure);
-    
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.TOP,
-      timeInSecForIosWeb: 4,
-      backgroundColor: backgroundColor,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
+     ToastUtils.showError(message);
   }
 
   /// Get appropriate message based on failure type
@@ -112,26 +102,6 @@ class ErrorToast {
         return '☁️ ${failure.message}';
       default:
         return '❌ ${failure.message}';
-    }
-  }
-
-  /// Get appropriate color based on failure type
-  static Color _getErrorColor(Failure failure) {
-    switch (failure.runtimeType) {
-      case NetworkFailure _:
-        return Colors.orange;
-      case ServerFailure _:
-        return Colors.red;
-      case CacheFailure _:
-        return Colors.purple;
-      case ValidationFailure _:
-        return Colors.amber.shade700;
-      case AuthenticationFailure _:
-        return Colors.red.shade700;
-      case ServiceUnavailableFailure _:
-        return Colors.grey.shade600;
-      default:
-        return Colors.red;
     }
   }
 }

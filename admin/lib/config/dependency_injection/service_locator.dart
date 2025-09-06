@@ -170,7 +170,7 @@ Future<void> initializeDependencies({
     ),
   );
 
-  serviceLocator.registerLazySingleton<ProfilesBloc>(
+  serviceLocator.registerFactory<ProfilesBloc>(
     () => ProfilesBloc(
       repository: serviceLocator<ProfileRepository>(),
     ),

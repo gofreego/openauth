@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:openauth/shared/shared.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart' as pb;
 import '../bloc/profiles_bloc.dart';
 import '../bloc/profiles_state.dart';
@@ -109,19 +110,15 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
     return BlocListener<ProfilesBloc, ProfilesState>(
       listener: (context, state) {
         if (state is ProfileCreateError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error creating profile: ${state.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ToastUtils.showError('Error creating profile: ${state.message}');
         } else if (state is ProfileUpdateError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error updating profile: ${state.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ToastUtils.showError('Error updating profile: ${state.message}');
+        } else if (state is ProfileCreated){
+          ToastUtils.showSuccess('Profile created successfully');
+          Navigator.of(context).pop(); // Close dialog on successful creation
+        }else if (state is ProfileUpdated){
+          ToastUtils.showSuccess('Profile updated successfully');
+          Navigator.of(context).pop(); // Close dialog on successful update
         }
       },
       child: AlertDialog(

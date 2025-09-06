@@ -284,10 +284,8 @@ class _UserProfilesDialogContentState
         create: (context) => serviceLocator<ProfilesBloc>(),
         child: BlocListener<ProfilesBloc, ProfilesState>(
           listener: (context, state) {
-            if (state is ProfileCreated) {
-              Navigator.of(context).pop();
-              // Reload profiles in the main dialog
-              mainProfilesBloc.add(
+            if (state is ProfileCreated || state is ProfileUpdated) {
+             mainProfilesBloc.add(
                 pb.ListUserProfilesRequest(
                   userUuid: widget.user.uuid,
                   limit: 50,
@@ -429,12 +427,14 @@ class _UserProfilesDialogContentState
                 ),
                 FilledButton(
                   onPressed: () {
-                    context.read<ProfilesBloc>().add(
+                    var bloc =context.read<ProfilesBloc>();
+                    bloc.add(
                           pb.DeleteProfileRequest(profileUuid: profile.uuid),
                         );
                   },
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.red,
+                    textStyle: const TextStyle(color: Colors.white)
                   ),
                   child: const Text('Delete'),
                 ),
