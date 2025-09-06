@@ -17,13 +17,34 @@ class SessionManager {
   static const String _deviceSessionKey = 'device_session_data';
   static const String _sessionMetaKey = 'session_metadata';
   static const String _loginHistoryKey = 'login_history';
-  
+
+  static const String _currentUserKey = 'current_user';
+
   // Singleton factory
   factory SessionManager(SharedPreferences prefs) {
     return _instance ??= SessionManager._internal(prefs);
   }
 
   SessionManager._internal(this._prefs);
+
+
+  Future<void> setCurrentUser(pb_users.User user) async {
+    final jsonData = user.toProto3Json();
+    await _prefs.setString(_currentUserKey, jsonData.toString());
+  }
+
+  Future<pb_users.User?> getCurrentUser() async {
+    try {
+      final userData = _prefs.getString(_currentUserKey);
+      if (userData != null) {
+        final jsonData = jsonDecode(userData) as Map<String, dynamic>;
+        return pb_users.User()..mergeFromProto3Json(jsonData);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 
 
   /// Create a new authentication session

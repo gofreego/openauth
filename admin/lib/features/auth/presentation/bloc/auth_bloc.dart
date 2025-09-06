@@ -1,8 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/features/auth/data/repositories/auth_repository.dart';
 import 'dart:async';
-
-import '../../data/repositories/auth_repository.dart';
-import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -16,6 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignInRequested>(_onAuthSignInRequested);
     on<AuthSignOutRequested>(_onAuthSignOutRequested);
     on<AuthUserUpdated>(_onAuthUserUpdated);
+    on<AuthCheckRequested>(_onAuthCheckRequested);
   }
 
 
@@ -28,7 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final session = await _authRepository.signIn(event.request);
 
-      emit(AuthAuthenticated(session));
+      emit(AuthAuthenticated(session.user));
     } catch (e) {
       emit(AuthSignInError(e.toString()));
     }
@@ -56,14 +55,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final currentState = state;
     if (currentState is AuthAuthenticated) {
-      // Update session with new user data
-      final updatedSession = pb.SignInResponse(
-        accessToken: currentState.session.accessToken,
-        refreshToken: currentState.session.refreshToken,
-        sessionId: currentState.session.sessionId,
-        user: event.user,
-      );
-      emit(AuthAuthenticated(updatedSession));
+      emit(AuthAuthenticated(event.user));
+    }
+  }
+
+  Future<void> _onAuthCheckRequested(
+    AuthCheckRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      final isAuthenticated = await _authRepository.isAuthenticated();
+      if (isAuthenticated) {
+        emit(AuthAuthenticated(await _authRepository.getCurrentUser()));
+      } else {
+        emit(const AuthUnauthenticated());
+      }
+    } catch (e) {
+      emit(const AuthUnauthenticated());
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:openauth/features/splash/presentation/pages/splash_screen.dart';
 import 'core/themes/app_theme.dart';
 import 'config/dependency_injection/service_locator.dart';
 import 'config/routes/app_routes.dart';
@@ -20,7 +21,6 @@ import 'features/groups/presentation/bloc/groups_bloc.dart';
 import 'features/groups/presentation/bloc/group_permissions_bloc.dart';
 import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/sessions/presentation/bloc/sessions_bloc.dart';
-import 'shared/shared.dart';
 
 class OpenAuthAdmin extends StatefulWidget {
   const OpenAuthAdmin({super.key});
@@ -41,25 +41,7 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
       routes: [
         GoRoute(
           path: AppRoutes.splash,
-          builder: (context, state) => Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const AppLogo.extraLarge(withBackground: true),
-                  const SizedBox(height: 24),
-                  Text(
-                    'OpenAuth',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const CircularProgressIndicator(),
-                ],
-              ),
-            ),
-          ),
+          builder: (context, state) => const SplashScreen(),
         ),
         GoRoute(
           path: AppRoutes.signIn,

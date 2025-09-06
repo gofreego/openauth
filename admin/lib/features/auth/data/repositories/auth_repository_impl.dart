@@ -1,6 +1,7 @@
 import 'dart:developer' as dev;
 
 import 'package:dio/dio.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 
 import 'auth_repository.dart';
 import '../../../../shared/shared.dart';
@@ -29,7 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     final signInResponse = pb.SignInResponse()..mergeFromProto3Json(response);
-
+    await _sessionManager.setCurrentUser(signInResponse.user);
     if (signInResponse.hasAccessToken()) {
       // Create enhanced session with device tracking
       await _sessionManager.createSession(
@@ -90,8 +91,22 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<bool> isAuthenticated() async {
+    return await _sessionManager.getAccessToken() != null;
+  }
+
+  @override
   Future<void> clearAuthData() async {
     // Clear session manager data
     await _sessionManager.clearSession();
+  }
+
+  @override
+  Future<User> getCurrentUser() async {
+    final user = await _sessionManager.getCurrentUser();
+    if (user != null) {
+      return user;
+    }
+    throw Exception('User not found');
   }
 }

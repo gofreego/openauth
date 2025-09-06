@@ -61,7 +61,7 @@ class SettingsPage extends StatelessWidget {
                   return const SizedBox.shrink();
                 }
 
-                final user = state.session.user;
+                final user = state.user;
                 // TODO: Profile is not part of SignInResponse, need to fetch separately
                 const profile = null; // state.session.profile;
 

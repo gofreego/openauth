@@ -21,7 +21,7 @@ class CompactUserProfile extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        final user = state.session.user;
+        final user = state.user;
         
         return InkWell(
           onTap: onTap,

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../shared/services/session_manager.dart';
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
@@ -18,12 +19,12 @@ class AuthLoading extends AuthState {
 }
 
 class AuthAuthenticated extends AuthState {
-  final pb.SignInResponse session;
+  final User user;
 
-  const AuthAuthenticated(this.session);
+  const AuthAuthenticated(this.user);
 
   @override
-  List<Object> get props => [session];
+  List<Object> get props => [user];
 }
 
 class AuthUnauthenticated extends AuthState {

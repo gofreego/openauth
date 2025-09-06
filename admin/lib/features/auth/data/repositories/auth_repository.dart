@@ -1,3 +1,5 @@
+import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+
 import '../../../../src/generated/openauth/v1/sessions.pb.dart' as pb;
 
 /// Repository interface for authentication operations
@@ -11,6 +13,12 @@ abstract class AuthRepository {
   /// Sign out user
   Future<void> signOut();
 
+  /// Check if user is authenticated
+  Future<bool> isAuthenticated();
+
   /// Clear stored authentication data
   Future<void> clearAuthData();
+
+  /// Get current user
+  Future<User> getCurrentUser();
 }
