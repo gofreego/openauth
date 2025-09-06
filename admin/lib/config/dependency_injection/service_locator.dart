@@ -36,7 +36,6 @@ import '../../features/groups/presentation/bloc/groups_bloc.dart';
 import '../../features/groups/presentation/bloc/group_permissions_bloc.dart';
 
 // Dashboard feature dependencies
-import '../../features/dashboard/data/datasources/stats_remote_datasource.dart';
 import '../../features/dashboard/data/repositories/stats_repository_impl.dart';
 import '../../features/dashboard/data/repositories/stats_repository.dart';
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
@@ -120,15 +119,10 @@ Future<void> initializeDependencies({
     ),
   );
 
-  // Dashboard data sources
-  serviceLocator.registerLazySingleton<StatsRemoteDataSource>(
-    () => StatsRemoteDataSourceImpl(serviceLocator<ApiService>()),
-  );
-
   // Dashboard repositories
   serviceLocator.registerLazySingleton<StatsRepository>(
     () => StatsRepositoryImpl(
-      remoteDataSource: serviceLocator<StatsRemoteDataSource>(),
+      apiService: serviceLocator<ApiService>(),
     ),
   );
 
