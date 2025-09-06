@@ -32,7 +32,6 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
     return BlocProvider(
       create: (context) => serviceLocator<ProfilesBloc>(),
       child: _UserProfilesDialogContent(user: widget.user),
-
     );
   }
 }
