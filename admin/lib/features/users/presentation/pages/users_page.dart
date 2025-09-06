@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/widgets/widgets.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../shared/shared.dart';
 import '../widgets/users_header.dart';
 import '../widgets/users_table.dart';
 import '../widgets/create_user_dialog.dart';
@@ -46,7 +45,9 @@ class _UsersPageState extends State<UsersPage> {
         children: [
           // Header
           UsersHeader(
-            onAddUser: _showCreateUserDialog,
+            onAddUser: () {
+              CreateUserDialog.show(context);
+            },
           ),
           const SizedBox(height: 32),
 
@@ -69,17 +70,6 @@ class _UsersPageState extends State<UsersPage> {
             child: UsersTable(),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showCreateUserDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => CreateUserDialog(
-        onUserCreated: () {
-          ToastUtils.showSuccess('User created successfully');
-        },
       ),
     );
   }

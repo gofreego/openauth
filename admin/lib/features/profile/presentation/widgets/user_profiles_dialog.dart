@@ -16,7 +16,12 @@ class UserProfilesDialog extends StatefulWidget {
     super.key,
     required this.user,
   });
-
+  static void show(BuildContext context, pb.User user, ) {
+    showDialog(
+      context: context,
+      builder: (context) => UserProfilesDialog(user: user),
+    );
+  }
   @override
   State<UserProfilesDialog> createState() => _UserProfilesDialogState();
 }
@@ -27,7 +32,7 @@ class _UserProfilesDialogState extends State<UserProfilesDialog> {
     return BlocProvider(
       create: (context) => serviceLocator<ProfilesBloc>(),
       child: _UserProfilesDialogContent(user: widget.user),
-      
+
     );
   }
 }

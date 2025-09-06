@@ -14,6 +14,13 @@ class UserGroupsDialog extends StatefulWidget {
     required this.user,
   });
 
+  static void show(BuildContext context, user_pb.User user) {
+    showDialog(
+      context: context,
+      builder: (context) => UserGroupsDialog(user: user),
+    );
+  }
+
   @override
   State<UserGroupsDialog> createState() => _UserGroupsDialogState();
 }

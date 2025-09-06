@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/features/users/presentation/widgets/delete_user_dialog.dart';
+import 'package:openauth/features/users/presentation/widgets/toggle_user_status_dialog.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../../../core/constants/app_constants.dart';
-import '../../../../shared/shared.dart';
 import '../bloc/users_bloc.dart';
 import '../bloc/users_state.dart';
 import 'user_row.dart';
@@ -183,139 +184,36 @@ class UsersTable extends StatelessWidget {
   void _handleUserAction(String action, pb.User user, BuildContext context) {
     switch (action) {
       case 'edit':
-        _showEditUserDialog(user, context);
+        EditUserDialog.show( context, user, _handleUserAction);
         break;
       case 'permissions':
-        _showUserPermissionsDialog(user, context);
+        UserPermissionsDialog.show(context, user);
         break;
       case 'groups':
-        _showUserGroupsDialog(user, context);
+        UserGroupsDialog.show( context, user);
         break;
       case 'sessions':
-        _showUserSessionsDialog(user, context);
+        UserSessionsDialog.show(context, user);
         break;
       case 'profiles':
-        _showUserProfilesDialog(user, context);
+        UserProfilesDialog.show(context, user);
         break;
       case 'activate':
       case 'deactivate':
-        _toggleUserActiveStatus(user, context);
+        ToggleUserStatusDialog.show(context, user);
         break;
       case 'delete':
-        _showDeleteUserDialog(user, context);
+        DeleteUserDialog.show(context, user);
         break;
     }
   }
 
-  void _showDeleteUserDialog(pb.User user, BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete User'),
-        content: Text('Are you sure you want to delete ${user.name}? This action cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              final bloc = context.read<UsersBloc>();
-              if (!bloc.isClosed) {
-                bloc.add(DeleteUserRequest(uuid:user.uuid));
-              }
-              ToastUtils.showSuccess('${user.name} deleted successfully');
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-  }
+ 
 
-  void _showEditUserDialog(pb.User user, BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: context.read<UsersBloc>(),
-        child: EditUserDialog(
-          user: user,
-          onUserUpdated: () {
-            // The BlocConsumer in the dialog will handle the success message
-          },
-          onUserAction: _handleUserAction,
-        ),
-      ),
-    );
-  }
 
-  void _toggleUserActiveStatus(pb.User user, BuildContext context) {
-    final newStatus = !user.isActive;
-    final action = newStatus ? 'activate' : 'deactivate';
-    final capitalizedAction = action[0].toUpperCase() + action.substring(1);
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('$capitalizedAction User'),
-        content: Text('Are you sure you want to $action ? ${user.name} will${action == 'activate'?'':' not'} be able to log in!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          OutlinedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              final bloc = context.read<UsersBloc>();
-              if (!bloc.isClosed) {
-                bloc.add(UpdateUserRequest(
-                  uuid: user.uuid,
-                  isActive: newStatus,
-                ));
-              }
-              ToastUtils.showSuccess('${user.name} ${action}d successfully');
-            },
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.orange),
-              foregroundColor: Colors.orange,
-            ),
-            child: Text(capitalizedAction),
-          ),
-        ],
-      ),
-    );
-  }
+ 
 
-  void _showUserSessionsDialog(pb.User user, BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => UserSessionsDialog(user: user),
-    );
-  }
+ 
 
-  void _showUserPermissionsDialog(pb.User user, BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => UserPermissionsDialog(user: user),
-    );
-  }
-
-  void _showUserGroupsDialog(pb.User user, BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => UserGroupsDialog(user: user),
-    );
-  }
-
-  void _showUserProfilesDialog(pb.User user, BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => UserProfilesDialog(user: user),
-    );
-  }
+  
 }

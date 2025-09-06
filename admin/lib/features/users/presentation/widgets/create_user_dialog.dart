@@ -12,7 +12,16 @@ class CreateUserDialog extends StatefulWidget {
     super.key,
     this.onUserCreated,
   });
-
+static show(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => CreateUserDialog(
+        onUserCreated: () {
+          ToastUtils.showSuccess('User created successfully');
+        },
+      ),
+    );
+  }
   @override
   State<CreateUserDialog> createState() => _CreateUserDialogState();
 }

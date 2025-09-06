@@ -21,7 +21,7 @@ class UserRow extends StatelessWidget {
     final isEven = index % 2 == 0;
     
     return InkWell(
-      onTap: () => _showUserDetailsDialog(context),
+      onTap: () => EditUserDialog.show(context, user, onUserAction),
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class UserRow extends StatelessWidget {
                         : null,
                     child: user.avatarUrl.isEmpty 
                         ? Text(
-                            _getInitial(),
+                            UtilityFunctions.getInitials(user.name),
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -164,23 +164,5 @@ class UserRow extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _showUserDetailsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => EditUserDialog(
-        user: user,
-        isViewMode: true,
-        onUserAction: onUserAction,
-        onUserUpdated: () {
-          // Optionally trigger a refresh or callback
-        },
-      ),
-    );
-  }
-
-  String _getInitial() {
-    return UtilityFunctions.getInitials(user.name);
   }
 }

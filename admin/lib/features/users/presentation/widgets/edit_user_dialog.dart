@@ -23,6 +23,20 @@ class EditUserDialog extends StatefulWidget {
     this.isViewMode = false,
   });
 
+  static void show(BuildContext context, User user, Function(String action, pb.User user, BuildContext context) onUserAction) {
+    showDialog(
+      context: context,
+      builder: (context) => EditUserDialog(
+        user: user,
+        isViewMode: true,
+        onUserAction: onUserAction,
+        onUserUpdated: () {
+          // Optionally trigger a refresh or callback
+        },
+      ),
+    );
+  }
+
   @override
   State<EditUserDialog> createState() => _EditUserDialogState();
 }
@@ -553,4 +567,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
       ),
     );
   }
+
+
+  
 }

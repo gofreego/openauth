@@ -16,6 +16,12 @@ class UserSessionsDialog extends StatefulWidget {
     super.key,
     required this.user,
   });
+  static void show( BuildContext context, user_pb.User user) {
+    showDialog(
+      context: context,
+      builder: (context) => UserSessionsDialog(user: user),
+    );
+  }
 
   @override
   State<UserSessionsDialog> createState() => _UserSessionsDialogState();

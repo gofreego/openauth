@@ -17,7 +17,12 @@ class UserPermissionsDialog extends StatefulWidget {
     super.key,
     required this.user,
   });
-
+  static void show(BuildContext context, User user) {
+    showDialog(
+      context: context,
+      builder: (context) => UserPermissionsDialog(user: user),
+    );
+  }
   @override
   State<UserPermissionsDialog> createState() => _UserPermissionsDialogState();
 }
