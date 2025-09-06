@@ -16,14 +16,23 @@ abstract class Failure extends Equatable {
         final errorMessage = exception.response?.data['message'] ?? 'Unknown error occurred';
         if (statusCode == 401) {
           return const AuthenticationFailure(message: 'Authentication failed. Please log in again.');
-        } else if (statusCode == 503) {
+        } else if (statusCode == 400) {
+          return ValidationFailure(message: 'Bad request: $errorMessage');
+        } else if (statusCode == 403) {
+          return const AuthenticationFailure(message: 'You do not have permission to perform this action.');
+        } else if (statusCode == 404) {
+          return const ServerFailure(message: 'Requested resource not found.');
+        }
+        else if (statusCode == 503) {
           return const ServiceUnavailableFailure(message: 'Service is currently unavailable. Please try again later.');
         } else {
           return ServerFailure(message: 'Server error ($statusCode): $errorMessage');
         }
       } else if (exception.type == DioExceptionType.cancel) {
         return const NetworkFailure(message: 'Request was cancelled. Please try again.');
-      } else {
+      } else if (exception.type == DioExceptionType.connectionError) {
+        return const NetworkFailure(message: 'Server is unreachable. Please check your internet connection. \n Or our server is down, please try again later.');
+      }else {
         return const NetworkFailure(message: 'Network error occurred. Please check your connection.');
       }
     }
