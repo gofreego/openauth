@@ -18,9 +18,9 @@ import '../../features/users/presentation/bloc/users_bloc.dart';
 import '../../features/users/presentation/bloc/user_permissions_bloc.dart';
 
 // Profile feature dependencies
-import '../../features/profile/data/profile_repository.dart';
-import '../../features/profile/data/profile_repository_impl.dart';
-import '../../features/profile/presentation/bloc/profiles_bloc.dart';
+import '../../features/profiles/data/profile_repository.dart';
+import '../../features/profiles/data/profile_repository_impl.dart';
+import '../../features/profiles/presentation/bloc/profiles_bloc.dart';
 
 // Permissions feature dependencies
 import '../../features/permissions/data/datasources/permissions_remote_datasource_impl.dart';
