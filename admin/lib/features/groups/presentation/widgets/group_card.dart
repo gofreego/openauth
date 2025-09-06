@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:openauth/features/groups/presentation/widgets/group_action_dialogs.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 
 class GroupCard extends StatelessWidget {
   final Group group;
   final VoidCallback onTap;
-  final void Function(String action) onAction;
 
   const GroupCard({
     super.key,
     required this.group,
     required this.onTap,
-    required this.onAction,
   });
 
   @override
@@ -45,11 +44,27 @@ class GroupCard extends StatelessWidget {
                   ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert, size: 20),
-                    onSelected: onAction,
+                    onSelected: (action) {
+                      switch (action) {
+                        case 'edit':
+                          GroupActionDialogs.showGroupDetails(context, group, editMode: true);
+                          break;
+                        case 'manage_members':
+                          GroupActionDialogs.showManageMembersDialog(context, group);
+                          break;
+                        case 'manage_permissions':
+                          GroupActionDialogs.showManagePermissionsDialog(context, group);
+                          break;
+                        case 'delete':
+                          GroupActionDialogs.showDeleteGroupDialog(context, group);
+                          break;
+                      }
+                    },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'edit',
-                        child: Row(
+                        enabled: !group.isSystem,
+                        child: const Row(
                           children: [
                             Icon(Icons.edit),
                             SizedBox(width: 8),
@@ -77,9 +92,10 @@ class GroupCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
-                        child: Row(
+                        enabled: !group.isSystem,
+                        child: const Row(
                           children: [
                             Icon(Icons.delete, color: Colors.red),
                             SizedBox(width: 8),

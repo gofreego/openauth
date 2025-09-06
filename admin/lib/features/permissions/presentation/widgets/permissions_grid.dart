@@ -63,7 +63,6 @@ class _PermissionsGridState extends State<PermissionsGrid> {
     }
     
     return SingleChildScrollView(
-      padding: EdgeInsets.all(MediaQuery.of(context).size.width < 600 ? 8 : 16),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final crossAxisCount = (constraints.maxWidth / 320).floor().clamp(1, 10);

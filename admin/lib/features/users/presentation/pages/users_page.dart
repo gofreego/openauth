@@ -17,7 +17,6 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -53,32 +52,21 @@ class _UsersPageState extends State<UsersPage> {
 
           // Enhanced search with ID support
           CustomSearchBar(
-            initialQuery: _searchQuery,
             hintText: 'Search by name, mobile, email, username, ID, or UUID...',
             onSearch: (query) {
              _performSearch(query);
             },
             onClear: () {
-              setState(() {
-                _searchQuery = '';
-              });
               context.read<UsersBloc>().add(ListUsersRequest(
                 limit: PaginationConstants.defaultPageLimit,
                 offset: 0,
               ));
             },
-            onKeyStrokeChanged: (value) => {
-              setState(() {
-                _searchQuery = value;
-              })
-            },
           ),
           const SizedBox(height: 16),
           // Users table
-          Expanded(
-            child: UsersTable(
-              searchQuery: _searchQuery,
-            ),
+          const Expanded(
+            child: UsersTable(),
           ),
         ],
       ),
@@ -98,10 +86,6 @@ class _UsersPageState extends State<UsersPage> {
 
   void _performSearch(String query) {
     final trimmedQuery = query.trim();
-    
-    setState(() {
-      _searchQuery = trimmedQuery;
-    });
     context.read<UsersBloc>().add(ListUsersRequest(
       limit: PaginationConstants.defaultPageLimit,
       offset: 0,

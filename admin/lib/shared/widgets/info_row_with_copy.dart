@@ -16,7 +16,7 @@ class InfoRowWithCopy extends StatelessWidget {
     CopyToast.show(label);
   }
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

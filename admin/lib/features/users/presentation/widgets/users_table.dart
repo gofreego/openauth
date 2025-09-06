@@ -15,11 +15,9 @@ import '../../../profile/presentation/widgets/user_profiles_dialog.dart';
 import '../../../../shared/widgets/error_widget.dart' as shared;
 
 class UsersTable extends StatelessWidget {
-  final String searchQuery;
 
   const UsersTable({
     super.key,
-    required this.searchQuery,
   });
 
   @override
@@ -27,6 +25,7 @@ class UsersTable extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Card(
+      margin: EdgeInsets.zero,
       child: Column(
         children: [
           // Table header
@@ -147,7 +146,7 @@ class UsersTable extends StatelessWidget {
                             label: Text(state.isLoadingMore ? 'Loading...' : 'Load More'),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+                              side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.5)),
                             ),
                           ),
                         );
