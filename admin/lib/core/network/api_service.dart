@@ -21,16 +21,12 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
       await _ensureInitialized();
       return await _httpClient!.get<T>(
         path,
         queryParameters: queryParameters,
         options: options,
       );
-    } catch (e) {
-      rethrow;
-    }
   }
 
   Future<Response<T>> post<T>(
@@ -39,17 +35,13 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
-      await _ensureInitialized();
+     await _ensureInitialized();
       return await _httpClient!.post<T>(
         path,
         data: data,
         queryParameters: queryParameters,
         options: options,
       );
-    } catch (e) {
-      rethrow;
-    }
   }
 
   Future<Response<T>> put<T>(
@@ -58,17 +50,13 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
-      await _ensureInitialized();
+     await _ensureInitialized();
       return await _httpClient!.put<T>(
         path,
         data: data,
         queryParameters: queryParameters,
         options: options,
       );
-    } catch (e) {
-      rethrow;
-    }
   }
 
   Future<Response<T>> delete<T>(
@@ -77,7 +65,6 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    try {
       await _ensureInitialized();
       return await _httpClient!.delete<T>(
         path,
@@ -85,18 +72,6 @@ class ApiService {
         queryParameters: queryParameters,
         options: options,
       );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  /// Manually set authorization header for testing or special cases
-  void setAuthorizationHeader(String token) {
-    // This is handled by the singleton HttpClient now
-  }
-
-  /// Remove authorization header
-  void removeAuthorizationHeader() {
-    // This is handled by the singleton HttpClient now
+    
   }
 }

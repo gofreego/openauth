@@ -6,6 +6,7 @@ import '../../src/generated/openauth/v1/users.pb.dart' as pb_users;
 
 /// Enhanced session manager with device tracking and security features
 class SessionManager {
+  static SessionManager? _instance;
   final SharedPreferences _prefs;
   
   // Storage keys
@@ -17,7 +18,13 @@ class SessionManager {
   static const String _sessionMetaKey = 'session_metadata';
   static const String _loginHistoryKey = 'login_history';
   
-  SessionManager(this._prefs);
+  // Singleton factory
+  factory SessionManager(SharedPreferences prefs) {
+    return _instance ??= SessionManager._internal(prefs);
+  }
+
+  SessionManager._internal(this._prefs);
+
 
   /// Create a new authentication session
   Future<void> createSession({
@@ -78,6 +85,15 @@ class SessionManager {
   Future<String?> getAccessToken() async {
     try {
       return _prefs.getString(_accessTokenKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get current refresh token
+  Future<String?> getRefreshToken() async {
+    try {
+      return _prefs.getString(_refreshTokenKey);
     } catch (e) {
       return null;
     }
