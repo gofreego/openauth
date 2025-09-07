@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
-import '../../../../core/errors/exceptions.dart';
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
 import 'groups_repository.dart';
 import '../datasources/groups_remote_datasource_impl.dart';
@@ -15,13 +14,9 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       final response = await remoteDataSource.getGroups( request);
       return Right(response.groups);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
-    }
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
+    } 
   }
 
   @override
@@ -29,12 +24,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       final group = await remoteDataSource.getGroup(request);
       return Right(group);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 
@@ -43,12 +34,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       final group = await remoteDataSource.createGroup(request);
       return Right(group);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 
@@ -57,12 +44,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       final group = await remoteDataSource.updateGroup(request);
       return Right(group);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 
@@ -71,12 +54,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       await remoteDataSource.deleteGroup( request);
       return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 
@@ -85,12 +64,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       final response = await remoteDataSource.getGroupUsers(request);
       return Right(response.users);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 
@@ -99,12 +74,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       final response = await remoteDataSource.getUserGroups(request);
       return Right(response.groups);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 
@@ -113,12 +84,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       await remoteDataSource.assignUsersToGroup(request);
       return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 
@@ -127,12 +94,8 @@ class GroupsRepositoryImpl implements GroupsRepository {
     try {
       await remoteDataSource.removeUserFromGroup(request);
       return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
   }
 }
