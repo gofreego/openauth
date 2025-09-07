@@ -17,7 +17,7 @@ class DashboardBloc extends Bloc<pb.GeneratedMessage, DashboardState> {
     final result = await repository.getStats();
 
     result.fold(
-      (failure) => emit(DashboardError(message: failure.message)),
+      (failure) => emit(DashboardError(failure: failure)),
       (stats) => emit(DashboardLoaded(stats: stats)),
     );
   }
@@ -28,7 +28,7 @@ class DashboardBloc extends Bloc<pb.GeneratedMessage, DashboardState> {
     final result = await repository.getStats();
 
     result.fold(
-      (failure) => emit(DashboardError(message: failure.message)),
+      (failure) => emit(DashboardError(failure: failure)),
       (stats) {
         if (currentState is DashboardLoaded) {
           // Compare with previous stats to determine what changed

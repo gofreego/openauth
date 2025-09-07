@@ -1,6 +1,7 @@
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/shared.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/src/generated/openauth/v1/permission_assignments.pb.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
@@ -23,6 +24,7 @@ class UserPermissionsDialog extends StatefulWidget {
       builder: (context) => UserPermissionsDialog(user: user),
     );
   }
+
   @override
   State<UserPermissionsDialog> createState() => _UserPermissionsDialogState();
 }
@@ -459,30 +461,13 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
               return const Center(child: CircularProgressIndicator());
             } else if (state is PermissionsError) {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error_outline,
-                        size: 48, color: Colors.red),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Error loading available permissions',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(state.message),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
+                  child: CustomErrorWidget(
+                      failure: state.failure,
+                      onRetry: () {
                         context
                             .read<PermissionsBloc>()
                             .add(ListPermissionsRequest(all: true));
-                      },
-                      child: const Text('Retry'),
-                    ),
-                  ],
-                ),
-              );
+                      }));
             } else if (state is PermissionsLoaded) {
               // Only process if user permissions state is loaded (not necessarily non-empty)
               if (userPermissionsState is! UserPermissionsLoaded) {
@@ -807,7 +792,7 @@ class _UserPermissionsDialogState extends State<UserPermissionsDialog> {
             : IconButton(
                 icon: Icon(
                   isSelected ? Icons.check_circle : Icons.remove_circle_outline,
-                  color:  Colors.red,
+                  color: Colors.red,
                 ),
                 tooltip: isSelected
                     ? 'Deselect for bulk removal'

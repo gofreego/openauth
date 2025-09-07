@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/core/errors/failures.dart';
 import 'package:protobuf/protobuf.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../data/profile_repository.dart';
@@ -24,7 +25,7 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
       final result = await repository.listUserProfiles(event);
 
       result.fold(
-        (failure) => emit(ProfilesListError(failure.message)),
+        (failure) => emit(ProfilesListError(failure)),
         (response) => emit(ProfilesLoaded(
           profiles: response.profiles,
           totalCount: response.totalCount,
@@ -34,7 +35,7 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
         )),
       );
     } catch (e) {
-      emit(ProfilesListError('Failed to load user profiles: ${e.toString()}'));
+      emit(ProfilesListError(ServerFailure(message: 'Something went wrong: ${e.toString()}')));
     }
   }
 

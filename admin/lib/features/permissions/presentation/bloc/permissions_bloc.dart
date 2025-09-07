@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:openauth/core/errors/failures.dart';
 import 'package:openauth/features/permissions/permissions.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pbserver.dart';
 import 'package:protobuf/protobuf.dart';
@@ -67,7 +68,7 @@ class PermissionsBloc extends Bloc<GeneratedMessage, PermissionsState> {
     final result = await repository.getPermissions(event);
 
     result.fold(
-      (failure) => emit(PermissionsError(failure.message)),
+      (failure) => emit(PermissionsError(failure)),
       (newPermissions) {
         if (isLoadMore && state is PermissionsLoaded) {
           // This is pagination - append to existing permissions

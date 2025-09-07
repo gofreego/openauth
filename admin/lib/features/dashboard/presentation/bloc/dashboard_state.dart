@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:openauth/core/errors/failures.dart';
 import 'package:openauth/src/generated/openauth/v1/stats.pb.dart' as pb;
 
 abstract class DashboardState extends Equatable {
@@ -41,10 +42,10 @@ class DashboardLoaded extends DashboardState {
 }
 
 class DashboardError extends DashboardState {
-  final String message;
+  final Failure failure;
 
-  const DashboardError({required this.message});
+  const DashboardError({required this.failure});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [failure];
 }

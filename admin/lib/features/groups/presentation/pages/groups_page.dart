@@ -108,44 +108,21 @@ class _GroupsPageState extends State<GroupsPage> {
                   );
                 } else if (state is ListGroupError) {
                   return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 64,
-                          color: Colors.red.shade300,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Error loading groups',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          state.failure.message,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (mounted) {
-                              final bloc = context.read<GroupsBloc>();
-                              if (!bloc.isClosed) {
-                                bloc.add(ListGroupsRequest(
-                                  search: _searchQuery.isNotEmpty
-                                      ? _searchQuery
-                                      : null,
-                                  limit: bloc.listGroupsLimit,
-                                  offset: 0,
-                                ));
-                              }
-                            }
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
+                    child: CustomErrorWidget(
+                      failure: state.failure,
+                      onRetry: () {
+                        if (mounted) {
+                          final bloc = context.read<GroupsBloc>();
+                          if (!bloc.isClosed) {
+                            bloc.add(ListGroupsRequest(
+                              search:
+                                  _searchQuery.isNotEmpty ? _searchQuery : null,
+                              limit: bloc.listGroupsLimit,
+                              offset: 0,
+                            ));
+                          }
+                        }
+                      },
                     ),
                   );
                 }

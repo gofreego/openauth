@@ -88,7 +88,7 @@ class UsersTable extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is UsersError) {
-                  return shared.ErrorWidget(
+                  return shared.CustomErrorWidget(
                     failure: state.failure,
                     onRetry: () {
                       context.read<UsersBloc>().add(ListUsersRequest(

@@ -126,43 +126,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     );
                   } else if (state is PermissionsError) {
                     return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            size: 64,
-                            color: Colors.red.shade300,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Error loading permissions',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            state.message,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (mounted) {
-                                final bloc = context.read<PermissionsBloc>();
-                                if (!bloc.isClosed) {
-                                  bloc.add(ListPermissionsRequest(
-                                    limit: PaginationConstants.defaultPageLimit,
-                                    offset: 0,
-                                    search: _searchQuery.isNotEmpty ? _searchQuery : null,
-                                  ));
-                                }
-                              }
-                            },
-                            child: const Text('Retry'),
-                          ),
-                        ],
-                      ),
+                      child: CustomErrorWidget(failure: state.failure)
                     );
                   }
                   // Initial state or other states

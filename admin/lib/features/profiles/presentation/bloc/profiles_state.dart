@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:openauth/core/errors/failures.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 
 abstract class ProfilesState extends Equatable {
@@ -41,12 +42,12 @@ class ProfilesError extends ProfilesState {
 }
 
 class ProfilesListError extends ProfilesState {
-  final String message;
+  final Failure failure;
 
-  const ProfilesListError(this.message);
+  const ProfilesListError(this.failure);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [failure];
 }
 
 class ProfileCreateError extends ProfilesState {

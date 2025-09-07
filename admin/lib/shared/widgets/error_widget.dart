@@ -3,7 +3,7 @@ import '../../core/errors/failures.dart';
 import '../utils/toast_utils.dart';
 
 /// A common error widget that handles all types of failures
-class ErrorWidget extends StatelessWidget {
+class CustomErrorWidget extends StatelessWidget {
   final Failure failure;
   final VoidCallback? onRetry;
   final String? customTitle;
@@ -11,7 +11,7 @@ class ErrorWidget extends StatelessWidget {
   final bool showRetryButton;
   final EdgeInsetsGeometry? padding;
 
-  const ErrorWidget({
+  const CustomErrorWidget({
     super.key,
     required this.failure,
     this.onRetry,
@@ -39,15 +39,16 @@ class ErrorWidget extends StatelessWidget {
               color: _getErrorColor(colorScheme).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: customIcon ?? Icon(
-              _getErrorIcon(),
-              size: 64,
-              color: _getErrorColor(colorScheme),
-            ),
+            child: customIcon ??
+                Icon(
+                  _getErrorIcon(),
+                  size: 64,
+                  color: _getErrorColor(colorScheme),
+                ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Error Title
           Text(
             customTitle ?? _getErrorTitle(),
@@ -57,9 +58,9 @@ class ErrorWidget extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Error Message
           Text(
             failure.message,
@@ -70,23 +71,14 @@ class ErrorWidget extends StatelessWidget {
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Retry Button
           if (showRetryButton && onRetry != null)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
-                label: const Text('Try Again'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colorScheme.onPrimary,
-                ),
-              ),
+            ElevatedButton.icon(
+              onPressed: onRetry,
+              label: const Text('Retry'),
             ),
         ],
       ),

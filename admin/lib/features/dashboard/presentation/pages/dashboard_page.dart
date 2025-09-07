@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/shared.dart';
 import 'package:openauth/src/generated/openauth/v1/stats.pb.dart';
 import '../widgets/stat_card.dart';
 import '../bloc/dashboard_bloc.dart';
@@ -290,38 +291,7 @@ class _DashboardPageState extends State<DashboardPage> {
               }
               
               if (state is DashboardError) {
-                return  
-                
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 48,
-                        color: theme.colorScheme.error,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error loading stats',
-                        style: theme.textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        state.message,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loadStats,
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                );
+                return  Center(child: CustomErrorWidget(failure: state.failure, onRetry: _loadStats));
               }
               
               // Default to showing stats (either loaded or initial values)

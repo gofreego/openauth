@@ -43,12 +43,12 @@ class PermissionsLoaded extends PermissionsState {
 }
 
 class PermissionsError extends PermissionsState {
-  final String message;
+  final Failure  failure;
 
-  const PermissionsError(this.message);
-
+  const PermissionsError(this.failure);
+  
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [failure];
 }
 
 // Single permission states

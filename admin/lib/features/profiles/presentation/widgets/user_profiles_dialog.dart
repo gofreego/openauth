@@ -190,36 +190,9 @@ class _UserProfilesDialogContentState
                   }
 
                   if (state is ProfilesListError) {
-                    return SizedBox(
-                      width: 600,
-                      height: 300,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.red[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Error loading profiles',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: Colors.red[600],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              state.message,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              onPressed: () {
+                    return  Center(
+                        child: CustomErrorWidget(failure: state.failure,
+                          onRetry: () {
                                 context.read<ProfilesBloc>().add(
                                       pb.ListUserProfilesRequest(
                                         userUuid: widget.user.uuid,
@@ -228,13 +201,7 @@ class _UserProfilesDialogContentState
                                       ),
                                     );
                               },
-                              icon: const Icon(Icons.refresh),
-                              label: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                        ),);
                   }
 
                   return const SizedBox(
