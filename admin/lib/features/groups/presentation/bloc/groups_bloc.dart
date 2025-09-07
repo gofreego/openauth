@@ -1,6 +1,9 @@
+import 'dart:developer' as dev;
+
 import 'package:equatable/equatable.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/core/errors/failures.dart';
 import 'package:openauth/features/groups/data/repositories/groups_repository.dart';
 import 'package:protobuf/protobuf.dart' as pb;
 import '../../../../src/generated/openauth/v1/groups.pb.dart';
@@ -59,7 +62,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.getGroups(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(ListGroupError(failure)),
         (groups) {
           if (isLoadMore && state is GroupsLoaded) {
             // This is pagination - append to existing groups
@@ -84,7 +87,8 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         },
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error loading groups: $e");
+      emit(const ListGroupError(ServerFailure(message: "Something went wrong")));
     }
   }
 
@@ -96,14 +100,15 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.getGroupUsers(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(ListGroupError(failure)),
         (users) => emit(GroupUsersLoaded(
           users: users,
           groupId: event.groupId,
         )),
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error loading group users: $e");
+      emit(const ListGroupError(ServerFailure(message: "Something went wrong")));
     }
   }
 
@@ -115,7 +120,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.createGroup(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(CreateGroupError(failure)),
         (group) {
           emit(GroupCreated(group));
           // Refresh the groups list
@@ -127,7 +132,8 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         },
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error creating group: $e");
+      emit(const CreateGroupError(ServerFailure(message: "Something went wrong")));
     }
   }
 
@@ -139,7 +145,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.updateGroup(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(UpdateGroupError(failure)),
         (group) {
           emit(GroupUpdated(group));
           // Refresh the groups list
@@ -151,7 +157,8 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         },
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error updating group: $e");
+      emit(const UpdateGroupError(ServerFailure(message: "Something went wrong")));
     }
   }
 
@@ -163,7 +170,7 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.deleteGroup(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(DeleteGroupError(failure)),
         (_) {
           emit(const GroupDeleted());
           // Refresh the groups list
@@ -175,7 +182,8 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
         },
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error deleting group: $e");
+      emit(const DeleteGroupError(ServerFailure(message: "Something went wrong")));
     }
   }
 
@@ -187,13 +195,14 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.removeUserFromGroup(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(GroupsError(failure)),
         (_) {
           emit(const UserRemoved());
         },
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error removing user from group: $e");
+      emit(const GroupsError(ServerFailure(message: "Something went wrong")));
     }
   }
 
@@ -205,13 +214,14 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.assignUserToGroup(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(GroupsError(failure)),
         (_) {
           emit(const UserAssigned());
         },
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error assigning user to group: $e");
+      emit(const GroupsError(ServerFailure(message: "Something went wrong")));
     }
   }
 
@@ -223,11 +233,12 @@ class GroupsBloc extends Bloc<pb.GeneratedMessage, GroupsState> {
       final result = await repository.getUserGroups(event);
 
       result.fold(
-        (failure) => emit(GroupsError(failure.message)),
+        (failure) => emit(GroupsError(failure)),
         (userGroups) => emit(UserGroupsLoaded(userGroups)),
       );
     } catch (e) {
-      emit(GroupsError(e.toString()));
+      dev.log("Error loading user groups: $e");
+      emit(const GroupsError(ServerFailure(message: "Something went wrong")));
     }
   }
 }

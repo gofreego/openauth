@@ -35,7 +35,6 @@ class _CreateGroupDialogState extends State<CreateGroupDialog> {
               : _descriptionController.text.trim(),
         ),
       );
-      Navigator.of(context).pop();
     }
   }
 

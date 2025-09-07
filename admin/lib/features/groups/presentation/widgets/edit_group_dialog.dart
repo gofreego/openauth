@@ -49,7 +49,6 @@ class _EditGroupDialogState extends State<EditGroupDialog> {
               : _descriptionController.text.trim(),
         ),
       );
-      Navigator.of(context).pop();
     }
   }
 

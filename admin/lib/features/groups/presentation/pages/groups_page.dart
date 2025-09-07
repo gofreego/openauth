@@ -82,7 +82,7 @@ class _GroupsPageState extends State<GroupsPage> {
                 return current is GroupsInitial ||
                     current is GroupsLoading ||
                     current is GroupsLoaded ||
-                    current is GroupsError;
+                    current is ListGroupError;
               },
               builder: (context, state) {
                 if (state is GroupsLoading) {
@@ -106,7 +106,7 @@ class _GroupsPageState extends State<GroupsPage> {
                       }
                     },
                   );
-                } else if (state is GroupsError) {
+                } else if (state is ListGroupError) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -123,7 +123,7 @@ class _GroupsPageState extends State<GroupsPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          state.message,
+                          state.failure.message,
                           style: Theme.of(context).textTheme.bodyMedium,
                           textAlign: TextAlign.center,
                         ),

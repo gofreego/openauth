@@ -47,12 +47,48 @@ class GroupsLoaded extends GroupsState {
 }
 
 class GroupsError extends GroupsState {
-  final String message;
+  final Failure failure;
 
-  const GroupsError(this.message);
+  const GroupsError(this.failure);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [failure];
+}
+
+class ListGroupError extends GroupsState {
+  final Failure failure;
+
+  const ListGroupError(this.failure);
+
+  @override
+  List<Object?> get props => [failure];
+}
+
+class UpdateGroupError extends GroupsState {
+  final Failure failure;
+
+  const UpdateGroupError(this.failure);
+
+  @override
+  List<Object?> get props => [failure];
+}
+
+class CreateGroupError extends GroupsState {
+  final Failure failure;
+
+  const CreateGroupError(this.failure);
+
+  @override
+  List<Object?> get props => [failure];
+}
+
+class DeleteGroupError extends GroupsState {
+  final Failure failure;
+
+  const DeleteGroupError(this.failure);
+
+  @override
+  List<Object?> get props => [failure];
 }
 
 class GroupLoading extends GroupsState {

@@ -128,15 +128,15 @@ class _UserGroupsDialogState extends State<UserGroupsDialog> {
                     setState(() {
                       _isRemoving = false;
                     });
-                    ToastUtils.showError('Failed to remove user from group: ${state.message}');
+                    ToastUtils.showError('Failed to remove user from group: ${state.failure.message}');
                   }
                 },
                 child: BlocBuilder<GroupsBloc, GroupsState>(
                   builder: (context, state) {
                     if (state is GroupsLoading) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is GroupsError) {
-                      return _buildErrorWidget(state.message);
+                    } else if (state is ListGroupError) {
+                      return _buildErrorWidget(state.failure.message);
                     } else if (state is UserGroupsLoaded) {
                       _userGroups = state.groups;
                       return _buildGroupsList();

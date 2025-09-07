@@ -183,7 +183,7 @@ class _ManageGroupMembersDialogState extends State<ManageGroupMembersDialog> {
                           _isAddingUsers = false;
                           _isRemovingUsers = false;
                         });
-                        ToastUtils.showError('Error: ${state.message}');
+                        ToastUtils.showError('Error: ${state.failure.message}');
                       }
                     },
                   ),
