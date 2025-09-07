@@ -290,7 +290,9 @@ class _DashboardPageState extends State<DashboardPage> {
               }
               
               if (state is DashboardError) {
-                return Center(
+                return  
+                
+                Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
