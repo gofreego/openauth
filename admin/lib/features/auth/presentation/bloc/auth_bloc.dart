@@ -26,8 +26,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       final session = await _authRepository.signIn(event.request);
-
-      emit(AuthAuthenticated(session.user));
+      session.fold(
+        (failure) => emit(AuthSignInError(failure.message)),
+        (response) async {
+          emit(AuthAuthenticated(response.user));
+        },
+      );
     } catch (e) {
       emit(AuthSignInError(e.toString()));
     }

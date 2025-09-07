@@ -1,6 +1,6 @@
-import 'dart:developer' as dev;
-
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:openauth/core/errors/failures.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 
 import 'auth_repository.dart';
@@ -15,7 +15,8 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._httpClient, this._sessionManager);
 
   @override
-  Future<pb.SignInResponse> signIn(pb.SignInRequest request) async {
+  Future<Either<Failure, pb.SignInResponse>> signIn(pb.SignInRequest request) async {
+    try{
     final deviceSession = await DeviceUtils.createDeviceSession();
 
     request.metadata = pb.SignInMetadata(
@@ -37,35 +38,40 @@ class AuthRepositoryImpl implements AuthRepository {
         identifier: request.username,
         rememberMe: request.rememberMe,
       );
-
-      return signInResponse;
+      return Right(signInResponse);
     }
-
-    throw Exception('Sign in failed: Invalid response');
+    return const Left(ServerFailure(message: 'Sign-in failed: Invalid response'));
+    } on Exception catch(e){
+      return Left(Failure.fromException(e));
+    }
   }
 
   @override
-  Future<pb.RefreshTokenResponse> refreshToken(String refreshToken) async {
+  Future<Either<Failure, pb.RefreshTokenResponse>> refreshToken(String refreshToken) async {
     final request = pb.RefreshTokenRequest(refreshToken: refreshToken);
 
-    final response = await _httpClient.post<Map<String, dynamic>>(
-      '/openauth/v1/auth/refresh',
-      data: request.toProto3Json(),
-    );
+    try {
+      final response = await _httpClient.post<Map<String, dynamic>>(
+        '/openauth/v1/auth/refresh',
+        data: request.toProto3Json(),
+      );
 
-    final refreshResponse = pb.RefreshTokenResponse()
-      ..mergeFromProto3Json(response);
+      final refreshResponse = pb.RefreshTokenResponse()
+        ..mergeFromProto3Json(response);
 
-    if (refreshResponse.hasAccessToken()) {
-      _sessionManager.updateAuthTokens(refreshResponse);
-      return refreshResponse;
+      if (refreshResponse.hasAccessToken()) {
+        _sessionManager.updateAuthTokens(refreshResponse);
+        return Right(refreshResponse);
+      }
+
+      return const Left(ServerFailure(message: 'Token refresh failed: Invalid response'));
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     }
-
-    throw Exception('Token refresh failed: Invalid response');
   }
 
   @override
-  Future<void> signOut() async {
+  Future<Either<Failure, void>> signOut() async {
     try {
       final accessToken = await _sessionManager.getAccessToken();
       if (accessToken != null) {
@@ -81,9 +87,9 @@ class AuthRepositoryImpl implements AuthRepository {
           ),
         );
       }
-    } catch (e) {
-      // Continue with local cleanup even if server logout fails
-      dev.log('Server logout failed: $e');
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(Failure.fromException(e));
     } finally {
       await clearAuthData();
     }
