@@ -30,7 +30,6 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     final signInResponse = pb.SignInResponse()..mergeFromProto3Json(response);
-    await _sessionManager.setCurrentUser(signInResponse.user);
     if (signInResponse.hasAccessToken()) {
       // Create enhanced session with device tracking
       await _sessionManager.createSession(

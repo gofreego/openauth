@@ -29,19 +29,19 @@ class SessionManager {
 
 
   Future<void> setCurrentUser(pb_users.User user) async {
-    final jsonData = user.toProto3Json();
-    await _prefs.setString(_currentUserKey, jsonData.toString());
+    final jsonData = user.writeToJson();
+    await _prefs.setString(_currentUserKey, jsonData);
   }
 
   Future<pb_users.User?> getCurrentUser() async {
     try {
       final userData = _prefs.getString(_currentUserKey);
       if (userData != null) {
-        final jsonData = jsonDecode(userData) as Map<String, dynamic>;
-        return pb_users.User()..mergeFromProto3Json(jsonData);
+        return pb_users.User()..mergeFromJson(userData);
       }
       return null;
     } catch (e) {
+      clearSession();
       return null;
     }
   }
@@ -56,12 +56,8 @@ class SessionManager {
     try {
       // Store authentication tokens
       await _storeAuthTokens(signInResponse);
-      
-      // Store user data if available
-      if (signInResponse.hasUser()) {
-        await _storeUserData(signInResponse.user);
-      }
-      
+      await setCurrentUser(signInResponse.user);
+    
       // Create and store device session
       final deviceSession = await DeviceUtils.createDeviceSession();
       await _storeDeviceSession(deviceSession);
@@ -144,26 +140,6 @@ class SessionManager {
       metadata['refreshCount'] = ((int.tryParse(metadata['refreshCount'] ?? '0') ?? 0) + 1).toString();
       await _prefs.setString(_sessionMetaKey, jsonEncode(metadata));
     }
-  }
-
-  /// Get stored user data
-  Future<pb_users.User?> getUserData() async {
-    try {
-      final userData = _prefs.getString(_userDataKey);
-      if (userData != null) {
-        final jsonData = jsonDecode(userData) as Map<String, dynamic>;
-        return pb_users.User()..mergeFromProto3Json(jsonData);
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Update stored user data
-  Future<void> updateUserData(pb_users.User user) async {
-    final jsonData = user.writeToJson();
-    await _prefs.setString(_userDataKey, jsonData);
   }
 
   /// Get device session information
@@ -275,6 +251,7 @@ class SessionManager {
       _prefs.remove(_userDataKey),
       _prefs.remove(_deviceSessionKey),
       _prefs.remove(_sessionMetaKey),
+      _prefs.remove(_currentUserKey),
     ]);
   }
 
@@ -287,11 +264,6 @@ class SessionManager {
     if (response.hasSessionId()) {
       await _prefs.setString(_sessionIdKey, response.sessionId);
     }
-  }
-
-  Future<void> _storeUserData(pb_users.User user) async {
-    final jsonData = user.writeToJson();
-    await _prefs.setString(_userDataKey, jsonData);
   }
 
   Future<void> _storeDeviceSession(Map<String, String> deviceSession) async {
