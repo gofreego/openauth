@@ -66,9 +66,7 @@ class _GroupsPageState extends State<GroupsPage> {
             child: BlocConsumer<GroupsBloc, GroupsState>(
               listener: (context, state) {
                 // Only listen to error states and success states for actions that affect the main list
-                if (state is GroupsError) {
-                  ToastUtils.showError(state.message);
-                } else if (state is GroupCreated) {
+                if (state is GroupCreated) {
                   ToastUtils.showSuccess('Group created successfully');
                 } else if (state is GroupUpdated) {
                   ToastUtils.showSuccess('Group updated successfully');
