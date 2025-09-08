@@ -316,8 +316,6 @@ func (s *Service) GetUserEffectivePermissions(ctx context.Context, req *openauth
 	// Convert to proto response
 	protoEffectivePermissions := make([]*openauth_v1.EffectivePermission, len(permissions))
 	for i, p := range permissions {
-		// For now, we'll mark all as "direct" or "group" based on simple logic
-		// In a more complete implementation, you'd need to query the source
 		protoEffectivePermissions[i] = p.ToProtoUserEffectivePermission()
 	}
 
