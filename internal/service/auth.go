@@ -156,8 +156,10 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 
 	logger.Info(ctx, "Session created successfully: sessionID=%s, userID=%d", sessionUUID.String(), user.ID)
 
+	includePermissions := req.IncludePermissions != nil && *req.IncludePermissions
+	includeProfiles := req.Profiles != nil && *req.Profiles
 	// Generate JWT access token
-	accessToken, err := s.generateAccessToken(ctx, user, createdSession, accessTokenDuration, req)
+	accessToken, err := s.generateAccessToken(ctx, user, createdSession, accessTokenDuration, includePermissions, includeProfiles)
 	if err != nil {
 		logger.Error(ctx, "Failed to generate access token for userID=%d, sessionID=%s: %v",
 			user.ID, sessionUUID.String(), err)
@@ -247,9 +249,10 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 			session.UUID.String(), session.UserID, err)
 		return nil, status.Error(codes.Internal, "failed to update session")
 	}
-
+	includePermissions := req.IncludePermissions != nil && *req.IncludePermissions
+	includeProfiles := req.Profiles != nil && *req.Profiles
 	// Generate new JWT access token
-	accessToken, err := s.generateAccessToken(ctx, user, updatedSession, accessTokenDuration, nil)
+	accessToken, err := s.generateAccessToken(ctx, user, updatedSession, accessTokenDuration, includePermissions, includeProfiles)
 	if err != nil {
 		logger.Error(ctx, "Failed to generate new access token: userID=%d, sessionID=%s: %v",
 			session.UserID, session.UUID.String(), err)
@@ -448,7 +451,7 @@ func generateRefreshToken() (string, error) {
 }
 
 // generateAccessToken creates a JWT access token
-func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, session *dao.Session, duration time.Duration, req *openauth_v1.SignInRequest) (string, error) {
+func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, session *dao.Session, duration time.Duration, includePermissions bool, includeProfiles bool) (string, error) {
 	claims := jwtutils.JWTClaims{
 		UserID:      user.ID,
 		UserUUID:    user.UUID.String(),
@@ -466,7 +469,7 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 	}
 
 	// Include profile IDs if requested
-	if req != nil && req.Profiles != nil && *req.Profiles {
+	if includeProfiles {
 		profileIDs, err := s.repo.ListUserProfileUUIDs(ctx, user.ID)
 		if err != nil {
 			logger.Error(ctx, "Failed to get user profile IDs for userID=%d: %v", user.ID, err)
@@ -476,7 +479,7 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 	}
 
 	// Include permissions if requested
-	if req != nil && req.IncludePermissions != nil && *req.IncludePermissions {
+	if includePermissions {
 		permissions, err := s.repo.GetUserEffectivePermissionNames(ctx, user.ID)
 		if err != nil {
 			logger.Error(ctx, "Failed to get user permissions: %v", err)
