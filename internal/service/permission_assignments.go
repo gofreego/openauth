@@ -10,18 +10,23 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/pkg/jwtutils"
 )
 
 // AssignPermissionsToGroup assigns multiple permissions to a group
 func (s *Service) AssignPermissionsToGroup(ctx context.Context, req *openauth_v1.AssignPermissionsToGroupRequest) (*openauth_v1.AssignPermissionsToGroupResponse, error) {
 	logger.Info(ctx, "Permission assignment to group requested: groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
-
-	// Extract user claims from context
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission assignment failed: invalid or missing token for groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
-		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsAssign) {
+		logger.Warn(ctx, "userID=%d does not have permission to assign permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to assign permissions")
 	}
 
 	logger.Debug(ctx, "Permission assignment initiated by userID=%d for groupID=%d, permissionIDs=%v", claims.UserID, req.GroupId, req.PermissionsIds)
@@ -56,11 +61,16 @@ func (s *Service) AssignPermissionsToGroup(ctx context.Context, req *openauth_v1
 func (s *Service) RemovePermissionsFromGroup(ctx context.Context, req *openauth_v1.RemovePermissionsFromGroupRequest) (*openauth_v1.RemovePermissionsFromGroupResponse, error) {
 	logger.Info(ctx, "Permission removal from group requested: groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
 
-	// Extract user claims from context
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission removal failed: invalid or missing token for groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
-		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsRevoke) {
+		logger.Warn(ctx, "userID=%d does not have permission to revoke permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to revoke permissions")
 	}
 
 	logger.Debug(ctx, "Permission removal initiated by userID=%d for groupID=%d, permissionIDs=%v", claims.UserID, req.GroupId, req.PermissionsIds)
@@ -95,12 +105,16 @@ func (s *Service) RemovePermissionsFromGroup(ctx context.Context, req *openauth_
 // ListGroupPermissions retrieves permissions assigned to a group
 func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.ListGroupPermissionsRequest) (*openauth_v1.ListGroupPermissionsResponse, error) {
 	logger.Debug(ctx, "List group permissions requested: groupID=%d", req.GroupId)
-
-	// Extract user claims from context
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "List group permissions failed: invalid or missing token for groupID=%d", req.GroupId)
-		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read permissions")
 	}
 
 	logger.Debug(ctx, "List group permissions initiated by userID=%d for groupID=%d", claims.UserID, req.GroupId)
@@ -134,12 +148,16 @@ func (s *Service) ListGroupPermissions(ctx context.Context, req *openauth_v1.Lis
 // AssignPermissionsToUser assigns multiple permissions directly to a user
 func (s *Service) AssignPermissionsToUser(ctx context.Context, req *openauth_v1.AssignPermissionsToUserRequest) (*openauth_v1.AssignPermissionsToUserResponse, error) {
 	logger.Info(ctx, "Permission assignment to user requested: userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
-
-	// Extract user claims from context
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission assignment failed: invalid or missing token for userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
-		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsAssign) {
+		logger.Warn(ctx, "userID=%d does not have permission to assign permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to assign permissions")
 	}
 
 	logger.Debug(ctx, "Permission assignment initiated by userID=%d for targetUserID=%d, permissionIDs=%v", claims.UserID, req.UserId, req.PermissionsIds)
@@ -180,12 +198,16 @@ func (s *Service) AssignPermissionsToUser(ctx context.Context, req *openauth_v1.
 // RemovePermissionsFromUser removes multiple permissions directly assigned to a user
 func (s *Service) RemovePermissionsFromUser(ctx context.Context, req *openauth_v1.RemovePermissionsFromUserRequest) (*openauth_v1.RemovePermissionsFromUserResponse, error) {
 	logger.Info(ctx, "Permission removal from user requested: userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
-
-	// Extract user claims from context
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Permission removal failed: invalid or missing token for userID=%d, permissionIDs=%v", req.UserId, req.PermissionsIds)
-		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsRevoke) {
+		logger.Warn(ctx, "userID=%d does not have permission to revoke permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to revoke permissions")
 	}
 
 	logger.Debug(ctx, "Permission removal initiated by userID=%d for targetUserID=%d, permissionIDs=%v", claims.UserID, req.UserId, req.PermissionsIds)
@@ -220,12 +242,16 @@ func (s *Service) RemovePermissionsFromUser(ctx context.Context, req *openauth_v
 // ListUserPermissions retrieves permissions directly assigned to a user
 func (s *Service) ListUserPermissions(ctx context.Context, req *openauth_v1.ListUserPermissionsRequest) (*openauth_v1.ListUserPermissionsResponse, error) {
 	logger.Debug(ctx, "List user permissions requested: userID=%d", req.UserId)
-
-	// Extract user claims from context
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "List user permissions failed: invalid or missing token for userID=%d", req.UserId)
-		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
 	}
 
 	logger.Debug(ctx, "List user permissions initiated by userID=%d for targetUserID=%d", claims.UserID, req.UserId)
@@ -258,12 +284,16 @@ func (s *Service) ListUserPermissions(ctx context.Context, req *openauth_v1.List
 // GetUserEffectivePermissions retrieves all effective permissions for a user
 func (s *Service) GetUserEffectivePermissions(ctx context.Context, req *openauth_v1.GetUserEffectivePermissionsRequest) (*openauth_v1.GetUserEffectivePermissionsResponse, error) {
 	logger.Debug(ctx, "Get user effective permissions requested: userID=%d", req.UserId)
-
-	// Extract user claims from context
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
-		logger.Warn(ctx, "Get user effective permissions failed: invalid or missing token for userID=%d", req.UserId)
-		return nil, status.Error(codes.Unauthenticated, "invalid or missing token")
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
 	}
 
 	logger.Debug(ctx, "Get user effective permissions initiated by userID=%d for targetUserID=%d", claims.UserID, req.UserId)
