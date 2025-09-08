@@ -29,7 +29,7 @@ Repository:
       Port: 5432
       Username: "admin"
       Password: OSwfiTlc1r5W7Z
-      DBName: openauth
+      DBName: test
       SSLMode: "disable"
       MaxOpenConns: 0
       MaxIdleConns: 0
@@ -51,6 +51,6 @@ Debug:
   Enabled: true
   EnablePprof: true
 Migrator:
-  Path: "./resources/migrations/postgresql" # Path to the SQL migration files
+  Path: "./resources/migrations/postgresql_v2" # Path to the SQL migration files
   Action: up # Migration action (up/down/force/version)
   ForceVersion: 0 # Force version (optional)

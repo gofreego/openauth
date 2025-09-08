@@ -1,0 +1,114 @@
+-- Drop all schema objects created in 001_init_schema.up.sql (reverse order)
+
+DROP TRIGGER IF EXISTS update_user_external_accounts_updated_at ON user_external_accounts;
+DROP TRIGGER IF EXISTS update_auth_providers_updated_at ON auth_providers;
+DROP TABLE IF EXISTS user_external_accounts;
+DROP TABLE IF EXISTS auth_providers;
+
+DROP TRIGGER IF EXISTS update_groups_updated_at ON groups;
+DROP TRIGGER IF EXISTS update_permissions_updated_at ON permissions;
+DROP INDEX IF EXISTS idx_user_permissions_expires_at;
+DROP INDEX IF EXISTS idx_user_permissions_granted_by;
+DROP INDEX IF EXISTS idx_user_permissions_permission_id;
+DROP INDEX IF EXISTS idx_user_permissions_user_id;
+DROP TABLE IF EXISTS user_permissions;
+DROP INDEX IF EXISTS idx_user_groups_expires_at;
+DROP INDEX IF EXISTS idx_user_groups_assigned_by;
+DROP INDEX IF EXISTS idx_user_groups_group_id;
+DROP INDEX IF EXISTS idx_user_groups_user_id;
+DROP TABLE IF EXISTS user_groups;
+DROP INDEX IF EXISTS idx_group_permissions_granted_by;
+DROP INDEX IF EXISTS idx_group_permissions_permission_id;
+DROP INDEX IF EXISTS idx_group_permissions_group_id;
+DROP TABLE IF EXISTS group_permissions;
+DROP INDEX IF EXISTS idx_groups_default;
+DROP INDEX IF EXISTS idx_groups_system;
+DROP INDEX IF EXISTS idx_groups_name;
+DROP TABLE IF EXISTS groups;
+DROP INDEX IF EXISTS idx_permissions_system;
+DROP INDEX IF EXISTS idx_permissions_name;
+DROP TABLE IF EXISTS permissions;
+
+DROP INDEX IF EXISTS idx_login_attempts_created_at;
+DROP INDEX IF EXISTS idx_login_attempts_user_id;
+DROP INDEX IF EXISTS idx_login_attempts_success;
+DROP INDEX IF EXISTS idx_login_attempts_ip_address;
+DROP INDEX IF EXISTS idx_login_attempts_identifier_type;
+DROP INDEX IF EXISTS idx_login_attempts_identifier;
+DROP TABLE IF EXISTS login_attempts;
+DROP INDEX IF EXISTS idx_security_events_ip_address;
+DROP INDEX IF EXISTS idx_security_events_created_at;
+DROP INDEX IF EXISTS idx_security_events_resolved;
+DROP INDEX IF EXISTS idx_security_events_severity;
+DROP INDEX IF EXISTS idx_security_events_event_type;
+DROP INDEX IF EXISTS idx_security_events_user_id;
+DROP TABLE IF EXISTS security_events;
+DROP INDEX IF EXISTS idx_audit_logs_session_id;
+DROP INDEX IF EXISTS idx_audit_logs_created_at;
+DROP INDEX IF EXISTS idx_audit_logs_severity;
+DROP INDEX IF EXISTS idx_audit_logs_action;
+DROP INDEX IF EXISTS idx_audit_logs_entity_id;
+DROP INDEX IF EXISTS idx_audit_logs_entity_type;
+DROP INDEX IF EXISTS idx_audit_logs_user_id;
+DROP TABLE IF EXISTS audit_logs;
+
+ALTER TABLE IF EXISTS user_sessions_archive DROP CONSTRAINT IF EXISTS chk_archive_session_status;
+ALTER TABLE IF EXISTS user_sessions DROP CONSTRAINT IF EXISTS chk_session_status;
+DROP INDEX IF EXISTS idx_user_sessions_archive_user_id;
+DROP INDEX IF EXISTS idx_user_sessions_archive_original_id;
+DROP INDEX IF EXISTS idx_user_sessions_archive_archived_at;
+DROP INDEX IF EXISTS idx_user_sessions_archive_status;
+DROP INDEX IF EXISTS idx_user_sessions_archive_user_uuid;
+DROP INDEX IF EXISTS idx_session_activities_ip_address;
+DROP INDEX IF EXISTS idx_session_activities_created_at;
+DROP INDEX IF EXISTS idx_session_activities_activity_type;
+DROP INDEX IF EXISTS idx_session_activities_session_id;
+DROP INDEX IF EXISTS idx_user_sessions_revoked_at;
+DROP INDEX IF EXISTS idx_user_sessions_last_activity_at;
+DROP INDEX IF EXISTS idx_user_sessions_expires_at;
+DROP INDEX IF EXISTS idx_user_sessions_status_last_activity;
+DROP INDEX IF EXISTS idx_user_sessions_status;
+DROP INDEX IF EXISTS idx_user_sessions_is_active;
+DROP INDEX IF EXISTS idx_user_sessions_device_id;
+DROP INDEX IF EXISTS idx_user_sessions_refresh_token;
+DROP INDEX IF EXISTS idx_user_sessions_session_token;
+DROP INDEX IF EXISTS idx_user_sessions_user_uuid;
+DROP INDEX IF EXISTS idx_user_sessions_user_id;
+DROP INDEX IF EXISTS idx_user_sessions_uuid;
+DROP TABLE IF EXISTS user_sessions_archive;
+DROP TABLE IF EXISTS session_activities;
+DROP TABLE IF EXISTS user_sessions;
+
+DROP INDEX IF EXISTS idx_email_verification_tokens_expires_at;
+DROP INDEX IF EXISTS idx_email_verification_tokens_token;
+DROP INDEX IF EXISTS idx_email_verification_tokens_user_id;
+DROP TABLE IF EXISTS email_verification_tokens;
+DROP INDEX IF EXISTS idx_password_reset_tokens_expires_at;
+DROP INDEX IF EXISTS idx_password_reset_tokens_token;
+DROP INDEX IF EXISTS idx_password_reset_tokens_user_id;
+DROP TABLE IF EXISTS password_reset_tokens;
+DROP INDEX IF EXISTS idx_otp_verifications_type;
+DROP INDEX IF EXISTS idx_otp_verifications_expires_at;
+DROP INDEX IF EXISTS idx_otp_verifications_otp_code;
+DROP INDEX IF EXISTS idx_otp_verifications_identifier;
+DROP INDEX IF EXISTS idx_otp_verifications_user_id;
+DROP TABLE IF EXISTS otp_verifications;
+
+DROP TRIGGER IF EXISTS update_user_profiles_updated_at ON user_profiles;
+DROP INDEX IF EXISTS idx_user_profiles_country;
+DROP INDEX IF EXISTS idx_user_profiles_display_name;
+DROP INDEX IF EXISTS idx_user_profiles_user_id;
+DROP INDEX IF EXISTS idx_user_profiles_uuid;
+DROP TABLE IF EXISTS user_profiles;
+
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+DROP INDEX IF EXISTS idx_users_created_at;
+DROP INDEX IF EXISTS idx_users_active;
+DROP INDEX IF EXISTS idx_users_phone;
+DROP INDEX IF EXISTS idx_users_email;
+DROP INDEX IF EXISTS idx_users_username;
+DROP INDEX IF EXISTS idx_users_uuid;
+DROP FUNCTION IF EXISTS update_updated_at_column();
+DROP TABLE IF EXISTS users;
+
+
