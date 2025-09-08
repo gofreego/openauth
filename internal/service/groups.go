@@ -19,7 +19,17 @@ import (
 // CreateGroup creates a new group in the system
 func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupRequest) (*openauth_v1.CreateGroupResponse, error) {
 	logger.Info(ctx, "Create group request initiated for name: %s", req.Name)
-
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "Create group failed: failed to get user from context for group: %s", req.Name)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsCreate) {
+		logger.Warn(ctx, "Create group failed: userID=%d does not have permission to create groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to create groups")
+	}
 	// Validate input
 	if req.Name == "" {
 		logger.Warn(ctx, "Create group failed: missing group name")
@@ -46,13 +56,6 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 		return nil, status.Error(codes.AlreadyExists, "group name already exists")
 	}
 
-	// Get current user ID from context
-	claims, err := jwtutils.GetUserFromContext(ctx)
-	if err != nil {
-		logger.Warn(ctx, "Create group failed: failed to get user from context for group: %s", req.Name)
-		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
-	}
-
 	logger.Debug(ctx, "Group creation authorized by userID=%d for group: %s", claims.UserID, req.Name)
 
 	// Create group DAO using the FromCreateGroupRequest method
@@ -77,8 +80,19 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 
 // GetGroup retrieves a group by ID, UUID, or name
 func (s *Service) GetGroup(ctx context.Context, req *openauth_v1.GetGroupRequest) (*openauth_v1.GetGroupResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
+	}
+
 	var group *dao.Group
-	var err error
 
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "group ID is required")
@@ -97,6 +111,18 @@ func (s *Service) GetGroup(ctx context.Context, req *openauth_v1.GetGroupRequest
 
 // ListGroups retrieves groups with filtering and pagination
 func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsRequest) (*openauth_v1.ListGroupsResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
+	}
+
 	// Build filters from request
 	filters := filter.FromListGroupsRequest(req)
 
@@ -120,6 +146,18 @@ func (s *Service) ListGroups(ctx context.Context, req *openauth_v1.ListGroupsReq
 
 // UpdateGroup modifies an existing group
 func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupRequest) (*openauth_v1.UpdateGroupResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsUpdate) {
+		logger.Warn(ctx, "userID=%d does not have permission to update groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update groups")
+	}
+
 	if req.Id == 0 {
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
@@ -189,6 +227,18 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 
 // DeleteGroup removes a group from the system
 func (s *Service) DeleteGroup(ctx context.Context, req *openauth_v1.DeleteGroupRequest) (*openauth_v1.DeleteGroupResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsDelete) {
+		logger.Warn(ctx, "userID=%d does not have permission to delete groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete groups")
+	}
+
 	if req.Id == 0 {
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
@@ -221,6 +271,18 @@ func (s *Service) DeleteGroup(ctx context.Context, req *openauth_v1.DeleteGroupR
 func (s *Service) AssignUsersToGroup(ctx context.Context, req *openauth_v1.AssignUsersToGroupRequest) (*openauth_v1.AssignUsersToGroupResponse, error) {
 	logger.Debug(ctx, "AssignUsersToGroup request: userIDs=%v, groupID=%d", req.UserIds, req.GroupId)
 
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsAssign) {
+		logger.Warn(ctx, "userID=%d does not have permission to assign users to groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to assign users to groups")
+	}
+
 	if len(req.UserIds) == 0 {
 		logger.Warn(ctx, "AssignUsersToGroup failed: missing user IDs")
 		return nil, status.Error(codes.InvalidArgument, "user ids are required")
@@ -228,13 +290,6 @@ func (s *Service) AssignUsersToGroup(ctx context.Context, req *openauth_v1.Assig
 	if req.GroupId == 0 {
 		logger.Warn(ctx, "AssignUsersToGroup failed: missing group ID")
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
-	}
-
-	// Get the current user from context (who is performing the assignment)
-	claims, err := jwtutils.GetUserFromContext(ctx)
-	if err != nil {
-		logger.Error(ctx, "Failed to get current user from context for group assignment: %v", err)
-		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
 	}
 
 	logger.Debug(ctx, "User %s (userID=%d) assigning users %v to group %d",
@@ -309,6 +364,18 @@ func (s *Service) AssignUsersToGroup(ctx context.Context, req *openauth_v1.Assig
 func (s *Service) RemoveUsersFromGroup(ctx context.Context, req *openauth_v1.RemoveUsersFromGroupRequest) (*openauth_v1.RemoveUsersFromGroupResponse, error) {
 	logger.Debug(ctx, "RemoveUsersFromGroup request: userIDs=%v, groupID=%d", req.UserIds, req.GroupId)
 
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsRevoke) {
+		logger.Warn(ctx, "userID=%d does not have permission to revoke users from groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to revoke users from groups")
+	}
+
 	if len(req.UserIds) == 0 {
 		logger.Warn(ctx, "RemoveUsersFromGroup failed: missing user IDs")
 		return nil, status.Error(codes.InvalidArgument, "user ids are required")
@@ -316,13 +383,6 @@ func (s *Service) RemoveUsersFromGroup(ctx context.Context, req *openauth_v1.Rem
 	if req.GroupId == 0 {
 		logger.Warn(ctx, "RemoveUsersFromGroup failed: missing group ID")
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
-	}
-
-	// Get the current user from context
-	claims, err := jwtutils.GetUserFromContext(ctx)
-	if err != nil {
-		logger.Error(ctx, "Failed to get current user from context for group removal: %v", err)
-		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
 	}
 
 	logger.Debug(ctx, "User %s (userID=%d) removing users %v from group %d",
@@ -395,6 +455,18 @@ func (s *Service) RemoveUsersFromGroup(ctx context.Context, req *openauth_v1.Rem
 
 // ListGroupUsers retrieves all users in a specific group
 func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroupUsersRequest) (*openauth_v1.ListGroupUsersResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
+	}
+
 	if req.GroupId == 0 {
 		return nil, status.Error(codes.InvalidArgument, "group id is required")
 	}
@@ -421,6 +493,18 @@ func (s *Service) ListGroupUsers(ctx context.Context, req *openauth_v1.ListGroup
 
 // ListUserGroups retrieves all groups for a specific user
 func (s *Service) ListUserGroups(ctx context.Context, req *openauth_v1.ListUserGroupsRequest) (*openauth_v1.ListUserGroupsResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionGroupsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
+	}
+
 	if req.UserId == 0 {
 		return nil, status.Error(codes.InvalidArgument, "user id is required")
 	}

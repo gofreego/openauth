@@ -24,6 +24,15 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
+func (c *JWTClaims) HasPermission(permission string) bool {
+	for _, userPerm := range c.Permissions {
+		if userPerm == permission || userPerm == "system.admin" {
+			return true
+		}
+	}
+	return false
+}
+
 // ExtractTokenFromMetadata extracts JWT token from gRPC metadata
 func ExtractTokenFromMetadata(ctx context.Context) (string, error) {
 	logger.Debug(ctx, "Extracting JWT token from metadata")
