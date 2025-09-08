@@ -5,6 +5,8 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -12,7 +14,17 @@ import (
 // Stats returns system statistics
 func (s *Service) Stats(ctx context.Context, req *openauth_v1.StatsRequest) (*openauth_v1.StatsResponse, error) {
 	logger.Debug(ctx, "System stats request initiated")
-
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionAuditRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read stats", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read stats")
+	}
 	// Get stats from repository
 	totalUsers, err := s.repo.GetTotalUsers(ctx)
 	if err != nil {

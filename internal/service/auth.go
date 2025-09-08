@@ -102,7 +102,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	// Reset failed login attempts and update last login
 	updates := map[string]interface{}{
 		"failed_login_attempts": 0,
-		"last_login_at":         time.Now().Unix(),
+		"last_login_at":         time.Now().UnixMilli(),
 	}
 	s.repo.UpdateUser(ctx, user.ID, updates)
 	logger.Debug(ctx, "Reset failed login attempts for userID=%d", user.ID)
@@ -132,8 +132,8 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 			user.ID, accessTokenDuration, refreshTokenDuration)
 	}
 
-	expiresAt := time.Now().Add(accessTokenDuration).Unix()
-	refreshExpiresAt := time.Now().Add(refreshTokenDuration).Unix()
+	expiresAt := time.Now().Add(accessTokenDuration).UnixMilli()
+	refreshExpiresAt := time.Now().Add(refreshTokenDuration).UnixMilli()
 
 	// Create session record using FromSignInRequest method
 	session := new(dao.Session).FromSignInRequest(
@@ -208,7 +208,7 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 		return nil, status.Error(codes.Unauthenticated, "session is inactive")
 	}
 
-	if session.RefreshExpiresAt != nil && time.Now().Unix() > *session.RefreshExpiresAt {
+	if session.RefreshExpiresAt != nil && time.Now().UnixMilli() > *session.RefreshExpiresAt {
 		logger.Warn(ctx, "Token refresh denied: refresh token expired: sessionID=%s, userID=%d, expires_at=%d",
 			session.UUID.String(), session.UserID, *session.RefreshExpiresAt)
 		return nil, status.Error(codes.Unauthenticated, "refresh token expired")
@@ -233,14 +233,14 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 	accessTokenDuration := s.cfg.JWT.AccessTokenTTL
 	refreshTokenDuration := s.cfg.JWT.RefreshTokenTTL
 
-	expiresAt := time.Now().Add(accessTokenDuration).Unix()
-	refreshExpiresAt := time.Now().Add(refreshTokenDuration).Unix()
+	expiresAt := time.Now().Add(accessTokenDuration).UnixMilli()
+	refreshExpiresAt := time.Now().Add(refreshTokenDuration).UnixMilli()
 
 	// Update session with new refresh token
 	updates := map[string]interface{}{
 		"refresh_token":      newRefreshToken,
 		"refresh_expires_at": refreshExpiresAt,
-		"last_activity_at":   time.Now().Unix(),
+		"last_activity_at":   time.Now().UnixMilli(),
 	}
 
 	updatedSession, err := s.repo.UpdateSession(ctx, session.UUID.String(), updates)
@@ -359,7 +359,7 @@ func (s *Service) ValidateToken(ctx context.Context, req *openauth_v1.ValidateTo
 	s.repo.UpdateLastActivity(ctx, session.UUID.String())
 	logger.Debug(ctx, "Updated last activity for sessionID=%s", session.UUID.String())
 
-	expiresAt := claims.RegisteredClaims.ExpiresAt.Unix()
+	expiresAt := claims.RegisteredClaims.ExpiresAt.UnixMilli()
 	logger.Info(ctx, "Token validation successful: userID=%d, sessionID=%s", session.UserID, claims.SessionUUID)
 
 	return &openauth_v1.ValidateTokenResponse{

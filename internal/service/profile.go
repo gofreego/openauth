@@ -10,18 +10,31 @@ import (
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 // CreateProfile creates a new profile for a user
 func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProfileRequest) (*openauth_v1.CreateProfileResponse, error) {
-	if req.UserUuid == "" {
-		return nil, status.Error(codes.InvalidArgument, "user_uuid is required")
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesCreate) && claims.UserID != req.UserId {
+		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
+	}
+
+	if req.UserId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
 	}
 
 	// Verify user exists
-	user, err := s.repo.GetUserByUUID(ctx, req.UserUuid)
+	user, err := s.repo.GetUserByID(ctx, req.UserId)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "user not found")
 	}
@@ -30,7 +43,7 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 
 	// Validate country field - must be 2-character ISO code or empty
 	if req.Country != nil && len(*req.Country) > 2 {
-		logger.Error(ctx, "Invalid country code provided for user UUID %s: %s (must be 2 characters or less)", req.UserUuid, *req.Country)
+		logger.Error(ctx, "Invalid country code provided for user id %d: %s (must be 2 characters or less)", req.UserId, *req.Country)
 		return nil, status.Error(codes.InvalidArgument, "country must be a 2-character ISO country code")
 	}
 
@@ -40,7 +53,7 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 		if json.Valid(req.Metadata) {
 			profile.Metadata = req.Metadata
 		} else {
-			logger.Error(ctx, "Invalid JSON metadata provided for user UUID %s", req.UserUuid)
+			logger.Error(ctx, "Invalid JSON metadata provided for user id %d: %s", req.UserId, req.Metadata)
 			return nil, status.Error(codes.InvalidArgument, "invalid JSON metadata")
 		}
 	} else {
@@ -59,7 +72,7 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 
 	createdProfile, err := s.repo.CreateUserProfile(ctx, profile)
 	if err != nil {
-		logger.Error(ctx, "Failed to create profile for user UUID %s: %v", req.UserUuid, err)
+		logger.Error(ctx, "Failed to create profile for user UUID %d: %v", req.UserId, err)
 		return nil, status.Error(codes.Internal, "failed to create profile")
 	}
 
@@ -71,6 +84,18 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 
 // ListUserProfiles retrieves all profiles for a user
 func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUserProfilesRequest) (*openauth_v1.ListUserProfilesResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesRead) && claims.UserUUID != req.UserUuid {
+		logger.Warn(ctx, "userID=%d does not have permission to read profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read profiles")
+	}
+
 	if req.UserUuid == "" {
 		return nil, status.Error(codes.InvalidArgument, "user_uuid is required")
 	}
@@ -106,6 +131,18 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 
 // UpdateProfile modifies an existing profile
 func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProfileRequest) (*openauth_v1.UpdateProfileResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesUpdate) && !claims.HasProfile(req.ProfileUuid) {
+		logger.Warn(ctx, "userID=%d does not have permission to update profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update profiles")
+	}
+
 	if req.ProfileUuid == "" {
 		return nil, status.Error(codes.InvalidArgument, "profile_uuid is required")
 	}
@@ -204,6 +241,18 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 
 // DeleteProfile removes a specific profile
 func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProfileRequest) (*openauth_v1.DeleteProfileResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesDelete) && !claims.HasProfile(req.ProfileUuid) {
+		logger.Warn(ctx, "userID=%d does not have permission to delete profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete profiles")
+	}
+
 	if req.ProfileUuid == "" {
 		return nil, status.Error(codes.InvalidArgument, "profile_uuid is required")
 	}

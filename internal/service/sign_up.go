@@ -141,7 +141,7 @@ func (s *Service) VerifyEmail(ctx context.Context, req *openauth_v1.VerifyEmailR
 	}
 
 	// Check if expired
-	if time.Now().Unix() > otpVerification.ExpiresAt {
+	if time.Now().UnixMilli() > otpVerification.ExpiresAt {
 		logger.Warn(ctx, "Email verification failed: code expired for email %s, userID=%v",
 			req.Email, otpVerification.UserID)
 		return nil, status.Error(codes.DeadlineExceeded, "verification code has expired")
@@ -197,7 +197,7 @@ func (s *Service) VerifyPhone(ctx context.Context, req *openauth_v1.VerifyPhoneR
 	}
 
 	// Check if expired
-	if time.Now().Unix() > otpVerification.ExpiresAt {
+	if time.Now().UnixMilli() > otpVerification.ExpiresAt {
 		return nil, status.Error(codes.DeadlineExceeded, "verification code has expired")
 	}
 
@@ -350,8 +350,8 @@ func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePas
 	// Update password
 	updates := map[string]interface{}{
 		"password_hash":       string(hashedPassword),
-		"password_changed_at": time.Now().Unix(),
-		"updated_at":          time.Now().Unix(),
+		"password_changed_at": time.Now().UnixMilli(),
+		"updated_at":          time.Now().UnixMilli(),
 	}
 
 	_, err = s.repo.UpdateUser(ctx, user.ID, updates)
@@ -453,10 +453,10 @@ func (s *Service) sendEmailVerification(ctx context.Context, userID int64, email
 		OTPCode:     code,
 		OTPType:     "emailVerification",
 		IsUsed:      false,
-		ExpiresAt:   time.Now().Add(15 * time.Minute).Unix(), // 15 minutes
+		ExpiresAt:   time.Now().Add(15 * time.Minute).UnixMilli(), // 15 minutes
 		Attempts:    0,
 		MaxAttempts: 3,
-		CreatedAt:   time.Now().Unix(),
+		CreatedAt:   time.Now().UnixMilli(),
 	}
 
 	err = s.repo.CreateOTPVerification(ctx, otp)
@@ -495,10 +495,10 @@ func (s *Service) sendPhoneVerification(ctx context.Context, userID int64, phone
 		OTPCode:     code,
 		OTPType:     "phoneVerification",
 		IsUsed:      false,
-		ExpiresAt:   time.Now().Add(15 * time.Minute).Unix(), // 15 minutes
+		ExpiresAt:   time.Now().Add(15 * time.Minute).UnixMilli(), // 15 minutes
 		Attempts:    0,
 		MaxAttempts: 3,
-		CreatedAt:   time.Now().Unix(),
+		CreatedAt:   time.Now().UnixMilli(),
 	}
 
 	err = s.repo.CreateOTPVerification(ctx, otp)

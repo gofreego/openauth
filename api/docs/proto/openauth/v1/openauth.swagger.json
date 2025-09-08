@@ -1456,6 +1456,47 @@
         ]
       }
     },
+    "/openauth/v1/users/{userId}/profiles": {
+      "post": {
+        "summary": "Create a new profile",
+        "description": "Create a new profile for a user.",
+        "operationId": "OpenAuth_CreateProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthCreateProfileBody"
+            }
+          }
+        ],
+        "tags": [
+          "Profile Management"
+        ]
+      }
+    },
     "/openauth/v1/users/{userUuid}/profiles": {
       "get": {
         "summary": "List user profiles",
@@ -1495,45 +1536,6 @@
             "required": false,
             "type": "integer",
             "format": "int32"
-          }
-        ],
-        "tags": [
-          "Profile Management"
-        ]
-      },
-      "post": {
-        "summary": "Create a new profile",
-        "description": "Create a new profile for a user.",
-        "operationId": "OpenAuth_CreateProfile",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1CreateProfileResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "userUuid",
-            "description": "UUID of the user this profile belongs to",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/OpenAuthCreateProfileBody"
-            }
           }
         ],
         "tags": [

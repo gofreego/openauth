@@ -37,7 +37,7 @@ func (p *Profile) FromCreateProfileRequest(req *openauth_v1.CreateProfileRequest
 		d := time.UnixMilli(*req.DateOfBirth)
 		dob = &d
 	}
-	now := time.Now().Unix()
+	now := time.Now().UnixMilli()
 	p.UUID = uuid.New()
 	p.UserID = userId
 	p.ProfileName = req.ProfileName
@@ -64,7 +64,7 @@ func (p *Profile) FromCreateProfileRequest(req *openauth_v1.CreateProfileRequest
 func (p *Profile) ToProtoUserProfile() *openauth_v1.UserProfile {
 	var dateOfBirth *int64
 	if p.DateOfBirth != nil {
-		timestamp := p.DateOfBirth.Unix()
+		timestamp := p.DateOfBirth.UnixMilli()
 		dateOfBirth = &timestamp
 	}
 

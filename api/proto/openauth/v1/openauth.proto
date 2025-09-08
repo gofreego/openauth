@@ -651,7 +651,7 @@ service OpenAuth {
     // and metadata while belonging to the same user account.
     rpc CreateProfile (CreateProfileRequest) returns (CreateProfileResponse) {
         option (google.api.http) = {
-            post: "/openauth/v1/users/{user_uuid}/profiles"
+            post: "/openauth/v1/users/{user_id}/profiles"
             body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

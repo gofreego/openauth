@@ -127,7 +127,7 @@ message CheckEmailResponse {
 
 // CreateProfileRequest to create a new profile for a user
 message CreateProfileRequest {
-    string user_uuid = 1;  // UUID of the user this profile belongs to
+    int64 user_id = 1;  
     optional string profile_name = 2;  // Name/label for this profile (e.g., "Personal", "Work", "Gaming")
     optional string first_name = 3;
     optional string last_name = 4;

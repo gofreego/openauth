@@ -192,7 +192,7 @@ func (r *Repository) DeleteUser(ctx context.Context, id int64, softDelete bool) 
 	if softDelete {
 		updates := map[string]interface{}{
 			"is_active":  false,
-			"updated_at": time.Now().Unix(),
+			"updated_at": time.Now().UnixMilli(),
 		}
 		_, err := r.UpdateUser(ctx, id, updates)
 		return err
@@ -371,7 +371,7 @@ func (r *Repository) GetOTPVerification(ctx context.Context, identifier, code st
 // UpdateVerificationStatus updates user verification status
 func (r *Repository) UpdateVerificationStatus(ctx context.Context, userID int64, field string, verified bool) error {
 	query := fmt.Sprintf("UPDATE users SET %s = $1, updated_at = $2 WHERE id = $3", field)
-	_, err := r.connManager.Primary().ExecContext(ctx, query, verified, time.Now().Unix(), userID)
+	_, err := r.connManager.Primary().ExecContext(ctx, query, verified, time.Now().UnixMilli(), userID)
 	return err
 }
 

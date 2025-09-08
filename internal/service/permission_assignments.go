@@ -173,7 +173,7 @@ func (s *Service) AssignPermissionsToUser(ctx context.Context, req *openauth_v1.
 	}
 
 	// Validate expiration time if provided
-	if req.ExpiresAt != nil && *req.ExpiresAt <= time.Now().Unix() {
+	if req.ExpiresAt != nil && *req.ExpiresAt <= time.Now().UnixMilli() {
 		logger.Warn(ctx, "Permission assignment failed: expires_at is in the past: userID=%d, permissionIDs=%v, expires_at=%d",
 			req.UserId, req.PermissionsIds, *req.ExpiresAt)
 		return nil, status.Error(codes.InvalidArgument, "expires_at must be in the future")

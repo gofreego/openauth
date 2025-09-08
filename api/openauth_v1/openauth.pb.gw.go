@@ -1722,14 +1722,14 @@ func request_OpenAuth_CreateProfile_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["user_uuid"]
+	val, ok = pathParams["user_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
 	}
 
-	protoReq.UserUuid, err = runtime.String(val)
+	protoReq.UserId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
 	msg, err := client.CreateProfile(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1752,14 +1752,14 @@ func local_request_OpenAuth_CreateProfile_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["user_uuid"]
+	val, ok = pathParams["user_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
 	}
 
-	protoReq.UserUuid, err = runtime.String(val)
+	protoReq.UserId, err = runtime.Int64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
 	}
 
 	msg, err := server.CreateProfile(ctx, &protoReq)
@@ -3014,7 +3014,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/CreateProfile", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_uuid}/profiles"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/CreateProfile", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/profiles"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4051,7 +4051,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/CreateProfile", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_uuid}/profiles"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/CreateProfile", runtime.WithHTTPPathPattern("/openauth/v1/users/{user_id}/profiles"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4337,7 +4337,7 @@ var (
 
 	pattern_OpenAuth_DeleteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "users", "uuid"}, ""))
 
-	pattern_OpenAuth_CreateProfile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_uuid", "profiles"}, ""))
+	pattern_OpenAuth_CreateProfile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "profiles"}, ""))
 
 	pattern_OpenAuth_ListUserProfiles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_uuid", "profiles"}, ""))
 

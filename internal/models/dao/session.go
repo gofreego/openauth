@@ -51,8 +51,8 @@ func (s *Session) FromSignInRequest(
 	s.Status = "active"
 	s.ExpiresAt = expiresAt
 	s.RefreshExpiresAt = &refreshExpiresAt
-	s.LastActivityAt = time.Now().Unix()
-	s.CreatedAt = time.Now().Unix()
+	s.LastActivityAt = time.Now().UnixMilli()
+	s.CreatedAt = time.Now().UnixMilli()
 
 	// Set device information if provided
 	if req.Metadata != nil {

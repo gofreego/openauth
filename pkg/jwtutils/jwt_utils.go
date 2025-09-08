@@ -33,6 +33,15 @@ func (c *JWTClaims) HasPermission(permission string) bool {
 	return false
 }
 
+func (c *JWTClaims) HasProfile(profileId string) bool {
+	for _, pid := range c.ProfileIds {
+		if pid.String() == profileId {
+			return true
+		}
+	}
+	return false
+}
+
 // ExtractTokenFromMetadata extracts JWT token from gRPC metadata
 func ExtractTokenFromMetadata(ctx context.Context) (string, error) {
 	logger.Debug(ctx, "Extracting JWT token from metadata")
