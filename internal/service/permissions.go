@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
 	"github.com/gofreego/openauth/pkg/jwtutils"
@@ -19,6 +20,18 @@ import (
 func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreatePermissionRequest) (*openauth_v1.Permission, error) {
 	logger.Info(ctx, "Create permission request initiated for name: %s", req.Name)
 
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsCreate) {
+		logger.Warn(ctx, "userID=%d does not have permission to create permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to create permissions")
+	}
+
 	// Validate required fields
 	if req.Name == "" {
 		logger.Warn(ctx, "Create permission failed: missing name")
@@ -27,12 +40,6 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	if req.DisplayName == "" {
 		logger.Warn(ctx, "Create permission failed: missing display_name for name: %s", req.Name)
 		return nil, status.Error(codes.InvalidArgument, "display_name is required")
-	}
-
-	claims, err := jwtutils.GetUserFromContext(ctx)
-	if err != nil {
-		logger.Warn(ctx, "Create permission failed: user not authenticated for name: %s", req.Name)
-		return nil, status.Error(codes.Unauthenticated, "user not authenticated")
 	}
 
 	logger.Debug(ctx, "Permission creation authorized by userID=%d for name: %s", claims.UserID, req.Name)
@@ -61,6 +68,19 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 
 // GetPermission retrieves a permission by ID
 func (s *Service) GetPermission(ctx context.Context, req *openauth_v1.GetPermissionRequest) (*openauth_v1.Permission, error) {
+
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read permissions")
+	}
+
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "id must be greater than 0")
 	}
@@ -78,6 +98,18 @@ func (s *Service) GetPermission(ctx context.Context, req *openauth_v1.GetPermiss
 
 // ListPermissions retrieves permissions with filtering and pagination
 func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPermissionsRequest) (*openauth_v1.ListPermissionsResponse, error) {
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read permissions")
+	}
+
 	// Build filters from request
 	filters := filter.FromListPermissionsRequest(req)
 
@@ -100,6 +132,19 @@ func (s *Service) ListPermissions(ctx context.Context, req *openauth_v1.ListPerm
 
 // UpdatePermission updates an existing permission
 func (s *Service) UpdatePermission(ctx context.Context, req *openauth_v1.UpdatePermissionRequest) (*openauth_v1.Permission, error) {
+
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsUpdate) {
+		logger.Warn(ctx, "userID=%d does not have permission to update permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update permissions")
+	}
+
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "id must be greater than 0")
 	}
@@ -160,6 +205,19 @@ func (s *Service) UpdatePermission(ctx context.Context, req *openauth_v1.UpdateP
 
 // DeletePermission deletes a permission
 func (s *Service) DeletePermission(ctx context.Context, req *openauth_v1.DeletePermissionRequest) (*openauth_v1.DeletePermissionResponse, error) {
+
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionPermissionsDelete) {
+		logger.Warn(ctx, "userID=%d does not have permission to delete permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete permissions")
+	}
+
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "id must be greater than 0")
 	}
