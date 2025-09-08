@@ -1,16 +1,14 @@
--- Drop verification tables and related objects
 DROP INDEX IF EXISTS idx_email_verification_tokens_expires_at;
 DROP INDEX IF EXISTS idx_email_verification_tokens_token;
 DROP INDEX IF EXISTS idx_email_verification_tokens_user_id;
+DROP TABLE IF EXISTS email_verification_tokens;
 DROP INDEX IF EXISTS idx_password_reset_tokens_expires_at;
 DROP INDEX IF EXISTS idx_password_reset_tokens_token;
 DROP INDEX IF EXISTS idx_password_reset_tokens_user_id;
+DROP TABLE IF EXISTS password_reset_tokens;
 DROP INDEX IF EXISTS idx_otp_verifications_type;
 DROP INDEX IF EXISTS idx_otp_verifications_expires_at;
 DROP INDEX IF EXISTS idx_otp_verifications_otp_code;
-DROP INDEX IF EXISTS idx_otp_verifications_phone;
-DROP INDEX IF EXISTS idx_otp_verifications_email;
+DROP INDEX IF EXISTS idx_otp_verifications_identifier;
 DROP INDEX IF EXISTS idx_otp_verifications_user_id;
-DROP TABLE IF EXISTS email_verification_tokens;
-DROP TABLE IF EXISTS password_reset_tokens;
 DROP TABLE IF EXISTS otp_verifications;
