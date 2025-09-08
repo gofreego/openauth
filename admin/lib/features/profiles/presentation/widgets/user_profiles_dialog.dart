@@ -400,10 +400,9 @@ class _UserProfilesDialogContentState
                         );
                   },
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    textStyle: const TextStyle(color: Colors.white)
+                    backgroundColor: Colors.red
                   ),
-                  child: const Text('Delete'),
+                  child: const Text('Delete', style: TextStyle(color: Colors.white),),
                 ),
               ],
             ),

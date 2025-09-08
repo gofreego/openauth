@@ -26,6 +26,7 @@ class ToastUtils {
       gravity: ToastGravity.TOP,
       timeInSecForIosWeb: 4,
       backgroundColor: Colors.red,
+      webBgColor: "#D22B2B",
       textColor: Colors.white,
       fontSize: 16.0,
     );
