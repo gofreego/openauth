@@ -9,9 +9,7 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
-	"github.com/gofreego/openauth/internal/models/filter"
 	communicationservice "github.com/gofreego/openauth/pkg/clients/communication-service"
 	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/google/uuid"
@@ -362,80 +360,6 @@ func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePas
 	return &openauth_v1.ChangePasswordResponse{
 		Success: true,
 		Message: "Password changed successfully",
-	}, nil
-}
-
-// ListUsers retrieves users with filtering, sorting, and pagination
-func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersRequest) (*openauth_v1.ListUsersResponse, error) {
-	// Set default values
-	limit := req.Limit
-	if limit <= 0 || limit > 100 {
-		limit = constants.DefaultPageSize
-	}
-	offset := req.Offset
-	if offset < 0 {
-		offset = 0
-	}
-
-	// Prepare filters
-	filters := &filter.UserFilter{
-		Limit:  limit,
-		Offset: offset,
-	}
-
-	if req.Search != nil {
-		filters.Search = req.Search
-	}
-	// TODO add filter based on req.Search pattern type like, mobile, email, id, etc.
-	// Get users from repository
-	users, err := s.repo.ListUsers(ctx, filters)
-	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to list users")
-	}
-
-	// Convert to proto
-	protoUsers := make([]*openauth_v1.User, len(users))
-	for i, user := range users {
-		protoUsers[i] = user.ToProtoUser()
-	}
-
-	return &openauth_v1.ListUsersResponse{
-		Users: protoUsers,
-	}, nil
-}
-
-// DeleteUser removes or deactivates a user account
-func (s *Service) DeleteUser(ctx context.Context, req *openauth_v1.DeleteUserRequest) (*openauth_v1.DeleteUserResponse, error) {
-	if req.Uuid == "" {
-		return nil, status.Error(codes.InvalidArgument, "uuid is required")
-	}
-
-	// Get user to ensure it exists
-	user, err := s.repo.GetUserByUUID(ctx, req.Uuid)
-	if err != nil {
-		return nil, status.Error(codes.NotFound, "user not found")
-	}
-
-	// check if user is admin user
-	if user.Username == "admin" {
-		return nil, status.Error(codes.PermissionDenied, "admin user cannot be deleted")
-	}
-
-	// Delete user
-	err = s.repo.DeleteUser(ctx, user.ID, req.SoftDelete)
-	if err != nil {
-		logger.Error(ctx, "Failed to delete userID=%d: %v", user.ID, err)
-		return nil, status.Error(codes.Internal, "failed to delete user")
-	}
-
-	message := "User deleted successfully"
-	if req.SoftDelete {
-		message = "User deactivated successfully"
-	}
-
-	return &openauth_v1.DeleteUserResponse{
-		Success: true,
-		Message: message,
 	}, nil
 }
 

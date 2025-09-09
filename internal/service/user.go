@@ -6,15 +6,28 @@ import (
 
 	"github.com/gofreego/goutils/logger"
 	"github.com/gofreego/openauth/api/openauth_v1"
+	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
+	"github.com/gofreego/openauth/internal/models/filter"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 // GetUser retrieves user information by ID, UUID, username, or email
 func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) (*openauth_v1.GetUserResponse, error) {
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "Create group failed: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionUsersRead) && claims.UserID != req.GetId() {
+		logger.Warn(ctx, "Create group failed: userID=%d does not have permission to read users", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read users")
+	}
+
 	var user *dao.User
-	var err error
 
 	switch identifier := req.Identifier.(type) {
 	case *openauth_v1.GetUserRequest_Id:
@@ -45,7 +58,16 @@ func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) 
 // UpdateUser modifies user account and profile information
 func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserRequest) (*openauth_v1.UpdateUserResponse, error) {
 	logger.Debug(ctx, "UpdateUser request initiated for UUID: %s", req.Uuid)
-
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "Create group failed: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionUsersUpdate) && claims.UserUUID != req.Uuid {
+		logger.Warn(ctx, "UpdateUser failed: userID=%d does not have permission to update users", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update users")
+	}
 	if req.Uuid == "" {
 		logger.Warn(ctx, "UpdateUser failed: missing UUID")
 		return nil, status.Error(codes.InvalidArgument, "uuid is required")
@@ -134,5 +156,101 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 
 	return &openauth_v1.UpdateUserResponse{
 		User: updatedUser.ToProtoUser(),
+	}, nil
+}
+
+// ListUsers retrieves users with filtering, sorting, and pagination
+func (s *Service) ListUsers(ctx context.Context, req *openauth_v1.ListUsersRequest) (*openauth_v1.ListUsersResponse, error) {
+	// Set default values
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "Create group failed: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionUsersRead) {
+		logger.Warn(ctx, "ListUsers failed: userID=%d does not have permission to list users", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to list users")
+	}
+
+	limit := req.Limit
+	if limit <= 0 || limit > 100 {
+		limit = constants.DefaultPageSize
+	}
+	offset := req.Offset
+	if offset < 0 {
+		offset = 0
+	}
+
+	// Prepare filters
+	filters := &filter.UserFilter{
+		Limit:  limit,
+		Offset: offset,
+	}
+
+	if req.Search != nil {
+		filters.Search = req.Search
+	}
+	// TODO add filter based on req.Search pattern type like, mobile, email, id, etc.
+	// Get users from repository
+	users, err := s.repo.ListUsers(ctx, filters)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to list users")
+	}
+
+	// Convert to proto
+	protoUsers := make([]*openauth_v1.User, len(users))
+	for i, user := range users {
+		protoUsers[i] = user.ToProtoUser()
+	}
+
+	return &openauth_v1.ListUsersResponse{
+		Users: protoUsers,
+	}, nil
+}
+
+// DeleteUser removes or deactivates a user account
+func (s *Service) DeleteUser(ctx context.Context, req *openauth_v1.DeleteUserRequest) (*openauth_v1.DeleteUserResponse, error) {
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "Create group failed: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionUsersDelete) && claims.UserUUID != req.Uuid {
+		logger.Warn(ctx, "UpdateUser failed: userID=%d does not have permission to update users", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update users")
+	}
+
+	if req.Uuid == "" {
+		return nil, status.Error(codes.InvalidArgument, "uuid is required")
+	}
+
+	// Get user to ensure it exists
+	user, err := s.repo.GetUserByUUID(ctx, req.Uuid)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+
+	// check if user is admin user
+	if user.Username == "admin" {
+		return nil, status.Error(codes.PermissionDenied, "admin user cannot be deleted")
+	}
+
+	// Delete user
+	err = s.repo.DeleteUser(ctx, user.ID, req.SoftDelete)
+	if err != nil {
+		logger.Error(ctx, "Failed to delete userID=%d: %v", user.ID, err)
+		return nil, status.Error(codes.Internal, "failed to delete user")
+	}
+
+	message := "User deleted successfully"
+	if req.SoftDelete {
+		message = "User deactivated successfully"
+	}
+
+	return &openauth_v1.DeleteUserResponse{
+		Success: true,
+		Message: message,
 	}, nil
 }
