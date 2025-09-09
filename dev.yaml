@@ -50,7 +50,3 @@ Service:
 Debug:
   Enabled: true
   EnablePprof: true
-Migrator:
-  Path: "./resources/migrations/postgresql" # Path to the SQL migration files
-  Action: up # Migration action (up/down/force/version)
-  ForceVersion: 0 # Force version (optional)
