@@ -173,10 +173,10 @@ func (m *CreateGroupRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 100 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
 		err := CreateGroupRequestValidationError{
 			field:  "Name",
-			reason: "value length must be between 3 and 100 runes, inclusive",
+			reason: "value length must be between 3 and 50 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -195,10 +195,10 @@ func (m *CreateGroupRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 255 {
+	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
 		err := CreateGroupRequestValidationError{
 			field:  "DisplayName",
-			reason: "value length must be between 3 and 255 runes, inclusive",
+			reason: "value length must be between 3 and 50 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -711,12 +711,12 @@ func (m *UpdateGroupRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.NewName != nil {
+	if m.Name != nil {
 
-		if l := utf8.RuneCountInString(m.GetNewName()); l < 3 || l > 100 {
+		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
 			err := UpdateGroupRequestValidationError{
-				field:  "NewName",
-				reason: "value length must be between 3 and 100 runes, inclusive",
+				field:  "Name",
+				reason: "value length must be between 3 and 50 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -724,9 +724,9 @@ func (m *UpdateGroupRequest) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
-		if !_UpdateGroupRequest_NewName_Pattern.MatchString(m.GetNewName()) {
+		if !_UpdateGroupRequest_Name_Pattern.MatchString(m.GetName()) {
 			err := UpdateGroupRequestValidationError{
-				field:  "NewName",
+				field:  "Name",
 				reason: "value does not match regex pattern \"^[a-z][a-z0-9_-]*$\"",
 			}
 			if !all {
@@ -739,10 +739,10 @@ func (m *UpdateGroupRequest) validate(all bool) error {
 
 	if m.DisplayName != nil {
 
-		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 255 {
+		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
 			err := UpdateGroupRequestValidationError{
 				field:  "DisplayName",
-				reason: "value length must be between 3 and 255 runes, inclusive",
+				reason: "value length must be between 3 and 50 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -847,7 +847,7 @@ var _ interface {
 	ErrorName() string
 } = UpdateGroupRequestValidationError{}
 
-var _UpdateGroupRequest_NewName_Pattern = regexp.MustCompile("^[a-z][a-z0-9_-]*$")
+var _UpdateGroupRequest_Name_Pattern = regexp.MustCompile("^[a-z][a-z0-9_-]*$")
 
 // Validate checks the field values on UpdateGroupResponse with the rules
 // defined in the proto definition for this message. If any rules are

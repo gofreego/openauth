@@ -36,14 +36,14 @@ message CreateGroupRequest {
     // Unique name for the group
     string name = 1 [(validate.rules).string = {
         min_len: 3,
-        max_len: 100,
+        max_len: 50,
         pattern: "^[a-z][a-z0-9_-]*$"
     }];
     
     // Human-readable display name for the group
     string display_name = 2 [(validate.rules).string = {
         min_len: 3,
-        max_len: 255
+        max_len: 50
     }];
     
     // Optional detailed description of the group
@@ -72,16 +72,16 @@ message UpdateGroupRequest {
     int64 id = 1 [(validate.rules).int64.gt = 0];
 
     // Optional new name for the group
-    optional string new_name = 4 [(validate.rules).string = {
+    optional string name = 4 [(validate.rules).string = {
         min_len: 3,
-        max_len: 100,
+        max_len: 50,
         pattern: "^[a-z][a-z0-9_-]*$"
     }];
     
     // Optional new display name
     optional string display_name = 5 [(validate.rules).string = {
         min_len: 3,
-        max_len: 255
+        max_len: 50
     }];
     
     // Optional new description

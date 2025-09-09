@@ -16,7 +16,7 @@ message SignInMetadata {
 message SignInRequest {
     string username = 1 [(validate.rules).string = {
         min_len: 1,
-        max_len: 255
+        max_len: 50
     }];
     optional string password = 2 [(validate.rules).string = {
         min_len: 1,
@@ -24,7 +24,7 @@ message SignInRequest {
     }];
     optional string otp = 3 [(validate.rules).string = {
         min_len: 4,
-        max_len: 10,
+        max_len: 8,
         pattern: "^[0-9]+$"
     }];
     optional bool remember_me = 4;

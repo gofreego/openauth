@@ -2,8 +2,8 @@
 -- RBAC: permissions, groups, links
 CREATE TABLE permissions (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    display_name VARCHAR(255) NOT NULL,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    display_name VARCHAR(50) NOT NULL,
     description TEXT,
     is_system BOOLEAN DEFAULT FALSE,
     created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
@@ -13,8 +13,8 @@ CREATE TABLE permissions (
 
 CREATE TABLE groups (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    display_name VARCHAR(255) NOT NULL,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    display_name VARCHAR(50) NOT NULL,
     description TEXT,
     is_system BOOLEAN DEFAULT FALSE,
     is_default BOOLEAN DEFAULT FALSE,

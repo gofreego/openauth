@@ -177,10 +177,10 @@ func (m *SignInRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetUsername()); l < 1 || l > 255 {
+	if l := utf8.RuneCountInString(m.GetUsername()); l < 1 || l > 50 {
 		err := SignInRequestValidationError{
 			field:  "Username",
-			reason: "value length must be between 1 and 255 runes, inclusive",
+			reason: "value length must be between 1 and 50 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -205,10 +205,10 @@ func (m *SignInRequest) validate(all bool) error {
 
 	if m.Otp != nil {
 
-		if l := utf8.RuneCountInString(m.GetOtp()); l < 4 || l > 10 {
+		if l := utf8.RuneCountInString(m.GetOtp()); l < 4 || l > 8 {
 			err := SignInRequestValidationError{
 				field:  "Otp",
-				reason: "value length must be between 4 and 10 runes, inclusive",
+				reason: "value length must be between 4 and 8 runes, inclusive",
 			}
 			if !all {
 				return err

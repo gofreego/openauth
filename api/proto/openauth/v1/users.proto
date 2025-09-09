@@ -61,7 +61,7 @@ message SignUpRequest {
     }];
     optional string email = 2 [(validate.rules).string.email = true];
     optional string phone = 3 [(validate.rules).string = {
-        pattern: "^\\+?[1-9]\\d{1,14}$"
+        pattern: "^\\+?[1-9]\\d{1,22}$"
     }];
     string password = 4 [(validate.rules).string = {
         min_len: 8,
@@ -86,7 +86,7 @@ message VerifyEmailRequest {
     }];
     string verification_code = 2 [(validate.rules).string = {
         min_len: 4,
-        max_len: 10,
+        max_len: 8,
         pattern: "^[0-9]+$"
     }];
 }
@@ -94,12 +94,12 @@ message VerifyEmailRequest {
 // VerifyPhoneRequest for phone verification
 message VerifyPhoneRequest {
     string phone = 1 [(validate.rules).string = {
-        pattern: "^\\+?[1-9]\\d{1,14}$",
+        pattern: "^\\+?[1-9]\\d{1,22}$",
         min_len: 1
     }];
     string verification_code = 2 [(validate.rules).string = {
         min_len: 4,
-        max_len: 10,
+        max_len: 8,
         pattern: "^[0-9]+$"
     }];
 }
@@ -172,13 +172,13 @@ message CreateProfileRequest {
         uri: true
     }];
     optional int64 date_of_birth = 8 [(validate.rules).int64.gte = 0];
-    optional string gender = 9 [(validate.rules).string.max_len = 20];
+    optional string gender = 9 [(validate.rules).string.max_len = 50];
     optional string timezone = 10 [(validate.rules).string.max_len = 50];
-    optional string locale = 11 [(validate.rules).string.max_len = 10];
-    optional string country = 12 [(validate.rules).string.max_len = 100];
+    optional string locale = 11 [(validate.rules).string.max_len = 20];
+    optional string country = 12 [(validate.rules).string.max_len = 2];
     optional string city = 13 [(validate.rules).string.max_len = 100];
     optional string address = 14 [(validate.rules).string.max_len = 500];
-    optional string postal_code = 15 [(validate.rules).string.max_len = 20];
+    optional string postal_code = 15 [(validate.rules).string.max_len = 25];
     optional string website_url = 16 [(validate.rules).string = {
         max_len: 2048,
         uri: true
@@ -223,13 +223,13 @@ message UpdateProfileRequest {
         uri: true
     }];
     optional int64 date_of_birth = 8 [(validate.rules).int64.gte = 0];
-    optional string gender = 9 [(validate.rules).string.max_len = 20];
+    optional string gender = 9 [(validate.rules).string.max_len = 50];
     optional string timezone = 10 [(validate.rules).string.max_len = 50];
-    optional string locale = 11 [(validate.rules).string.max_len = 10];
-    optional string country = 12 [(validate.rules).string.max_len = 100];
+    optional string locale = 11 [(validate.rules).string.max_len = 20];
+    optional string country = 12 [(validate.rules).string.max_len = 2];
     optional string city = 13 [(validate.rules).string.max_len = 100];
     optional string address = 14 [(validate.rules).string.max_len = 500];
-    optional string postal_code = 15 [(validate.rules).string.max_len = 20];
+    optional string postal_code = 15 [(validate.rules).string.max_len = 25];
     optional string website_url = 16 [(validate.rules).string = {
         max_len: 2048,
         uri: true

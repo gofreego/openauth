@@ -174,10 +174,10 @@ func (m *CreatePermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 40 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
 		err := CreatePermissionRequestValidationError{
 			field:  "Name",
-			reason: "value length must be between 3 and 40 runes, inclusive",
+			reason: "value length must be between 3 and 50 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -196,10 +196,10 @@ func (m *CreatePermissionRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 40 {
+	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
 		err := CreatePermissionRequestValidationError{
 			field:  "DisplayName",
-			reason: "value length must be between 3 and 40 runes, inclusive",
+			reason: "value length must be between 3 and 50 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -744,10 +744,10 @@ func (m *UpdatePermissionRequest) validate(all bool) error {
 
 	if m.Name != nil {
 
-		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 100 {
+		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
 			err := UpdatePermissionRequestValidationError{
 				field:  "Name",
-				reason: "value length must be between 3 and 100 runes, inclusive",
+				reason: "value length must be between 3 and 50 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -770,10 +770,10 @@ func (m *UpdatePermissionRequest) validate(all bool) error {
 
 	if m.DisplayName != nil {
 
-		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 255 {
+		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
 			err := UpdatePermissionRequestValidationError{
 				field:  "DisplayName",
-				reason: "value length must be between 3 and 255 runes, inclusive",
+				reason: "value length must be between 3 and 50 runes, inclusive",
 			}
 			if !all {
 				return err

@@ -175,8 +175,8 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 	// Build updates map
 	updates := make(map[string]interface{})
 
-	if req.NewName != nil && *req.NewName != "" {
-		newName := strings.ToLower(strings.TrimSpace(*req.NewName))
+	if req.Name != nil && *req.Name != "" {
+		newName := strings.ToLower(strings.TrimSpace(*req.Name))
 		if newName != group.Name {
 			// Check if new name already exists
 			exists, err := s.repo.CheckGroupNameExists(ctx, newName)

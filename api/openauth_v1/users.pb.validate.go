@@ -424,7 +424,7 @@ func (m *SignUpRequest) validate(all bool) error {
 		if !_SignUpRequest_Phone_Pattern.MatchString(m.GetPhone()) {
 			err := SignUpRequestValidationError{
 				field:  "Phone",
-				reason: "value does not match regex pattern \"^\\\\+?[1-9]\\\\d{1,14}$\"",
+				reason: "value does not match regex pattern \"^\\\\+?[1-9]\\\\d{1,22}$\"",
 			}
 			if !all {
 				return err
@@ -579,7 +579,7 @@ var _ interface {
 
 var _SignUpRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9_.-]+$")
 
-var _SignUpRequest_Phone_Pattern = regexp.MustCompile("^\\+?[1-9]\\d{1,14}$")
+var _SignUpRequest_Phone_Pattern = regexp.MustCompile("^\\+?[1-9]\\d{1,22}$")
 
 // Validate checks the field values on SignUpResponse with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -761,10 +761,10 @@ func (m *VerifyEmailRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetVerificationCode()); l < 4 || l > 10 {
+	if l := utf8.RuneCountInString(m.GetVerificationCode()); l < 4 || l > 8 {
 		err := VerifyEmailRequestValidationError{
 			field:  "VerificationCode",
-			reason: "value length must be between 4 and 10 runes, inclusive",
+			reason: "value length must be between 4 and 8 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -951,7 +951,7 @@ func (m *VerifyPhoneRequest) validate(all bool) error {
 	if !_VerifyPhoneRequest_Phone_Pattern.MatchString(m.GetPhone()) {
 		err := VerifyPhoneRequestValidationError{
 			field:  "Phone",
-			reason: "value does not match regex pattern \"^\\\\+?[1-9]\\\\d{1,14}$\"",
+			reason: "value does not match regex pattern \"^\\\\+?[1-9]\\\\d{1,22}$\"",
 		}
 		if !all {
 			return err
@@ -959,10 +959,10 @@ func (m *VerifyPhoneRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetVerificationCode()); l < 4 || l > 10 {
+	if l := utf8.RuneCountInString(m.GetVerificationCode()); l < 4 || l > 8 {
 		err := VerifyPhoneRequestValidationError{
 			field:  "VerificationCode",
-			reason: "value length must be between 4 and 10 runes, inclusive",
+			reason: "value length must be between 4 and 8 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -1061,7 +1061,7 @@ var _ interface {
 	ErrorName() string
 } = VerifyPhoneRequestValidationError{}
 
-var _VerifyPhoneRequest_Phone_Pattern = regexp.MustCompile("^\\+?[1-9]\\d{1,14}$")
+var _VerifyPhoneRequest_Phone_Pattern = regexp.MustCompile("^\\+?[1-9]\\d{1,22}$")
 
 var _VerifyPhoneRequest_VerificationCode_Pattern = regexp.MustCompile("^[0-9]+$")
 
@@ -2083,10 +2083,10 @@ func (m *CreateProfileRequest) validate(all bool) error {
 
 	if m.Gender != nil {
 
-		if utf8.RuneCountInString(m.GetGender()) > 20 {
+		if utf8.RuneCountInString(m.GetGender()) > 50 {
 			err := CreateProfileRequestValidationError{
 				field:  "Gender",
-				reason: "value length must be at most 20 runes",
+				reason: "value length must be at most 50 runes",
 			}
 			if !all {
 				return err
@@ -2113,10 +2113,10 @@ func (m *CreateProfileRequest) validate(all bool) error {
 
 	if m.Locale != nil {
 
-		if utf8.RuneCountInString(m.GetLocale()) > 10 {
+		if utf8.RuneCountInString(m.GetLocale()) > 20 {
 			err := CreateProfileRequestValidationError{
 				field:  "Locale",
-				reason: "value length must be at most 10 runes",
+				reason: "value length must be at most 20 runes",
 			}
 			if !all {
 				return err
@@ -2128,10 +2128,10 @@ func (m *CreateProfileRequest) validate(all bool) error {
 
 	if m.Country != nil {
 
-		if utf8.RuneCountInString(m.GetCountry()) > 100 {
+		if utf8.RuneCountInString(m.GetCountry()) > 2 {
 			err := CreateProfileRequestValidationError{
 				field:  "Country",
-				reason: "value length must be at most 100 runes",
+				reason: "value length must be at most 2 runes",
 			}
 			if !all {
 				return err
@@ -2173,10 +2173,10 @@ func (m *CreateProfileRequest) validate(all bool) error {
 
 	if m.PostalCode != nil {
 
-		if utf8.RuneCountInString(m.GetPostalCode()) > 20 {
+		if utf8.RuneCountInString(m.GetPostalCode()) > 25 {
 			err := CreateProfileRequestValidationError{
 				field:  "PostalCode",
-				reason: "value length must be at most 20 runes",
+				reason: "value length must be at most 25 runes",
 			}
 			if !all {
 				return err
@@ -2878,10 +2878,10 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	if m.Gender != nil {
 
-		if utf8.RuneCountInString(m.GetGender()) > 20 {
+		if utf8.RuneCountInString(m.GetGender()) > 50 {
 			err := UpdateProfileRequestValidationError{
 				field:  "Gender",
-				reason: "value length must be at most 20 runes",
+				reason: "value length must be at most 50 runes",
 			}
 			if !all {
 				return err
@@ -2908,10 +2908,10 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	if m.Locale != nil {
 
-		if utf8.RuneCountInString(m.GetLocale()) > 10 {
+		if utf8.RuneCountInString(m.GetLocale()) > 20 {
 			err := UpdateProfileRequestValidationError{
 				field:  "Locale",
-				reason: "value length must be at most 10 runes",
+				reason: "value length must be at most 20 runes",
 			}
 			if !all {
 				return err
@@ -2923,10 +2923,10 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	if m.Country != nil {
 
-		if utf8.RuneCountInString(m.GetCountry()) > 100 {
+		if utf8.RuneCountInString(m.GetCountry()) > 2 {
 			err := UpdateProfileRequestValidationError{
 				field:  "Country",
-				reason: "value length must be at most 100 runes",
+				reason: "value length must be at most 2 runes",
 			}
 			if !all {
 				return err
@@ -2968,10 +2968,10 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	if m.PostalCode != nil {
 
-		if utf8.RuneCountInString(m.GetPostalCode()) > 20 {
+		if utf8.RuneCountInString(m.GetPostalCode()) > 25 {
 			err := UpdateProfileRequestValidationError{
 				field:  "PostalCode",
-				reason: "value length must be at most 20 runes",
+				reason: "value length must be at most 25 runes",
 			}
 			if !all {
 				return err
