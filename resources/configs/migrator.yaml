@@ -1,0 +1,18 @@
+Repository:
+  Name: Postgres
+  Postgres:
+    primary:
+      Host: "localhost"
+      Port: 5432
+      Username: "admin"
+      Password: OSwfiTlc1r5W7Z
+      DBName: openauth
+      SSLMode: "disable"
+      MaxOpenConns: 0
+      MaxIdleConns: 0
+      ConnMaxLifetime: 0s
+      ConnMaxIdleTime: 0s
+Migrator:
+  Path: "./resources/migrations/postgresql" # Path to the SQL migration files
+  Action: up # Migration action (up/down/force/version)
+  ForceVersion: 0 # Force version (optional)

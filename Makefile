@@ -27,10 +27,11 @@ install:
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
 	go install google.golang.org/protobuf/cmd/protoc-gen-go
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
+	go install github.com/gofreego/goutils/cmd/sql-migrator@v1.3.8
 
 setup:
 	sh ./api/protoc.sh
 	go mod tidy
 
 migrate:
-	go run main.go -app=SQL_MIGRATOR
+	sql-migrator resources/configs/migrator.yaml

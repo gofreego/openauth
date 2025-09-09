@@ -9,7 +9,6 @@ import (
 	"github.com/gofreego/goutils/api/debug"
 	"github.com/gofreego/goutils/configutils"
 	"github.com/gofreego/goutils/databases/connections/sql"
-	migrator "github.com/gofreego/goutils/databases/migrations/sql"
 	"github.com/gofreego/goutils/logger"
 )
 
@@ -22,7 +21,6 @@ type Configuration struct {
 	Repository   sql.Config         `yaml:"Repository"`
 	Service      service.Config     `yaml:"Service"`
 	Debug        debug.Config       `yaml:"Debug"`
-	Migrator     migrator.Config    `yaml:"Migrator"`
 }
 
 type ServerConfig struct {

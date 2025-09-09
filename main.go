@@ -6,7 +6,6 @@ import (
 
 	"github.com/gofreego/openauth/cmd/grpc_server"
 	"github.com/gofreego/openauth/cmd/http_server"
-	"github.com/gofreego/openauth/cmd/migrator"
 	"github.com/gofreego/openauth/internal/configs"
 	"github.com/gofreego/openauth/internal/constants"
 
@@ -44,8 +43,6 @@ func main() {
 			apps = append(apps, http_server.NewHTTPServer(conf))
 		case constants.GRPC_SERVER:
 			apps = append(apps, grpc_server.NewGRPCServer(conf))
-		case constants.SQL_MIGRATOR:
-			apps = append(apps, migrator.NewSQLMigrator(conf))
 		default:
 			logger.Panic(ctx, "invalid application name provided `%s`", appName)
 		}
