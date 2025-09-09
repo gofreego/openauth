@@ -27,10 +27,10 @@ import (
 func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
 	logger.Info(ctx, "Sign-in attempt initiated for identifier: %s", req.Username)
 
-	// Validate input
-	if req.Username == "" || req.Password == nil || *req.Password == "" {
-		logger.Warn(ctx, "Sign-in failed: missing credentials for identifier: %s", req.Username)
-		return nil, status.Error(codes.InvalidArgument, "username and password are required")
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Sign-in failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
 	}
 
 	// Detect the type of identifier and find user accordingly

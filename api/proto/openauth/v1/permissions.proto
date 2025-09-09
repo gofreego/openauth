@@ -1,6 +1,8 @@
 syntax = "proto3";
 package v1;
 
+import "validate/validate.proto";
+
 option go_package = "./openauth_v1";
 
 // Permission represents a specific authorization rule in the system.
@@ -43,35 +45,42 @@ message CreatePermissionRequest {
     // Unique name for the permission, typically in format "resource.action"
     // Must be unique across all permissions
     // Examples: "users.create", "orders.approve", "reports.export"
-    string name = 1;
+    string name = 1 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 40,
+        pattern: "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+    }];
     
     // Human-readable display name
     // Examples: "Create Users", "Approve Orders", "Export Reports"
-    string display_name = 2;
+    string display_name = 2 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 40
+    }];
     
     // Optional detailed description explaining what this permission allows
-    optional string description = 3;
+    optional string description = 3 [(validate.rules).string.max_len = 250];
 }
 
 // Request to retrieve a specific permission by ID
 message GetPermissionRequest {
     // The unique identifier of the permission to retrieve
-    int64 id = 1;
+    int64 id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // Request to list permissions with optional filtering and pagination
 message ListPermissionsRequest {
     // Maximum number of permissions to return (default: 10, max: 100)
-    int32 limit = 1;
+    int32 limit = 1 [(validate.rules).int32 = {gte: 1, lte: 100}];
     
     // Number of permissions to skip for pagination (default: 0)
-    int32 offset = 2;
+    int32 offset = 2 [(validate.rules).int32.gte = 0];
 
-    optional int64 id = 3;
+    optional int64 id = 3 [(validate.rules).int64.gt = 0];
     
     // Search term to filter permissions by name, display_name, or description
     // Uses case-insensitive partial matching
-    optional string search = 4;
+    optional string search = 4 [(validate.rules).string.max_len = 255];
 
     bool all = 5;
 }
@@ -85,25 +94,32 @@ message ListPermissionsResponse {
 // Request to update an existing permission
 message UpdatePermissionRequest {
     // The unique identifier of the permission to update
-    int64 id = 1;
+    int64 id = 1 [(validate.rules).int64.gt = 0];
     
     // New name for the permission (optional)
     // Must be unique if provided
-    optional string name = 2;
+    optional string name = 2 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 100,
+        pattern: "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+    }];
     
     // New display name for the permission (optional)
-    optional string display_name = 3;
+    optional string display_name = 3 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 255
+    }];
     
     // New description for the permission (optional)
     // Set to empty string to clear existing description
-    optional string description = 4;
+    optional string description = 4 [(validate.rules).string.max_len = 1000];
 }
 
 // Request to delete a permission
 message DeletePermissionRequest {
     // The unique identifier of the permission to delete
     // Note: System permissions cannot be deleted
-    int64 id = 1;
+    int64 id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // Response confirming permission deletion

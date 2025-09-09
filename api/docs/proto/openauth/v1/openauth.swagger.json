@@ -930,7 +930,6 @@
         "parameters": [
           {
             "name": "profileUuid",
-            "description": "UUID of the profile to update",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1044,7 +1043,6 @@
           },
           {
             "name": "search",
-            "description": "Search in username, email, first_name, last_name",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1825,8 +1823,7 @@
       "type": "object",
       "properties": {
         "profileName": {
-          "type": "string",
-          "title": "Name/label for this profile (e.g., \"Personal\", \"Work\", \"Gaming\")"
+          "type": "string"
         },
         "firstName": {
           "type": "string"
@@ -1845,8 +1842,7 @@
         },
         "dateOfBirth": {
           "type": "string",
-          "format": "int64",
-          "title": "Unix timestamp"
+          "format": "int64"
         },
         "gender": {
           "type": "string"
@@ -1874,8 +1870,7 @@
         },
         "metadata": {
           "type": "string",
-          "format": "byte",
-          "title": "JSON metadata"
+          "format": "byte"
         }
       },
       "title": "CreateProfileRequest to create a new profile for a user"
@@ -2029,12 +2024,10 @@
           "type": "boolean"
         },
         "name": {
-          "type": "string",
-          "title": "Display name for the user"
+          "type": "string"
         },
         "avatarUrl": {
-          "type": "string",
-          "title": "URL to user's avatar image"
+          "type": "string"
         }
       },
       "title": "UpdateUserRequest to update user information"
@@ -2632,12 +2625,10 @@
           "type": "string"
         },
         "profiles": {
-          "type": "boolean",
-          "title": "Include user profile ids in access token"
+          "type": "boolean"
         },
         "includePermissions": {
-          "type": "boolean",
-          "title": "Include user permissions in access token"
+          "type": "boolean"
         }
       },
       "title": "RefreshTokenRequest to refresh access token"
@@ -2814,36 +2805,29 @@
       "type": "object",
       "properties": {
         "username": {
-          "type": "string",
-          "title": "Can be username, email, or phone - determined by backend"
+          "type": "string"
         },
         "password": {
           "type": "string"
         },
         "otp": {
-          "type": "string",
-          "title": "One-time password for 2FA"
+          "type": "string"
         },
         "rememberMe": {
-          "type": "boolean",
-          "title": "Extend session duration"
+          "type": "boolean"
         },
         "metadata": {
-          "$ref": "#/definitions/v1SignInMetadata",
-          "title": "Optional device metadata"
+          "$ref": "#/definitions/v1SignInMetadata"
         },
         "profiles": {
-          "type": "boolean",
-          "title": "Include user profile ids in access token"
+          "type": "boolean"
         },
         "includePermissions": {
-          "type": "boolean",
-          "title": "Include user permissions in access token"
+          "type": "boolean"
         },
         "verificationId": {
           "type": "string",
-          "format": "int64",
-          "title": "In case of otp verification"
+          "format": "int64"
         }
       },
       "title": "SignInRequest for user authentication"
@@ -2896,8 +2880,7 @@
           "type": "string"
         },
         "name": {
-          "type": "string",
-          "title": "Display name for the user"
+          "type": "string"
         }
       },
       "title": "SignUpRequest for user registration - only authentication credentials"

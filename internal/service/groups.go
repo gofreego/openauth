@@ -19,6 +19,13 @@ import (
 // CreateGroup creates a new group in the system
 func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupRequest) (*openauth_v1.CreateGroupResponse, error) {
 	logger.Info(ctx, "Create group request initiated for name: %s", req.Name)
+
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Create group failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
 	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -29,15 +36,6 @@ func (s *Service) CreateGroup(ctx context.Context, req *openauth_v1.CreateGroupR
 	if !claims.HasPermission(constants.PermissionGroupsCreate) {
 		logger.Warn(ctx, "Create group failed: userID=%d does not have permission to create groups", claims.UserID)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to create groups")
-	}
-	// Validate input
-	if req.Name == "" {
-		logger.Warn(ctx, "Create group failed: missing group name")
-		return nil, status.Error(codes.InvalidArgument, "group name is required")
-	}
-	if req.DisplayName == "" {
-		logger.Warn(ctx, "Create group failed: missing display name for group: %s", req.Name)
-		return nil, status.Error(codes.InvalidArgument, "group display name is required")
 	}
 
 	// Normalize the name

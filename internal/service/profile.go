@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/gofreego/goutils/logger"
@@ -17,6 +18,12 @@ import (
 
 // CreateProfile creates a new profile for a user
 func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProfileRequest) (*openauth_v1.CreateProfileResponse, error) {
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Create profile failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
 	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -27,10 +34,6 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 	if !claims.HasPermission(constants.PermissionProfilesCreate) && claims.UserID != req.UserId {
 		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
-	}
-
-	if req.UserId == 0 {
-		return nil, status.Error(codes.InvalidArgument, "user_id is required")
 	}
 
 	// Verify user exists
@@ -84,6 +87,12 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 
 // ListUserProfiles retrieves all profiles for a user
 func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUserProfilesRequest) (*openauth_v1.ListUserProfilesResponse, error) {
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "List user profiles failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
 	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -94,10 +103,6 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 	if !claims.HasPermission(constants.PermissionProfilesRead) && claims.UserUUID != req.UserUuid {
 		logger.Warn(ctx, "userID=%d does not have permission to read profiles", claims.UserID)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read profiles")
-	}
-
-	if req.UserUuid == "" {
-		return nil, status.Error(codes.InvalidArgument, "user_uuid is required")
 	}
 
 	// Set default pagination
@@ -131,6 +136,12 @@ func (s *Service) ListUserProfiles(ctx context.Context, req *openauth_v1.ListUse
 
 // UpdateProfile modifies an existing profile
 func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProfileRequest) (*openauth_v1.UpdateProfileResponse, error) {
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Update profile failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
 	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -141,10 +152,6 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 	if !claims.HasPermission(constants.PermissionProfilesUpdate) {
 		logger.Warn(ctx, "userID=%d does not have permission to update profiles", claims.UserID)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update profiles")
-	}
-
-	if req.ProfileUuid == "" {
-		return nil, status.Error(codes.InvalidArgument, "profile_uuid is required")
 	}
 
 	// Get existing profile
@@ -241,6 +248,12 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 
 // DeleteProfile removes a specific profile
 func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProfileRequest) (*openauth_v1.DeleteProfileResponse, error) {
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Delete profile failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
 	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -251,10 +264,6 @@ func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProf
 	if !claims.HasPermission(constants.PermissionProfilesDelete) {
 		logger.Warn(ctx, "userID=%d does not have permission to delete profiles", claims.UserID)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete profiles")
-	}
-
-	if req.ProfileUuid == "" {
-		return nil, status.Error(codes.InvalidArgument, "profile_uuid is required")
 	}
 
 	// Get profile to ensure it exists

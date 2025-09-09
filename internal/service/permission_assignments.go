@@ -17,6 +17,13 @@ import (
 // AssignPermissionsToGroup assigns multiple permissions to a group
 func (s *Service) AssignPermissionsToGroup(ctx context.Context, req *openauth_v1.AssignPermissionsToGroupRequest) (*openauth_v1.AssignPermissionsToGroupResponse, error) {
 	logger.Info(ctx, "Permission assignment to group requested: groupID=%d, permissionIDs=%v", req.GroupId, req.PermissionsIds)
+
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Permission assignment to group failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
 	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
@@ -30,16 +37,6 @@ func (s *Service) AssignPermissionsToGroup(ctx context.Context, req *openauth_v1
 	}
 
 	logger.Debug(ctx, "Permission assignment initiated by userID=%d for groupID=%d, permissionIDs=%v", claims.UserID, req.GroupId, req.PermissionsIds)
-
-	// Validate input
-	if req.GroupId <= 0 {
-		logger.Warn(ctx, "Permission assignment failed: invalid group_id=%d", req.GroupId)
-		return nil, status.Error(codes.InvalidArgument, "group_id must be greater than 0")
-	}
-	if len(req.PermissionsIds) == 0 {
-		logger.Warn(ctx, "Permission assignment failed: no permission IDs provided")
-		return nil, status.Error(codes.InvalidArgument, "permission_ids are required")
-	}
 
 	// Assign permissions to group using bulk operation
 	err = s.repo.AssignPermissionsToGroup(ctx, req.GroupId, req.PermissionsIds, claims.UserID)

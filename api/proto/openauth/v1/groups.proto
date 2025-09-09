@@ -1,6 +1,8 @@
 syntax = "proto3";
 package v1;
 
+import "validate/validate.proto";
+
 option go_package = "./openauth_v1";
 
 // Group represents a group/role in the system for organizing users and permissions
@@ -32,13 +34,20 @@ message Group {
 // CreateGroupRequest to create a new group
 message CreateGroupRequest {
     // Unique name for the group
-    string name = 1;
+    string name = 1 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 100,
+        pattern: "^[a-z][a-z0-9_-]*$"
+    }];
     
     // Human-readable display name for the group
-    string display_name = 2;
+    string display_name = 2 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 255
+    }];
     
     // Optional detailed description of the group
-    optional string description = 3;
+    optional string description = 3 [(validate.rules).string.max_len = 1000];
     bool is_default = 4;
 }
 
@@ -50,7 +59,7 @@ message CreateGroupResponse {
 
 // GetGroupRequest to get group by ID
 message GetGroupRequest {
-    int64 id = 1;
+    int64 id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // GetGroupResponse
@@ -60,16 +69,23 @@ message GetGroupResponse {
 
 // UpdateGroupRequest to update group information
 message UpdateGroupRequest {
-    int64 id = 1;
+    int64 id = 1 [(validate.rules).int64.gt = 0];
 
     // Optional new name for the group
-    optional string new_name = 4;
+    optional string new_name = 4 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 100,
+        pattern: "^[a-z][a-z0-9_-]*$"
+    }];
     
     // Optional new display name
-    optional string display_name = 5;
+    optional string display_name = 5 [(validate.rules).string = {
+        min_len: 3,
+        max_len: 255
+    }];
     
     // Optional new description
-    optional string description = 6;
+    optional string description = 6 [(validate.rules).string.max_len = 1000];
 }
 
 // UpdateGroupResponse
@@ -80,7 +96,7 @@ message UpdateGroupResponse {
 
 // DeleteGroupRequest to delete a group
 message DeleteGroupRequest {
-    int64 id = 1;
+    int64 id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // DeleteGroupResponse
@@ -92,15 +108,15 @@ message DeleteGroupResponse {
 // ListGroupsRequest for listing groups with pagination and filtering
 message ListGroupsRequest {
     // Maximum number of groups to return (default: 10, max: 100)
-    int32 limit = 1;
+    int32 limit = 1 [(validate.rules).int32 = {gte: 1, lte: 100}];
     
     // Number of groups to skip (for pagination)
-    int32 offset = 2;
+    int32 offset = 2 [(validate.rules).int32.gte = 0];
 
-    optional int64 id = 3;
+    optional int64 id = 3 [(validate.rules).int64.gt = 0];
 
     // Optional search query (searches name, display_name, description)
-    optional string search = 4;
+    optional string search = 4 [(validate.rules).string.max_len = 255];
 
     bool all = 5;
 }
@@ -112,10 +128,14 @@ message ListGroupsResponse {
 
 // AssignUsersToGroupRequest to add users to a group
 message AssignUsersToGroupRequest {
-    repeated int64 user_ids = 1;
-    int64 group_id = 2;
+    repeated int64 user_ids = 1 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {int64: {gt: 0}}
+    }];
+    int64 group_id = 2 [(validate.rules).int64.gt = 0];
     // Optional expiration time for the group membership
-    optional int64 expires_at = 3;
+    optional int64 expires_at = 3 [(validate.rules).int64.gte = 0];
 }
 
 // AssignUsersToGroupResponse
@@ -126,8 +146,12 @@ message AssignUsersToGroupResponse {
 
 // RemoveUsersFromGroupRequest to remove users from a group
 message RemoveUsersFromGroupRequest {
-    repeated int64 user_ids = 1;
-    int64 group_id = 2;
+    repeated int64 user_ids = 1 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {int64: {gt: 0}}
+    }];
+    int64 group_id = 2 [(validate.rules).int64.gt = 0];
 }
 
 // RemoveUsersFromGroupResponse
@@ -138,11 +162,11 @@ message RemoveUsersFromGroupResponse {
 
 // ListGroupUsersRequest to get all users in a group
 message ListGroupUsersRequest {
-    int64 group_id = 1;
-    string search = 2;
+    int64 group_id = 1 [(validate.rules).int64.gt = 0];
+    string search = 2 [(validate.rules).string.max_len = 255];
     // Pagination
-    int32 limit = 3;
-    int32 offset = 4;
+    int32 limit = 3 [(validate.rules).int32 = {gte: 1, lte: 100}];
+    int32 offset = 4 [(validate.rules).int32.gte = 0];
     bool all = 5;
 }
 
@@ -166,9 +190,9 @@ message GroupUser {
 
 // ListUserGroupsRequest to get all groups for a user
 message ListUserGroupsRequest {
-    int64 user_id = 1;
-    int32 limit = 2;
-    int32 offset = 3;
+    int64 user_id = 1 [(validate.rules).int64.gt = 0];
+    int32 limit = 2 [(validate.rules).int32 = {gte: 1, lte: 100}];
+    int32 offset = 3 [(validate.rules).int32.gte = 0];
     bool all = 4;
 }
 

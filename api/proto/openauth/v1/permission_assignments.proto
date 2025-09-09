@@ -2,16 +2,21 @@ syntax = "proto3";
 package v1;
 
 import "proto/openauth/v1/permissions.proto";
+import "validate/validate.proto";
 
 option go_package = "./openauth_v1";
 
 // Request to assign a permission to a group
 message AssignPermissionsToGroupRequest {
     // ID of the group to assign the permission to
-    int64 group_id = 1;
+    int64 group_id = 1 [(validate.rules).int64.gt = 0];
 
     // IDs of the permissions to assign
-    repeated int64 permissions_ids = 2;
+    repeated int64 permissions_ids = 2 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {int64: {gt: 0}}
+    }];
 }
 
 // Response after assigning a permission to a group
@@ -22,10 +27,14 @@ message AssignPermissionsToGroupResponse {
 // Request to remove a permission from a group
 message RemovePermissionsFromGroupRequest {
     // ID of the group to remove the permission from
-    int64 group_id = 1;
+    int64 group_id = 1 [(validate.rules).int64.gt = 0];
 
     // IDs of the permissions to remove
-    repeated int64 permissions_ids = 2;
+    repeated int64 permissions_ids = 2 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {int64: {gt: 0}}
+    }];
 }
 
 // Response after removing a permission from a group
@@ -37,7 +46,7 @@ message RemovePermissionsFromGroupResponse {
 // Request to list permissions assigned to a group
 message ListGroupPermissionsRequest {
     // ID of the group to list permissions for
-    int64 group_id = 1;
+    int64 group_id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // Response containing group permissions
@@ -49,13 +58,17 @@ message ListGroupPermissionsResponse {
 // Request to assign a permission directly to a user
 message AssignPermissionsToUserRequest {
     // ID of the user to assign the permission to
-    int64 user_id = 1;
+    int64 user_id = 1 [(validate.rules).int64.gt = 0];
 
     // IDs of the permissions to assign
-    repeated int64 permissions_ids = 2;
+    repeated int64 permissions_ids = 2 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {int64: {gt: 0}}
+    }];
     
     // Optional expiration timestamp (null means no expiration)
-    optional int64 expires_at = 3;
+    optional int64 expires_at = 3 [(validate.rules).int64.gte = 0];
 }
 
 // Response after assigning a permission to a user
@@ -66,10 +79,14 @@ message AssignPermissionsToUserResponse {
 // Request to remove a permission from a user
 message RemovePermissionsFromUserRequest {
     // ID of the user to remove the permission from
-    int64 user_id = 1;
+    int64 user_id = 1 [(validate.rules).int64.gt = 0];
 
     // IDs of the permissions to remove
-    repeated int64 permissions_ids = 2;
+    repeated int64 permissions_ids = 2 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {int64: {gt: 0}}
+    }];
 }
 
 // Response after removing a permission from a user
@@ -81,7 +98,7 @@ message RemovePermissionsFromUserResponse {
 // Request to list permissions assigned directly to a user
 message ListUserPermissionsRequest {
     // ID of the user to list permissions for
-    int64 user_id = 1;
+    int64 user_id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // Response containing user permissions
@@ -93,7 +110,7 @@ message ListUserPermissionsResponse {
 // Request to get all effective permissions for a user (direct + group permissions)
 message GetUserEffectivePermissionsRequest {
     // ID of the user to get effective permissions for
-    int64 user_id = 1;
+    int64 user_id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // EffectivePermission represents a permission that a user has either directly or through group membership

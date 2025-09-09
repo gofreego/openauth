@@ -13,3 +13,8 @@ plugins:
   
   - plugin: openapiv2
     out: docs
+  
+  - plugin: validate
+    out: ./
+    opt:
+      - lang=go

@@ -22,14 +22,10 @@ import (
 func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*openauth_v1.SignUpResponse, error) {
 	logger.Info(ctx, "Sign-up request initiated for username: %s", req.Username)
 
-	// Validate required fields
-	if req.Username == "" {
-		logger.Warn(ctx, "Sign-up failed: missing username")
-		return nil, status.Error(codes.InvalidArgument, "username is required")
-	}
-	if req.Password == "" {
-		logger.Warn(ctx, "Sign-up failed: missing password for username: %s", req.Username)
-		return nil, status.Error(codes.InvalidArgument, "password is required")
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Sign-up failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
 	}
 
 	// Check if username already exists

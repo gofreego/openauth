@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/gofreego/goutils/logger"
@@ -16,6 +17,12 @@ import (
 
 // GetUser retrieves user information by ID, UUID, username, or email
 func (s *Service) GetUser(ctx context.Context, req *openauth_v1.GetUserRequest) (*openauth_v1.GetUserResponse, error) {
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Get user failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
 		logger.Warn(ctx, "Create group failed: failed to get user from context: %v", err)
