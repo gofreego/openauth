@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/configs"
@@ -63,13 +65,42 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 		debug.RegisterDebugHandlersWithGateway(ctx, &a.cfg.Debug, mux, a.cfg.Logger.AppName, string(a.cfg.Logger.Build), "/openauth/v1")
 	}
 
+	// Create a custom handler that serves static files for /openauth/admin and falls back to grpc-gateway
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/openauth/admin") {
+			// Serve static files from admin/builds/web
+			staticDir := "./admin/builds/web"
+
+			// Remove /openauth/admin prefix and get the file path
+			filePath := strings.TrimPrefix(r.URL.Path, "/openauth/admin")
+			if filePath == "" || filePath == "/" {
+				filePath = "/index.html"
+			}
+
+			// Construct the full file path
+			fullPath := filepath.Join(staticDir, filePath)
+
+			// Check if file exists, if not serve index.html for SPA routing
+			if _, err := http.Dir(staticDir).Open(filePath); err != nil {
+				fullPath = filepath.Join(staticDir, "index.html")
+			}
+
+			http.ServeFile(w, r, fullPath)
+			return
+		}
+
+		// Fall back to grpc-gateway mux for other routes
+		mux.ServeHTTP(w, r)
+	})
+
 	a.server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", a.cfg.Server.HTTP.Port),
-		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(api.CORSMiddleware(authMiddleware.HTTPMiddleware(mux)))),
+		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(api.CORSMiddleware(authMiddleware.HTTPMiddleware(handler)))),
 	}
 
 	logger.Info(ctx, "Starting HTTP server on port %d", a.cfg.Server.HTTP.Port)
 	logger.Info(ctx, "Swagger UI is available at `http://localhost:%d/openauth/v1/swagger`", a.cfg.Server.HTTP.Port)
+	logger.Info(ctx, "Admin UI is available at `http://localhost:%d/openauth/admin`", a.cfg.Server.HTTP.Port)
 
 	if a.cfg.Debug.Enabled {
 		logger.Info(ctx, "Debug dashboard available at `http://localhost:%d/openauth/v1/debug`", a.cfg.Server.HTTP.Port)

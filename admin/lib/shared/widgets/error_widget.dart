@@ -51,7 +51,7 @@ class CustomErrorWidget extends StatelessWidget {
 
           // Error Title
           Text(
-            customTitle ?? _getErrorTitle(),
+            customTitle ?? failure.title,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
@@ -102,26 +102,6 @@ class CustomErrorWidget extends StatelessWidget {
         return Icons.cloud_off;
       default:
         return Icons.error;
-    }
-  }
-
-  /// Get appropriate title based on failure type
-  String _getErrorTitle() {
-    switch (failure.runtimeType) {
-      case NetworkFailure _:
-        return 'Connection Problem';
-      case ServerFailure _:
-        return 'Server Error';
-      case CacheFailure _:
-        return 'Storage Error';
-      case ValidationFailure _:
-        return 'Invalid Input';
-      case AuthenticationFailure _:
-        return 'Authentication Required';
-      case ServiceUnavailableFailure _:
-        return 'Service Unavailable';
-      default:
-        return 'Something Went Wrong';
     }
   }
 

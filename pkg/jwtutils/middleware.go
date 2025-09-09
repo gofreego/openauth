@@ -187,6 +187,7 @@ func (a *AuthMiddleware) skipHTTPAuth(path string) bool {
 		"/v1/auth/refresh",
 		"/v1/auth/validate",
 		"/openauth/v1/swagger",
+		"/openauth/admin",
 	}
 
 	for _, skipPath := range skipPaths {

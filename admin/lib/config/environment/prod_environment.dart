@@ -7,7 +7,7 @@ class ProdEnvironment implements Environment {
   String get environmentName => 'production';
 
   @override
-  String get apiBaseUrl => 'https://api.bappaapp.com';
+  String get apiBaseUrl => '';
 
   @override
   bool get isDebug => false;

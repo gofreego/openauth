@@ -7,7 +7,7 @@ class StagingEnvironment implements Environment {
   String get environmentName => 'staging';
 
   @override
-  String get apiBaseUrl => 'https://staging-api.bappaapp.com';
+  String get apiBaseUrl => '';
 
   @override
   bool get isDebug => true;
