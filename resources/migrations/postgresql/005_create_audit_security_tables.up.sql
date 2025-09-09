@@ -3,7 +3,7 @@
 CREATE TABLE audit_logs (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    entity_type VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
     entity_id INTEGER,
     action VARCHAR(50) NOT NULL,
     old_values JSONB,
@@ -14,15 +14,15 @@ CREATE TABLE audit_logs (
     user_agent TEXT,
     session_id INTEGER REFERENCES user_sessions(id),
     metadata JSONB,
-    severity VARCHAR(20) DEFAULT 'medium',
+    severity VARCHAR(15) DEFAULT 'medium',
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 CREATE TABLE security_events (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    event_type VARCHAR(100) NOT NULL,
-    severity VARCHAR(20) DEFAULT 'medium',
+    event_type VARCHAR(50) NOT NULL,
+    severity VARCHAR(15) DEFAULT 'medium',
     description TEXT,
     ip_address INET,
     user_agent TEXT,

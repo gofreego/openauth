@@ -2,10 +2,10 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     uuid UUID UNIQUE DEFAULT gen_random_uuid(),
-    username VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE,
-    phone VARCHAR(20),
-    name VARCHAR(255),
+    phone VARCHAR(25),
+    name VARCHAR(100),
     avatar_url TEXT,
     password_hash VARCHAR(255),
     email_verified BOOLEAN DEFAULT FALSE,
