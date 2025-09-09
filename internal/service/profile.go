@@ -138,7 +138,7 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 	// check for permissions
-	if !claims.HasPermission(constants.PermissionProfilesUpdate) && !claims.HasProfile(req.ProfileUuid) {
+	if !claims.HasPermission(constants.PermissionProfilesUpdate) {
 		logger.Warn(ctx, "userID=%d does not have permission to update profiles", claims.UserID)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update profiles")
 	}
@@ -248,7 +248,7 @@ func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProf
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 	// check for permissions
-	if !claims.HasPermission(constants.PermissionProfilesDelete) && !claims.HasProfile(req.ProfileUuid) {
+	if !claims.HasPermission(constants.PermissionProfilesDelete) {
 		logger.Warn(ctx, "userID=%d does not have permission to delete profiles", claims.UserID)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete profiles")
 	}
