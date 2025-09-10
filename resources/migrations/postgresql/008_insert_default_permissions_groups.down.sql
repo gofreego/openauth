@@ -15,7 +15,7 @@ DELETE FROM user_groups WHERE user_id = (SELECT id FROM users WHERE username = '
 DELETE FROM group_permissions;
 
 -- Remove groups
-DELETE FROM groups WHERE name IN ('super_admin','admin','moderator','user','guest');
+DELETE FROM groups WHERE name IN ('super_admin');
 
 -- Remove permissions
 DELETE FROM permissions WHERE name IN (

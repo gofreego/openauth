@@ -33,25 +33,6 @@ INSERT INTO group_permissions (group_id, permission_id, granted_by)
 SELECT (SELECT id FROM groups WHERE name = 'super_admin'), p.id, (SELECT id FROM users WHERE username = 'admin')
 FROM permissions p;
 
-INSERT INTO group_permissions (group_id, permission_id, granted_by)
-SELECT (SELECT id FROM groups WHERE name = 'admin'), p.id, (SELECT id FROM users WHERE username = 'admin')
-FROM permissions p
-WHERE p.name != 'system.admin';
-
-INSERT INTO group_permissions (group_id, permission_id, granted_by)
-SELECT (SELECT id FROM groups WHERE name = 'moderator'), p.id, (SELECT id FROM users WHERE username = 'admin')
-FROM permissions p
-WHERE p.name IN (
-    'users.read', 'users.list', 'users.update',
-    'groups.read', 'sessions.read', 'sessions.terminate',
-    'audit.read'
-);
-
-INSERT INTO group_permissions (group_id, permission_id, granted_by)
-SELECT (SELECT id FROM groups WHERE name = 'user'), p.id, (SELECT id FROM users WHERE username = 'admin')
-FROM permissions p
-WHERE p.name IN ('users.read', 'sessions.read');
-
 -- Add admin to super_admin
 INSERT INTO user_groups (user_id, group_id, assigned_by, created_at)
 VALUES (
