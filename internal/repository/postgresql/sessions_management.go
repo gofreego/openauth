@@ -11,7 +11,7 @@ import (
 // RevokeSession marks a session as revoked (soft delete approach 1)
 func (r *Repository) RevokeSession(ctx context.Context, sessionUUID string) error {
 	query := `UPDATE user_sessions SET is_active = false, status = 'revoked', revoked_at = $1 WHERE uuid = $2`
-	revokedAt := time.Now().UnixMilli()
+	revokedAt := time.Now().Unix()
 	result, err := r.connManager.Primary().ExecContext(ctx, query, revokedAt, sessionUUID)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func (r *Repository) RevokeSession(ctx context.Context, sessionUUID string) erro
 // RevokeUserSessions marks all user sessions as revoked
 func (r *Repository) RevokeUserSessions(ctx context.Context, userUUID string) error {
 	query := `UPDATE user_sessions SET is_active = false, status = 'revoked', revoked_at = $1 WHERE user_uuid = $2 AND is_active = true`
-	revokedAt := time.Now().UnixMilli()
+	revokedAt := time.Now().Unix()
 	_, err := r.connManager.Primary().ExecContext(ctx, query, revokedAt, userUUID)
 	return err
 }
@@ -40,7 +40,7 @@ func (r *Repository) RevokeUserSessions(ctx context.Context, userUUID string) er
 // LogoutSession marks a session as logged out
 func (r *Repository) LogoutSession(ctx context.Context, sessionUUID string) error {
 	query := `UPDATE user_sessions SET is_active = false, status = 'logged_out', revoked_at = $1 WHERE uuid = $2`
-	loggedOutAt := time.Now().UnixMilli()
+	loggedOutAt := time.Now().Unix()
 	result, err := r.connManager.Primary().ExecContext(ctx, query, loggedOutAt, sessionUUID)
 	if err != nil {
 		return err
@@ -60,7 +60,7 @@ func (r *Repository) LogoutSession(ctx context.Context, sessionUUID string) erro
 
 // CleanupOldSessions deletes old inactive sessions (cleanup strategy approach 2)
 func (r *Repository) CleanupOldSessions(ctx context.Context, retentionDays int) (int64, error) {
-	cutoffTime := time.Now().AddDate(0, 0, -retentionDays).UnixMilli()
+	cutoffTime := time.Now().AddDate(0, 0, -retentionDays).Unix()
 	query := `DELETE FROM user_sessions WHERE is_active = false AND last_activity_at < $1`
 	result, err := r.connManager.Primary().ExecContext(ctx, query, cutoffTime)
 	if err != nil {
@@ -77,8 +77,8 @@ func (r *Repository) CleanupOldSessions(ctx context.Context, retentionDays int) 
 
 // ArchiveOldSessions moves old sessions to archive table (archive pattern approach 3)
 func (r *Repository) ArchiveOldSessions(ctx context.Context, retentionDays int) (int64, error) {
-	cutoffTime := time.Now().AddDate(0, 0, -retentionDays).UnixMilli()
-	archivedAt := time.Now().UnixMilli()
+	cutoffTime := time.Now().AddDate(0, 0, -retentionDays).Unix()
+	archivedAt := time.Now().Unix()
 
 	// Start transaction
 	tx, err := r.connManager.Primary().BeginTx(ctx, nil)

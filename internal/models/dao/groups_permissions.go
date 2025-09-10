@@ -24,8 +24,8 @@ func (p *Permission) FromCreatePermissionRequest(req *openauth_v1.CreatePermissi
 	p.Description = req.Description
 	p.IsSystem = false
 	p.CreatedBy = createdBy
-	p.CreatedAt = time.Now().UnixMilli()
-	p.UpdatedAt = time.Now().UnixMilli()
+	p.CreatedAt = time.Now().Unix()
+	p.UpdatedAt = time.Now().Unix()
 	return p
 }
 
@@ -68,8 +68,8 @@ func (g *Group) FromCreateGroupRequest(req *openauth_v1.CreateGroupRequest, crea
 	g.IsSystem = false
 	g.IsDefault = req.IsDefault
 	g.CreatedBy = createdBy
-	g.CreatedAt = time.Now().UnixMilli()
-	g.UpdatedAt = time.Now().UnixMilli()
+	g.CreatedAt = time.Now().Unix()
+	g.UpdatedAt = time.Now().Unix()
 	return g
 }
 

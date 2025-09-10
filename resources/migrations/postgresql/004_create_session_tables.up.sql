@@ -18,9 +18,9 @@ CREATE TABLE user_sessions (
     status VARCHAR(15) DEFAULT 'active',
     expires_at BIGINT NOT NULL,
     refresh_expires_at BIGINT,
-    last_activity_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
+    last_activity_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) ,
     revoked_at BIGINT,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) 
 );
 
 CREATE TABLE session_activities (
@@ -31,7 +31,7 @@ CREATE TABLE session_activities (
     user_agent TEXT,
     location VARCHAR(255),
     metadata JSONB,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) 
 );
 
 CREATE TABLE user_sessions_archive (
@@ -57,7 +57,7 @@ CREATE TABLE user_sessions_archive (
     last_activity_at BIGINT NOT NULL,
     revoked_at BIGINT,
     created_at BIGINT NOT NULL,
-    archived_at BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
+    archived_at BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) 
 );
 
 CREATE INDEX idx_user_sessions_uuid ON user_sessions(uuid);

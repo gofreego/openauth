@@ -42,7 +42,7 @@ func (r *Repository) AssignPermissionToGroup(ctx context.Context, groupID, permi
 		VALUES ($1, $2, $3, $4)
 		`
 
-	now := time.Now().UnixMilli()
+	now := time.Now().Unix()
 
 	result, err := r.connManager.Primary().ExecContext(ctx, query, groupID, permissionID, grantedBy, now)
 	if err != nil {
@@ -85,7 +85,7 @@ func (r *Repository) AssignPermissionsToGroup(ctx context.Context, groupID int64
 
 	args := make([]interface{}, 0, len(permissionIDs)*4)
 	placeholders := make([]string, 0, len(permissionIDs))
-	createdAt := time.Now().UnixMilli()
+	createdAt := time.Now().Unix()
 
 	for i, permissionID := range permissionIDs {
 		baseIndex := i * 4
@@ -262,7 +262,7 @@ func (r *Repository) AssignPermissionToUser(ctx context.Context, userID, permiss
 		VALUES ($1, $2, $3, $4, $5)
 	`
 
-	now := time.Now().UnixMilli()
+	now := time.Now().Unix()
 
 	result, err := r.connManager.Primary().ExecContext(ctx, query, userID, permissionID, grantedBy, expiresAt, now)
 	if err != nil {
@@ -305,7 +305,7 @@ func (r *Repository) AssignPermissionsToUser(ctx context.Context, userID int64, 
 
 	args := make([]interface{}, 0, len(permissionIDs)*5)
 	placeholders := make([]string, 0, len(permissionIDs))
-	createdAt := time.Now().UnixMilli()
+	createdAt := time.Now().Unix()
 
 	for i, permissionID := range permissionIDs {
 		baseIndex := i * 5
@@ -484,7 +484,7 @@ func (r *Repository) GetUserEffectivePermissions(ctx context.Context, userId int
 		ORDER BY granted_at DESC
 	`
 
-	currentTime := time.Now().UnixMilli()
+	currentTime := time.Now().Unix()
 	rows, err := r.connManager.Primary().QueryContext(ctx, baseQuery, userId, currentTime)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user effective permissions: %w", err)
@@ -557,7 +557,7 @@ func (r *Repository) GetUserEffectivePermissionNames(ctx context.Context, userId
 		ORDER BY p.name
 	`
 
-	currentTime := time.Now().UnixMilli()
+	currentTime := time.Now().Unix()
 	rows, err := r.connManager.Primary().QueryContext(ctx, baseQuery, userId, currentTime)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user effective permission names: %w", err)

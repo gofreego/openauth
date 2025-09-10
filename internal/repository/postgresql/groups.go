@@ -206,7 +206,7 @@ func (r *Repository) AssignUserToGroup(ctx context.Context, userID, groupID int6
 		INSERT INTO user_groups (user_id, group_id, assigned_by, expires_at, created_at)
 		VALUES ($1, $2, $3, $4, $5)`
 
-	_, err := r.connManager.Primary().ExecContext(ctx, query, userID, groupID, assignedBy, expiresAt, time.Now().UnixMilli())
+	_, err := r.connManager.Primary().ExecContext(ctx, query, userID, groupID, assignedBy, expiresAt, time.Now().Unix())
 	if err != nil {
 		return fmt.Errorf("failed to assign user to group: %w", err)
 	}
@@ -233,7 +233,7 @@ func (r *Repository) AssignUsersToGroup(ctx context.Context, userIDs []int64, gr
 
 	args := make([]interface{}, 0, len(userIDs)*5)
 	placeholders := make([]string, 0, len(userIDs))
-	createdAt := time.Now().UnixMilli()
+	createdAt := time.Now().Unix()
 
 	for i, userID := range userIDs {
 		baseIndex := i * 5

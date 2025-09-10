@@ -148,7 +148,7 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 	var updatedUser *dao.User
 	if len(userUpdates) > 0 {
 		logger.Debug(ctx, "Updating user fields: %v for userID=%d", userUpdates, user.ID)
-		userUpdates["updated_at"] = time.Now().UnixMilli()
+		userUpdates["updated_at"] = time.Now().Unix()
 		updatedUser, err = s.repo.UpdateUser(ctx, user.ID, userUpdates)
 		if err != nil {
 			logger.Error(ctx, "Failed to update userID=%d: %v", user.ID, err)

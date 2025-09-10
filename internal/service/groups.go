@@ -208,7 +208,7 @@ func (s *Service) UpdateGroup(ctx context.Context, req *openauth_v1.UpdateGroupR
 		}, nil
 	}
 
-	updates["updated_at"] = time.Now().UnixMilli()
+	updates["updated_at"] = time.Now().Unix()
 
 	// Update group in repository
 	updatedGroup, err := s.repo.UpdateGroup(ctx, group.ID, updates)
