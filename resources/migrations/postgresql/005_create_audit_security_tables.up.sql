@@ -15,7 +15,7 @@ CREATE TABLE audit_logs (
     session_id INTEGER REFERENCES user_sessions(id),
     metadata JSONB,
     severity VARCHAR(15) DEFAULT 'medium',
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
 );
 
 CREATE TABLE security_events (
@@ -33,7 +33,7 @@ CREATE TABLE security_events (
     resolved BOOLEAN DEFAULT FALSE,
     resolved_by INTEGER REFERENCES users(id),
     resolved_at BIGINT,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
 );
 
 CREATE TABLE login_attempts (
@@ -46,7 +46,7 @@ CREATE TABLE login_attempts (
     failure_reason VARCHAR(255),
     user_id INTEGER REFERENCES users(id),
     session_id INTEGER REFERENCES user_sessions(id),
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
 );
 
 CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
