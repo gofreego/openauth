@@ -45,7 +45,6 @@ INSERT INTO users (
     username,
     email,
     password_hash,
-    email_verified,
     phone_verified,
     is_active,
     is_locked,
@@ -57,8 +56,7 @@ INSERT INTO users (
     gen_random_uuid(),
     'Administrator',
     'admin',
-    'admin@openauth.local',
-    '$2a$12$bMavjNGg74RQJdNa.n1VpeZgcTjtEcuGi7Pkg1JLP2MFg0qL0PmFi',
+    '$2a$12$bMavjNGg74RQJdNa.n1VpeZgcTjtEcuGi7Pkg1JLP2MFg0qL0PmFi',  -- password is 'admin123'
     true,
     false,
     true,
