@@ -191,7 +191,7 @@ func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserS
 // UpdateLastActivity updates the last activity timestamp for a session
 func (r *Repository) UpdateLastActivity(ctx context.Context, sessionUUID string) error {
 	query := `UPDATE user_sessions SET last_activity_at = $1 WHERE uuid = $2`
-	_, err := r.connManager.Primary().ExecContext(ctx, query, time.Now().Unix(), sessionUUID)
+	_, err := r.connManager.Primary().ExecContext(ctx, query, time.Now().UnixMilli(), sessionUUID)
 	return err
 }
 

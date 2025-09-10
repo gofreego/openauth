@@ -172,7 +172,7 @@ func (s *Service) UpdatePermission(ctx context.Context, req *openauth_v1.UpdateP
 
 	// Build updates map
 	updates := make(map[string]interface{})
-	updates["updated_at"] = time.Now().Unix()
+	updates["updated_at"] = time.Now().UnixMilli()
 
 	if req.Name != nil {
 		// Check if another permission with this name exists

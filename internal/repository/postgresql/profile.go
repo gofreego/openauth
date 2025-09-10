@@ -175,7 +175,7 @@ func (r *Repository) UpdateProfileByUUID(ctx context.Context, uuid string, updat
 
 	// Add updated_at timestamp
 	setParts = append(setParts, fmt.Sprintf("updated_at = $%d", argIndex))
-	args = append(args, time.Now().Unix())
+	args = append(args, time.Now().UnixMilli())
 	argIndex++
 
 	// Add UUID as the last parameter
