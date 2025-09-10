@@ -3,7 +3,7 @@
 CREATE TABLE auth_providers (
     id SERIAL PRIMARY KEY,
     uuid UUID UNIQUE DEFAULT gen_random_uuid(),
-    name VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL UNIQUE,
     display_name VARCHAR(255) NOT NULL,
     client_id VARCHAR(500),
     client_secret VARCHAR(500),
