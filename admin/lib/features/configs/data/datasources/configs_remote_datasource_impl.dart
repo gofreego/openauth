@@ -48,7 +48,7 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   Future<pb.ConfigEntity> createConfigEntity(pb.CreateConfigEntityRequest request) async {
     final response = await apiService.post(
       '/openauth/v1/config-entities',
-      data: request.writeToBuffer(),
+      data: request.toProto3Json(),
     );
     var res = pb.ConfigEntity();
     res.mergeFromProto3Json(response.data);
@@ -59,7 +59,7 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   Future<pb.ConfigEntity> updateConfigEntity(pb.UpdateConfigEntityRequest request) async {
     final response = await apiService.put(
       '/openauth/v1/config-entities/${request.id}',
-      data: request.writeToBuffer(),
+      data: request.toProto3Json(),
     );
     var res = pb.ConfigEntity();
     res.mergeFromProto3Json(response.data);
@@ -100,7 +100,7 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   Future<pb.Config> createConfig(pb.CreateConfigRequest request) async {
     final response = await apiService.post(
       '/openauth/v1/configs',
-      data: request.writeToBuffer(),
+      data: request.toProto3Json(),
     );
     var res = pb.Config();
     res.mergeFromProto3Json(response.data);
@@ -111,7 +111,7 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   Future<pb.Config> updateConfig(pb.UpdateConfigRequest request) async {
     final response = await apiService.put(
       '/openauth/v1/configs/${request.id}',
-      data: request.writeToBuffer(),
+      data: request.toProto3Json(),
     );
     var res = pb.Config();
     res.mergeFromProto3Json(response.data);
@@ -132,7 +132,7 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   Future<pb.GetConfigsByKeysResponse> getConfigsByKeys(pb.GetConfigsByKeysRequest request) async {
     final response = await apiService.post(
       '/openauth/v1/entities/${request.entityId}/configs/batch',
-      data: request.writeToBuffer(),
+      data: request.toProto3Json(),
     );
     var res = pb.GetConfigsByKeysResponse();
     res.mergeFromProto3Json(response.data);

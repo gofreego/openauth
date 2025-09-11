@@ -31,7 +31,7 @@ class ConfigEntitiesBloc extends Bloc<GeneratedMessage, ConfigEntitiesState> {
     final result = await repository.getConfigEntities(event);
     
     result.fold(
-      (failure) => emit(ConfigEntitiesError(
+      (failure) => emit(ConfigEntitiesListError(
         failure: failure,
         message: failure.message,
       )),
@@ -60,7 +60,7 @@ class ConfigEntitiesBloc extends Bloc<GeneratedMessage, ConfigEntitiesState> {
     final result = await repository.createConfigEntity(event);
     
     result.fold(
-      (failure) => emit(ConfigEntitiesError(
+      (failure) => emit(ConfigEntityCreateError(
         failure: failure,
         message: failure.message,
       )),
@@ -72,7 +72,7 @@ class ConfigEntitiesBloc extends Bloc<GeneratedMessage, ConfigEntitiesState> {
     final result = await repository.updateConfigEntity(event);
     
     result.fold(
-      (failure) => emit(ConfigEntitiesError(
+      (failure) => emit(ConfigEntityUpdateError(
         failure: failure,
         message: failure.message,
       )),
@@ -84,7 +84,7 @@ class ConfigEntitiesBloc extends Bloc<GeneratedMessage, ConfigEntitiesState> {
     final result = await repository.deleteConfigEntity(event);
     
     result.fold(
-      (failure) => emit(ConfigEntitiesError(
+      (failure) => emit(ConfigEntityDeleteError(
         failure: failure,
         message: failure.message,
       )),

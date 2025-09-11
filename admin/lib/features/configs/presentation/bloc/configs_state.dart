@@ -73,6 +73,86 @@ class ConfigsByKeysLoaded extends ConfigsState {
   List<Object> get props => [configs];
 }
 
+// Specific error states for different operations
+class ConfigsListError extends ConfigsState {
+  final Failure failure;
+  final String message;
+
+  const ConfigsListError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigCreateError extends ConfigsState {
+  final Failure failure;
+  final String message;
+
+  const ConfigCreateError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigUpdateError extends ConfigsState {
+  final Failure failure;
+  final String message;
+
+  const ConfigUpdateError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigDeleteError extends ConfigsState {
+  final Failure failure;
+  final String message;
+
+  const ConfigDeleteError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigGetError extends ConfigsState {
+  final Failure failure;
+  final String message;
+
+  const ConfigGetError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigsByKeysError extends ConfigsState {
+  final Failure failure;
+  final String message;
+
+  const ConfigsByKeysError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+// Generic error state (kept for backward compatibility)
 class ConfigsError extends ConfigsState {
   final Failure failure;
   final String message;

@@ -36,9 +36,25 @@ class _ConfigValuesTabState extends State<ConfigValuesTab> {
   Widget build(BuildContext context) {
     return BlocConsumer<ConfigsBloc, ConfigsState>(
       listener: (context, state) {
-        if (state is ConfigsError) {
-          ToastUtils.showError(state.message);
-        } else if (state is ConfigCreated) {
+        // Handle all specific error states
+        if (state is ConfigsListError) {
+          ToastUtils.showError('Failed to load configs: ${state.message}');
+        } else if (state is ConfigCreateError) {
+          ToastUtils.showError('Failed to create config: ${state.message}');
+        } else if (state is ConfigUpdateError) {
+          ToastUtils.showError('Failed to update config: ${state.message}');
+        } else if (state is ConfigDeleteError) {
+          ToastUtils.showError('Failed to delete config: ${state.message}');
+        } else if (state is ConfigGetError) {
+          ToastUtils.showError('Failed to get config: ${state.message}');
+        } else if (state is ConfigsByKeysError) {
+          ToastUtils.showError('Failed to get configs by keys: ${state.message}');
+        } else if (state is ConfigsError) {
+          // Generic error fallback
+          ToastUtils.showError('An error occurred: ${state.message}');
+        }
+        // Handle success states
+        else if (state is ConfigCreated) {
           ToastUtils.showSuccess('Config created successfully');
           _refreshConfigs();
         } else if (state is ConfigUpdated) {
@@ -54,7 +70,52 @@ class _ConfigValuesTabState extends State<ConfigValuesTab> {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ConfigsLoaded) {
           return _buildConfigsList(state);
+        } 
+        // Handle all specific error states in builder
+        else if (state is ConfigsListError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: _refreshConfigs,
+            ),
+          );
+        } else if (state is ConfigCreateError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: _refreshConfigs,
+            ),
+          );
+        } else if (state is ConfigUpdateError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: _refreshConfigs,
+            ),
+          );
+        } else if (state is ConfigDeleteError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: _refreshConfigs,
+            ),
+          );
+        } else if (state is ConfigGetError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: _refreshConfigs,
+            ),
+          );
+        } else if (state is ConfigsByKeysError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: _refreshConfigs,
+            ),
+          );
         } else if (state is ConfigsError) {
+          // Generic error fallback
           return Center(
             child: CustomErrorWidget(
               failure: state.failure,

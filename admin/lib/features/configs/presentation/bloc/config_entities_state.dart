@@ -60,6 +60,73 @@ class ConfigEntityUpdated extends ConfigEntitiesState {
 
 class ConfigEntityDeleted extends ConfigEntitiesState {}
 
+// Specific error states for different operations
+class ConfigEntitiesListError extends ConfigEntitiesState {
+  final Failure failure;
+  final String message;
+
+  const ConfigEntitiesListError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigEntityCreateError extends ConfigEntitiesState {
+  final Failure failure;
+  final String message;
+
+  const ConfigEntityCreateError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigEntityUpdateError extends ConfigEntitiesState {
+  final Failure failure;
+  final String message;
+
+  const ConfigEntityUpdateError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigEntityDeleteError extends ConfigEntitiesState {
+  final Failure failure;
+  final String message;
+
+  const ConfigEntityDeleteError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+class ConfigEntityGetError extends ConfigEntitiesState {
+  final Failure failure;
+  final String message;
+
+  const ConfigEntityGetError({
+    required this.failure,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [failure, message];
+}
+
+// Generic error state (kept for backward compatibility)
 class ConfigEntitiesError extends ConfigEntitiesState {
   final Failure failure;
   final String message;

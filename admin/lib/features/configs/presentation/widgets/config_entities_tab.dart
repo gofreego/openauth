@@ -24,9 +24,23 @@ class _ConfigEntitiesTabState extends State<ConfigEntitiesTab> {
   Widget build(BuildContext context) {
     return BlocConsumer<ConfigEntitiesBloc, ConfigEntitiesState>(
       listener: (context, state) {
-        if (state is ConfigEntitiesError) {
-          ToastUtils.showError(state.message);
-        } else if (state is ConfigEntityCreated) {
+        // Handle all specific error states
+        if (state is ConfigEntitiesListError) {
+          ToastUtils.showError('Failed to load config entities: ${state.message}');
+        } else if (state is ConfigEntityCreateError) {
+          ToastUtils.showError('Failed to create config entity: ${state.message}');
+        } else if (state is ConfigEntityUpdateError) {
+          ToastUtils.showError('Failed to update config entity: ${state.message}');
+        } else if (state is ConfigEntityDeleteError) {
+          ToastUtils.showError('Failed to delete config entity: ${state.message}');
+        } else if (state is ConfigEntityGetError) {
+          ToastUtils.showError('Failed to get config entity: ${state.message}');
+        } else if (state is ConfigEntitiesError) {
+          // Generic error fallback
+          ToastUtils.showError('An error occurred: ${state.message}');
+        } 
+        // Handle success states
+        else if (state is ConfigEntityCreated) {
           ToastUtils.showSuccess('Config entity created successfully');
           // Refresh the list
           context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
@@ -57,7 +71,79 @@ class _ConfigEntitiesTabState extends State<ConfigEntitiesTab> {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ConfigEntitiesLoaded) {
           return _buildConfigEntitiesList(state);
+        } 
+        // Handle all specific error states in builder
+        else if (state is ConfigEntitiesListError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: () {
+                context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
+                  limit: PaginationConstants.defaultPageLimit,
+                  offset: 0,
+                  search: widget.searchQuery.isNotEmpty ? widget.searchQuery : null,
+                ));
+              },
+            ),
+          );
+        } else if (state is ConfigEntityCreateError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: () {
+                // Return to list view
+                context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
+                  limit: PaginationConstants.defaultPageLimit,
+                  offset: 0,
+                  search: widget.searchQuery.isNotEmpty ? widget.searchQuery : null,
+                ));
+              },
+            ),
+          );
+        } else if (state is ConfigEntityUpdateError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: () {
+                // Return to list view
+                context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
+                  limit: PaginationConstants.defaultPageLimit,
+                  offset: 0,
+                  search: widget.searchQuery.isNotEmpty ? widget.searchQuery : null,
+                ));
+              },
+            ),
+          );
+        } else if (state is ConfigEntityDeleteError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: () {
+                // Return to list view
+                context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
+                  limit: PaginationConstants.defaultPageLimit,
+                  offset: 0,
+                  search: widget.searchQuery.isNotEmpty ? widget.searchQuery : null,
+                ));
+              },
+            ),
+          );
+        } else if (state is ConfigEntityGetError) {
+          return Center(
+            child: CustomErrorWidget(
+              failure: state.failure,
+              onRetry: () {
+                // Return to list view
+                context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
+                  limit: PaginationConstants.defaultPageLimit,
+                  offset: 0,
+                  search: widget.searchQuery.isNotEmpty ? widget.searchQuery : null,
+                ));
+              },
+            ),
+          );
         } else if (state is ConfigEntitiesError) {
+          // Generic error fallback
           return Center(
             child: CustomErrorWidget(
               failure: state.failure,
