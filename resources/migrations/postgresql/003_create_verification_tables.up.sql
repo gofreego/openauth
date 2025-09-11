@@ -9,7 +9,7 @@ CREATE TABLE otp_verifications (
     expires_at BIGINT NOT NULL,
     attempts INTEGER DEFAULT 0,
     max_attempts INTEGER DEFAULT 3,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 
 );
 
 CREATE TABLE password_reset_tokens (
@@ -18,7 +18,7 @@ CREATE TABLE password_reset_tokens (
     token VARCHAR(255) UNIQUE NOT NULL,
     expires_at BIGINT NOT NULL,
     is_used BOOLEAN DEFAULT FALSE,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 
 );
 
 CREATE TABLE email_verification_tokens (
@@ -28,7 +28,7 @@ CREATE TABLE email_verification_tokens (
     token VARCHAR(255) UNIQUE NOT NULL,
     expires_at BIGINT NOT NULL,
     is_used BOOLEAN DEFAULT FALSE,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 
 );
 
 CREATE INDEX idx_otp_verifications_user_id ON otp_verifications(user_id);

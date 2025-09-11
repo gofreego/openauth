@@ -12,8 +12,8 @@ CREATE TABLE auth_providers (
     user_info_url VARCHAR(500),
     scope VARCHAR(500),
     is_enabled BOOLEAN DEFAULT TRUE,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) ,
-    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 ,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 
 );
 
 CREATE TABLE user_external_accounts (
@@ -28,8 +28,8 @@ CREATE TABLE user_external_accounts (
     refresh_token TEXT,
     token_expires_at BIGINT,
     external_data JSONB,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) ,
-    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) ,
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 ,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 ,
     UNIQUE(provider_id, external_user_id)
 );
 

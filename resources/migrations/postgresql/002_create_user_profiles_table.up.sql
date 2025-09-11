@@ -19,8 +19,8 @@ CREATE TABLE user_profiles (
     postal_code VARCHAR(25),
     website_url VARCHAR(500),
     metadata JSONB,
-    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) ,
-    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) 
+    created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 ,
+    updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 
 );
 
 CREATE INDEX idx_user_profiles_uuid ON user_profiles(uuid);

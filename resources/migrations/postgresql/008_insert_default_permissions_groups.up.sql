@@ -39,7 +39,7 @@ VALUES (
     (SELECT id FROM users WHERE username = 'admin'),
     (SELECT id FROM groups WHERE name = 'super_admin'),
     (SELECT id FROM users WHERE username = 'admin'),
-    EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000)
+    EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
 );
 
 -- Default OAuth providers
@@ -91,12 +91,12 @@ BEGIN
             INSERT INTO audit_logs (user_id, entity_type, entity_id, action, new_values, severity, created_at)
             VALUES (current_user_id, entity_name, NEW.id, 'assign_permission',
                 jsonb_build_object('group_id', NEW.group_id,'permission_id', NEW.permission_id,'granted_by', NEW.granted_by),
-                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) );
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 );
         ELSIF TG_OP = 'DELETE' THEN
             INSERT INTO audit_logs (user_id, entity_type, entity_id, action, old_values, severity, created_at)
             VALUES (current_user_id, entity_name, OLD.id, 'revoke_permission',
                 jsonb_build_object('group_id', OLD.group_id,'permission_id', OLD.permission_id,'granted_by', OLD.granted_by),
-                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) );
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 );
         END IF;
     ELSIF TG_TABLE_NAME = 'user_groups' THEN
         entity_name := 'user_groups';
@@ -104,12 +104,12 @@ BEGIN
             INSERT INTO audit_logs (user_id, entity_type, entity_id, action, new_values, severity, created_at)
             VALUES (current_user_id, entity_name, NEW.id, 'assign_group',
                 jsonb_build_object('user_id', NEW.user_id,'group_id', NEW.group_id,'assigned_by', NEW.assigned_by,'expires_at', NEW.expires_at),
-                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) );
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 );
         ELSIF TG_OP = 'DELETE' THEN
             INSERT INTO audit_logs (user_id, entity_type, entity_id, action, old_values, severity, created_at)
             VALUES (current_user_id, entity_name, OLD.id, 'revoke_group',
                 jsonb_build_object('user_id', OLD.user_id,'group_id', OLD.group_id,'assigned_by', OLD.assigned_by,'expires_at', OLD.expires_at),
-                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) );
+                'high', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 );
         END IF;
     ELSIF TG_TABLE_NAME = 'user_permissions' THEN
         entity_name := 'user_permissions';
@@ -117,12 +117,12 @@ BEGIN
             INSERT INTO audit_logs (user_id, entity_type, entity_id, action, new_values, severity, created_at)
             VALUES (current_user_id, entity_name, NEW.id, 'assign_direct_permission',
                 jsonb_build_object('user_id', NEW.user_id,'permission_id', NEW.permission_id,'granted_by', NEW.granted_by,'expires_at', NEW.expires_at),
-                'critical', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) );
+                'critical', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 );
         ELSIF TG_OP = 'DELETE' THEN
             INSERT INTO audit_logs (user_id, entity_type, entity_id, action, old_values, severity, created_at)
             VALUES (current_user_id, entity_name, OLD.id, 'revoke_direct_permission',
                 jsonb_build_object('user_id', OLD.user_id,'permission_id', OLD.permission_id,'granted_by', OLD.granted_by,'expires_at', OLD.expires_at),
-                'critical', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP * 1000) );
+                'critical', EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 );
         END IF;
     END IF;
 
