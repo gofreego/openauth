@@ -49,9 +49,8 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		logger.Debug(ctx, "Looking up user by email: %s", username)
 		user, err = s.repo.GetUserByEmail(ctx, username)
 	case utils.IdentifierTypePhone:
-		logger.Warn(ctx, "Phone login attempted but not implemented for: %s", username)
-		// Try phone - you may need to implement GetUserByPhone
-		return nil, status.Error(codes.Unimplemented, "phone login not yet implemented")
+		logger.Debug(ctx, "Looking up user by phone: %s", username)
+		user, err = s.repo.GetUserByPhone(ctx, username)
 	default:
 		logger.Warn(ctx, "Invalid identifier format provided: %s", username)
 		return nil, status.Error(codes.InvalidArgument, "invalid identifier format")
@@ -104,8 +103,11 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		"failed_login_attempts": 0,
 		"last_login_at":         time.Now().UnixMilli(),
 	}
-	s.repo.UpdateUser(ctx, user.ID, updates)
-	logger.Debug(ctx, "Reset failed login attempts for userID=%d", user.ID)
+	user, err = s.repo.UpdateUser(ctx, user.ID, updates)
+	if err != nil {
+		logger.Error(ctx, "Failed to update user login info for userID=%d: %v", user.ID, err)
+		return nil, status.Error(codes.Internal, "failed to update user login info")
+	}
 
 	// Create session
 	sessionUUID := uuid.New()
