@@ -10,18 +10,6 @@ type ConfigEntityFilter struct {
 	// Search term to filter by name or display_name
 	Search *string `json:"search,omitempty"`
 
-	// Status filters entities by status (active, deprecated, maintenance)
-	Status *string `json:"status,omitempty"`
-
-	// ReadPerm filters entities by read permission ID
-	ReadPerm *int64 `json:"read_perm,omitempty"`
-
-	// WritePerm filters entities by write permission ID
-	WritePerm *int64 `json:"write_perm,omitempty"`
-
-	// CreatedBy filters entities by creator user ID
-	CreatedBy *int64 `json:"created_by,omitempty"`
-
 	// Limit for pagination (number of records to return)
 	Limit int32 `json:"limit,omitempty"`
 
@@ -60,15 +48,6 @@ type ConfigFilter struct {
 	// Search term to filter by key or display_name
 	Search *string `json:"search,omitempty"`
 
-	// Type filters configs by value type (string, int, float, bool, json, choice)
-	Type *string `json:"type,omitempty"`
-
-	// CreatedBy filters configs by creator user ID
-	CreatedBy *int64 `json:"created_by,omitempty"`
-
-	// UpdatedBy filters configs by last updater user ID
-	UpdatedBy *int64 `json:"updated_by,omitempty"`
-
 	// Limit for pagination (number of records to return)
 	Limit int32 `json:"limit,omitempty"`
 
@@ -93,10 +72,6 @@ func NewConfigFilterFromProtoRequest(req *openauth_v1.ListConfigsRequest) *Confi
 
 	if req.Search != nil {
 		filter.Search = req.Search
-	}
-
-	if req.Type != nil {
-		filter.Type = req.Type
 	}
 
 	// Set default limit if not specified

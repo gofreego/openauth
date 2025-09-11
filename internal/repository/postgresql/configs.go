@@ -128,30 +128,6 @@ func (r *Repository) ListConfigEntities(ctx context.Context, filters *filter.Con
 		argIndex++
 	}
 
-	if filters.Status != nil {
-		conditions = append(conditions, fmt.Sprintf("status = $%d", argIndex))
-		args = append(args, *filters.Status)
-		argIndex++
-	}
-
-	if filters.ReadPerm != nil {
-		conditions = append(conditions, fmt.Sprintf("read_perm = $%d", argIndex))
-		args = append(args, *filters.ReadPerm)
-		argIndex++
-	}
-
-	if filters.WritePerm != nil {
-		conditions = append(conditions, fmt.Sprintf("write_perm = $%d", argIndex))
-		args = append(args, *filters.WritePerm)
-		argIndex++
-	}
-
-	if filters.CreatedBy != nil {
-		conditions = append(conditions, fmt.Sprintf("created_by = $%d", argIndex))
-		args = append(args, *filters.CreatedBy)
-		argIndex++
-	}
-
 	// Build query
 	query := `
 		SELECT id, name, display_name, description, read_perm, write_perm, created_by, created_at, updated_at
@@ -582,24 +558,6 @@ func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilt
 	if filters.Search != nil && *filters.Search != "" {
 		conditions = append(conditions, fmt.Sprintf("(c.key ILIKE $%d OR c.display_name ILIKE $%d)", argIndex, argIndex))
 		args = append(args, "%"+*filters.Search+"%")
-		argIndex++
-	}
-
-	if filters.Type != nil {
-		conditions = append(conditions, fmt.Sprintf("c.type = $%d", argIndex))
-		args = append(args, *filters.Type)
-		argIndex++
-	}
-
-	if filters.CreatedBy != nil {
-		conditions = append(conditions, fmt.Sprintf("c.created_by = $%d", argIndex))
-		args = append(args, *filters.CreatedBy)
-		argIndex++
-	}
-
-	if filters.UpdatedBy != nil {
-		conditions = append(conditions, fmt.Sprintf("c.updated_by = $%d", argIndex))
-		args = append(args, *filters.UpdatedBy)
 		argIndex++
 	}
 
