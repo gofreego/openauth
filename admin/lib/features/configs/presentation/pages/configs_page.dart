@@ -55,7 +55,7 @@ class _ConfigsPageState extends State<ConfigsPage> with TickerProviderStateMixin
           // Header
           ConfigsHeader(
             onAddConfigEntity: () {
-              // TODO: Implement create config entity dialog
+              _showCreateDialog(context);
             },
           ),
           const SizedBox(height: 24),
@@ -64,7 +64,6 @@ class _ConfigsPageState extends State<ConfigsPage> with TickerProviderStateMixin
           CustomSearchBar(
             hintText: 'Search configs and entities...',
             initialQuery: _searchController.text,
-            triggerSearchOnKeyStroke: true,
             onSearch: (query) {
               setState(() {
                 _searchController.text = query;
@@ -103,10 +102,6 @@ class _ConfigsPageState extends State<ConfigsPage> with TickerProviderStateMixin
           ),
         ],
       ),
-    ),
-    floatingActionButton: FloatingActionButton(
-      onPressed: () => _showCreateDialog(context),
-      child: const Icon(Icons.add),
     ),
   );
 }
