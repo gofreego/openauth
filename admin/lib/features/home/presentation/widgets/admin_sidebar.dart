@@ -7,6 +7,7 @@ enum NavigationSection {
   users,
   permissions,
   groups,
+  configs,
   settings,
 }
 
@@ -98,6 +99,13 @@ class AdminSidebar extends StatelessWidget {
                   selectedIcon: Icons.group,
                   title: 'Groups',
                   section: NavigationSection.groups,
+                ),
+                _buildNavigationItem(
+                  context: context,
+                  icon: Icons.settings_outlined,
+                  selectedIcon: Icons.settings,
+                  title: 'Configs',
+                  section: NavigationSection.configs,
                 ),
               ],
             ),

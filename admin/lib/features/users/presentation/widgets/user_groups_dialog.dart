@@ -4,7 +4,6 @@ import '../../../../src/generated/openauth/v1/users.pb.dart' as user_pb;
 import '../../../../src/generated/openauth/v1/groups.pb.dart' as groups_pb;
 import '../../../../shared/shared.dart';
 import '../../../groups/presentation/bloc/groups_bloc.dart';
-import '../../../../shared/widgets/custom_search_bar.dart';
 
 class UserGroupsDialog extends StatefulWidget {
   final user_pb.User user;

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // ConfigEntity represents the config_entities table
@@ -108,8 +107,7 @@ func (c *Config) FromCreateConfigRequest(req *openauth_v1.CreateConfigRequest, c
 
 	// Handle metadata
 	if req.Metadata != nil {
-		metadataMap := req.Metadata.AsMap()
-		c.SetMetadata(metadataMap)
+		c.Metadata = []byte(*req.Metadata)
 	}
 
 	return c
@@ -148,8 +146,7 @@ func (c *Config) FromUpdateConfigRequest(req *openauth_v1.UpdateConfigRequest, u
 
 	// Handle metadata updates
 	if req.Metadata != nil {
-		metadataMap := req.Metadata.AsMap()
-		c.SetMetadata(metadataMap)
+		c.Metadata = []byte(*req.Metadata)
 	}
 
 	c.UpdatedBy = updatedBy
@@ -209,12 +206,7 @@ func (c *Config) ToProtoConfig() *openauth_v1.Config {
 
 	// Handle metadata conversion
 	if len(c.Metadata) > 0 {
-		var metadataMap map[string]interface{}
-		if err := json.Unmarshal(c.Metadata, &metadataMap); err == nil {
-			if structValue, err := structpb.NewStruct(metadataMap); err == nil {
-				proto.Metadata = structValue
-			}
-		}
+		proto.Metadata = string(c.Metadata)
 	}
 
 	return proto
@@ -228,36 +220,4 @@ func (c *Config) SetValue(value interface{}) error {
 	}
 	c.Value = valueBytes
 	return nil
-}
-
-// SetMetadata sets the config metadata from a map
-func (c *Config) SetMetadata(metadata map[string]interface{}) error {
-	metadataBytes, err := json.Marshal(metadata)
-	if err != nil {
-		return err
-	}
-	c.Metadata = metadataBytes
-	return nil
-}
-
-// GetValueAsInterface returns the config value as an interface{}
-func (c *Config) GetValueAsInterface() (interface{}, error) {
-	if len(c.Value) == 0 {
-		return nil, nil
-	}
-
-	var value interface{}
-	err := json.Unmarshal(c.Value, &value)
-	return value, err
-}
-
-// GetMetadata returns the config metadata as a map
-func (c *Config) GetMetadata() (map[string]interface{}, error) {
-	if len(c.Metadata) == 0 {
-		return nil, nil
-	}
-
-	var metadata map[string]interface{}
-	err := json.Unmarshal(c.Metadata, &metadata)
-	return metadata, err
 }

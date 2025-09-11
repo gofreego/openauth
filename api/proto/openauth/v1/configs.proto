@@ -3,7 +3,6 @@ package v1;
 
 import "proto/common/sort.proto";
 import "validate/validate.proto";
-import "google/protobuf/struct.proto";
 
 option go_package = "./openauth_v1";
 
@@ -67,7 +66,7 @@ message Config {
     string type = 11;
     
     // Additional metadata as JSON
-    google.protobuf.Struct metadata = 12;
+    string metadata = 12;
     
     // User ID who created this config
     int64 created_by = 13;
@@ -197,7 +196,7 @@ message CreateConfigRequest {
     }];
     
     // Additional metadata
-    optional google.protobuf.Struct metadata = 11;
+    optional string metadata = 11;
 }
 
 // Request to get a specific config by ID
@@ -277,7 +276,7 @@ message UpdateConfigRequest {
     }
     
     // New metadata (optional)
-    optional google.protobuf.Struct metadata = 9;
+    optional string metadata = 9;
 }
 
 // Request to delete a config

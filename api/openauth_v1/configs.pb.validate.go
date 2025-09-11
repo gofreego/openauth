@@ -185,34 +185,7 @@ func (m *Config) validate(all bool) error {
 
 	// no validation rules for Type
 
-	if all {
-		switch v := interface{}(m.GetMetadata()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ConfigValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, ConfigValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ConfigValidationError{
-				field:  "Metadata",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Metadata
 
 	// no validation rules for CreatedBy
 
@@ -1469,36 +1442,7 @@ func (m *CreateConfigRequest) validate(all bool) error {
 	}
 
 	if m.Metadata != nil {
-
-		if all {
-			switch v := interface{}(m.GetMetadata()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CreateConfigRequestValidationError{
-						field:  "Metadata",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CreateConfigRequestValidationError{
-						field:  "Metadata",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CreateConfigRequestValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Metadata
 	}
 
 	if len(errors) > 0 {
@@ -2303,36 +2247,7 @@ func (m *UpdateConfigRequest) validate(all bool) error {
 	}
 
 	if m.Metadata != nil {
-
-		if all {
-			switch v := interface{}(m.GetMetadata()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdateConfigRequestValidationError{
-						field:  "Metadata",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdateConfigRequestValidationError{
-						field:  "Metadata",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdateConfigRequestValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Metadata
 	}
 
 	if len(errors) > 0 {

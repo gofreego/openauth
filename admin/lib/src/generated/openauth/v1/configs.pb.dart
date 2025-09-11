@@ -10,8 +10,6 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../../google/protobuf/struct.pb.dart' as $0;
-
 class ConfigEntity extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConfigEntity', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
@@ -202,7 +200,7 @@ class Config extends $pb.GeneratedMessage {
     ..aOB(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boolValue')
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'jsonValue')
     ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type')
-    ..aOM<$0.Struct>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata', subBuilder: $0.Struct.create)
+    ..aOS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata')
     ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdBy')
     ..aInt64(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedBy')
     ..aInt64(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
@@ -223,7 +221,7 @@ class Config extends $pb.GeneratedMessage {
     $core.bool? boolValue,
     $core.String? jsonValue,
     $core.String? type,
-    $0.Struct? metadata,
+    $core.String? metadata,
     $fixnum.Int64? createdBy,
     $fixnum.Int64? updatedBy,
     $fixnum.Int64? createdAt,
@@ -404,15 +402,13 @@ class Config extends $pb.GeneratedMessage {
   void clearType() => clearField(11);
 
   @$pb.TagNumber(12)
-  $0.Struct get metadata => $_getN(11);
+  $core.String get metadata => $_getSZ(11);
   @$pb.TagNumber(12)
-  set metadata($0.Struct v) { setField(12, v); }
+  set metadata($core.String v) { $_setString(11, v); }
   @$pb.TagNumber(12)
   $core.bool hasMetadata() => $_has(11);
   @$pb.TagNumber(12)
   void clearMetadata() => clearField(12);
-  @$pb.TagNumber(12)
-  $0.Struct ensureMetadata() => $_ensure(11);
 
   @$pb.TagNumber(13)
   $fixnum.Int64 get createdBy => $_getI64(12);
@@ -958,7 +954,7 @@ class CreateConfigRequest extends $pb.GeneratedMessage {
     ..aOB(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boolValue')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'jsonValue')
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type')
-    ..aOM<$0.Struct>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata', subBuilder: $0.Struct.create)
+    ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata')
     ..hasRequiredFields = false
   ;
 
@@ -974,7 +970,7 @@ class CreateConfigRequest extends $pb.GeneratedMessage {
     $core.bool? boolValue,
     $core.String? jsonValue,
     $core.String? type,
-    $0.Struct? metadata,
+    $core.String? metadata,
   }) {
     final _result = create();
     if (entityId != null) {
@@ -1127,15 +1123,13 @@ class CreateConfigRequest extends $pb.GeneratedMessage {
   void clearType() => clearField(10);
 
   @$pb.TagNumber(11)
-  $0.Struct get metadata => $_getN(10);
+  $core.String get metadata => $_getSZ(10);
   @$pb.TagNumber(11)
-  set metadata($0.Struct v) { setField(11, v); }
+  set metadata($core.String v) { $_setString(10, v); }
   @$pb.TagNumber(11)
   $core.bool hasMetadata() => $_has(10);
   @$pb.TagNumber(11)
   void clearMetadata() => clearField(11);
-  @$pb.TagNumber(11)
-  $0.Struct ensureMetadata() => $_ensure(10);
 }
 
 class GetConfigRequest extends $pb.GeneratedMessage {
@@ -1475,7 +1469,7 @@ class UpdateConfigRequest extends $pb.GeneratedMessage {
     ..a<$core.double>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'floatValue', $pb.PbFieldType.OD)
     ..aOB(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boolValue')
     ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'jsonValue')
-    ..aOM<$0.Struct>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata', subBuilder: $0.Struct.create)
+    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata')
     ..hasRequiredFields = false
   ;
 
@@ -1489,7 +1483,7 @@ class UpdateConfigRequest extends $pb.GeneratedMessage {
     $core.double? floatValue,
     $core.bool? boolValue,
     $core.String? jsonValue,
-    $0.Struct? metadata,
+    $core.String? metadata,
   }) {
     final _result = create();
     if (id != null) {
@@ -1618,15 +1612,13 @@ class UpdateConfigRequest extends $pb.GeneratedMessage {
   void clearJsonValue() => clearField(8);
 
   @$pb.TagNumber(9)
-  $0.Struct get metadata => $_getN(8);
+  $core.String get metadata => $_getSZ(8);
   @$pb.TagNumber(9)
-  set metadata($0.Struct v) { setField(9, v); }
+  set metadata($core.String v) { $_setString(8, v); }
   @$pb.TagNumber(9)
   $core.bool hasMetadata() => $_has(8);
   @$pb.TagNumber(9)
   void clearMetadata() => clearField(9);
-  @$pb.TagNumber(9)
-  $0.Struct ensureMetadata() => $_ensure(8);
 }
 
 class DeleteConfigRequest extends $pb.GeneratedMessage {

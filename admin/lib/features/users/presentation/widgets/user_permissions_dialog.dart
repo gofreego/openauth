@@ -2,14 +2,12 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/shared.dart';
-import 'package:openauth/shared/utils/toast_utils.dart';
 import 'package:openauth/src/generated/openauth/v1/permission_assignments.pb.dart';
 import 'package:openauth/src/generated/openauth/v1/permissions.pb.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
 import '../../../permissions/presentation/bloc/permissions_bloc.dart';
 import '../bloc/user_permissions_bloc.dart';
 import '../bloc/user_permissions_state.dart';
-import '../../../../shared/widgets/custom_search_bar.dart';
 
 class UserPermissionsDialog extends StatefulWidget {
   final User user;

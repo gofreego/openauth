@@ -46,6 +46,13 @@ import '../../features/sessions/data/repositories/sessions_repository_impl.dart'
 import '../../features/sessions/data/repositories/sessions_repository.dart';
 import '../../features/sessions/presentation/bloc/sessions_bloc.dart';
 
+// Configs feature dependencies
+import '../../features/configs/data/datasources/configs_remote_datasource_impl.dart';
+import '../../features/configs/data/repositories/configs_repository_impl.dart';
+import '../../features/configs/data/repositories/configs_repository.dart';
+import '../../features/configs/presentation/bloc/configs_bloc.dart';
+import '../../features/configs/presentation/bloc/config_entities_bloc.dart';
+
 final serviceLocator = GetIt.instance;
 
 Future<void> initializeDependencies({
@@ -137,6 +144,18 @@ Future<void> initializeDependencies({
     ),
   );
 
+  // Configs data sources
+  serviceLocator.registerLazySingleton<ConfigsRemoteDataSource>(
+    () => ConfigsRemoteDataSourceImpl(apiService: serviceLocator<ApiService>()),
+  );
+
+  // Configs repositories
+  serviceLocator.registerLazySingleton<ConfigsRepository>(
+    () => ConfigsRepositoryImpl(
+      remoteDataSource: serviceLocator<ConfigsRemoteDataSource>(),
+    ),
+  );
+
   // Profile repositories  
   serviceLocator.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(
@@ -196,6 +215,18 @@ Future<void> initializeDependencies({
   serviceLocator.registerLazySingleton<SessionsBloc>(
     () => SessionsBloc(
       sessionsRepository: serviceLocator<SessionsRepository>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<ConfigsBloc>(
+    () => ConfigsBloc(
+      repository: serviceLocator<ConfigsRepository>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<ConfigEntitiesBloc>(
+    () => ConfigEntitiesBloc(
+      repository: serviceLocator<ConfigsRepository>(),
     ),
   );
 

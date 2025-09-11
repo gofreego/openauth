@@ -7,6 +7,7 @@ import '../../../dashboard/dashboard.dart';
 import '../../../users/users.dart';
 import '../../../permissions/permissions.dart';
 import '../../../groups/groups.dart';
+import '../../../configs/configs.dart';
 import '../../../settings/settings.dart';
 
 class HomePage extends StatefulWidget {
@@ -90,6 +91,8 @@ class _HomePageState extends State<HomePage> {
         return const PermissionsPage();
       case NavigationSection.groups:
         return const GroupsPage();
+      case NavigationSection.configs:
+        return const ConfigsPage();
       case NavigationSection.settings:
         return const SettingsPage();
     }

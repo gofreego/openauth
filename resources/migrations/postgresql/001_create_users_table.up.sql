@@ -43,7 +43,6 @@ INSERT INTO users (
     uuid,
     name,
     username,
-    email,
     password_hash,
     phone_verified,
     is_active,
@@ -56,8 +55,7 @@ INSERT INTO users (
     gen_random_uuid(),
     'Administrator',
     'admin',
-    '$2a$12$bMavjNGg74RQJdNa.n1VpeZgcTjtEcuGi7Pkg1JLP2MFg0qL0PmFi',  -- password is 'admin123'
-    true,
+    '$2y$12$3pN3etceVLVpwlrQQXUHiOKkk7xBpI3WaGXr5IlFMu0dd9lEPwoWW',  -- password is 'admin123'
     false,
     true,
     false,

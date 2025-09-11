@@ -2537,7 +2537,7 @@
           "title": "For complex JSON objects"
         },
         "metadata": {
-          "type": "object",
+          "type": "string",
           "title": "New metadata (optional)"
         }
       },
@@ -2692,14 +2692,6 @@
       },
       "additionalProperties": {}
     },
-    "protobufNullValue": {
-      "type": "string",
-      "enum": [
-        "NULL_VALUE"
-      ],
-      "default": "NULL_VALUE",
-      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\nThe JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
-    },
     "rpcStatus": {
       "type": "object",
       "properties": {
@@ -2840,7 +2832,7 @@
           "title": "Type of the configuration value"
         },
         "metadata": {
-          "type": "object",
+          "type": "string",
           "title": "Additional metadata as JSON"
         },
         "createdBy": {
@@ -2985,7 +2977,7 @@
           "title": "Type of the configuration value"
         },
         "metadata": {
-          "type": "object",
+          "type": "string",
           "title": "Additional metadata"
         }
       },

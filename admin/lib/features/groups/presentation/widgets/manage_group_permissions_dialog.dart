@@ -28,7 +28,7 @@ class _ManageGroupPermissionsDialogState
     extends State<ManageGroupPermissionsDialog> {
   String _searchQuery = '';
   List<Permission> _availablePermissions = [];
-  List<EffectivePermission> _groupPermissions = [];
+  final List<EffectivePermission> _groupPermissions = [];
   Set<Int64> selectedPermissions =
       <Int64>{}; // Track selected permissions to add
   Set<Int64> selectedRemovePermissions =
@@ -109,7 +109,7 @@ class _ManageGroupPermissionsDialogState
                   CircleAvatar(
                     radius: 20,
                     backgroundColor: theme.colorScheme.primary,
-                    child: Icon(
+                    child: const Icon(
                       Icons.group,
                       color: Colors.white,
                     ),

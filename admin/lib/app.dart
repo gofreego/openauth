@@ -21,6 +21,8 @@ import 'features/groups/presentation/bloc/groups_bloc.dart';
 import 'features/groups/presentation/bloc/group_permissions_bloc.dart';
 import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/sessions/presentation/bloc/sessions_bloc.dart';
+import 'features/configs/presentation/bloc/configs_bloc.dart';
+import 'features/configs/presentation/bloc/config_entities_bloc.dart';
 
 class OpenAuthAdmin extends StatefulWidget {
   const OpenAuthAdmin({super.key});
@@ -123,6 +125,12 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
         ),
         BlocProvider<SessionsBloc>(
           create: (context) => serviceLocator<SessionsBloc>(),
+        ),
+        BlocProvider<ConfigsBloc>(
+          create: (context) => serviceLocator<ConfigsBloc>(),
+        ),
+        BlocProvider<ConfigEntitiesBloc>(
+          create: (context) => serviceLocator<ConfigEntitiesBloc>(),
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
