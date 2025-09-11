@@ -263,7 +263,7 @@ class _UserProfilesDialogContentState
           },
           child: Builder(
             builder: (context) => CreateEditProfileDialog(
-              userUuid: widget.user.uuid,
+              userId: widget.user.id,
             ),
           ),
         ),
@@ -294,7 +294,7 @@ class _UserProfilesDialogContentState
           },
           child: Builder(
             builder: (context) => CreateEditProfileDialog(
-              userUuid: widget.user.uuid,
+              userId: widget.user.id,
               profile: profile,
             ),
           ),
@@ -309,7 +309,7 @@ class _UserProfilesDialogContentState
       builder: (context) => BlocProvider(
         create: (context) => serviceLocator<ProfilesBloc>(),
         child: CreateEditProfileDialog(
-          userUuid: widget.user.uuid,
+          userId: widget.user.id,
           profile: profile,
           isViewMode: true,
         ),

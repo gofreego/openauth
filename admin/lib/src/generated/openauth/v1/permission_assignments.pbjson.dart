@@ -12,13 +12,13 @@ import 'dart:typed_data' as $typed_data;
 const AssignPermissionsToGroupRequest$json = const {
   '1': 'AssignPermissionsToGroupRequest',
   '2': const [
-    const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '10': 'groupId'},
-    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
+    const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'groupId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '8': const {}, '10': 'permissionsIds'},
   ],
 };
 
 /// Descriptor for `AssignPermissionsToGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignPermissionsToGroupRequestDescriptor = $convert.base64Decode('Ch9Bc3NpZ25QZXJtaXNzaW9uc1RvR3JvdXBSZXF1ZXN0EhkKCGdyb3VwX2lkGAEgASgDUgdncm91cElkEicKD3Blcm1pc3Npb25zX2lkcxgCIAMoA1IOcGVybWlzc2lvbnNJZHM=');
+final $typed_data.Uint8List assignPermissionsToGroupRequestDescriptor = $convert.base64Decode('Ch9Bc3NpZ25QZXJtaXNzaW9uc1RvR3JvdXBSZXF1ZXN0EiIKCGdyb3VwX2lkGAEgASgDQgf6QgQiAiAAUgdncm91cElkEjkKD3Blcm1pc3Npb25zX2lkcxgCIAMoA0IQ+kINkgEKCAEQZCIEIgIgAFIOcGVybWlzc2lvbnNJZHM=');
 @$core.Deprecated('Use assignPermissionsToGroupResponseDescriptor instead')
 const AssignPermissionsToGroupResponse$json = const {
   '1': 'AssignPermissionsToGroupResponse',
@@ -33,13 +33,13 @@ final $typed_data.Uint8List assignPermissionsToGroupResponseDescriptor = $conver
 const RemovePermissionsFromGroupRequest$json = const {
   '1': 'RemovePermissionsFromGroupRequest',
   '2': const [
-    const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '10': 'groupId'},
-    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
+    const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'groupId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '8': const {}, '10': 'permissionsIds'},
   ],
 };
 
 /// Descriptor for `RemovePermissionsFromGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removePermissionsFromGroupRequestDescriptor = $convert.base64Decode('CiFSZW1vdmVQZXJtaXNzaW9uc0Zyb21Hcm91cFJlcXVlc3QSGQoIZ3JvdXBfaWQYASABKANSB2dyb3VwSWQSJwoPcGVybWlzc2lvbnNfaWRzGAIgAygDUg5wZXJtaXNzaW9uc0lkcw==');
+final $typed_data.Uint8List removePermissionsFromGroupRequestDescriptor = $convert.base64Decode('CiFSZW1vdmVQZXJtaXNzaW9uc0Zyb21Hcm91cFJlcXVlc3QSIgoIZ3JvdXBfaWQYASABKANCB/pCBCICIABSB2dyb3VwSWQSOQoPcGVybWlzc2lvbnNfaWRzGAIgAygDQhD6Qg2SAQoIARBkIgQiAiAAUg5wZXJtaXNzaW9uc0lkcw==');
 @$core.Deprecated('Use removePermissionsFromGroupResponseDescriptor instead')
 const RemovePermissionsFromGroupResponse$json = const {
   '1': 'RemovePermissionsFromGroupResponse',
@@ -55,12 +55,12 @@ final $typed_data.Uint8List removePermissionsFromGroupResponseDescriptor = $conv
 const ListGroupPermissionsRequest$json = const {
   '1': 'ListGroupPermissionsRequest',
   '2': const [
-    const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '10': 'groupId'},
+    const {'1': 'group_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'groupId'},
   ],
 };
 
 /// Descriptor for `ListGroupPermissionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listGroupPermissionsRequestDescriptor = $convert.base64Decode('ChtMaXN0R3JvdXBQZXJtaXNzaW9uc1JlcXVlc3QSGQoIZ3JvdXBfaWQYASABKANSB2dyb3VwSWQ=');
+final $typed_data.Uint8List listGroupPermissionsRequestDescriptor = $convert.base64Decode('ChtMaXN0R3JvdXBQZXJtaXNzaW9uc1JlcXVlc3QSIgoIZ3JvdXBfaWQYASABKANCB/pCBCICIABSB2dyb3VwSWQ=');
 @$core.Deprecated('Use listGroupPermissionsResponseDescriptor instead')
 const ListGroupPermissionsResponse$json = const {
   '1': 'ListGroupPermissionsResponse',
@@ -75,9 +75,9 @@ final $typed_data.Uint8List listGroupPermissionsResponseDescriptor = $convert.ba
 const AssignPermissionsToUserRequest$json = const {
   '1': 'AssignPermissionsToUserRequest',
   '2': const [
-    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
-    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
-    const {'1': 'expires_at', '3': 3, '4': 1, '5': 3, '9': 0, '10': 'expiresAt', '17': true},
+    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'userId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '8': const {}, '10': 'permissionsIds'},
+    const {'1': 'expires_at', '3': 3, '4': 1, '5': 3, '8': const {}, '9': 0, '10': 'expiresAt', '17': true},
   ],
   '8': const [
     const {'1': '_expires_at'},
@@ -85,7 +85,7 @@ const AssignPermissionsToUserRequest$json = const {
 };
 
 /// Descriptor for `AssignPermissionsToUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List assignPermissionsToUserRequestDescriptor = $convert.base64Decode('Ch5Bc3NpZ25QZXJtaXNzaW9uc1RvVXNlclJlcXVlc3QSFwoHdXNlcl9pZBgBIAEoA1IGdXNlcklkEicKD3Blcm1pc3Npb25zX2lkcxgCIAMoA1IOcGVybWlzc2lvbnNJZHMSIgoKZXhwaXJlc19hdBgDIAEoA0gAUglleHBpcmVzQXSIAQFCDQoLX2V4cGlyZXNfYXQ=');
+final $typed_data.Uint8List assignPermissionsToUserRequestDescriptor = $convert.base64Decode('Ch5Bc3NpZ25QZXJtaXNzaW9uc1RvVXNlclJlcXVlc3QSIAoHdXNlcl9pZBgBIAEoA0IH+kIEIgIgAFIGdXNlcklkEjkKD3Blcm1pc3Npb25zX2lkcxgCIAMoA0IQ+kINkgEKCAEQZCIEIgIgAFIOcGVybWlzc2lvbnNJZHMSKwoKZXhwaXJlc19hdBgDIAEoA0IH+kIEIgIoAEgAUglleHBpcmVzQXSIAQFCDQoLX2V4cGlyZXNfYXQ=');
 @$core.Deprecated('Use assignPermissionsToUserResponseDescriptor instead')
 const AssignPermissionsToUserResponse$json = const {
   '1': 'AssignPermissionsToUserResponse',
@@ -100,13 +100,13 @@ final $typed_data.Uint8List assignPermissionsToUserResponseDescriptor = $convert
 const RemovePermissionsFromUserRequest$json = const {
   '1': 'RemovePermissionsFromUserRequest',
   '2': const [
-    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
-    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '10': 'permissionsIds'},
+    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'userId'},
+    const {'1': 'permissions_ids', '3': 2, '4': 3, '5': 3, '8': const {}, '10': 'permissionsIds'},
   ],
 };
 
 /// Descriptor for `RemovePermissionsFromUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List removePermissionsFromUserRequestDescriptor = $convert.base64Decode('CiBSZW1vdmVQZXJtaXNzaW9uc0Zyb21Vc2VyUmVxdWVzdBIXCgd1c2VyX2lkGAEgASgDUgZ1c2VySWQSJwoPcGVybWlzc2lvbnNfaWRzGAIgAygDUg5wZXJtaXNzaW9uc0lkcw==');
+final $typed_data.Uint8List removePermissionsFromUserRequestDescriptor = $convert.base64Decode('CiBSZW1vdmVQZXJtaXNzaW9uc0Zyb21Vc2VyUmVxdWVzdBIgCgd1c2VyX2lkGAEgASgDQgf6QgQiAiAAUgZ1c2VySWQSOQoPcGVybWlzc2lvbnNfaWRzGAIgAygDQhD6Qg2SAQoIARBkIgQiAiAAUg5wZXJtaXNzaW9uc0lkcw==');
 @$core.Deprecated('Use removePermissionsFromUserResponseDescriptor instead')
 const RemovePermissionsFromUserResponse$json = const {
   '1': 'RemovePermissionsFromUserResponse',
@@ -122,12 +122,12 @@ final $typed_data.Uint8List removePermissionsFromUserResponseDescriptor = $conve
 const ListUserPermissionsRequest$json = const {
   '1': 'ListUserPermissionsRequest',
   '2': const [
-    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
+    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'userId'},
   ],
 };
 
 /// Descriptor for `ListUserPermissionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listUserPermissionsRequestDescriptor = $convert.base64Decode('ChpMaXN0VXNlclBlcm1pc3Npb25zUmVxdWVzdBIXCgd1c2VyX2lkGAEgASgDUgZ1c2VySWQ=');
+final $typed_data.Uint8List listUserPermissionsRequestDescriptor = $convert.base64Decode('ChpMaXN0VXNlclBlcm1pc3Npb25zUmVxdWVzdBIgCgd1c2VyX2lkGAEgASgDQgf6QgQiAiAAUgZ1c2VySWQ=');
 @$core.Deprecated('Use listUserPermissionsResponseDescriptor instead')
 const ListUserPermissionsResponse$json = const {
   '1': 'ListUserPermissionsResponse',
@@ -142,12 +142,12 @@ final $typed_data.Uint8List listUserPermissionsResponseDescriptor = $convert.bas
 const GetUserEffectivePermissionsRequest$json = const {
   '1': 'GetUserEffectivePermissionsRequest',
   '2': const [
-    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '10': 'userId'},
+    const {'1': 'user_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'userId'},
   ],
 };
 
 /// Descriptor for `GetUserEffectivePermissionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getUserEffectivePermissionsRequestDescriptor = $convert.base64Decode('CiJHZXRVc2VyRWZmZWN0aXZlUGVybWlzc2lvbnNSZXF1ZXN0EhcKB3VzZXJfaWQYASABKANSBnVzZXJJZA==');
+final $typed_data.Uint8List getUserEffectivePermissionsRequestDescriptor = $convert.base64Decode('CiJHZXRVc2VyRWZmZWN0aXZlUGVybWlzc2lvbnNSZXF1ZXN0EiAKB3VzZXJfaWQYASABKANCB/pCBCICIABSBnVzZXJJZA==');
 @$core.Deprecated('Use effectivePermissionDescriptor instead')
 const EffectivePermission$json = const {
   '1': 'EffectivePermission',

@@ -7,13 +7,13 @@ import '../bloc/profiles_bloc.dart';
 import '../bloc/profiles_state.dart';
 
 class CreateEditProfileDialog extends StatefulWidget {
-  final String userUuid;
+  final Int64 userId;
   final pb.UserProfile? profile;
   final bool isViewMode;
 
   const CreateEditProfileDialog({
     super.key,
-    required this.userUuid,
+    required this.userId,
     this.profile,
     this.isViewMode = false,
   });
@@ -439,7 +439,7 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
       } else {
         context.read<ProfilesBloc>().add(
           pb.CreateProfileRequest(
-            userUuid: widget.userUuid,
+            userId: widget.userId,
             profileName: _profileNameController.text.trim().isNotEmpty 
                 ? _profileNameController.text.trim() 
                 : null,

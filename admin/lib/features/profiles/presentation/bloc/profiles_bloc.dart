@@ -28,10 +28,6 @@ class ProfilesBloc extends Bloc<GeneratedMessage, ProfilesState> {
         (failure) => emit(ProfilesListError(failure)),
         (response) => emit(ProfilesLoaded(
           profiles: response.profiles,
-          totalCount: response.totalCount,
-          limit: response.limit,
-          offset: response.offset,
-          hasMore: response.hasMore,
         )),
       );
     } catch (e) {

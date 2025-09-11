@@ -1361,7 +1361,7 @@ class CheckEmailResponse extends $pb.GeneratedMessage {
 
 class CreateProfileRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateProfileRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userUuid')
+    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'profileName')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'firstName')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastName')
@@ -1383,7 +1383,7 @@ class CreateProfileRequest extends $pb.GeneratedMessage {
 
   CreateProfileRequest._() : super();
   factory CreateProfileRequest({
-    $core.String? userUuid,
+    $fixnum.Int64? userId,
     $core.String? profileName,
     $core.String? firstName,
     $core.String? lastName,
@@ -1402,8 +1402,8 @@ class CreateProfileRequest extends $pb.GeneratedMessage {
     $core.List<$core.int>? metadata,
   }) {
     final _result = create();
-    if (userUuid != null) {
-      _result.userUuid = userUuid;
+    if (userId != null) {
+      _result.userId = userId;
     }
     if (profileName != null) {
       _result.profileName = profileName;
@@ -1477,13 +1477,13 @@ class CreateProfileRequest extends $pb.GeneratedMessage {
   static CreateProfileRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get userUuid => $_getSZ(0);
+  $fixnum.Int64 get userId => $_getI64(0);
   @$pb.TagNumber(1)
-  set userUuid($core.String v) { $_setString(0, v); }
+  set userId($fixnum.Int64 v) { $_setInt64(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasUserUuid() => $_has(0);
+  $core.bool hasUserId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearUserUuid() => clearField(1);
+  void clearUserId() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get profileName => $_getSZ(1);
@@ -1771,36 +1771,16 @@ class ListUserProfilesRequest extends $pb.GeneratedMessage {
 class ListUserProfilesResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListUserProfilesResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..pc<UserProfile>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'profiles', $pb.PbFieldType.PM, subBuilder: UserProfile.create)
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalCount', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
-    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hasMore')
     ..hasRequiredFields = false
   ;
 
   ListUserProfilesResponse._() : super();
   factory ListUserProfilesResponse({
     $core.Iterable<UserProfile>? profiles,
-    $core.int? totalCount,
-    $core.int? limit,
-    $core.int? offset,
-    $core.bool? hasMore,
   }) {
     final _result = create();
     if (profiles != null) {
       _result.profiles.addAll(profiles);
-    }
-    if (totalCount != null) {
-      _result.totalCount = totalCount;
-    }
-    if (limit != null) {
-      _result.limit = limit;
-    }
-    if (offset != null) {
-      _result.offset = offset;
-    }
-    if (hasMore != null) {
-      _result.hasMore = hasMore;
     }
     return _result;
   }
@@ -1827,42 +1807,6 @@ class ListUserProfilesResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<UserProfile> get profiles => $_getList(0);
-
-  @$pb.TagNumber(2)
-  $core.int get totalCount => $_getIZ(1);
-  @$pb.TagNumber(2)
-  set totalCount($core.int v) { $_setSignedInt32(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasTotalCount() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearTotalCount() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.int get limit => $_getIZ(2);
-  @$pb.TagNumber(3)
-  set limit($core.int v) { $_setSignedInt32(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasLimit() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearLimit() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.int get offset => $_getIZ(3);
-  @$pb.TagNumber(4)
-  set offset($core.int v) { $_setSignedInt32(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasOffset() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearOffset() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.bool get hasMore => $_getBF(4);
-  @$pb.TagNumber(5)
-  set hasMore($core.bool v) { $_setBool(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasHasMore() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearHasMore() => clearField(5);
 }
 
 class UpdateProfileRequest extends $pb.GeneratedMessage {

@@ -241,7 +241,7 @@ class _GroupDetailsDialogState extends State<GroupDetailsDialog> {
       context.read<GroupsBloc>().add(
             UpdateGroupRequest(
               id: widget.group.id,
-              newName: _nameController.text.trim(),
+              name: _nameController.text.trim(),
               displayName: _displayNameController.text.trim(),
               description: _descriptionController.text.trim().isEmpty
                   ? null

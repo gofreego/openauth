@@ -15,21 +15,13 @@ class ProfilesLoading extends ProfilesState {}
 
 class ProfilesLoaded extends ProfilesState {
   final List<pb.UserProfile> profiles;
-  final int totalCount;
-  final int limit;
-  final int offset;
-  final bool hasMore;
 
   const ProfilesLoaded({
     required this.profiles,
-    required this.totalCount,
-    required this.limit,
-    required this.offset,
-    required this.hasMore,
   });
 
   @override
-  List<Object?> get props => [profiles, totalCount, limit, offset, hasMore];
+  List<Object?> get props => [profiles];
 }
 
 class ProfilesError extends ProfilesState {
