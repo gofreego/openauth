@@ -12,6 +12,7 @@ import "proto/openauth/v1/groups.proto";
 import "proto/openauth/v1/sessions.proto";
 import "proto/openauth/v1/permission_assignments.proto";
 import "proto/openauth/v1/stats.proto";
+import "proto/openauth/v1/configs.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
@@ -63,6 +64,10 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     {
       name: "Session Management"
       description: "User session management"
+    },
+    {
+      name: "Config Management"
+      description: "Configuration entity and key-value management"
     }
   ]
 };
@@ -809,6 +814,168 @@ service OpenAuth {
             tags: "Session Management"
             summary: "Terminate user session"
             description: "End a specific user session."
+        };
+    }
+
+    // Config Entity Management APIs
+    // These endpoints manage configuration entities that group related configuration settings
+
+    // CreateConfigEntity creates a new configuration entity
+    rpc CreateConfigEntity (CreateConfigEntityRequest) returns (ConfigEntity) {
+        option (google.api.http) = {
+            post: "/openauth/v1/config-entities"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Create a new config entity"
+            description: "Create a new configuration entity to group related configuration settings."
+        };
+    }
+
+    // UpdateConfigEntity updates an existing config entity
+    rpc UpdateConfigEntity (UpdateConfigEntityRequest) returns (ConfigEntity) {
+        option (google.api.http) = {
+            put: "/openauth/v1/config-entities/{id}"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Update config entity"
+            description: "Update an existing configuration entity."
+        };
+    }
+
+    // GetConfigEntity retrieves a specific config entity by ID
+    rpc GetConfigEntity (GetConfigEntityRequest) returns (ConfigEntity) {
+        option (google.api.http) = {
+            get: "/openauth/v1/config-entities/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Get config entity by ID"
+            description: "Retrieve a specific configuration entity by its unique identifier."
+        };
+    }
+
+    // ListConfigEntities lists config entities with optional filtering and pagination
+    rpc ListConfigEntities (ListConfigEntitiesRequest) returns (ListConfigEntitiesResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/config-entities"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "List config entities"
+            description: "Retrieve a list of configuration entities with optional filtering and pagination."
+        };
+    }
+
+    // DeleteConfigEntity deletes a config entity
+    rpc DeleteConfigEntity (DeleteConfigEntityRequest) returns (DeleteResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/config-entities/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Delete config entity"
+            description: "Delete a configuration entity and all its associated configs."
+        };
+    }
+
+    // Config Management APIs
+    // These endpoints manage individual configuration key-value pairs within entities
+
+    // CreateConfig creates a new configuration
+    rpc CreateConfig (CreateConfigRequest) returns (Config) {
+        option (google.api.http) = {
+            post: "/openauth/v1/configs"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Create a new config"
+            description: "Create a new configuration key-value pair within an entity."
+        };
+    }
+
+    // GetConfig retrieves a specific config by ID
+    rpc GetConfig (GetConfigRequest) returns (Config) {
+        option (google.api.http) = {
+            get: "/openauth/v1/configs/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Get config by ID"
+            description: "Retrieve a specific configuration by its unique identifier."
+        };
+    }
+
+    // GetConfigByKey retrieves a specific config by entity and key
+    rpc GetConfigByKey (GetConfigByKeyRequest) returns (Config) {
+        option (google.api.http) = {
+            get: "/openauth/v1/entities/{entity_id}/configs/{key}"
+            additional_bindings: {
+                get: "/openauth/v1/entities/by-name/{entity_name}/configs/{key}"
+            }
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Get config by entity and key"
+            description: "Retrieve a specific configuration by entity and key."
+        };
+    }
+
+    // GetConfigsByKeys retrieves multiple configs by keys within an entity
+    rpc GetConfigsByKeys (GetConfigsByKeysRequest) returns (GetConfigsByKeysResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/entities/{entity_id}/configs/batch"
+            body: "*"
+            additional_bindings: {
+                post: "/openauth/v1/entities/by-name/{entity_name}/configs/batch"
+                body: "*"
+            }
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Get multiple configs by keys"
+            description: "Retrieve multiple configurations by their keys within an entity."
+        };
+    }
+
+    // ListConfigs lists configs with optional filtering and pagination
+    rpc ListConfigs (ListConfigsRequest) returns (ListConfigsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/configs"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "List configs"
+            description: "Retrieve a list of configurations with optional filtering and pagination."
+        };
+    }
+
+    // UpdateConfig updates an existing config
+    rpc UpdateConfig (UpdateConfigRequest) returns (Config) {
+        option (google.api.http) = {
+            put: "/openauth/v1/configs/{id}"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Update config"
+            description: "Update an existing configuration."
+        };
+    }
+
+    // DeleteConfig deletes a config
+    rpc DeleteConfig (DeleteConfigRequest) returns (DeleteResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/configs/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Delete config"
+            description: "Delete a configuration."
         };
     }
 }

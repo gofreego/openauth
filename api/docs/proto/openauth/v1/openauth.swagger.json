@@ -51,6 +51,10 @@
       "description": "User session management"
     },
     {
+      "name": "Config Management",
+      "description": "Configuration entity and key-value management"
+    },
+    {
       "name": "OpenAuth"
     }
   ],
@@ -197,6 +201,582 @@
         ]
       }
     },
+    "/openauth/v1/config-entities": {
+      "get": {
+        "summary": "List config entities",
+        "description": "Retrieve a list of configuration entities with optional filtering and pagination.",
+        "operationId": "OpenAuth_ListConfigEntities",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListConfigEntitiesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Maximum number of entities to return (default: 10, max: 100)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Number of entities to skip for pagination (default: 0)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Search term to filter entities by name or display_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "all",
+            "description": "Return all entities without pagination",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      },
+      "post": {
+        "summary": "Create a new config entity",
+        "description": "Create a new configuration entity to group related configuration settings.",
+        "operationId": "OpenAuth_CreateConfigEntity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ConfigEntity"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateConfigEntityRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
+    "/openauth/v1/config-entities/{id}": {
+      "get": {
+        "summary": "Get config entity by ID",
+        "description": "Retrieve a specific configuration entity by its unique identifier.",
+        "operationId": "OpenAuth_GetConfigEntity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ConfigEntity"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the config entity to retrieve",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      },
+      "delete": {
+        "summary": "Delete config entity",
+        "description": "Delete a configuration entity and all its associated configs.",
+        "operationId": "OpenAuth_DeleteConfigEntity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the config entity to delete",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      },
+      "put": {
+        "summary": "Update config entity",
+        "description": "Update an existing configuration entity.",
+        "operationId": "OpenAuth_UpdateConfigEntity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ConfigEntity"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the config entity to update",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUpdateConfigEntityBody"
+            }
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
+    "/openauth/v1/configs": {
+      "get": {
+        "summary": "List configs",
+        "description": "Retrieve a list of configurations with optional filtering and pagination.",
+        "operationId": "OpenAuth_ListConfigs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListConfigsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entityId",
+            "description": "Entity ID to filter configs (optional)",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Maximum number of configs to return (default: 10, max: 100)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "description": "Number of configs to skip for pagination (default: 0)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "description": "Search term to filter configs by key or display_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "description": "Filter by type",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "all",
+            "description": "Return all configs without pagination",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      },
+      "post": {
+        "summary": "Create a new config",
+        "description": "Create a new configuration key-value pair within an entity.",
+        "operationId": "OpenAuth_CreateConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Config"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
+    "/openauth/v1/configs/{id}": {
+      "get": {
+        "summary": "Get config by ID",
+        "description": "Retrieve a specific configuration by its unique identifier.",
+        "operationId": "OpenAuth_GetConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Config"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the config to retrieve",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      },
+      "delete": {
+        "summary": "Delete config",
+        "description": "Delete a configuration.",
+        "operationId": "OpenAuth_DeleteConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the config to delete",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      },
+      "put": {
+        "summary": "Update config",
+        "description": "Update an existing configuration.",
+        "operationId": "OpenAuth_UpdateConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Config"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique identifier of the config to update",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUpdateConfigBody"
+            }
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
+    "/openauth/v1/entities/by-name/{entityName}/configs/batch": {
+      "post": {
+        "summary": "Get multiple configs by keys",
+        "description": "Retrieve multiple configurations by their keys within an entity.",
+        "operationId": "OpenAuth_GetConfigsByKeys2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetConfigsByKeysResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthGetConfigsByKeysBody"
+            }
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
+    "/openauth/v1/entities/by-name/{entityName}/configs/{key}": {
+      "get": {
+        "summary": "Get config by entity and key",
+        "description": "Retrieve a specific configuration by entity and key.",
+        "operationId": "OpenAuth_GetConfigByKey2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Config"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "key",
+            "description": "The configuration key",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
+    "/openauth/v1/entities/{entityId}/configs/batch": {
+      "post": {
+        "summary": "Get multiple configs by keys",
+        "description": "Retrieve multiple configurations by their keys within an entity.",
+        "operationId": "OpenAuth_GetConfigsByKeys",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetConfigsByKeysResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entityId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthGetConfigsByKeysBody"
+            }
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
+    "/openauth/v1/entities/{entityId}/configs/{key}": {
+      "get": {
+        "summary": "Get config by entity and key",
+        "description": "Retrieve a specific configuration by entity and key.",
+        "operationId": "OpenAuth_GetConfigByKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Config"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entityId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "key",
+            "description": "The configuration key",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "entityName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Config Management"
+        ]
+      }
+    },
     "/openauth/v1/groups": {
       "get": {
         "summary": "List groups",
@@ -242,7 +822,7 @@
           },
           {
             "name": "search",
-            "description": "Optional search query (searches name, display_name, description)",
+            "description": "Optional search query (searches name, display_name)",
             "in": "query",
             "required": false,
             "type": "string"
@@ -431,12 +1011,6 @@
             "required": true,
             "type": "string",
             "format": "int64"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
           },
           {
             "name": "limit",
@@ -1875,6 +2449,23 @@
       },
       "title": "CreateProfileRequest to create a new profile for a user"
     },
+    "OpenAuthGetConfigsByKeysBody": {
+      "type": "object",
+      "properties": {
+        "entityId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "List of configuration keys to retrieve"
+        }
+      },
+      "title": "Request to get multiple configs by keys within an entity"
+    },
     "OpenAuthRemovePermissionsFromGroupBody": {
       "type": "object",
       "properties": {
@@ -1915,6 +2506,66 @@
         }
       },
       "title": "RemoveUsersFromGroupRequest to remove users from a group"
+    },
+    "OpenAuthUpdateConfigBody": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "title": "New display name (optional)"
+        },
+        "description": {
+          "type": "string",
+          "title": "New description (optional)"
+        },
+        "stringValue": {
+          "type": "string"
+        },
+        "intValue": {
+          "type": "string",
+          "format": "int64"
+        },
+        "floatValue": {
+          "type": "number",
+          "format": "double"
+        },
+        "boolValue": {
+          "type": "boolean"
+        },
+        "jsonValue": {
+          "type": "string",
+          "title": "For complex JSON objects"
+        },
+        "metadata": {
+          "type": "object",
+          "title": "New metadata (optional)"
+        }
+      },
+      "title": "Request to update an existing config"
+    },
+    "OpenAuthUpdateConfigEntityBody": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "title": "New display name (optional)"
+        },
+        "description": {
+          "type": "string",
+          "title": "New description (optional)"
+        },
+        "readPerm": {
+          "type": "string",
+          "format": "int64",
+          "title": "New read permission ID (optional)"
+        },
+        "writePerm": {
+          "type": "string",
+          "format": "int64",
+          "title": "New write permission ID (optional)"
+        }
+      },
+      "title": "Request to update an existing config entity"
     },
     "OpenAuthUpdateGroupBody": {
       "type": "object",
@@ -2041,6 +2692,14 @@
       },
       "additionalProperties": {}
     },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\nThe JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
+    },
     "rpcStatus": {
       "type": "object",
       "properties": {
@@ -2132,6 +2791,205 @@
         }
       },
       "title": "CheckUsernameResponse"
+    },
+    "v1Config": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unique identifier for the config"
+        },
+        "entityId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the parent config entity"
+        },
+        "key": {
+          "type": "string",
+          "title": "Configuration key (unique within entity)"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional description explaining this configuration"
+        },
+        "stringValue": {
+          "type": "string"
+        },
+        "intValue": {
+          "type": "string",
+          "format": "int64"
+        },
+        "floatValue": {
+          "type": "number",
+          "format": "double"
+        },
+        "boolValue": {
+          "type": "boolean"
+        },
+        "jsonValue": {
+          "type": "string",
+          "title": "For complex JSON objects"
+        },
+        "type": {
+          "type": "string",
+          "title": "Type of the configuration value"
+        },
+        "metadata": {
+          "type": "object",
+          "title": "Additional metadata as JSON"
+        },
+        "createdBy": {
+          "type": "string",
+          "format": "int64",
+          "title": "User ID who created this config"
+        },
+        "updatedBy": {
+          "type": "string",
+          "format": "int64",
+          "title": "User ID who last updated this config"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the config was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the config was last updated"
+        }
+      },
+      "title": "Config represents a single configuration key-value pair within an entity"
+    },
+    "v1ConfigEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unique identifier for the config entity"
+        },
+        "name": {
+          "type": "string",
+          "title": "Unique name for the entity (e.g., \"database\", \"auth\", \"payment\")"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional description explaining the purpose of this entity"
+        },
+        "readPerm": {
+          "type": "string",
+          "format": "int64",
+          "title": "Permission ID required to read configs from this entity"
+        },
+        "writePerm": {
+          "type": "string",
+          "format": "int64",
+          "title": "Permission ID required to write/modify configs in this entity"
+        },
+        "createdBy": {
+          "type": "string",
+          "format": "int64",
+          "title": "User ID who created this entity"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the entity was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when the entity was last updated"
+        }
+      },
+      "title": "ConfigEntity represents a configuration entity that groups related configs"
+    },
+    "v1CreateConfigEntityRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Unique name for the entity"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional description"
+        },
+        "readPerm": {
+          "type": "string",
+          "format": "int64",
+          "title": "Permission ID required to read configs from this entity"
+        },
+        "writePerm": {
+          "type": "string",
+          "format": "int64",
+          "title": "Permission ID required to write/modify configs in this entity"
+        }
+      },
+      "title": "Request to create a new config entity"
+    },
+    "v1CreateConfigRequest": {
+      "type": "object",
+      "properties": {
+        "entityId": {
+          "type": "string",
+          "format": "int64",
+          "title": "ID of the parent config entity"
+        },
+        "key": {
+          "type": "string",
+          "title": "Configuration key (unique within entity)"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "Human-readable display name"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional description"
+        },
+        "stringValue": {
+          "type": "string"
+        },
+        "intValue": {
+          "type": "string",
+          "format": "int64"
+        },
+        "floatValue": {
+          "type": "number",
+          "format": "double"
+        },
+        "boolValue": {
+          "type": "boolean"
+        },
+        "jsonValue": {
+          "type": "string",
+          "title": "For complex JSON objects"
+        },
+        "type": {
+          "type": "string",
+          "title": "Type of the configuration value"
+        },
+        "metadata": {
+          "type": "object",
+          "title": "Additional metadata"
+        }
+      },
+      "title": "Request to create a new config"
     },
     "v1CreateGroupRequest": {
       "type": "object",
@@ -2234,6 +3092,20 @@
       },
       "title": "DeleteProfileResponse"
     },
+    "v1DeleteResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "Whether the operation was successful"
+        },
+        "message": {
+          "type": "string",
+          "title": "Optional message"
+        }
+      },
+      "title": "Generic response for delete operations"
+    },
     "v1DeleteUserResponse": {
       "type": "object",
       "properties": {
@@ -2295,6 +3167,19 @@
         }
       },
       "title": "EffectivePermission represents a permission that a user has either directly or through group membership"
+    },
+    "v1GetConfigsByKeysResponse": {
+      "type": "object",
+      "properties": {
+        "configs": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1Config"
+          },
+          "title": "Map of key to config"
+        }
+      },
+      "title": "Response containing multiple configs"
     },
     "v1GetGroupResponse": {
       "type": "object",
@@ -2412,6 +3297,39 @@
         }
       },
       "title": "GroupUser represents a user's membership in a group"
+    },
+    "v1ListConfigEntitiesResponse": {
+      "type": "object",
+      "properties": {
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ConfigEntity"
+          },
+          "title": "Array of config entities matching the request criteria"
+        }
+      },
+      "title": "Response containing a list of config entities"
+    },
+    "v1ListConfigsResponse": {
+      "type": "object",
+      "properties": {
+        "configs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Config"
+          },
+          "title": "Array of configs matching the request criteria"
+        },
+        "total": {
+          "type": "string",
+          "format": "int64",
+          "title": "Total number of configs (for pagination)"
+        }
+      },
+      "title": "Response containing a list of configs"
     },
     "v1ListGroupPermissionsResponse": {
       "type": "object",

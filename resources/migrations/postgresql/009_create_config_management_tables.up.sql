@@ -6,7 +6,6 @@ CREATE TABLE config_entities (
     name VARCHAR(255) NOT NULL UNIQUE,
     display_name VARCHAR(255),
     description TEXT,
-    status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'deprecated', 'maintenance')),
     read_perm INTEGER NOT NULL REFERENCES permissions(id) ON DELETE RESTRICT,
     write_perm INTEGER NOT NULL REFERENCES permissions(id) ON DELETE RESTRICT,
     created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,

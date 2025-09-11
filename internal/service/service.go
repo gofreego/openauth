@@ -177,6 +177,25 @@ type Repository interface {
 	GetTotalPermissions(ctx context.Context) (int64, error)
 	GetTotalGroups(ctx context.Context) (int64, error)
 	GetActiveUsers(ctx context.Context) (int64, error)
+
+	// Config Entity methods
+	CreateConfigEntity(ctx context.Context, entity *dao.ConfigEntity) (*dao.ConfigEntity, error)
+	GetConfigEntityByID(ctx context.Context, id int64) (*dao.ConfigEntity, error)
+	GetConfigEntityByName(ctx context.Context, name string) (*dao.ConfigEntity, error)
+	ListConfigEntities(ctx context.Context, filters *filter.ConfigEntityFilter) ([]*dao.ConfigEntity, error)
+	UpdateConfigEntity(ctx context.Context, id int64, updates map[string]interface{}) (*dao.ConfigEntity, error)
+	DeleteConfigEntity(ctx context.Context, id int64) error
+
+	// Config methods
+	CreateConfig(ctx context.Context, config *dao.Config) (*dao.Config, error)
+	GetConfigByID(ctx context.Context, id int64) (*dao.Config, error)
+	GetConfigByEntityAndKey(ctx context.Context, entityID int64, key string) (*dao.Config, error)
+	GetConfigByEntityNameAndKey(ctx context.Context, entityName, key string) (*dao.Config, error)
+	ListConfigs(ctx context.Context, filters *filter.ConfigFilter) ([]*dao.Config, int64, error)
+	UpdateConfig(ctx context.Context, id int64, updates map[string]interface{}) (*dao.Config, error)
+	DeleteConfig(ctx context.Context, id int64) error
+	GetConfigsByEntityAndKeys(ctx context.Context, entityID int64, keys []string) (map[string]*dao.Config, error)
+	GetConfigsByEntityNameAndKeys(ctx context.Context, entityName string, keys []string) (map[string]*dao.Config, error)
 }
 
 type Service struct {

@@ -173,10 +173,10 @@ func (m *CreateGroupRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 100 {
 		err := CreateGroupRequestValidationError{
 			field:  "Name",
-			reason: "value length must be between 3 and 50 runes, inclusive",
+			reason: "value length must be between 3 and 100 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -195,10 +195,10 @@ func (m *CreateGroupRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
+	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 100 {
 		err := CreateGroupRequestValidationError{
 			field:  "DisplayName",
-			reason: "value length must be between 3 and 50 runes, inclusive",
+			reason: "value length must be between 3 and 100 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -713,10 +713,10 @@ func (m *UpdateGroupRequest) validate(all bool) error {
 
 	if m.Name != nil {
 
-		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
+		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 100 {
 			err := UpdateGroupRequestValidationError{
 				field:  "Name",
-				reason: "value length must be between 3 and 50 runes, inclusive",
+				reason: "value length must be between 3 and 100 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -739,10 +739,10 @@ func (m *UpdateGroupRequest) validate(all bool) error {
 
 	if m.DisplayName != nil {
 
-		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
+		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 100 {
 			err := UpdateGroupRequestValidationError{
 				field:  "DisplayName",
-				reason: "value length must be between 3 and 50 runes, inclusive",
+				reason: "value length must be between 3 and 100 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -2028,17 +2028,6 @@ func (m *ListGroupUsersRequest) validate(all bool) error {
 		err := ListGroupUsersRequestValidationError{
 			field:  "GroupId",
 			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetSearch()) > 255 {
-		err := ListGroupUsersRequestValidationError{
-			field:  "Search",
-			reason: "value length must be at most 255 runes",
 		}
 		if !all {
 			return err

@@ -1,0 +1,326 @@
+syntax = "proto3";
+package v1;
+
+import "proto/common/sort.proto";
+import "validate/validate.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "./openauth_v1";
+
+// ConfigEntity represents a configuration entity that groups related configs
+message ConfigEntity {
+    // Unique identifier for the config entity
+    int64 id = 1;
+    
+    // Unique name for the entity (e.g., "database", "auth", "payment")
+    string name = 2;
+    
+    // Human-readable display name
+    optional string display_name = 3;
+    
+    // Optional description explaining the purpose of this entity
+    optional string description = 4;
+    
+    // Permission ID required to read configs from this entity
+    int64 read_perm = 5;
+    
+    // Permission ID required to write/modify configs in this entity
+    int64 write_perm = 6;
+    
+    // User ID who created this entity
+    int64 created_by = 7;
+    
+    // Unix timestamp when the entity was created
+    int64 created_at = 8;
+    
+    // Unix timestamp when the entity was last updated
+    int64 updated_at = 9;
+}
+
+// Config represents a single configuration key-value pair within an entity
+message Config {
+    // Unique identifier for the config
+    int64 id = 1;
+    
+    // ID of the parent config entity
+    int64 entity_id = 2;
+    
+    // Configuration key (unique within entity)
+    string key = 3;
+    
+    // Human-readable display name
+    optional string display_name = 4;
+    
+    // Optional description explaining this configuration
+    optional string description = 5;
+    
+    // Configuration value (stored as JSON)
+    oneof value {
+        string string_value = 6;
+        int64 int_value = 7;
+        double float_value = 8;
+        bool bool_value = 9;
+        string json_value = 10;  // For complex JSON objects
+    }
+    
+    // Type of the configuration value
+    string type = 11;
+    
+    // Additional metadata as JSON
+    google.protobuf.Struct metadata = 12;
+    
+    // User ID who created this config
+    int64 created_by = 13;
+    
+    // User ID who last updated this config
+    int64 updated_by = 14;
+    
+    // Unix timestamp when the config was created
+    int64 created_at = 15;
+    
+    // Unix timestamp when the config was last updated
+    int64 updated_at = 16;
+}
+
+// Request to create a new config entity
+message CreateConfigEntityRequest {
+    // Unique name for the entity
+    string name = 1 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 255,
+        pattern: "^[a-z][a-z0-9_-]*$"
+    }];
+    
+    // Human-readable display name
+    optional string display_name = 2 [(validate.rules).string.max_len = 255];
+    
+    // Optional description
+    optional string description = 3;
+    
+    // Permission ID required to read configs from this entity
+    int64 read_perm = 4 [(validate.rules).int64.gt = 0];
+    
+    // Permission ID required to write/modify configs in this entity
+    int64 write_perm = 5 [(validate.rules).int64.gt = 0];
+}
+
+// Request to get a specific config entity by ID
+message GetConfigEntityRequest {
+    // The unique identifier of the config entity to retrieve
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+// Request to get a specific config entity by name
+message GetConfigEntityByNameRequest {
+    // The unique name of the config entity to retrieve
+    string name = 1 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 255
+    }];
+}
+
+// Request to list config entities with optional filtering and pagination
+message ListConfigEntitiesRequest {
+    // Maximum number of entities to return (default: 10, max: 100)
+    int32 limit = 1 [(validate.rules).int32 = {gte: 1, lte: 100}];
+    
+    // Number of entities to skip for pagination (default: 0)
+    int32 offset = 2 [(validate.rules).int32.gte = 0];
+    
+    // Search term to filter entities by name or display_name
+    optional string search = 3 [(validate.rules).string.max_len = 255];
+    
+    // Return all entities without pagination
+    bool all = 4;
+}
+
+// Response containing a list of config entities
+message ListConfigEntitiesResponse {
+    // Array of config entities matching the request criteria
+    repeated ConfigEntity entities = 1;
+}
+
+// Request to update an existing config entity
+message UpdateConfigEntityRequest {
+    // The unique identifier of the config entity to update
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+    
+    // New display name (optional)
+    optional string display_name = 2 [(validate.rules).string.max_len = 255];
+    
+    // New description (optional)
+    optional string description = 3;
+
+    // New read permission ID (optional)
+    optional int64 read_perm = 4 [(validate.rules).int64.gt = 0];
+    
+    // New write permission ID (optional)
+    optional int64 write_perm = 5 [(validate.rules).int64.gt = 0];
+}
+
+// Request to delete a config entity
+message DeleteConfigEntityRequest {
+    // The unique identifier of the config entity to delete
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+// Request to create a new config
+message CreateConfigRequest {
+    // ID of the parent config entity
+    int64 entity_id = 1 [(validate.rules).int64.gt = 0];
+    
+    // Configuration key (unique within entity)
+    string key = 2 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 255,
+        pattern: "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+    }];
+    
+    // Human-readable display name
+    optional string display_name = 3 [(validate.rules).string.max_len = 255];
+    
+    // Optional description
+    optional string description = 4;
+    
+    // Configuration value
+    oneof value {
+        string string_value = 5;
+        int64 int_value = 6;
+        double float_value = 7;
+        bool bool_value = 8;
+        string json_value = 9;  // For complex JSON objects
+    }
+    
+    // Type of the configuration value
+    string type = 10 [(validate.rules).string = {
+        in: ["string", "int", "float", "bool", "json", "choice"]
+    }];
+    
+    // Additional metadata
+    optional google.protobuf.Struct metadata = 11;
+}
+
+// Request to get a specific config by ID
+message GetConfigRequest {
+    // The unique identifier of the config to retrieve
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+// Request to get a specific config by entity and key
+message GetConfigByKeyRequest {
+    // The entity ID or name
+    oneof entity_identifier {
+        int64 entity_id = 1 [(validate.rules).int64.gt = 0];
+        string entity_name = 2 [(validate.rules).string = {
+            min_len: 1,
+            max_len: 255
+        }];
+    }
+    
+    // The configuration key
+    string key = 3 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 255
+    }];
+}
+
+// Request to list configs with optional filtering and pagination
+message ListConfigsRequest {
+    // Entity ID to filter configs (optional)
+    optional int64 entity_id = 1 [(validate.rules).int64.gt = 0];
+    
+    // Maximum number of configs to return (default: 10, max: 100)
+    int32 limit = 2 [(validate.rules).int32 = {gte: 1, lte: 100}];
+    
+    // Number of configs to skip for pagination (default: 0)
+    int32 offset = 3 [(validate.rules).int32.gte = 0];
+    
+    // Search term to filter configs by key or display_name
+    optional string search = 4 [(validate.rules).string.max_len = 255];
+    
+    // Filter by type
+    optional string type = 5 [(validate.rules).string = {
+        in: ["string", "int", "float", "bool", "json", "choice"]
+    }];
+    
+    // Return all configs without pagination
+    bool all = 6;
+}
+
+// Response containing a list of configs
+message ListConfigsResponse {
+    // Array of configs matching the request criteria
+    repeated Config configs = 1;
+    
+    // Total number of configs (for pagination)
+    int64 total = 2;
+}
+
+// Request to update an existing config
+message UpdateConfigRequest {
+    // The unique identifier of the config to update
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+    
+    // New display name (optional)
+    optional string display_name = 2 [(validate.rules).string.max_len = 255];
+    
+    // New description (optional)
+    optional string description = 3;
+    
+    // New configuration value (optional)
+    oneof value {
+        string string_value = 4;
+        int64 int_value = 5;
+        double float_value = 6;
+        bool bool_value = 7;
+        string json_value = 8;  // For complex JSON objects
+    }
+    
+    // New metadata (optional)
+    optional google.protobuf.Struct metadata = 9;
+}
+
+// Request to delete a config
+message DeleteConfigRequest {
+    // The unique identifier of the config to delete
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+// Request to get multiple configs by keys within an entity
+message GetConfigsByKeysRequest {
+    // The entity ID or name
+    oneof entity_identifier {
+        int64 entity_id = 1 [(validate.rules).int64.gt = 0];
+        string entity_name = 2 [(validate.rules).string = {
+            min_len: 1,
+            max_len: 255
+        }];
+    }
+    
+    // List of configuration keys to retrieve
+    repeated string keys = 3 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {
+            string: {
+                min_len: 1,
+                max_len: 255
+            }
+        }
+    }];
+}
+
+// Response containing multiple configs
+message GetConfigsByKeysResponse {
+    // Map of key to config
+    map<string, Config> configs = 1;
+}
+
+// Generic response for delete operations
+message DeleteResponse {
+    // Whether the operation was successful
+    bool success = 1;
+    
+    // Optional message
+    optional string message = 2;
+}
