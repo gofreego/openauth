@@ -182,7 +182,7 @@ class _ConfigEntitiesTableState extends State<ConfigEntitiesTable> {
                           child: Center(
                             child: state.isLoadingMore
                                 ? const CircularProgressIndicator()
-                                : ElevatedButton(
+                                : OutlinedButton(
                                     onPressed: () => _loadMoreEntities(),
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(

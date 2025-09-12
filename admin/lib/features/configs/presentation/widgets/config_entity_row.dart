@@ -51,15 +51,14 @@ class ConfigEntityRow extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ElevatedButton.icon(
+              child: OutlinedButton(
                 onPressed: () => context.push(AppRoutes.comingSoon),
-                icon: const Icon(Icons.settings, size: 16),
-                label: const Text('Configs'),
-                style: ElevatedButton.styleFrom(
+                style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   minimumSize: const Size(0, 32),
                   textStyle: theme.textTheme.bodySmall,
                 ),
+                child: const Text('Configs'),
               ),
             ),
             SizedBox(
