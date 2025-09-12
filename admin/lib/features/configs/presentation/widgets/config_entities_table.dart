@@ -17,37 +17,22 @@ class ConfigEntitiesTable extends StatefulWidget {
 }
 
 class _ConfigEntitiesTableState extends State<ConfigEntitiesTable> {
-  final ScrollController _scrollController = ScrollController();
-
+  
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
+    // Removed automatic scroll loading - using manual "Load More" button instead
+    // _scrollController.addListener(_onScroll);
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_isBottom) {
-      final state = context.read<ConfigEntitiesBloc>().state;
-      if (state is ConfigEntitiesLoaded && !state.hasReachedMax && !state.isLoadingMore) {
-        context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
-          limit: PaginationConstants.defaultPageLimit,
-          offset: state.entities.length,
-        ));
-      }
+  void _loadMoreEntities() {
+    final state = context.read<ConfigEntitiesBloc>().state;
+    if (state is ConfigEntitiesLoaded && !state.hasReachedMax && !state.isLoadingMore) {
+      context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
+        limit: PaginationConstants.defaultPageLimit,
+        offset: state.entities.length,
+      ));
     }
-  }
-
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
   }
 
   @override
@@ -188,16 +173,30 @@ class _ConfigEntitiesTableState extends State<ConfigEntitiesTable> {
                   }
 
                   return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: state.entities.length + (state.isLoadingMore ? 1 : 0),
+                    itemCount: state.entities.length + (!state.hasReachedMax ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (index >= state.entities.length) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(child: CircularProgressIndicator()),
+                      // If this is the last item and we haven't reached max, show load more button
+                      if (index == state.entities.length) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Center(
+                            child: state.isLoadingMore
+                                ? const CircularProgressIndicator()
+                                : ElevatedButton(
+                                    onPressed: () => _loadMoreEntities(),
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 24.0,
+                                        vertical: 12.0,
+                                      ),
+                                    ),
+                                    child: const Text('Load More'),
+                                  ),
+                          ),
                         );
                       }
-
+                      
+                      // Regular entity row
                       final entity = state.entities[index];
                       return ConfigEntityRow(
                         entity: entity,
