@@ -47,15 +47,14 @@ message CreatePermissionRequest {
     // Examples: "users.create", "orders.approve", "reports.export"
     string name = 1 [(validate.rules).string = {
         min_len: 3,
-        max_len: 50,
-        pattern: "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        max_len: 100,
     }];
     
     // Human-readable display name
     // Examples: "Create Users", "Approve Orders", "Export Reports"
     string display_name = 2 [(validate.rules).string = {
         min_len: 3,
-        max_len: 50
+        max_len: 100
     }];
     
     // Optional detailed description explaining what this permission allows
@@ -100,14 +99,13 @@ message UpdatePermissionRequest {
     // Must be unique if provided
     optional string name = 2 [(validate.rules).string = {
         min_len: 3,
-        max_len: 50,
-        pattern: "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        max_len: 100,
     }];
     
     // New display name for the permission (optional)
     optional string display_name = 3 [(validate.rules).string = {
         min_len: 3,
-        max_len: 50
+        max_len: 100
     }];
     
     // New description for the permission (optional)

@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../src/generated/openauth/v1/configs.pb.dart';
+import 'package:fixnum/fixnum.dart';
+import 'package:openauth/src/generated/openauth/v1/configs.pb.dart';
+import '../../../../shared/shared.dart';
 import '../bloc/config_entities_bloc.dart';
+import '../bloc/config_entities_state.dart';
 
 class CreateConfigEntityDialog extends StatefulWidget {
-  const CreateConfigEntityDialog({super.key});
+  final VoidCallback? onEntityCreated;
+
+  const CreateConfigEntityDialog({
+    super.key,
+    this.onEntityCreated,
+  });
+
+  static void show(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => CreateConfigEntityDialog(
+        onEntityCreated: () {
+          ToastUtils.showSuccess('Config entity created successfully');
+        },
+      ),
+    );
+  }
 
   @override
   State<CreateConfigEntityDialog> createState() => _CreateConfigEntityDialogState();
@@ -15,83 +34,185 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
   final _nameController = TextEditingController();
   final _displayNameController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _readPermController = TextEditingController();
+  final _writePermController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _displayNameController.dispose();
     _descriptionController.dispose();
+    _readPermController.dispose();
+    _writePermController.dispose();
     super.dispose();
-  }
-
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final request = CreateConfigEntityRequest(
-        name: _nameController.text,
-        displayName: _displayNameController.text.isEmpty ? null : _displayNameController.text,
-        description: _descriptionController.text.isEmpty ? null : _descriptionController.text,
-      );
-
-      context.read<ConfigEntitiesBloc>().add(request);
-      Navigator.of(context).pop();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Create Config Entity'),
-      content: SizedBox(
-        width: 400,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name *',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a name';
-                  }
-                  return null;
-                },
+    return BlocListener<ConfigEntitiesBloc, ConfigEntitiesState>(
+      listener: (context, state) {
+        if (state is ConfigEntityCreated) {
+          Navigator.of(context).pop();
+          widget.onEntityCreated?.call();
+          ToastUtils.showSuccess(
+              'Config entity ${state.entity.name} created successfully');
+        } else if (state is ConfigEntityCreateError) {
+          ToastUtils.showError('Error: ${state.message}');
+        }
+      },
+      child: AlertDialog(
+        title: const Text('Add New Config Entity'),
+        content: SizedBox(
+          width: 500,
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.text_fields_outlined),
+                      helperText: 'Unique identifier for this entity',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a name';
+                      }
+                      if (value.length < 3) {
+                        return 'Name must be at least 3 characters';
+                      }
+                      // Validate that it only contains letters, numbers, and underscores
+                      if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
+                        return 'Name can only contain letters, numbers, and underscores';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _displayNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Display Name',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.label_outlined),
+                      helperText: 'Human-readable name for display',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a display name';
+                      }
+                      if (value.length < 3) {
+                        return 'Display name must be at least 3 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _descriptionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.description_outlined),
+                      helperText: 'Brief description of this entity',
+                    ),
+                    maxLines: 3,
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty && value.length < 10) {
+                        return 'Description must be at least 10 characters if provided';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _readPermController,
+                    decoration: const InputDecoration(
+                      labelText: 'Read Permission (Optional)',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.visibility_outlined),
+                      helperText: 'Permission level required to read this entity',
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        final intValue = int.tryParse(value);
+                        if (intValue == null || intValue < 0) {
+                          return 'Please enter a valid non-negative number';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _writePermController,
+                    decoration: const InputDecoration(
+                      labelText: 'Write Permission (Optional)',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.edit_outlined),
+                      helperText: 'Permission level required to modify this entity',
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        final intValue = int.tryParse(value);
+                        if (intValue == null || intValue < 0) {
+                          return 'Please enter a valid non-negative number';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _displayNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Display Name',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-              ),
-            ],
+            ),
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          BlocBuilder<ConfigEntitiesBloc, ConfigEntitiesState>(
+            builder: (context, state) {
+              final isLoading = state is ConfigEntitiesLoading;
+
+              return FilledButton(
+                onPressed: isLoading ? null : _createEntity,
+                child: isLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Create Entity'),
+              );
+            },
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(
-          onPressed: _submit,
-          child: const Text('Create'),
-        ),
-      ],
     );
+  }
+
+  void _createEntity() {
+    if (_formKey.currentState!.validate()) {
+      final readPerm = _readPermController.text.trim();
+      final writePerm = _writePermController.text.trim();
+
+      context.read<ConfigEntitiesBloc>().add(
+            CreateConfigEntityRequest(
+              name: _nameController.text.trim(),
+              displayName: _displayNameController.text.trim(),
+              description: _descriptionController.text.trim(),
+              readPerm: readPerm.isEmpty ? null : Int64(int.parse(readPerm)),
+              writePerm: writePerm.isEmpty ? null : Int64(int.parse(writePerm)),
+            ),
+          );
+    }
   }
 }

@@ -42,7 +42,7 @@ const CreatePermissionRequest$json = const {
 };
 
 /// Descriptor for `CreatePermissionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createPermissionRequestDescriptor = $convert.base64Decode('ChdDcmVhdGVQZXJtaXNzaW9uUmVxdWVzdBJBCgRuYW1lGAEgASgJQi36QipyKBADGDIyIl5bYS16XVthLXowLTlfXSpcLlthLXpdW2EtejAtOV9dKiRSBG5hbWUSLAoMZGlzcGxheV9uYW1lGAIgASgJQgn6QgZyBBADGDJSC2Rpc3BsYXlOYW1lEi8KC2Rlc2NyaXB0aW9uGAMgASgJQgj6QgVyAxj6AUgAUgtkZXNjcmlwdGlvbogBAUIOCgxfZGVzY3JpcHRpb24=');
+final $typed_data.Uint8List createPermissionRequestDescriptor = $convert.base64Decode('ChdDcmVhdGVQZXJtaXNzaW9uUmVxdWVzdBIdCgRuYW1lGAEgASgJQgn6QgZyBBADGGRSBG5hbWUSLAoMZGlzcGxheV9uYW1lGAIgASgJQgn6QgZyBBADGGRSC2Rpc3BsYXlOYW1lEi8KC2Rlc2NyaXB0aW9uGAMgASgJQgj6QgVyAxj6AUgAUgtkZXNjcmlwdGlvbogBAUIOCgxfZGVzY3JpcHRpb24=');
 @$core.Deprecated('Use getPermissionRequestDescriptor instead')
 const GetPermissionRequest$json = const {
   '1': 'GetPermissionRequest',
@@ -98,7 +98,7 @@ const UpdatePermissionRequest$json = const {
 };
 
 /// Descriptor for `UpdatePermissionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updatePermissionRequestDescriptor = $convert.base64Decode('ChdVcGRhdGVQZXJtaXNzaW9uUmVxdWVzdBIXCgJpZBgBIAEoA0IH+kIEIgIgAFICaWQSRgoEbmFtZRgCIAEoCUIt+kIqcigQAxgyMiJeW2Etel1bYS16MC05X10qXC5bYS16XVthLXowLTlfXSokSABSBG5hbWWIAQESMQoMZGlzcGxheV9uYW1lGAMgASgJQgn6QgZyBBADGDJIAVILZGlzcGxheU5hbWWIAQESLwoLZGVzY3JpcHRpb24YBCABKAlCCPpCBXIDGOgHSAJSC2Rlc2NyaXB0aW9uiAEBQgcKBV9uYW1lQg8KDV9kaXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9u');
+final $typed_data.Uint8List updatePermissionRequestDescriptor = $convert.base64Decode('ChdVcGRhdGVQZXJtaXNzaW9uUmVxdWVzdBIXCgJpZBgBIAEoA0IH+kIEIgIgAFICaWQSIgoEbmFtZRgCIAEoCUIJ+kIGcgQQAxhkSABSBG5hbWWIAQESMQoMZGlzcGxheV9uYW1lGAMgASgJQgn6QgZyBBADGGRIAVILZGlzcGxheU5hbWWIAQESLwoLZGVzY3JpcHRpb24YBCABKAlCCPpCBXIDGOgHSAJSC2Rlc2NyaXB0aW9uiAEBQgcKBV9uYW1lQg8KDV9kaXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9u');
 @$core.Deprecated('Use deletePermissionRequestDescriptor instead')
 const DeletePermissionRequest$json = const {
   '1': 'DeletePermissionRequest',

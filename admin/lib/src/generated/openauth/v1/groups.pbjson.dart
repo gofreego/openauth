@@ -43,7 +43,7 @@ const CreateGroupRequest$json = const {
 };
 
 /// Descriptor for `CreateGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createGroupRequestDescriptor = $convert.base64Decode('ChJDcmVhdGVHcm91cFJlcXVlc3QSMQoEbmFtZRgBIAEoCUId+kIachgQAxhkMhJeW2Etel1bYS16MC05Xy1dKiRSBG5hbWUSLAoMZGlzcGxheV9uYW1lGAIgASgJQgn6QgZyBBADGGRSC2Rpc3BsYXlOYW1lEi8KC2Rlc2NyaXB0aW9uGAMgASgJQgj6QgVyAxjoB0gAUgtkZXNjcmlwdGlvbogBARIdCgppc19kZWZhdWx0GAQgASgIUglpc0RlZmF1bHRCDgoMX2Rlc2NyaXB0aW9u');
+final $typed_data.Uint8List createGroupRequestDescriptor = $convert.base64Decode('ChJDcmVhdGVHcm91cFJlcXVlc3QSHQoEbmFtZRgBIAEoCUIJ+kIGcgQQAxhkUgRuYW1lEiwKDGRpc3BsYXlfbmFtZRgCIAEoCUIJ+kIGcgQQAxhkUgtkaXNwbGF5TmFtZRIvCgtkZXNjcmlwdGlvbhgDIAEoCUII+kIFcgMY6AdIAFILZGVzY3JpcHRpb26IAQESHQoKaXNfZGVmYXVsdBgEIAEoCFIJaXNEZWZhdWx0Qg4KDF9kZXNjcmlwdGlvbg==');
 @$core.Deprecated('Use createGroupResponseDescriptor instead')
 const CreateGroupResponse$json = const {
   '1': 'CreateGroupResponse',
@@ -92,7 +92,7 @@ const UpdateGroupRequest$json = const {
 };
 
 /// Descriptor for `UpdateGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updateGroupRequestDescriptor = $convert.base64Decode('ChJVcGRhdGVHcm91cFJlcXVlc3QSFwoCaWQYASABKANCB/pCBCICIABSAmlkEjYKBG5hbWUYBCABKAlCHfpCGnIYEAMYZDISXlthLXpdW2EtejAtOV8tXSokSABSBG5hbWWIAQESMQoMZGlzcGxheV9uYW1lGAUgASgJQgn6QgZyBBADGGRIAVILZGlzcGxheU5hbWWIAQESLwoLZGVzY3JpcHRpb24YBiABKAlCCPpCBXIDGOgHSAJSC2Rlc2NyaXB0aW9uiAEBQgcKBV9uYW1lQg8KDV9kaXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9u');
+final $typed_data.Uint8List updateGroupRequestDescriptor = $convert.base64Decode('ChJVcGRhdGVHcm91cFJlcXVlc3QSFwoCaWQYASABKANCB/pCBCICIABSAmlkEiIKBG5hbWUYBCABKAlCCfpCBnIEEAMYZEgAUgRuYW1liAEBEjEKDGRpc3BsYXlfbmFtZRgFIAEoCUIJ+kIGcgQQAxhkSAFSC2Rpc3BsYXlOYW1liAEBEi8KC2Rlc2NyaXB0aW9uGAYgASgJQgj6QgVyAxjoB0gCUgtkZXNjcmlwdGlvbogBAUIHCgVfbmFtZUIPCg1fZGlzcGxheV9uYW1lQg4KDF9kZXNjcmlwdGlvbg==');
 @$core.Deprecated('Use updateGroupResponseDescriptor instead')
 const UpdateGroupResponse$json = const {
   '1': 'UpdateGroupResponse',

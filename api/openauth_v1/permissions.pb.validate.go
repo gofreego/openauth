@@ -174,10 +174,10 @@ func (m *CreatePermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 100 {
 		err := CreatePermissionRequestValidationError{
 			field:  "Name",
-			reason: "value length must be between 3 and 50 runes, inclusive",
+			reason: "value length must be between 3 and 100 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -185,21 +185,10 @@ func (m *CreatePermissionRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if !_CreatePermissionRequest_Name_Pattern.MatchString(m.GetName()) {
-		err := CreatePermissionRequestValidationError{
-			field:  "Name",
-			reason: "value does not match regex pattern \"^[a-z][a-z0-9_]*\\\\.[a-z][a-z0-9_]*$\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
+	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 100 {
 		err := CreatePermissionRequestValidationError{
 			field:  "DisplayName",
-			reason: "value length must be between 3 and 50 runes, inclusive",
+			reason: "value length must be between 3 and 100 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -301,8 +290,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreatePermissionRequestValidationError{}
-
-var _CreatePermissionRequest_Name_Pattern = regexp.MustCompile("^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$")
 
 // Validate checks the field values on GetPermissionRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -744,21 +731,10 @@ func (m *UpdatePermissionRequest) validate(all bool) error {
 
 	if m.Name != nil {
 
-		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
+		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 100 {
 			err := UpdatePermissionRequestValidationError{
 				field:  "Name",
-				reason: "value length must be between 3 and 50 runes, inclusive",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if !_UpdatePermissionRequest_Name_Pattern.MatchString(m.GetName()) {
-			err := UpdatePermissionRequestValidationError{
-				field:  "Name",
-				reason: "value does not match regex pattern \"^[a-z][a-z0-9_]*\\\\.[a-z][a-z0-9_]*$\"",
+				reason: "value length must be between 3 and 100 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -770,10 +746,10 @@ func (m *UpdatePermissionRequest) validate(all bool) error {
 
 	if m.DisplayName != nil {
 
-		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 50 {
+		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 100 {
 			err := UpdatePermissionRequestValidationError{
 				field:  "DisplayName",
-				reason: "value length must be between 3 and 50 runes, inclusive",
+				reason: "value length must be between 3 and 100 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -877,8 +853,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdatePermissionRequestValidationError{}
-
-var _UpdatePermissionRequest_Name_Pattern = regexp.MustCompile("^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$")
 
 // Validate checks the field values on DeletePermissionRequest with the rules
 // defined in the proto definition for this message. If any rules are

@@ -13,6 +13,3 @@ export 'presentation/bloc/configs_state.dart';
 export 'presentation/bloc/config_entities_bloc.dart';
 export 'presentation/bloc/config_entities_state.dart';
 export 'presentation/pages/configs_page.dart';
-export 'presentation/widgets/configs_header.dart';
-export 'presentation/widgets/config_entities_tab.dart';
-export 'presentation/widgets/config_values_tab.dart';
