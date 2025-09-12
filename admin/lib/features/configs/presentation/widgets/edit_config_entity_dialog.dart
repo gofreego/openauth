@@ -19,15 +19,13 @@ class EditConfigEntityDialog extends StatefulWidget {
     this.isViewMode = false,
   });
 
-  static void show(BuildContext context, ConfigEntity entity) {
+  static void show(BuildContext context, ConfigEntity entity, {VoidCallback? onEntityUpdated}) {
     showDialog(
       context: context,
       builder: (context) => EditConfigEntityDialog(
         entity: entity,
         isViewMode: true,
-        onEntityUpdated: () {
-          // Optionally trigger a refresh or callback
-        },
+        onEntityUpdated: onEntityUpdated,
       ),
     );
   }
@@ -199,7 +197,6 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                             prefixIcon: Icon(Icons.text_fields_outlined),
                             helperText: 'Name cannot be changed after creation',
                           ),
-                          enabled: false, // Name is immutable
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
@@ -243,7 +240,7 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                         TextFormField(
                           controller: _readPermController,
                           decoration: const InputDecoration(
-                            labelText: 'Read Permission (Optional)',
+                            labelText: 'Read Permission',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.visibility_outlined),
                             helperText:
@@ -264,7 +261,7 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                         TextFormField(
                           controller: _writePermController,
                           decoration: const InputDecoration(
-                            labelText: 'Write Permission (Optional)',
+                            labelText: 'Write Permission',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.edit_outlined),
                             helperText:
@@ -343,6 +340,7 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
       context.read<ConfigEntitiesBloc>().add(
             UpdateConfigEntityRequest(
               id: widget.entity.id,
+              name: _nameController.text.trim(),
               displayName: _displayNameController.text.trim(),
               description: _descriptionController.text.trim(),
               readPerm: readPerm.isEmpty ? null : readPerm,

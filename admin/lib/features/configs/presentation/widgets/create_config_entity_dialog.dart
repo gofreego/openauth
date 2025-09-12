@@ -13,13 +13,11 @@ class CreateConfigEntityDialog extends StatefulWidget {
     this.onEntityCreated,
   });
 
-  static void show(BuildContext context) {
+  static void show(BuildContext context, {VoidCallback? onEntityCreated}) {
     showDialog(
       context: context,
       builder: (context) => CreateConfigEntityDialog(
-        onEntityCreated: () {
-          ToastUtils.showSuccess('Config entity created successfully');
-        },
+        onEntityCreated: onEntityCreated,
       ),
     );
   }
@@ -54,7 +52,7 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
           Navigator.of(context).pop();
           widget.onEntityCreated?.call();
           ToastUtils.showSuccess(
-              'Config entity ${state.entity.name} created successfully');
+              'Config entity created successfully');
         } else if (state is ConfigEntityCreateError) {
           ToastUtils.showError('Error: ${state.message}');
         }
@@ -130,7 +128,7 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
                   TextFormField(
                     controller: _readPermController,
                     decoration: const InputDecoration(
-                      labelText: 'Read Permission (Optional)',
+                      labelText: 'Read Permission',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.visibility_outlined),
                       helperText: 'Permission level required to read this entity',
@@ -147,7 +145,7 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
                   TextFormField(
                     controller: _writePermController,
                     decoration: const InputDecoration(
-                      labelText: 'Write Permission (Optional)',
+                      labelText: 'Write Permission',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.edit_outlined),
                       helperText: 'Permission level required to modify this entity',

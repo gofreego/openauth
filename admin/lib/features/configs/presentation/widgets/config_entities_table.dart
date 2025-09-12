@@ -88,54 +88,9 @@ class _ConfigEntitiesTableState extends State<ConfigEntitiesTable> {
           ),
           // Table content
           Expanded(
-            child: BlocConsumer<ConfigEntitiesBloc, ConfigEntitiesState>(
-              listener: (context, state) {
-                if (state is ConfigEntityCreated) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Config entity created successfully')),
-                  );
-                  // Refresh the list
-                  context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
-                    limit: PaginationConstants.defaultPageLimit,
-                    offset: 0,
-                  ));
-                } else if (state is ConfigEntityUpdated) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Config entity updated successfully')),
-                  );
-                  // Refresh the list
-                  context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
-                    limit: PaginationConstants.defaultPageLimit,
-                    offset: 0,
-                  ));
-                } else if (state is ConfigEntityDeleted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Config entity deleted successfully')),
-                  );
-                  // Refresh the list
-                  context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
-                    limit: PaginationConstants.defaultPageLimit,
-                    offset: 0,
-                  ));
-                } else if (state is ConfigEntitiesListError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error loading entities: ${state.message}')),
-                  );
-                } else if (state is ConfigEntityCreateError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error creating entity: ${state.message}')),
-                  );
-                } else if (state is ConfigEntityUpdateError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error updating entity: ${state.message}')),
-                  );
-                } else if (state is ConfigEntityDeleteError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error deleting entity: ${state.message}')),
-                  );
-                }
-              },
-              builder: (context, state) {
+            child: BlocBuilder<ConfigEntitiesBloc, ConfigEntitiesState>(
+                buildWhen: (previous, current) => current is ConfigEntitiesLoading || current is ConfigEntitiesLoaded || current is ConfigEntitiesListError,
+                builder: (context, state) {
                 if (state is ConfigEntitiesLoading) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -222,9 +177,9 @@ class _ConfigEntitiesTableState extends State<ConfigEntitiesTable> {
                 return const Center(
                   child: Text('Unknown state'),
                 );
-              },
+                },
+              ),
             ),
-          ),
         ],
       ),
     );

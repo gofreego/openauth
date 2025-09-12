@@ -13,6 +13,12 @@ class ConfigEntitiesInitial extends ConfigEntitiesState {}
 
 class ConfigEntitiesLoading extends ConfigEntitiesState {}
 
+class ConfigEntityCreating extends ConfigEntitiesState {}
+
+class ConfigEntityUpdating extends ConfigEntitiesState {}
+
+class ConfigEntityDeleting extends ConfigEntitiesState {}
+
 class ConfigEntitiesLoaded extends ConfigEntitiesState {
   final List<ConfigEntity> entities;
   final bool hasReachedMax;

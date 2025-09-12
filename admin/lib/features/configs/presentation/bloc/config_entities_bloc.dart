@@ -57,6 +57,7 @@ class ConfigEntitiesBloc extends Bloc<GeneratedMessage, ConfigEntitiesState> {
   }
 
   Future<void> _onCreateConfigEntity(CreateConfigEntityRequest event, Emitter<ConfigEntitiesState> emit) async {
+    emit(ConfigEntityCreating());
     final result = await repository.createConfigEntity(event);
     
     result.fold(
@@ -69,6 +70,7 @@ class ConfigEntitiesBloc extends Bloc<GeneratedMessage, ConfigEntitiesState> {
   }
 
   Future<void> _onUpdateConfigEntity(UpdateConfigEntityRequest event, Emitter<ConfigEntitiesState> emit) async {
+    emit(ConfigEntityUpdating());
     final result = await repository.updateConfigEntity(event);
     
     result.fold(
@@ -81,6 +83,7 @@ class ConfigEntitiesBloc extends Bloc<GeneratedMessage, ConfigEntitiesState> {
   }
 
   Future<void> _onDeleteConfigEntity(DeleteConfigEntityRequest event, Emitter<ConfigEntitiesState> emit) async {
+    emit(ConfigEntityDeleting());
     final result = await repository.deleteConfigEntity(event);
     
     result.fold(

@@ -51,13 +51,13 @@ func (s *Service) CreateConfigEntity(ctx context.Context, req *openauth_v1.Creat
 	readPerm, err := s.repo.GetPermissionByName(ctx, req.ReadPerm)
 	if err != nil || readPerm == nil {
 		logger.Warn(ctx, "Read permission name %s not found", req.ReadPerm)
-		return nil, status.Error(codes.NotFound, "read permission not found")
+		return nil, status.Error(codes.InvalidArgument, "invalid read permission name")
 	}
 
 	writePerm, err := s.repo.GetPermissionByName(ctx, req.WritePerm)
 	if err != nil || writePerm == nil {
 		logger.Warn(ctx, "Write permission name %s not found", req.WritePerm)
-		return nil, status.Error(codes.NotFound, "write permission not found")
+		return nil, status.Error(codes.InvalidArgument, "invalid write permission name")
 	}
 
 	entity := new(dao.ConfigEntity).FromCreateConfigEntityRequest(req, readPerm.ID, writePerm.ID, claims.UserID)
