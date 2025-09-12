@@ -70,15 +70,7 @@ class _ConfigEntitiesTableState extends State<ConfigEntitiesTable> {
             ),
             child: Row(
               children: [
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    'Name',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+               
                 Expanded(
                   flex: 2,
                   child: Text(
@@ -99,15 +91,7 @@ class _ConfigEntitiesTableState extends State<ConfigEntitiesTable> {
                 ),
                 Expanded(
                   child: Text(
-                    'Read Perm',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'Write Perm',
+                    'Configs',
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

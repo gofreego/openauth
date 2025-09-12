@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../src/generated/openauth/v1/configs.pb.dart';
+import '../../../../config/routes/app_routes.dart';
 
 class ConfigEntityRow extends StatelessWidget {
   final ConfigEntity entity;
@@ -30,29 +32,7 @@ class ConfigEntityRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    entity.name,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (entity.hasId())
-                    Text(
-                      'ID: ${entity.id}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                ],
-              ),
-            ),
+            
             Expanded(
               flex: 2,
               child: Text(
@@ -71,17 +51,15 @@ class ConfigEntityRow extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Text(
-                entity.hasReadPerm() ? entity.readPerm.toString() : '-',
-                style: theme.textTheme.bodyMedium,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                entity.hasWritePerm() ? entity.writePerm.toString() : '-',
-                style: theme.textTheme.bodyMedium,
-                overflow: TextOverflow.ellipsis,
+              child: ElevatedButton.icon(
+                onPressed: () => context.push(AppRoutes.comingSoon),
+                icon: const Icon(Icons.settings, size: 16),
+                label: const Text('Configs'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  minimumSize: const Size(0, 32),
+                  textStyle: theme.textTheme.bodySmall,
+                ),
               ),
             ),
             SizedBox(

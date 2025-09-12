@@ -1,86 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:openauth/shared/widgets/widgets.dart';
-import 'package:openauth/src/generated/openauth/v1/configs.pb.dart';
-import '../../../../core/constants/app_constants.dart';
-import '../widgets/config_page_header.dart';
-import '../widgets/config_entities_table.dart';
-import '../widgets/create_config_entity_dialog.dart';
-import '../bloc/config_entities_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-class ConfigsPage extends StatefulWidget {
-  const ConfigsPage({super.key});
-
-  @override
-  State<ConfigsPage> createState() => _ConfigsPageState();
-}
-
-class _ConfigsPageState extends State<ConfigsPage> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    // Load config entities when the page is initialized
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
-        limit: PaginationConstants.defaultPageLimit,
-        offset: 0,
-      ));
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
+class ComingSoonPage extends StatelessWidget {
+  const ComingSoonPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          ConfigPageHeader(
-            onAddEntity: () {
-              CreateConfigEntityDialog.show(context);
-            },
-          ),
-          const SizedBox(height: 32),
-
-          // Search functionality (for future enhancement)
-          CustomSearchBar(
-            hintText: 'Search by name, display name, or description...',
-            onSearch: (query) {
-              _performSearch(query);
-            },
-            onClear: () {
-              context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
-                limit: PaginationConstants.defaultPageLimit,
-                offset: 0,
-              ));
-            },
-          ),
-          const SizedBox(height: 16),
-          
-          // Config entities table
-          const Expanded(
-            child: ConfigEntitiesTable(),
-          ),
-        ],
+    final theme = Theme.of(context);
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Configs'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.construction,
+              size: 120,
+              color: theme.colorScheme.primary.withValues(alpha: 0.7),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'Coming Soon!',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'This feature is currently under development.',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Please check back later for updates.',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 48),
+            ElevatedButton.icon(
+              onPressed: () => context.pop(),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text('Go Back'),
+            ),
+          ],
+        ),
       ),
     );
-  }
-
-  void _performSearch(String query) {
-    final trimmedQuery = query.trim();
-    context.read<ConfigEntitiesBloc>().add(ListConfigEntitiesRequest(
-      limit: PaginationConstants.defaultPageLimit,
-      offset: 0,
-      search: trimmedQuery.isNotEmpty ? trimmedQuery : null,
-    ));
   }
 }

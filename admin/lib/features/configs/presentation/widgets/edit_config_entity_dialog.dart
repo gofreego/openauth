@@ -136,6 +136,7 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                           InfoRowWithCopy(
                             label: 'Name',
                             value: widget.entity.name,
+                            copy: true,
                           ),
                           InfoRowWithCopy(
                             label: 'Display Name',

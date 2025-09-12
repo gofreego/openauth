@@ -13,6 +13,7 @@ import 'core/bloc/theme_event.dart';
 import 'core/bloc/theme_state.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/auth/presentation/pages/sign_in_page.dart';
+import 'features/configs/presentation/pages/configs_page.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/users/presentation/bloc/users_bloc.dart';
 import 'features/users/presentation/bloc/user_permissions_bloc.dart';
@@ -52,6 +53,10 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
         GoRoute(
           path: AppRoutes.home,
           builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: AppRoutes.comingSoon,
+          builder: (context, state) => const ComingSoonPage(),
         ),
       ],
       redirect: (context, state) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:openauth/features/home/presentation/pages/home_page.dart';
+import 'package:openauth/features/configs/presentation/pages/configs_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -13,6 +14,13 @@ class AppRouter {
         name: 'home',
         builder: (context, state) {
           return const HomePage();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.comingSoon,
+        name: 'comingSoon',
+        builder: (context, state) {
+          return const ComingSoonPage();
         },
       ),
     ],
