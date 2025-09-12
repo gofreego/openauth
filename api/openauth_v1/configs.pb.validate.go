@@ -370,10 +370,10 @@ func (m *CreateConfigEntityRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
+	if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 255 {
 		err := CreateConfigEntityRequestValidationError{
 			field:  "DisplayName",
-			reason: "value length must be at most 255 runes",
+			reason: "value length must be between 3 and 255 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -381,7 +381,16 @@ func (m *CreateConfigEntityRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Description
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 10 || l > 255 {
+		err := CreateConfigEntityRequestValidationError{
+			field:  "Description",
+			reason: "value length must be between 10 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if l := utf8.RuneCountInString(m.GetReadPerm()); l < 1 || l > 100 {
 		err := CreateConfigEntityRequestValidationError{
@@ -1024,10 +1033,10 @@ func (m *UpdateConfigEntityRequest) validate(all bool) error {
 
 	if m.Name != nil {
 
-		if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 255 {
+		if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 255 {
 			err := UpdateConfigEntityRequestValidationError{
 				field:  "Name",
-				reason: "value length must be between 1 and 255 runes, inclusive",
+				reason: "value length must be between 3 and 255 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -1039,10 +1048,10 @@ func (m *UpdateConfigEntityRequest) validate(all bool) error {
 
 	if m.DisplayName != nil {
 
-		if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
+		if l := utf8.RuneCountInString(m.GetDisplayName()); l < 3 || l > 255 {
 			err := UpdateConfigEntityRequestValidationError{
 				field:  "DisplayName",
-				reason: "value length must be at most 255 runes",
+				reason: "value length must be between 3 and 255 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -1053,7 +1062,18 @@ func (m *UpdateConfigEntityRequest) validate(all bool) error {
 	}
 
 	if m.Description != nil {
-		// no validation rules for Description
+
+		if l := utf8.RuneCountInString(m.GetDescription()); l < 10 || l > 255 {
+			err := UpdateConfigEntityRequestValidationError{
+				field:  "Description",
+				reason: "value length must be between 10 and 255 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.ReadPerm != nil {
