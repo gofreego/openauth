@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/src/generated/openauth/v1/configs.pb.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import '../../../../shared/shared.dart';
@@ -153,26 +154,24 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                             value: widget.entity.hasReadPerm() 
                                 ? widget.entity.readPerm.toString() 
                                 : 'Not set',
+                                copy: true,
                           ),
                           InfoRowWithCopy(
                             label: 'Write Permission',
                             value: widget.entity.hasWritePerm() 
                                 ? widget.entity.writePerm.toString() 
                                 : 'Not set',
+                                copy: true,
                           ),
                           if (widget.entity.hasCreatedAt())
                             InfoRowWithCopy(
                               label: 'Created At',
-                              value: DateTime.fromMillisecondsSinceEpoch(
-                                      widget.entity.createdAt.toInt() * 1000)
-                                  .toString(),
+                              value: UtilityFunctions.formatDate(widget.entity.createdAt) ,
                             ),
                           if (widget.entity.hasUpdatedAt())
                             InfoRowWithCopy(
                               label: 'Updated At',
-                              value: DateTime.fromMillisecondsSinceEpoch(
-                                      widget.entity.updatedAt.toInt() * 1000)
-                                  .toString(),
+                              value: UtilityFunctions.formatDate(widget.entity.updatedAt) ,
                             ),
                         ],
                       ),

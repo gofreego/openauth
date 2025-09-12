@@ -84,10 +84,6 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
                       if (value.length < 3) {
                         return 'Name must be at least 3 characters';
                       }
-                      // Validate that it only contains letters, numbers, and underscores
-                      if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
-                        return 'Name can only contain letters, numbers, and underscores';
-                      }
                       return null;
                     },
                   ),
@@ -121,7 +117,10 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
                     ),
                     maxLines: 3,
                     validator: (value) {
-                      if (value != null && value.isNotEmpty && value.length < 10) {
+                      if (value == null || value.isEmpty) {
+                        return 'Description is required';
+                      }
+                      if (value.length < 10) {
                         return 'Description must be at least 10 characters if provided';
                       }
                       return null;
@@ -138,11 +137,8 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (value != null && value.isNotEmpty) {
-                        final intValue = int.tryParse(value);
-                        if (intValue == null || intValue < 0) {
-                          return 'Please enter a valid non-negative number';
-                        }
+                      if (value == null || value.isEmpty) {
+                        return "Read Permission is required";
                       }
                       return null;
                     },
@@ -158,11 +154,8 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (value != null && value.isNotEmpty) {
-                        final intValue = int.tryParse(value);
-                        if (intValue == null || intValue < 0) {
-                          return 'Please enter a valid non-negative number';
-                        }
+                      if (value == null || value.isEmpty) {
+                        return "Write Permission is required";
                       }
                       return null;
                     },
