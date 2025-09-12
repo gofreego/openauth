@@ -50,7 +50,7 @@ class ConfigEntityCreated extends ConfigEntitiesState {
 }
 
 class ConfigEntityUpdated extends ConfigEntitiesState {
-  final ConfigEntity entity;
+  final UpdateResponse entity;
 
   const ConfigEntityUpdated(this.entity);
 

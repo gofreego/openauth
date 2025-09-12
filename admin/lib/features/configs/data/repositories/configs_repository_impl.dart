@@ -40,7 +40,7 @@ class ConfigsRepositoryImpl implements ConfigsRepository {
   }
 
   @override
-  Future<Either<Failure, pb.ConfigEntity>> updateConfigEntity(pb.UpdateConfigEntityRequest request) async {
+  Future<Either<Failure, pb.UpdateResponse>> updateConfigEntity(pb.UpdateConfigEntityRequest request) async {
     try {
       final response = await remoteDataSource.updateConfigEntity(request);
       return Right(response);
@@ -90,7 +90,7 @@ class ConfigsRepositoryImpl implements ConfigsRepository {
   }
 
   @override
-  Future<Either<Failure, pb.Config>> updateConfig(pb.UpdateConfigRequest request) async {
+  Future<Either<Failure, pb.UpdateResponse>> updateConfig(pb.UpdateConfigRequest request) async {
     try {
       final response = await remoteDataSource.updateConfig(request);
       return Right(response);

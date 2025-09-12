@@ -49,13 +49,18 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.entity.name);
-    _displayNameController = TextEditingController(text: widget.entity.displayName);
-    _descriptionController = TextEditingController(text: widget.entity.description);
+    _displayNameController =
+        TextEditingController(text: widget.entity.displayName);
+    _descriptionController =
+        TextEditingController(text: widget.entity.description);
     _readPermController = TextEditingController(
-      text: widget.entity.hasReadPerm() ? widget.entity.readPerm.toString() : '',
+      text:
+          widget.entity.hasReadPerm() ? widget.entity.readPerm.toString() : '',
     );
     _writePermController = TextEditingController(
-      text: widget.entity.hasWritePerm() ? widget.entity.writePerm.toString() : '',
+      text: widget.entity.hasWritePerm()
+          ? widget.entity.writePerm.toString()
+          : '',
     );
     _isEditMode = !widget.isViewMode;
   }
@@ -73,14 +78,14 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return BlocListener<ConfigEntitiesBloc, ConfigEntitiesState>(
       listener: (context, state) {
         if (state is ConfigEntityUpdated) {
           Navigator.of(context).pop();
           widget.onEntityUpdated?.call();
           ToastUtils.showSuccess(
-              'Config entity ${state.entity.name} updated successfully');
+              'Config entity updated successfully');
         } else if (state is ConfigEntityUpdateError) {
           ToastUtils.showError('Error: ${state.message}');
         }
@@ -140,39 +145,41 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                           ),
                           InfoRowWithCopy(
                             label: 'Display Name',
-                            value: widget.entity.displayName.isEmpty 
-                                ? 'Not set' 
+                            value: widget.entity.displayName.isEmpty
+                                ? 'Not set'
                                 : widget.entity.displayName,
                           ),
                           InfoRowWithCopy(
                             label: 'Description',
-                            value: widget.entity.description.isEmpty 
-                                ? 'Not set' 
+                            value: widget.entity.description.isEmpty
+                                ? 'Not set'
                                 : widget.entity.description,
                           ),
                           InfoRowWithCopy(
                             label: 'Read Permission',
-                            value: widget.entity.hasReadPerm() 
-                                ? widget.entity.readPerm.toString() 
+                            value: widget.entity.hasReadPerm()
+                                ? widget.entity.readPerm.toString()
                                 : 'Not set',
-                                copy: true,
+                            copy: true,
                           ),
                           InfoRowWithCopy(
                             label: 'Write Permission',
-                            value: widget.entity.hasWritePerm() 
-                                ? widget.entity.writePerm.toString() 
+                            value: widget.entity.hasWritePerm()
+                                ? widget.entity.writePerm.toString()
                                 : 'Not set',
-                                copy: true,
+                            copy: true,
                           ),
                           if (widget.entity.hasCreatedAt())
                             InfoRowWithCopy(
                               label: 'Created At',
-                              value: UtilityFunctions.formatDate(widget.entity.createdAt) ,
+                              value: UtilityFunctions.formatDate(
+                                  widget.entity.createdAt),
                             ),
                           if (widget.entity.hasUpdatedAt())
                             InfoRowWithCopy(
                               label: 'Updated At',
-                              value: UtilityFunctions.formatDate(widget.entity.updatedAt) ,
+                              value: UtilityFunctions.formatDate(
+                                  widget.entity.updatedAt),
                             ),
                         ],
                       ),
@@ -224,7 +231,9 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                           ),
                           maxLines: 3,
                           validator: (value) {
-                            if (value != null && value.isNotEmpty && value.length < 10) {
+                            if (value != null &&
+                                value.isNotEmpty &&
+                                value.length < 10) {
                               return 'Description must be at least 10 characters if provided';
                             }
                             return null;
@@ -237,15 +246,16 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                             labelText: 'Read Permission (Optional)',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.visibility_outlined),
-                            helperText: 'Permission level required to read this entity',
+                            helperText:
+                                'Permission level required to read this entity',
                           ),
                           keyboardType: TextInputType.number,
                           validator: (value) {
-                            if (value != null && value.isNotEmpty) {
-                              final intValue = int.tryParse(value);
-                              if (intValue == null || intValue < 0) {
-                                return 'Please enter a valid non-negative number';
-                              }
+                            if (value == null || value.isEmpty) {
+                              return "Read Permission is required";
+                            }
+                            if (value.length < 3) {
+                              return 'Read Permission must be at least 3 characters';
                             }
                             return null;
                           },
@@ -257,15 +267,16 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                             labelText: 'Write Permission (Optional)',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.edit_outlined),
-                            helperText: 'Permission level required to modify this entity',
+                            helperText:
+                                'Permission level required to modify this entity',
                           ),
                           keyboardType: TextInputType.number,
                           validator: (value) {
-                            if (value != null && value.isNotEmpty) {
-                              final intValue = int.tryParse(value);
-                              if (intValue == null || intValue < 0) {
-                                return 'Please enter a valid non-negative number';
-                              }
+                            if (value == null || value.isEmpty) {
+                              return "Write Permission is required";
+                            }
+                            if (value.length < 3) {
+                              return 'Write Permission must be at least 3 characters';
                             }
                             return null;
                           },
@@ -292,11 +303,11 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
                   _nameController.text = widget.entity.name;
                   _displayNameController.text = widget.entity.displayName;
                   _descriptionController.text = widget.entity.description;
-                  _readPermController.text = widget.entity.hasReadPerm() 
-                      ? widget.entity.readPerm.toString() 
+                  _readPermController.text = widget.entity.hasReadPerm()
+                      ? widget.entity.readPerm.toString()
                       : '';
-                  _writePermController.text = widget.entity.hasWritePerm() 
-                      ? widget.entity.writePerm.toString() 
+                  _writePermController.text = widget.entity.hasWritePerm()
+                      ? widget.entity.writePerm.toString()
                       : '';
                 });
               },

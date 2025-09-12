@@ -6,14 +6,14 @@ abstract class ConfigsRemoteDataSource {
   Future<pb.ListConfigEntitiesResponse> getConfigEntities(pb.ListConfigEntitiesRequest request);
   Future<pb.ConfigEntity> getConfigEntity(pb.GetConfigEntityRequest request);
   Future<pb.ConfigEntity> createConfigEntity(pb.CreateConfigEntityRequest request);
-  Future<pb.ConfigEntity> updateConfigEntity(pb.UpdateConfigEntityRequest request);
+  Future<pb.UpdateResponse> updateConfigEntity(pb.UpdateConfigEntityRequest request);
   Future<pb.DeleteResponse> deleteConfigEntity(pb.DeleteConfigEntityRequest request);
 
   // Config methods
   Future<pb.ListConfigsResponse> getConfigs(pb.ListConfigsRequest request);
   Future<pb.Config> getConfig(pb.GetConfigRequest request);
   Future<pb.Config> createConfig(pb.CreateConfigRequest request);
-  Future<pb.Config> updateConfig(pb.UpdateConfigRequest request);
+  Future<pb.UpdateResponse> updateConfig(pb.UpdateConfigRequest request);
   Future<pb.DeleteResponse> deleteConfig(pb.DeleteConfigRequest request);
   Future<pb.GetConfigsByKeysResponse> getConfigsByKeys(pb.GetConfigsByKeysRequest request);
 }
@@ -56,12 +56,12 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   }
 
   @override
-  Future<pb.ConfigEntity> updateConfigEntity(pb.UpdateConfigEntityRequest request) async {
+  Future<pb.UpdateResponse> updateConfigEntity(pb.UpdateConfigEntityRequest request) async {
     final response = await apiService.put(
       '/openauth/v1/config-entities/${request.id}',
       data: request.toProto3Json(),
     );
-    var res = pb.ConfigEntity();
+    var res = pb.UpdateResponse();
     res.mergeFromProto3Json(response.data);
     return res;
   }
@@ -108,12 +108,12 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   }
 
   @override
-  Future<pb.Config> updateConfig(pb.UpdateConfigRequest request) async {
+  Future<pb.UpdateResponse> updateConfig(pb.UpdateConfigRequest request) async {
     final response = await apiService.put(
       '/openauth/v1/configs/${request.id}',
       data: request.toProto3Json(),
     );
-    var res = pb.Config();
+    var res = pb.UpdateResponse();
     res.mergeFromProto3Json(response.data);
     return res;
   }

@@ -54,7 +54,7 @@ class ConfigCreated extends ConfigsState {
 }
 
 class ConfigUpdated extends ConfigsState {
-  final Config config;
+  final UpdateResponse config;
 
   const ConfigUpdated(this.config);
 
