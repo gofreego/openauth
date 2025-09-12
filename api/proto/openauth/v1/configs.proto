@@ -15,16 +15,16 @@ message ConfigEntity {
     string name = 2;
     
     // Human-readable display name
-    optional string display_name = 3;
+    string display_name = 3;
     
     // Optional description explaining the purpose of this entity
-    optional string description = 4;
+    string description = 4;
     
     // Permission ID required to read configs from this entity
-    int64 read_perm = 5;
+    string read_perm = 5;
     
     // Permission ID required to write/modify configs in this entity
-    int64 write_perm = 6;
+    string write_perm = 6;
     
     // User ID who created this entity
     int64 created_by = 7;
@@ -34,6 +34,16 @@ message ConfigEntity {
     
     // Unix timestamp when the entity was last updated
     int64 updated_at = 9;
+}
+
+enum ValueType {
+    VALUE_TYPE_UNSPECIFIED = 0;
+    VALUE_TYPE_STRING = 1;
+    VALUE_TYPE_INT = 2;
+    VALUE_TYPE_FLOAT = 3;
+    VALUE_TYPE_BOOL = 4;
+    VALUE_TYPE_JSON = 5;
+    VALUE_TYPE_CHOICE = 6;
 }
 
 // Config represents a single configuration key-value pair within an entity
@@ -48,10 +58,10 @@ message Config {
     string key = 3;
     
     // Human-readable display name
-    optional string display_name = 4;
+    string display_name = 4;
     
     // Optional description explaining this configuration
-    optional string description = 5;
+    string description = 5;
     
     // Configuration value (stored as JSON)
     oneof value {
@@ -61,22 +71,21 @@ message Config {
         bool bool_value = 9;
         string json_value = 10;  // For complex JSON objects
     }
-    
     // Type of the configuration value
-    string type = 11;
-    
+    ValueType type = 11;
+
     // Additional metadata as JSON
     string metadata = 12;
-    
+
     // User ID who created this config
     int64 created_by = 13;
-    
+
     // User ID who last updated this config
     int64 updated_by = 14;
     
     // Unix timestamp when the config was created
     int64 created_at = 15;
-    
+
     // Unix timestamp when the config was last updated
     int64 updated_at = 16;
 }
@@ -86,21 +95,26 @@ message CreateConfigEntityRequest {
     // Unique name for the entity
     string name = 1 [(validate.rules).string = {
         min_len: 1,
-        max_len: 255,
-        pattern: "^[a-z][a-z0-9_-]*$"
+        max_len: 255
     }];
     
     // Human-readable display name
-    optional string display_name = 2 [(validate.rules).string.max_len = 255];
+    string display_name = 2 [(validate.rules).string.max_len = 255];
     
-    // Optional description
-    optional string description = 3;
+    // description
+    string description = 3;
     
     // Permission ID required to read configs from this entity
-    int64 read_perm = 4 [(validate.rules).int64.gt = 0];
+    string read_perm = 4 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 100
+    }];
     
     // Permission ID required to write/modify configs in this entity
-    int64 write_perm = 5 [(validate.rules).int64.gt = 0];
+    string write_perm = 5 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 100
+    }];
 }
 
 // Request to get a specific config entity by ID
@@ -144,17 +158,29 @@ message UpdateConfigEntityRequest {
     // The unique identifier of the config entity to update
     int64 id = 1 [(validate.rules).int64.gt = 0];
     
+    // New name (optional)
+    optional string name = 2 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 255
+    }];
+
     // New display name (optional)
-    optional string display_name = 2 [(validate.rules).string.max_len = 255];
-    
+    optional string display_name = 3 [(validate.rules).string.max_len = 255];
+
     // New description (optional)
-    optional string description = 3;
+    optional string description = 4;
 
     // New read permission ID (optional)
-    optional int64 read_perm = 4 [(validate.rules).int64.gt = 0];
+    optional string read_perm = 5 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 100
+    }];
     
     // New write permission ID (optional)
-    optional int64 write_perm = 5 [(validate.rules).int64.gt = 0];
+    optional string write_perm = 6 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 100
+    }];
 }
 
 // Request to delete a config entity
@@ -172,14 +198,13 @@ message CreateConfigRequest {
     string key = 2 [(validate.rules).string = {
         min_len: 1,
         max_len: 255,
-        pattern: "^[a-zA-Z][a-zA-Z0-9_.-]*$"
     }];
     
     // Human-readable display name
-    optional string display_name = 3 [(validate.rules).string.max_len = 255];
+    string display_name = 3 [(validate.rules).string.max_len = 255];
     
     // Optional description
-    optional string description = 4;
+    string description = 4;
     
     // Configuration value
     oneof value {
@@ -191,12 +216,45 @@ message CreateConfigRequest {
     }
     
     // Type of the configuration value
-    string type = 10 [(validate.rules).string = {
-        in: ["string", "int", "float", "bool", "json", "choice"]
-    }];
+    ValueType type = 10;
     
     // Additional metadata
     optional string metadata = 11;
+}
+
+// Request to update an existing config
+message UpdateConfigRequest {
+    // The unique identifier of the config to update
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+    
+    optional string name = 2 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 255,
+    }];
+
+    // New display name (optional)
+    optional string display_name = 3 [(validate.rules).string.max_len = 255];
+
+    // New description (optional)
+    optional string description = 4;
+
+    // New configuration value (optional)
+    oneof value {
+        string string_value = 5;
+        int64 int_value = 6;
+        double float_value = 7;
+        bool bool_value = 8;
+        string json_value = 9;  // For complex JSON objects
+    }
+    
+    // New metadata (optional)
+    optional string metadata = 10;
+}
+
+// Request to delete a config
+message DeleteConfigRequest {
+    // The unique identifier of the config to delete
+    int64 id = 1 [(validate.rules).int64.gt = 0];
 }
 
 // Request to get a specific config by ID
@@ -255,36 +313,6 @@ message ListConfigsResponse {
     int64 total = 2;
 }
 
-// Request to update an existing config
-message UpdateConfigRequest {
-    // The unique identifier of the config to update
-    int64 id = 1 [(validate.rules).int64.gt = 0];
-    
-    // New display name (optional)
-    optional string display_name = 2 [(validate.rules).string.max_len = 255];
-    
-    // New description (optional)
-    optional string description = 3;
-    
-    // New configuration value (optional)
-    oneof value {
-        string string_value = 4;
-        int64 int_value = 5;
-        double float_value = 6;
-        bool bool_value = 7;
-        string json_value = 8;  // For complex JSON objects
-    }
-    
-    // New metadata (optional)
-    optional string metadata = 9;
-}
-
-// Request to delete a config
-message DeleteConfigRequest {
-    // The unique identifier of the config to delete
-    int64 id = 1 [(validate.rules).int64.gt = 0];
-}
-
 // Request to get multiple configs by keys within an entity
 message GetConfigsByKeysRequest {
     // The entity ID or name
@@ -322,4 +350,14 @@ message DeleteResponse {
     
     // Optional message
     optional string message = 2;
+}
+
+message UpdateResponse {
+    bool success = 1;
+    optional string message = 2;
+}
+
+// for dart code options for choice type
+message Metadata {
+    repeated string options = 1;
 }

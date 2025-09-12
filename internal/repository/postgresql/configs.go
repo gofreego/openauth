@@ -15,7 +15,7 @@ import (
 // Config Entity Repository Methods
 
 // CreateConfigEntity creates a new config entity in the database
-func (r *Repository) CreateConfigEntity(ctx context.Context, entity *dao.ConfigEntity) (*dao.ConfigEntity, error) {
+func (r *Repository) CreateConfigEntity(ctx context.Context, entity *dao.ConfigEntity) error {
 	logger.Debug(ctx, "Creating config entity with name: %s", entity.Name)
 
 	query := `
@@ -36,11 +36,11 @@ func (r *Repository) CreateConfigEntity(ctx context.Context, entity *dao.ConfigE
 
 	if err != nil {
 		logger.Error(ctx, "Failed to create config entity: %v", err)
-		return nil, fmt.Errorf("failed to create config entity: %w", err)
+		return fmt.Errorf("failed to create config entity: %w", err)
 	}
 
 	logger.Debug(ctx, "Config entity created successfully with ID: %d", entity.ID)
-	return entity, nil
+	return nil
 }
 
 // GetConfigEntityByID retrieves a config entity by ID
@@ -49,9 +49,13 @@ func (r *Repository) GetConfigEntityByID(ctx context.Context, id int64) (*dao.Co
 
 	entity := &dao.ConfigEntity{}
 	query := `
-		SELECT id, name, display_name, description, read_perm, write_perm, created_by, created_at, updated_at
-		FROM config_entities
-		WHERE id = $1`
+		SELECT ce.id, ce.name, ce.display_name, ce.description, ce.read_perm, ce.write_perm, 
+		       rp.name as read_perm_name, wp.name as write_perm_name,
+		       ce.created_by, ce.created_at, ce.updated_at
+		FROM config_entities ce
+		LEFT JOIN permissions rp ON ce.read_perm = rp.id
+		LEFT JOIN permissions wp ON ce.write_perm = wp.id
+		WHERE ce.id = $1`
 
 	err := r.connManager.Primary().QueryRowContext(ctx, query, id).Scan(
 		&entity.ID,
@@ -60,6 +64,8 @@ func (r *Repository) GetConfigEntityByID(ctx context.Context, id int64) (*dao.Co
 		&entity.Description,
 		&entity.ReadPerm,
 		&entity.WritePerm,
+		&entity.ReadPermName,
+		&entity.WritePermName,
 		&entity.CreatedBy,
 		&entity.CreatedAt,
 		&entity.UpdatedAt,
@@ -84,9 +90,13 @@ func (r *Repository) GetConfigEntityByName(ctx context.Context, name string) (*d
 
 	entity := &dao.ConfigEntity{}
 	query := `
-		SELECT id, name, display_name, description, read_perm, write_perm, created_by, created_at, updated_at
-		FROM config_entities
-		WHERE name = $1`
+		SELECT ce.id, ce.name, ce.display_name, ce.description, ce.read_perm, ce.write_perm, 
+		       rp.name as read_perm_name, wp.name as write_perm_name,
+		       ce.created_by, ce.created_at, ce.updated_at
+		FROM config_entities ce
+		LEFT JOIN permissions rp ON ce.read_perm = rp.id
+		LEFT JOIN permissions wp ON ce.write_perm = wp.id
+		WHERE ce.name = $1`
 
 	err := r.connManager.Primary().QueryRowContext(ctx, query, name).Scan(
 		&entity.ID,
@@ -95,6 +105,8 @@ func (r *Repository) GetConfigEntityByName(ctx context.Context, name string) (*d
 		&entity.Description,
 		&entity.ReadPerm,
 		&entity.WritePerm,
+		&entity.ReadPermName,
+		&entity.WritePermName,
 		&entity.CreatedBy,
 		&entity.CreatedAt,
 		&entity.UpdatedAt,
@@ -123,21 +135,25 @@ func (r *Repository) ListConfigEntities(ctx context.Context, filters *filter.Con
 
 	// Build WHERE conditions
 	if filters.Search != nil && *filters.Search != "" {
-		conditions = append(conditions, fmt.Sprintf("(name ILIKE $%d OR display_name ILIKE $%d)", argIndex, argIndex))
+		conditions = append(conditions, fmt.Sprintf("(ce.name ILIKE $%d OR ce.display_name ILIKE $%d)", argIndex, argIndex))
 		args = append(args, "%"+*filters.Search+"%")
 		argIndex++
 	}
 
 	// Build query
 	query := `
-		SELECT id, name, display_name, description, read_perm, write_perm, created_by, created_at, updated_at
-		FROM config_entities`
+		SELECT ce.id, ce.name, ce.display_name, ce.description, ce.read_perm, ce.write_perm, 
+		       rp.name as read_perm_name, wp.name as write_perm_name,
+		       ce.created_by, ce.created_at, ce.updated_at
+		FROM config_entities ce
+		LEFT JOIN permissions rp ON ce.read_perm = rp.id
+		LEFT JOIN permissions wp ON ce.write_perm = wp.id`
 
 	if len(conditions) > 0 {
 		query += " WHERE " + strings.Join(conditions, " AND ")
 	}
 
-	query += " ORDER BY name ASC"
+	query += " ORDER BY ce.name ASC"
 
 	// Add pagination
 	if !filters.All {
@@ -162,6 +178,8 @@ func (r *Repository) ListConfigEntities(ctx context.Context, filters *filter.Con
 			&entity.Description,
 			&entity.ReadPerm,
 			&entity.WritePerm,
+			&entity.ReadPermName,
+			&entity.WritePermName,
 			&entity.CreatedBy,
 			&entity.CreatedAt,
 			&entity.UpdatedAt,
@@ -183,11 +201,11 @@ func (r *Repository) ListConfigEntities(ctx context.Context, filters *filter.Con
 }
 
 // UpdateConfigEntity updates a config entity
-func (r *Repository) UpdateConfigEntity(ctx context.Context, id int64, updates map[string]interface{}) (*dao.ConfigEntity, error) {
+func (r *Repository) UpdateConfigEntity(ctx context.Context, id int64, updates map[string]interface{}) error {
 	logger.Debug(ctx, "Updating config entity with ID: %d", id)
 
 	if len(updates) == 0 {
-		return r.GetConfigEntityByID(ctx, id)
+		return nil
 	}
 
 	// Build dynamic update query
@@ -212,34 +230,27 @@ func (r *Repository) UpdateConfigEntity(ctx context.Context, id int64, updates m
 	query := fmt.Sprintf(`
 		UPDATE config_entities
 		SET %s
-		WHERE id = $%d
-		RETURNING id, name, display_name, description, read_perm, write_perm, created_by, created_at, updated_at`,
+		WHERE id = $%d`,
 		strings.Join(setParts, ", "), argIndex)
 
 	entity := &dao.ConfigEntity{}
-	err := r.connManager.Primary().QueryRowContext(ctx, query, args...).Scan(
-		&entity.ID,
-		&entity.Name,
-		&entity.DisplayName,
-		&entity.Description,
-		&entity.ReadPerm,
-		&entity.WritePerm,
-		&entity.CreatedBy,
-		&entity.CreatedAt,
-		&entity.UpdatedAt,
-	)
+	res, err := r.connManager.Primary().ExecContext(ctx, query, args...)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			logger.Warn(ctx, "Config entity not found for update with ID: %d", id)
-			return nil, fmt.Errorf("config entity not found")
-		}
 		logger.Error(ctx, "Failed to update config entity: %v", err)
-		return nil, fmt.Errorf("failed to update config entity: %w", err)
+		return fmt.Errorf("failed to update config entity: %w", err)
 	}
-
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		logger.Error(ctx, "Failed to get rows affected: %v", err)
+		return fmt.Errorf("failed to verify update: %w", err)
+	}
+	if rowsAffected == 0 {
+		logger.Warn(ctx, "No config entity found to update with ID: %d", id)
+		return sql.ErrNoRows
+	}
 	logger.Debug(ctx, "Config entity updated successfully: %d", entity.ID)
-	return entity, nil
+	return nil
 }
 
 // DeleteConfigEntity deletes a config entity
@@ -271,7 +282,7 @@ func (r *Repository) DeleteConfigEntity(ctx context.Context, id int64) error {
 // Config Repository Methods
 
 // CreateConfig creates a new config in the database
-func (r *Repository) CreateConfig(ctx context.Context, config *dao.Config) (*dao.Config, error) {
+func (r *Repository) CreateConfig(ctx context.Context, config *dao.Config) error {
 	logger.Debug(ctx, "Creating config with key: %s for entity: %d", config.Key, config.EntityID)
 
 	query := `
@@ -295,11 +306,11 @@ func (r *Repository) CreateConfig(ctx context.Context, config *dao.Config) (*dao
 
 	if err != nil {
 		logger.Error(ctx, "Failed to create config: %v", err)
-		return nil, fmt.Errorf("failed to create config: %w", err)
+		return fmt.Errorf("failed to create config: %w", err)
 	}
 
 	logger.Debug(ctx, "Config created successfully with ID: %d", config.ID)
-	return config, nil
+	return nil
 }
 
 // GetConfigByID retrieves a config by ID
@@ -631,11 +642,11 @@ func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilt
 }
 
 // UpdateConfig updates a config
-func (r *Repository) UpdateConfig(ctx context.Context, id int64, updates map[string]interface{}) (*dao.Config, error) {
+func (r *Repository) UpdateConfig(ctx context.Context, id int64, updates map[string]interface{}) error {
 	logger.Debug(ctx, "Updating config with ID: %d", id)
 
 	if len(updates) == 0 {
-		return r.GetConfigByID(ctx, id)
+		return nil
 	}
 
 	// Build dynamic update query
@@ -660,37 +671,27 @@ func (r *Repository) UpdateConfig(ctx context.Context, id int64, updates map[str
 	query := fmt.Sprintf(`
 		UPDATE configs
 		SET %s
-		WHERE id = $%d
-		RETURNING id, entity_id, key, display_name, description, value, type, metadata, created_by, updated_by, created_at, updated_at`,
+		WHERE id = $%d`,
 		strings.Join(setParts, ", "), argIndex)
 
-	config := &dao.Config{}
-	err := r.connManager.Primary().QueryRowContext(ctx, query, args...).Scan(
-		&config.ID,
-		&config.EntityID,
-		&config.Key,
-		&config.DisplayName,
-		&config.Description,
-		&config.Value,
-		&config.Type,
-		&config.Metadata,
-		&config.CreatedBy,
-		&config.UpdatedBy,
-		&config.CreatedAt,
-		&config.UpdatedAt,
-	)
+	res, err := r.connManager.Primary().ExecContext(ctx, query, args...)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			logger.Warn(ctx, "Config not found for update with ID: %d", id)
-			return nil, fmt.Errorf("config not found")
-		}
-		logger.Error(ctx, "Failed to update config: %v", err)
-		return nil, fmt.Errorf("failed to update config: %w", err)
-	}
 
-	logger.Debug(ctx, "Config updated successfully: %d", config.ID)
-	return config, nil
+		logger.Error(ctx, "Failed to update config: %v", err)
+		return fmt.Errorf("failed to update config: %w", err)
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		logger.Error(ctx, "Failed to get rows affected: %v", err)
+		return fmt.Errorf("failed to verify update: %w", err)
+	}
+	if rowsAffected == 0 {
+		logger.Warn(ctx, "No config found to update with ID: %d", id)
+		return sql.ErrNoRows
+	}
+	logger.Debug(ctx, "Config updated successfully: %d", id)
+	return nil
 }
 
 // DeleteConfig deletes a config

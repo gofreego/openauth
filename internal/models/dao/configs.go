@@ -9,15 +9,58 @@ import (
 
 // ConfigEntity represents the config_entities table
 type ConfigEntity struct {
-	ID          int64   `db:"id" json:"id"`
-	Name        string  `db:"name" json:"name"`
-	DisplayName *string `db:"display_name" json:"displayName,omitempty"`
-	Description *string `db:"description" json:"description,omitempty"`
-	ReadPerm    int64   `db:"read_perm" json:"readPerm"`
-	WritePerm   int64   `db:"write_perm" json:"writePerm"`
-	CreatedBy   int64   `db:"created_by" json:"createdBy"`
-	CreatedAt   int64   `db:"created_at" json:"createdAt"`
-	UpdatedAt   int64   `db:"updated_at" json:"updatedAt"`
+	ID            int64  `db:"id" json:"id"`
+	Name          string `db:"name" json:"name"`
+	DisplayName   string `db:"display_name" json:"displayName,omitempty"`
+	Description   string `db:"description" json:"description,omitempty"`
+	ReadPerm      int64  `db:"read_perm" json:"readPerm"`
+	WritePerm     int64  `db:"write_perm" json:"writePerm"`
+	ReadPermName  string `db:"permission.name" json:"readPermName,omitempty"`
+	WritePermName string `db:"permission.name" json:"writePermName,omitempty"`
+	CreatedBy     int64  `db:"created_by" json:"createdBy"`
+	CreatedAt     int64  `db:"created_at" json:"createdAt"`
+	UpdatedAt     int64  `db:"updated_at" json:"updatedAt"`
+}
+
+type ValueType string
+
+func (vt ValueType) FromProto(protoType openauth_v1.ValueType) ValueType {
+	switch protoType {
+	case openauth_v1.ValueType_VALUE_TYPE_STRING:
+		return "string"
+	case openauth_v1.ValueType_VALUE_TYPE_INT:
+		return "int"
+	case openauth_v1.ValueType_VALUE_TYPE_FLOAT:
+		return "float"
+	case openauth_v1.ValueType_VALUE_TYPE_BOOL:
+		return "bool"
+	case openauth_v1.ValueType_VALUE_TYPE_JSON:
+		return "json"
+	case openauth_v1.ValueType_VALUE_TYPE_CHOICE:
+		return "choice"
+	default:
+		return "string" // default to string if unknown
+	}
+
+}
+
+func (vt ValueType) ToProto() openauth_v1.ValueType {
+	switch vt {
+	case "string":
+		return openauth_v1.ValueType_VALUE_TYPE_STRING
+	case "int":
+		return openauth_v1.ValueType_VALUE_TYPE_INT
+	case "float":
+		return openauth_v1.ValueType_VALUE_TYPE_FLOAT
+	case "bool":
+		return openauth_v1.ValueType_VALUE_TYPE_BOOL
+	case "json":
+		return openauth_v1.ValueType_VALUE_TYPE_JSON
+	case "choice":
+		return openauth_v1.ValueType_VALUE_TYPE_CHOICE
+	default:
+		return openauth_v1.ValueType_VALUE_TYPE_STRING // default to string if unknown
+	}
 }
 
 // Config represents the configs table
@@ -25,10 +68,10 @@ type Config struct {
 	ID          int64           `db:"id" json:"id"`
 	EntityID    int64           `db:"entity_id" json:"entityId"`
 	Key         string          `db:"key" json:"key"`
-	DisplayName *string         `db:"display_name" json:"displayName,omitempty"`
-	Description *string         `db:"description" json:"description,omitempty"`
+	DisplayName string          `db:"display_name" json:"displayName,omitempty"`
+	Description string          `db:"description" json:"description,omitempty"`
 	Value       json.RawMessage `db:"value" json:"value,omitempty"`
-	Type        string          `db:"type" json:"type"`
+	Type        ValueType       `db:"type" json:"type"`
 	Metadata    json.RawMessage `db:"metadata" json:"metadata,omitempty"`
 	CreatedBy   int64           `db:"created_by" json:"createdBy"`
 	UpdatedBy   int64           `db:"updated_by" json:"updatedBy"`
@@ -37,12 +80,12 @@ type Config struct {
 }
 
 // FromCreateConfigEntityRequest creates a ConfigEntity from a protobuf request
-func (ce *ConfigEntity) FromCreateConfigEntityRequest(req *openauth_v1.CreateConfigEntityRequest, createdBy int64) *ConfigEntity {
+func (ce *ConfigEntity) FromCreateConfigEntityRequest(req *openauth_v1.CreateConfigEntityRequest, readPerm, writePerm int64, createdBy int64) *ConfigEntity {
 	ce.Name = req.Name
 	ce.DisplayName = req.DisplayName
 	ce.Description = req.Description
-	ce.ReadPerm = req.ReadPerm
-	ce.WritePerm = req.WritePerm
+	ce.ReadPerm = readPerm
+	ce.WritePerm = writePerm
 	ce.CreatedBy = createdBy
 	ce.CreatedAt = time.Now().UnixMilli()
 	ce.UpdatedAt = time.Now().UnixMilli()
@@ -54,20 +97,16 @@ func (ce *ConfigEntity) ToProtoConfigEntity() *openauth_v1.ConfigEntity {
 	proto := &openauth_v1.ConfigEntity{
 		Id:        ce.ID,
 		Name:      ce.Name,
-		ReadPerm:  ce.ReadPerm,
-		WritePerm: ce.WritePerm,
+		ReadPerm:  ce.ReadPermName,
+		WritePerm: ce.WritePermName,
 		CreatedBy: ce.CreatedBy,
 		CreatedAt: ce.CreatedAt,
 		UpdatedAt: ce.UpdatedAt,
 	}
 
-	if ce.DisplayName != nil {
-		proto.DisplayName = ce.DisplayName
-	}
+	proto.DisplayName = ce.DisplayName
 
-	if ce.Description != nil {
-		proto.Description = ce.Description
-	}
+	proto.Description = ce.Description
 
 	return proto
 }
@@ -78,7 +117,7 @@ func (c *Config) FromCreateConfigRequest(req *openauth_v1.CreateConfigRequest, c
 	c.Key = req.Key
 	c.DisplayName = req.DisplayName
 	c.Description = req.Description
-	c.Type = req.Type
+	c.Type = c.Type.FromProto(req.Type)
 	c.CreatedBy = createdBy
 	c.UpdatedBy = createdBy
 	c.CreatedAt = time.Now().UnixMilli()
@@ -115,14 +154,15 @@ func (c *Config) FromCreateConfigRequest(req *openauth_v1.CreateConfigRequest, c
 
 // FromUpdateConfigRequest updates a Config from a protobuf request
 func (c *Config) FromUpdateConfigRequest(req *openauth_v1.UpdateConfigRequest, updatedBy int64) *Config {
+	if req.Name != nil {
+		c.Key = *req.Name
+	}
 	if req.DisplayName != nil {
-		c.DisplayName = req.DisplayName
+		c.DisplayName = *req.DisplayName
 	}
-
 	if req.Description != nil {
-		c.Description = req.Description
+		c.Description = *req.Description
 	}
-
 	// Handle value updates
 	if req.Value != nil {
 		switch v := req.Value.(type) {
@@ -161,20 +201,16 @@ func (c *Config) ToProtoConfig() *openauth_v1.Config {
 		Id:        c.ID,
 		EntityId:  c.EntityID,
 		Key:       c.Key,
-		Type:      c.Type,
+		Type:      c.Type.ToProto(),
 		CreatedBy: c.CreatedBy,
 		UpdatedBy: c.UpdatedBy,
 		CreatedAt: c.CreatedAt,
 		UpdatedAt: c.UpdatedAt,
 	}
 
-	if c.DisplayName != nil {
-		proto.DisplayName = c.DisplayName
-	}
+	proto.DisplayName = c.DisplayName
 
-	if c.Description != nil {
-		proto.Description = c.Description
-	}
+	proto.Description = c.Description
 
 	// Handle value conversion based on type
 	if len(c.Value) > 0 {

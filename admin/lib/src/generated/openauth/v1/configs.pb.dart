@@ -10,14 +10,18 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'configs.pbenum.dart';
+
+export 'configs.pbenum.dart';
+
 class ConfigEntity extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConfigEntity', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'readPerm')
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'writePerm')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'readPerm')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'writePerm')
     ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdBy')
     ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
     ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
@@ -30,8 +34,8 @@ class ConfigEntity extends $pb.GeneratedMessage {
     $core.String? name,
     $core.String? displayName,
     $core.String? description,
-    $fixnum.Int64? readPerm,
-    $fixnum.Int64? writePerm,
+    $core.String? readPerm,
+    $core.String? writePerm,
     $fixnum.Int64? createdBy,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
@@ -124,18 +128,18 @@ class ConfigEntity extends $pb.GeneratedMessage {
   void clearDescription() => clearField(4);
 
   @$pb.TagNumber(5)
-  $fixnum.Int64 get readPerm => $_getI64(4);
+  $core.String get readPerm => $_getSZ(4);
   @$pb.TagNumber(5)
-  set readPerm($fixnum.Int64 v) { $_setInt64(4, v); }
+  set readPerm($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
   $core.bool hasReadPerm() => $_has(4);
   @$pb.TagNumber(5)
   void clearReadPerm() => clearField(5);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get writePerm => $_getI64(5);
+  $core.String get writePerm => $_getSZ(5);
   @$pb.TagNumber(6)
-  set writePerm($fixnum.Int64 v) { $_setInt64(5, v); }
+  set writePerm($core.String v) { $_setString(5, v); }
   @$pb.TagNumber(6)
   $core.bool hasWritePerm() => $_has(5);
   @$pb.TagNumber(6)
@@ -199,7 +203,7 @@ class Config extends $pb.GeneratedMessage {
     ..a<$core.double>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'floatValue', $pb.PbFieldType.OD)
     ..aOB(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boolValue')
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'jsonValue')
-    ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type')
+    ..e<ValueType>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: ValueType.VALUE_TYPE_UNSPECIFIED, valueOf: ValueType.valueOf, enumValues: ValueType.values)
     ..aOS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata')
     ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdBy')
     ..aInt64(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedBy')
@@ -220,7 +224,7 @@ class Config extends $pb.GeneratedMessage {
     $core.double? floatValue,
     $core.bool? boolValue,
     $core.String? jsonValue,
-    $core.String? type,
+    ValueType? type,
     $core.String? metadata,
     $fixnum.Int64? createdBy,
     $fixnum.Int64? updatedBy,
@@ -393,9 +397,9 @@ class Config extends $pb.GeneratedMessage {
   void clearJsonValue() => clearField(10);
 
   @$pb.TagNumber(11)
-  $core.String get type => $_getSZ(10);
+  ValueType get type => $_getN(10);
   @$pb.TagNumber(11)
-  set type($core.String v) { $_setString(10, v); }
+  set type(ValueType v) { setField(11, v); }
   @$pb.TagNumber(11)
   $core.bool hasType() => $_has(10);
   @$pb.TagNumber(11)
@@ -452,8 +456,8 @@ class CreateConfigEntityRequest extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'readPerm')
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'writePerm')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'readPerm')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'writePerm')
     ..hasRequiredFields = false
   ;
 
@@ -462,8 +466,8 @@ class CreateConfigEntityRequest extends $pb.GeneratedMessage {
     $core.String? name,
     $core.String? displayName,
     $core.String? description,
-    $fixnum.Int64? readPerm,
-    $fixnum.Int64? writePerm,
+    $core.String? readPerm,
+    $core.String? writePerm,
   }) {
     final _result = create();
     if (name != null) {
@@ -532,18 +536,18 @@ class CreateConfigEntityRequest extends $pb.GeneratedMessage {
   void clearDescription() => clearField(3);
 
   @$pb.TagNumber(4)
-  $fixnum.Int64 get readPerm => $_getI64(3);
+  $core.String get readPerm => $_getSZ(3);
   @$pb.TagNumber(4)
-  set readPerm($fixnum.Int64 v) { $_setInt64(3, v); }
+  set readPerm($core.String v) { $_setString(3, v); }
   @$pb.TagNumber(4)
   $core.bool hasReadPerm() => $_has(3);
   @$pb.TagNumber(4)
   void clearReadPerm() => clearField(4);
 
   @$pb.TagNumber(5)
-  $fixnum.Int64 get writePerm => $_getI64(4);
+  $core.String get writePerm => $_getSZ(4);
   @$pb.TagNumber(5)
-  set writePerm($fixnum.Int64 v) { $_setInt64(4, v); }
+  set writePerm($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
   $core.bool hasWritePerm() => $_has(4);
   @$pb.TagNumber(5)
@@ -777,24 +781,29 @@ class ListConfigEntitiesResponse extends $pb.GeneratedMessage {
 class UpdateConfigEntityRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateConfigEntityRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
-    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'readPerm')
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'writePerm')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'readPerm')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'writePerm')
     ..hasRequiredFields = false
   ;
 
   UpdateConfigEntityRequest._() : super();
   factory UpdateConfigEntityRequest({
     $fixnum.Int64? id,
+    $core.String? name,
     $core.String? displayName,
     $core.String? description,
-    $fixnum.Int64? readPerm,
-    $fixnum.Int64? writePerm,
+    $core.String? readPerm,
+    $core.String? writePerm,
   }) {
     final _result = create();
     if (id != null) {
       _result.id = id;
+    }
+    if (name != null) {
+      _result.name = name;
     }
     if (displayName != null) {
       _result.displayName = displayName;
@@ -841,40 +850,49 @@ class UpdateConfigEntityRequest extends $pb.GeneratedMessage {
   void clearId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get displayName => $_getSZ(1);
+  $core.String get name => $_getSZ(1);
   @$pb.TagNumber(2)
-  set displayName($core.String v) { $_setString(1, v); }
+  set name($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasDisplayName() => $_has(1);
+  $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
-  void clearDisplayName() => clearField(2);
+  void clearName() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get description => $_getSZ(2);
+  $core.String get displayName => $_getSZ(2);
   @$pb.TagNumber(3)
-  set description($core.String v) { $_setString(2, v); }
+  set displayName($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasDescription() => $_has(2);
+  $core.bool hasDisplayName() => $_has(2);
   @$pb.TagNumber(3)
-  void clearDescription() => clearField(3);
+  void clearDisplayName() => clearField(3);
 
   @$pb.TagNumber(4)
-  $fixnum.Int64 get readPerm => $_getI64(3);
+  $core.String get description => $_getSZ(3);
   @$pb.TagNumber(4)
-  set readPerm($fixnum.Int64 v) { $_setInt64(3, v); }
+  set description($core.String v) { $_setString(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasReadPerm() => $_has(3);
+  $core.bool hasDescription() => $_has(3);
   @$pb.TagNumber(4)
-  void clearReadPerm() => clearField(4);
+  void clearDescription() => clearField(4);
 
   @$pb.TagNumber(5)
-  $fixnum.Int64 get writePerm => $_getI64(4);
+  $core.String get readPerm => $_getSZ(4);
   @$pb.TagNumber(5)
-  set writePerm($fixnum.Int64 v) { $_setInt64(4, v); }
+  set readPerm($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasWritePerm() => $_has(4);
+  $core.bool hasReadPerm() => $_has(4);
   @$pb.TagNumber(5)
-  void clearWritePerm() => clearField(5);
+  void clearReadPerm() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get writePerm => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set writePerm($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasWritePerm() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearWritePerm() => clearField(6);
 }
 
 class DeleteConfigEntityRequest extends $pb.GeneratedMessage {
@@ -953,7 +971,7 @@ class CreateConfigRequest extends $pb.GeneratedMessage {
     ..a<$core.double>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'floatValue', $pb.PbFieldType.OD)
     ..aOB(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boolValue')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'jsonValue')
-    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type')
+    ..e<ValueType>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: ValueType.VALUE_TYPE_UNSPECIFIED, valueOf: ValueType.valueOf, enumValues: ValueType.values)
     ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata')
     ..hasRequiredFields = false
   ;
@@ -969,7 +987,7 @@ class CreateConfigRequest extends $pb.GeneratedMessage {
     $core.double? floatValue,
     $core.bool? boolValue,
     $core.String? jsonValue,
-    $core.String? type,
+    ValueType? type,
     $core.String? metadata,
   }) {
     final _result = create();
@@ -1114,9 +1132,9 @@ class CreateConfigRequest extends $pb.GeneratedMessage {
   void clearJsonValue() => clearField(9);
 
   @$pb.TagNumber(10)
-  $core.String get type => $_getSZ(9);
+  ValueType get type => $_getN(9);
   @$pb.TagNumber(10)
-  set type($core.String v) { $_setString(9, v); }
+  set type(ValueType v) { setField(10, v); }
   @$pb.TagNumber(10)
   $core.bool hasType() => $_has(9);
   @$pb.TagNumber(10)
@@ -1130,6 +1148,247 @@ class CreateConfigRequest extends $pb.GeneratedMessage {
   $core.bool hasMetadata() => $_has(10);
   @$pb.TagNumber(11)
   void clearMetadata() => clearField(11);
+}
+
+enum UpdateConfigRequest_Value {
+  stringValue, 
+  intValue, 
+  floatValue, 
+  boolValue, 
+  jsonValue, 
+  notSet
+}
+
+class UpdateConfigRequest extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, UpdateConfigRequest_Value> _UpdateConfigRequest_ValueByTag = {
+    5 : UpdateConfigRequest_Value.stringValue,
+    6 : UpdateConfigRequest_Value.intValue,
+    7 : UpdateConfigRequest_Value.floatValue,
+    8 : UpdateConfigRequest_Value.boolValue,
+    9 : UpdateConfigRequest_Value.jsonValue,
+    0 : UpdateConfigRequest_Value.notSet
+  };
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateConfigRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..oo(0, [5, 6, 7, 8, 9])
+    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stringValue')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'intValue')
+    ..a<$core.double>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'floatValue', $pb.PbFieldType.OD)
+    ..aOB(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boolValue')
+    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'jsonValue')
+    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata')
+    ..hasRequiredFields = false
+  ;
+
+  UpdateConfigRequest._() : super();
+  factory UpdateConfigRequest({
+    $fixnum.Int64? id,
+    $core.String? name,
+    $core.String? displayName,
+    $core.String? description,
+    $core.String? stringValue,
+    $fixnum.Int64? intValue,
+    $core.double? floatValue,
+    $core.bool? boolValue,
+    $core.String? jsonValue,
+    $core.String? metadata,
+  }) {
+    final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
+    if (name != null) {
+      _result.name = name;
+    }
+    if (displayName != null) {
+      _result.displayName = displayName;
+    }
+    if (description != null) {
+      _result.description = description;
+    }
+    if (stringValue != null) {
+      _result.stringValue = stringValue;
+    }
+    if (intValue != null) {
+      _result.intValue = intValue;
+    }
+    if (floatValue != null) {
+      _result.floatValue = floatValue;
+    }
+    if (boolValue != null) {
+      _result.boolValue = boolValue;
+    }
+    if (jsonValue != null) {
+      _result.jsonValue = jsonValue;
+    }
+    if (metadata != null) {
+      _result.metadata = metadata;
+    }
+    return _result;
+  }
+  factory UpdateConfigRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpdateConfigRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpdateConfigRequest clone() => UpdateConfigRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpdateConfigRequest copyWith(void Function(UpdateConfigRequest) updates) => super.copyWith((message) => updates(message as UpdateConfigRequest)) as UpdateConfigRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static UpdateConfigRequest create() => UpdateConfigRequest._();
+  UpdateConfigRequest createEmptyInstance() => create();
+  static $pb.PbList<UpdateConfigRequest> createRepeated() => $pb.PbList<UpdateConfigRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UpdateConfigRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateConfigRequest>(create);
+  static UpdateConfigRequest? _defaultInstance;
+
+  UpdateConfigRequest_Value whichValue() => _UpdateConfigRequest_ValueByTag[$_whichOneof(0)]!;
+  void clearValue() => clearField($_whichOneof(0));
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get id => $_getI64(0);
+  @$pb.TagNumber(1)
+  set id($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get displayName => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set displayName($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasDisplayName() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearDisplayName() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get description => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set description($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasDescription() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearDescription() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get stringValue => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set stringValue($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasStringValue() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearStringValue() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get intValue => $_getI64(5);
+  @$pb.TagNumber(6)
+  set intValue($fixnum.Int64 v) { $_setInt64(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasIntValue() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearIntValue() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.double get floatValue => $_getN(6);
+  @$pb.TagNumber(7)
+  set floatValue($core.double v) { $_setDouble(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasFloatValue() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearFloatValue() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.bool get boolValue => $_getBF(7);
+  @$pb.TagNumber(8)
+  set boolValue($core.bool v) { $_setBool(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasBoolValue() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearBoolValue() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.String get jsonValue => $_getSZ(8);
+  @$pb.TagNumber(9)
+  set jsonValue($core.String v) { $_setString(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasJsonValue() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearJsonValue() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.String get metadata => $_getSZ(9);
+  @$pb.TagNumber(10)
+  set metadata($core.String v) { $_setString(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasMetadata() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearMetadata() => clearField(10);
+}
+
+class DeleteConfigRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteConfigRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
+    ..hasRequiredFields = false
+  ;
+
+  DeleteConfigRequest._() : super();
+  factory DeleteConfigRequest({
+    $fixnum.Int64? id,
+  }) {
+    final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
+    return _result;
+  }
+  factory DeleteConfigRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteConfigRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteConfigRequest clone() => DeleteConfigRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteConfigRequest copyWith(void Function(DeleteConfigRequest) updates) => super.copyWith((message) => updates(message as DeleteConfigRequest)) as DeleteConfigRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DeleteConfigRequest create() => DeleteConfigRequest._();
+  DeleteConfigRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteConfigRequest> createRepeated() => $pb.PbList<DeleteConfigRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteConfigRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteConfigRequest>(create);
+  static DeleteConfigRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get id => $_getI64(0);
+  @$pb.TagNumber(1)
+  set id($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
 }
 
 class GetConfigRequest extends $pb.GeneratedMessage {
@@ -1441,233 +1700,6 @@ class ListConfigsResponse extends $pb.GeneratedMessage {
   void clearTotal() => clearField(2);
 }
 
-enum UpdateConfigRequest_Value {
-  stringValue, 
-  intValue, 
-  floatValue, 
-  boolValue, 
-  jsonValue, 
-  notSet
-}
-
-class UpdateConfigRequest extends $pb.GeneratedMessage {
-  static const $core.Map<$core.int, UpdateConfigRequest_Value> _UpdateConfigRequest_ValueByTag = {
-    4 : UpdateConfigRequest_Value.stringValue,
-    5 : UpdateConfigRequest_Value.intValue,
-    6 : UpdateConfigRequest_Value.floatValue,
-    7 : UpdateConfigRequest_Value.boolValue,
-    8 : UpdateConfigRequest_Value.jsonValue,
-    0 : UpdateConfigRequest_Value.notSet
-  };
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateConfigRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..oo(0, [4, 5, 6, 7, 8])
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
-    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stringValue')
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'intValue')
-    ..a<$core.double>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'floatValue', $pb.PbFieldType.OD)
-    ..aOB(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boolValue')
-    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'jsonValue')
-    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metadata')
-    ..hasRequiredFields = false
-  ;
-
-  UpdateConfigRequest._() : super();
-  factory UpdateConfigRequest({
-    $fixnum.Int64? id,
-    $core.String? displayName,
-    $core.String? description,
-    $core.String? stringValue,
-    $fixnum.Int64? intValue,
-    $core.double? floatValue,
-    $core.bool? boolValue,
-    $core.String? jsonValue,
-    $core.String? metadata,
-  }) {
-    final _result = create();
-    if (id != null) {
-      _result.id = id;
-    }
-    if (displayName != null) {
-      _result.displayName = displayName;
-    }
-    if (description != null) {
-      _result.description = description;
-    }
-    if (stringValue != null) {
-      _result.stringValue = stringValue;
-    }
-    if (intValue != null) {
-      _result.intValue = intValue;
-    }
-    if (floatValue != null) {
-      _result.floatValue = floatValue;
-    }
-    if (boolValue != null) {
-      _result.boolValue = boolValue;
-    }
-    if (jsonValue != null) {
-      _result.jsonValue = jsonValue;
-    }
-    if (metadata != null) {
-      _result.metadata = metadata;
-    }
-    return _result;
-  }
-  factory UpdateConfigRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UpdateConfigRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  UpdateConfigRequest clone() => UpdateConfigRequest()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  UpdateConfigRequest copyWith(void Function(UpdateConfigRequest) updates) => super.copyWith((message) => updates(message as UpdateConfigRequest)) as UpdateConfigRequest; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static UpdateConfigRequest create() => UpdateConfigRequest._();
-  UpdateConfigRequest createEmptyInstance() => create();
-  static $pb.PbList<UpdateConfigRequest> createRepeated() => $pb.PbList<UpdateConfigRequest>();
-  @$core.pragma('dart2js:noInline')
-  static UpdateConfigRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateConfigRequest>(create);
-  static UpdateConfigRequest? _defaultInstance;
-
-  UpdateConfigRequest_Value whichValue() => _UpdateConfigRequest_ValueByTag[$_whichOneof(0)]!;
-  void clearValue() => clearField($_whichOneof(0));
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get id => $_getI64(0);
-  @$pb.TagNumber(1)
-  set id($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get displayName => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set displayName($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasDisplayName() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearDisplayName() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.String get description => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set description($core.String v) { $_setString(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasDescription() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearDescription() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get stringValue => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set stringValue($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasStringValue() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearStringValue() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $fixnum.Int64 get intValue => $_getI64(4);
-  @$pb.TagNumber(5)
-  set intValue($fixnum.Int64 v) { $_setInt64(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasIntValue() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearIntValue() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.double get floatValue => $_getN(5);
-  @$pb.TagNumber(6)
-  set floatValue($core.double v) { $_setDouble(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasFloatValue() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearFloatValue() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.bool get boolValue => $_getBF(6);
-  @$pb.TagNumber(7)
-  set boolValue($core.bool v) { $_setBool(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasBoolValue() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearBoolValue() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $core.String get jsonValue => $_getSZ(7);
-  @$pb.TagNumber(8)
-  set jsonValue($core.String v) { $_setString(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasJsonValue() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearJsonValue() => clearField(8);
-
-  @$pb.TagNumber(9)
-  $core.String get metadata => $_getSZ(8);
-  @$pb.TagNumber(9)
-  set metadata($core.String v) { $_setString(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasMetadata() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearMetadata() => clearField(9);
-}
-
-class DeleteConfigRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteConfigRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
-    ..hasRequiredFields = false
-  ;
-
-  DeleteConfigRequest._() : super();
-  factory DeleteConfigRequest({
-    $fixnum.Int64? id,
-  }) {
-    final _result = create();
-    if (id != null) {
-      _result.id = id;
-    }
-    return _result;
-  }
-  factory DeleteConfigRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory DeleteConfigRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  DeleteConfigRequest clone() => DeleteConfigRequest()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  DeleteConfigRequest copyWith(void Function(DeleteConfigRequest) updates) => super.copyWith((message) => updates(message as DeleteConfigRequest)) as DeleteConfigRequest; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static DeleteConfigRequest create() => DeleteConfigRequest._();
-  DeleteConfigRequest createEmptyInstance() => create();
-  static $pb.PbList<DeleteConfigRequest> createRepeated() => $pb.PbList<DeleteConfigRequest>();
-  @$core.pragma('dart2js:noInline')
-  static DeleteConfigRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteConfigRequest>(create);
-  static DeleteConfigRequest? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get id => $_getI64(0);
-  @$pb.TagNumber(1)
-  set id($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearId() => clearField(1);
-}
-
 enum GetConfigsByKeysRequest_EntityIdentifier {
   entityId, 
   entityName, 
@@ -1852,5 +1884,107 @@ class DeleteResponse extends $pb.GeneratedMessage {
   $core.bool hasMessage() => $_has(1);
   @$pb.TagNumber(2)
   void clearMessage() => clearField(2);
+}
+
+class UpdateResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'success')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..hasRequiredFields = false
+  ;
+
+  UpdateResponse._() : super();
+  factory UpdateResponse({
+    $core.bool? success,
+    $core.String? message,
+  }) {
+    final _result = create();
+    if (success != null) {
+      _result.success = success;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    return _result;
+  }
+  factory UpdateResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpdateResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpdateResponse clone() => UpdateResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpdateResponse copyWith(void Function(UpdateResponse) updates) => super.copyWith((message) => updates(message as UpdateResponse)) as UpdateResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static UpdateResponse create() => UpdateResponse._();
+  UpdateResponse createEmptyInstance() => create();
+  static $pb.PbList<UpdateResponse> createRepeated() => $pb.PbList<UpdateResponse>();
+  @$core.pragma('dart2js:noInline')
+  static UpdateResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateResponse>(create);
+  static UpdateResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get message => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set message($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMessage() => clearField(2);
+}
+
+class Metadata extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Metadata', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..pPS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'options')
+    ..hasRequiredFields = false
+  ;
+
+  Metadata._() : super();
+  factory Metadata({
+    $core.Iterable<$core.String>? options,
+  }) {
+    final _result = create();
+    if (options != null) {
+      _result.options.addAll(options);
+    }
+    return _result;
+  }
+  factory Metadata.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Metadata.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Metadata clone() => Metadata()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Metadata copyWith(void Function(Metadata) updates) => super.copyWith((message) => updates(message as Metadata)) as Metadata; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static Metadata create() => Metadata._();
+  Metadata createEmptyInstance() => create();
+  static $pb.PbList<Metadata> createRepeated() => $pb.PbList<Metadata>();
+  @$core.pragma('dart2js:noInline')
+  static Metadata getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Metadata>(create);
+  static Metadata? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.String> get options => $_getList(0);
 }
 

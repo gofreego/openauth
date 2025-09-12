@@ -68,17 +68,17 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
   $async.Future<$6.ListUserSessionsResponse> listUserSessions($pb.ServerContext ctx, $6.ListUserSessionsRequest request);
   $async.Future<$6.TerminateSessionResponse> terminateSession($pb.ServerContext ctx, $6.TerminateSessionRequest request);
   $async.Future<$7.ConfigEntity> createConfigEntity($pb.ServerContext ctx, $7.CreateConfigEntityRequest request);
-  $async.Future<$7.ConfigEntity> updateConfigEntity($pb.ServerContext ctx, $7.UpdateConfigEntityRequest request);
+  $async.Future<$7.UpdateResponse> updateConfigEntity($pb.ServerContext ctx, $7.UpdateConfigEntityRequest request);
   $async.Future<$7.ConfigEntity> getConfigEntity($pb.ServerContext ctx, $7.GetConfigEntityRequest request);
   $async.Future<$7.ListConfigEntitiesResponse> listConfigEntities($pb.ServerContext ctx, $7.ListConfigEntitiesRequest request);
   $async.Future<$7.DeleteResponse> deleteConfigEntity($pb.ServerContext ctx, $7.DeleteConfigEntityRequest request);
   $async.Future<$7.Config> createConfig($pb.ServerContext ctx, $7.CreateConfigRequest request);
+  $async.Future<$7.UpdateResponse> updateConfig($pb.ServerContext ctx, $7.UpdateConfigRequest request);
+  $async.Future<$7.DeleteResponse> deleteConfig($pb.ServerContext ctx, $7.DeleteConfigRequest request);
   $async.Future<$7.Config> getConfig($pb.ServerContext ctx, $7.GetConfigRequest request);
   $async.Future<$7.Config> getConfigByKey($pb.ServerContext ctx, $7.GetConfigByKeyRequest request);
   $async.Future<$7.GetConfigsByKeysResponse> getConfigsByKeys($pb.ServerContext ctx, $7.GetConfigsByKeysRequest request);
   $async.Future<$7.ListConfigsResponse> listConfigs($pb.ServerContext ctx, $7.ListConfigsRequest request);
-  $async.Future<$7.Config> updateConfig($pb.ServerContext ctx, $7.UpdateConfigRequest request);
-  $async.Future<$7.DeleteResponse> deleteConfig($pb.ServerContext ctx, $7.DeleteConfigRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
@@ -132,12 +132,12 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'ListConfigEntities': return $7.ListConfigEntitiesRequest();
       case 'DeleteConfigEntity': return $7.DeleteConfigEntityRequest();
       case 'CreateConfig': return $7.CreateConfigRequest();
+      case 'UpdateConfig': return $7.UpdateConfigRequest();
+      case 'DeleteConfig': return $7.DeleteConfigRequest();
       case 'GetConfig': return $7.GetConfigRequest();
       case 'GetConfigByKey': return $7.GetConfigByKeyRequest();
       case 'GetConfigsByKeys': return $7.GetConfigsByKeysRequest();
       case 'ListConfigs': return $7.ListConfigsRequest();
-      case 'UpdateConfig': return $7.UpdateConfigRequest();
-      case 'DeleteConfig': return $7.DeleteConfigRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -194,12 +194,12 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'ListConfigEntities': return this.listConfigEntities(ctx, request as $7.ListConfigEntitiesRequest);
       case 'DeleteConfigEntity': return this.deleteConfigEntity(ctx, request as $7.DeleteConfigEntityRequest);
       case 'CreateConfig': return this.createConfig(ctx, request as $7.CreateConfigRequest);
+      case 'UpdateConfig': return this.updateConfig(ctx, request as $7.UpdateConfigRequest);
+      case 'DeleteConfig': return this.deleteConfig(ctx, request as $7.DeleteConfigRequest);
       case 'GetConfig': return this.getConfig(ctx, request as $7.GetConfigRequest);
       case 'GetConfigByKey': return this.getConfigByKey(ctx, request as $7.GetConfigByKeyRequest);
       case 'GetConfigsByKeys': return this.getConfigsByKeys(ctx, request as $7.GetConfigsByKeysRequest);
       case 'ListConfigs': return this.listConfigs(ctx, request as $7.ListConfigsRequest);
-      case 'UpdateConfig': return this.updateConfig(ctx, request as $7.UpdateConfigRequest);
-      case 'DeleteConfig': return this.deleteConfig(ctx, request as $7.DeleteConfigRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }

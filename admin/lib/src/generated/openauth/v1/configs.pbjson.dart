@@ -8,28 +8,40 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
+@$core.Deprecated('Use valueTypeDescriptor instead')
+const ValueType$json = const {
+  '1': 'ValueType',
+  '2': const [
+    const {'1': 'VALUE_TYPE_UNSPECIFIED', '2': 0},
+    const {'1': 'VALUE_TYPE_STRING', '2': 1},
+    const {'1': 'VALUE_TYPE_INT', '2': 2},
+    const {'1': 'VALUE_TYPE_FLOAT', '2': 3},
+    const {'1': 'VALUE_TYPE_BOOL', '2': 4},
+    const {'1': 'VALUE_TYPE_JSON', '2': 5},
+    const {'1': 'VALUE_TYPE_CHOICE', '2': 6},
+  ],
+};
+
+/// Descriptor for `ValueType`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List valueTypeDescriptor = $convert.base64Decode('CglWYWx1ZVR5cGUSGgoWVkFMVUVfVFlQRV9VTlNQRUNJRklFRBAAEhUKEVZBTFVFX1RZUEVfU1RSSU5HEAESEgoOVkFMVUVfVFlQRV9JTlQQAhIUChBWQUxVRV9UWVBFX0ZMT0FUEAMSEwoPVkFMVUVfVFlQRV9CT09MEAQSEwoPVkFMVUVfVFlQRV9KU09OEAUSFQoRVkFMVUVfVFlQRV9DSE9JQ0UQBg==');
 @$core.Deprecated('Use configEntityDescriptor instead')
 const ConfigEntity$json = const {
   '1': 'ConfigEntity',
   '2': const [
     const {'1': 'id', '3': 1, '4': 1, '5': 3, '10': 'id'},
     const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
-    const {'1': 'display_name', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'displayName', '17': true},
-    const {'1': 'description', '3': 4, '4': 1, '5': 9, '9': 1, '10': 'description', '17': true},
-    const {'1': 'read_perm', '3': 5, '4': 1, '5': 3, '10': 'readPerm'},
-    const {'1': 'write_perm', '3': 6, '4': 1, '5': 3, '10': 'writePerm'},
+    const {'1': 'display_name', '3': 3, '4': 1, '5': 9, '10': 'displayName'},
+    const {'1': 'description', '3': 4, '4': 1, '5': 9, '10': 'description'},
+    const {'1': 'read_perm', '3': 5, '4': 1, '5': 9, '10': 'readPerm'},
+    const {'1': 'write_perm', '3': 6, '4': 1, '5': 9, '10': 'writePerm'},
     const {'1': 'created_by', '3': 7, '4': 1, '5': 3, '10': 'createdBy'},
     const {'1': 'created_at', '3': 8, '4': 1, '5': 3, '10': 'createdAt'},
     const {'1': 'updated_at', '3': 9, '4': 1, '5': 3, '10': 'updatedAt'},
   ],
-  '8': const [
-    const {'1': '_display_name'},
-    const {'1': '_description'},
-  ],
 };
 
 /// Descriptor for `ConfigEntity`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List configEntityDescriptor = $convert.base64Decode('CgxDb25maWdFbnRpdHkSDgoCaWQYASABKANSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSJgoMZGlzcGxheV9uYW1lGAMgASgJSABSC2Rpc3BsYXlOYW1liAEBEiUKC2Rlc2NyaXB0aW9uGAQgASgJSAFSC2Rlc2NyaXB0aW9uiAEBEhsKCXJlYWRfcGVybRgFIAEoA1IIcmVhZFBlcm0SHQoKd3JpdGVfcGVybRgGIAEoA1IJd3JpdGVQZXJtEh0KCmNyZWF0ZWRfYnkYByABKANSCWNyZWF0ZWRCeRIdCgpjcmVhdGVkX2F0GAggASgDUgljcmVhdGVkQXQSHQoKdXBkYXRlZF9hdBgJIAEoA1IJdXBkYXRlZEF0Qg8KDV9kaXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9u');
+final $typed_data.Uint8List configEntityDescriptor = $convert.base64Decode('CgxDb25maWdFbnRpdHkSDgoCaWQYASABKANSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSIQoMZGlzcGxheV9uYW1lGAMgASgJUgtkaXNwbGF5TmFtZRIgCgtkZXNjcmlwdGlvbhgEIAEoCVILZGVzY3JpcHRpb24SGwoJcmVhZF9wZXJtGAUgASgJUghyZWFkUGVybRIdCgp3cml0ZV9wZXJtGAYgASgJUgl3cml0ZVBlcm0SHQoKY3JlYXRlZF9ieRgHIAEoA1IJY3JlYXRlZEJ5Eh0KCmNyZWF0ZWRfYXQYCCABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GAkgASgDUgl1cGRhdGVkQXQ=');
 @$core.Deprecated('Use configDescriptor instead')
 const Config$json = const {
   '1': 'Config',
@@ -37,14 +49,14 @@ const Config$json = const {
     const {'1': 'id', '3': 1, '4': 1, '5': 3, '10': 'id'},
     const {'1': 'entity_id', '3': 2, '4': 1, '5': 3, '10': 'entityId'},
     const {'1': 'key', '3': 3, '4': 1, '5': 9, '10': 'key'},
-    const {'1': 'display_name', '3': 4, '4': 1, '5': 9, '9': 1, '10': 'displayName', '17': true},
-    const {'1': 'description', '3': 5, '4': 1, '5': 9, '9': 2, '10': 'description', '17': true},
+    const {'1': 'display_name', '3': 4, '4': 1, '5': 9, '10': 'displayName'},
+    const {'1': 'description', '3': 5, '4': 1, '5': 9, '10': 'description'},
     const {'1': 'string_value', '3': 6, '4': 1, '5': 9, '9': 0, '10': 'stringValue'},
     const {'1': 'int_value', '3': 7, '4': 1, '5': 3, '9': 0, '10': 'intValue'},
     const {'1': 'float_value', '3': 8, '4': 1, '5': 1, '9': 0, '10': 'floatValue'},
     const {'1': 'bool_value', '3': 9, '4': 1, '5': 8, '9': 0, '10': 'boolValue'},
     const {'1': 'json_value', '3': 10, '4': 1, '5': 9, '9': 0, '10': 'jsonValue'},
-    const {'1': 'type', '3': 11, '4': 1, '5': 9, '10': 'type'},
+    const {'1': 'type', '3': 11, '4': 1, '5': 14, '6': '.v1.ValueType', '10': 'type'},
     const {'1': 'metadata', '3': 12, '4': 1, '5': 9, '10': 'metadata'},
     const {'1': 'created_by', '3': 13, '4': 1, '5': 3, '10': 'createdBy'},
     const {'1': 'updated_by', '3': 14, '4': 1, '5': 3, '10': 'updatedBy'},
@@ -53,31 +65,25 @@ const Config$json = const {
   ],
   '8': const [
     const {'1': 'value'},
-    const {'1': '_display_name'},
-    const {'1': '_description'},
   ],
 };
 
 /// Descriptor for `Config`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List configDescriptor = $convert.base64Decode('CgZDb25maWcSDgoCaWQYASABKANSAmlkEhsKCWVudGl0eV9pZBgCIAEoA1IIZW50aXR5SWQSEAoDa2V5GAMgASgJUgNrZXkSJgoMZGlzcGxheV9uYW1lGAQgASgJSAFSC2Rpc3BsYXlOYW1liAEBEiUKC2Rlc2NyaXB0aW9uGAUgASgJSAJSC2Rlc2NyaXB0aW9uiAEBEiMKDHN0cmluZ192YWx1ZRgGIAEoCUgAUgtzdHJpbmdWYWx1ZRIdCglpbnRfdmFsdWUYByABKANIAFIIaW50VmFsdWUSIQoLZmxvYXRfdmFsdWUYCCABKAFIAFIKZmxvYXRWYWx1ZRIfCgpib29sX3ZhbHVlGAkgASgISABSCWJvb2xWYWx1ZRIfCgpqc29uX3ZhbHVlGAogASgJSABSCWpzb25WYWx1ZRISCgR0eXBlGAsgASgJUgR0eXBlEhoKCG1ldGFkYXRhGAwgASgJUghtZXRhZGF0YRIdCgpjcmVhdGVkX2J5GA0gASgDUgljcmVhdGVkQnkSHQoKdXBkYXRlZF9ieRgOIAEoA1IJdXBkYXRlZEJ5Eh0KCmNyZWF0ZWRfYXQYDyABKANSCWNyZWF0ZWRBdBIdCgp1cGRhdGVkX2F0GBAgASgDUgl1cGRhdGVkQXRCBwoFdmFsdWVCDwoNX2Rpc3BsYXlfbmFtZUIOCgxfZGVzY3JpcHRpb24=');
+final $typed_data.Uint8List configDescriptor = $convert.base64Decode('CgZDb25maWcSDgoCaWQYASABKANSAmlkEhsKCWVudGl0eV9pZBgCIAEoA1IIZW50aXR5SWQSEAoDa2V5GAMgASgJUgNrZXkSIQoMZGlzcGxheV9uYW1lGAQgASgJUgtkaXNwbGF5TmFtZRIgCgtkZXNjcmlwdGlvbhgFIAEoCVILZGVzY3JpcHRpb24SIwoMc3RyaW5nX3ZhbHVlGAYgASgJSABSC3N0cmluZ1ZhbHVlEh0KCWludF92YWx1ZRgHIAEoA0gAUghpbnRWYWx1ZRIhCgtmbG9hdF92YWx1ZRgIIAEoAUgAUgpmbG9hdFZhbHVlEh8KCmJvb2xfdmFsdWUYCSABKAhIAFIJYm9vbFZhbHVlEh8KCmpzb25fdmFsdWUYCiABKAlIAFIJanNvblZhbHVlEiEKBHR5cGUYCyABKA4yDS52MS5WYWx1ZVR5cGVSBHR5cGUSGgoIbWV0YWRhdGEYDCABKAlSCG1ldGFkYXRhEh0KCmNyZWF0ZWRfYnkYDSABKANSCWNyZWF0ZWRCeRIdCgp1cGRhdGVkX2J5GA4gASgDUgl1cGRhdGVkQnkSHQoKY3JlYXRlZF9hdBgPIAEoA1IJY3JlYXRlZEF0Eh0KCnVwZGF0ZWRfYXQYECABKANSCXVwZGF0ZWRBdEIHCgV2YWx1ZQ==');
 @$core.Deprecated('Use createConfigEntityRequestDescriptor instead')
 const CreateConfigEntityRequest$json = const {
   '1': 'CreateConfigEntityRequest',
   '2': const [
     const {'1': 'name', '3': 1, '4': 1, '5': 9, '8': const {}, '10': 'name'},
-    const {'1': 'display_name', '3': 2, '4': 1, '5': 9, '8': const {}, '9': 0, '10': 'displayName', '17': true},
-    const {'1': 'description', '3': 3, '4': 1, '5': 9, '9': 1, '10': 'description', '17': true},
-    const {'1': 'read_perm', '3': 4, '4': 1, '5': 3, '8': const {}, '10': 'readPerm'},
-    const {'1': 'write_perm', '3': 5, '4': 1, '5': 3, '8': const {}, '10': 'writePerm'},
-  ],
-  '8': const [
-    const {'1': '_display_name'},
-    const {'1': '_description'},
+    const {'1': 'display_name', '3': 2, '4': 1, '5': 9, '8': const {}, '10': 'displayName'},
+    const {'1': 'description', '3': 3, '4': 1, '5': 9, '10': 'description'},
+    const {'1': 'read_perm', '3': 4, '4': 1, '5': 9, '8': const {}, '10': 'readPerm'},
+    const {'1': 'write_perm', '3': 5, '4': 1, '5': 9, '8': const {}, '10': 'writePerm'},
   ],
 };
 
 /// Descriptor for `CreateConfigEntityRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createConfigEntityRequestDescriptor = $convert.base64Decode('ChlDcmVhdGVDb25maWdFbnRpdHlSZXF1ZXN0EjIKBG5hbWUYASABKAlCHvpCG3IZEAEY/wEyEl5bYS16XVthLXowLTlfLV0qJFIEbmFtZRIwCgxkaXNwbGF5X25hbWUYAiABKAlCCPpCBXIDGP8BSABSC2Rpc3BsYXlOYW1liAEBEiUKC2Rlc2NyaXB0aW9uGAMgASgJSAFSC2Rlc2NyaXB0aW9uiAEBEiQKCXJlYWRfcGVybRgEIAEoA0IH+kIEIgIgAFIIcmVhZFBlcm0SJgoKd3JpdGVfcGVybRgFIAEoA0IH+kIEIgIgAFIJd3JpdGVQZXJtQg8KDV9kaXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9u');
+final $typed_data.Uint8List createConfigEntityRequestDescriptor = $convert.base64Decode('ChlDcmVhdGVDb25maWdFbnRpdHlSZXF1ZXN0Eh4KBG5hbWUYASABKAlCCvpCB3IFEAEY/wFSBG5hbWUSKwoMZGlzcGxheV9uYW1lGAIgASgJQgj6QgVyAxj/AVILZGlzcGxheU5hbWUSIAoLZGVzY3JpcHRpb24YAyABKAlSC2Rlc2NyaXB0aW9uEiYKCXJlYWRfcGVybRgEIAEoCUIJ+kIGcgQQARhkUghyZWFkUGVybRIoCgp3cml0ZV9wZXJtGAUgASgJQgn6QgZyBBABGGRSCXdyaXRlUGVybQ==');
 @$core.Deprecated('Use getConfigEntityRequestDescriptor instead')
 const GetConfigEntityRequest$json = const {
   '1': 'GetConfigEntityRequest',
@@ -129,12 +135,14 @@ const UpdateConfigEntityRequest$json = const {
   '1': 'UpdateConfigEntityRequest',
   '2': const [
     const {'1': 'id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'id'},
-    const {'1': 'display_name', '3': 2, '4': 1, '5': 9, '8': const {}, '9': 0, '10': 'displayName', '17': true},
-    const {'1': 'description', '3': 3, '4': 1, '5': 9, '9': 1, '10': 'description', '17': true},
-    const {'1': 'read_perm', '3': 4, '4': 1, '5': 3, '8': const {}, '9': 2, '10': 'readPerm', '17': true},
-    const {'1': 'write_perm', '3': 5, '4': 1, '5': 3, '8': const {}, '9': 3, '10': 'writePerm', '17': true},
+    const {'1': 'name', '3': 2, '4': 1, '5': 9, '8': const {}, '9': 0, '10': 'name', '17': true},
+    const {'1': 'display_name', '3': 3, '4': 1, '5': 9, '8': const {}, '9': 1, '10': 'displayName', '17': true},
+    const {'1': 'description', '3': 4, '4': 1, '5': 9, '9': 2, '10': 'description', '17': true},
+    const {'1': 'read_perm', '3': 5, '4': 1, '5': 9, '8': const {}, '9': 3, '10': 'readPerm', '17': true},
+    const {'1': 'write_perm', '3': 6, '4': 1, '5': 9, '8': const {}, '9': 4, '10': 'writePerm', '17': true},
   ],
   '8': const [
+    const {'1': '_name'},
     const {'1': '_display_name'},
     const {'1': '_description'},
     const {'1': '_read_perm'},
@@ -143,7 +151,7 @@ const UpdateConfigEntityRequest$json = const {
 };
 
 /// Descriptor for `UpdateConfigEntityRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updateConfigEntityRequestDescriptor = $convert.base64Decode('ChlVcGRhdGVDb25maWdFbnRpdHlSZXF1ZXN0EhcKAmlkGAEgASgDQgf6QgQiAiAAUgJpZBIwCgxkaXNwbGF5X25hbWUYAiABKAlCCPpCBXIDGP8BSABSC2Rpc3BsYXlOYW1liAEBEiUKC2Rlc2NyaXB0aW9uGAMgASgJSAFSC2Rlc2NyaXB0aW9uiAEBEikKCXJlYWRfcGVybRgEIAEoA0IH+kIEIgIgAEgCUghyZWFkUGVybYgBARIrCgp3cml0ZV9wZXJtGAUgASgDQgf6QgQiAiAASANSCXdyaXRlUGVybYgBAUIPCg1fZGlzcGxheV9uYW1lQg4KDF9kZXNjcmlwdGlvbkIMCgpfcmVhZF9wZXJtQg0KC193cml0ZV9wZXJt');
+final $typed_data.Uint8List updateConfigEntityRequestDescriptor = $convert.base64Decode('ChlVcGRhdGVDb25maWdFbnRpdHlSZXF1ZXN0EhcKAmlkGAEgASgDQgf6QgQiAiAAUgJpZBIjCgRuYW1lGAIgASgJQgr6QgdyBRABGP8BSABSBG5hbWWIAQESMAoMZGlzcGxheV9uYW1lGAMgASgJQgj6QgVyAxj/AUgBUgtkaXNwbGF5TmFtZYgBARIlCgtkZXNjcmlwdGlvbhgEIAEoCUgCUgtkZXNjcmlwdGlvbogBARIrCglyZWFkX3Blcm0YBSABKAlCCfpCBnIEEAEYZEgDUghyZWFkUGVybYgBARItCgp3cml0ZV9wZXJtGAYgASgJQgn6QgZyBBABGGRIBFIJd3JpdGVQZXJtiAEBQgcKBV9uYW1lQg8KDV9kaXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9uQgwKCl9yZWFkX3Blcm1CDQoLX3dyaXRlX3Blcm0=');
 @$core.Deprecated('Use deleteConfigEntityRequestDescriptor instead')
 const DeleteConfigEntityRequest$json = const {
   '1': 'DeleteConfigEntityRequest',
@@ -160,26 +168,60 @@ const CreateConfigRequest$json = const {
   '2': const [
     const {'1': 'entity_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'entityId'},
     const {'1': 'key', '3': 2, '4': 1, '5': 9, '8': const {}, '10': 'key'},
-    const {'1': 'display_name', '3': 3, '4': 1, '5': 9, '8': const {}, '9': 1, '10': 'displayName', '17': true},
-    const {'1': 'description', '3': 4, '4': 1, '5': 9, '9': 2, '10': 'description', '17': true},
+    const {'1': 'display_name', '3': 3, '4': 1, '5': 9, '8': const {}, '10': 'displayName'},
+    const {'1': 'description', '3': 4, '4': 1, '5': 9, '10': 'description'},
     const {'1': 'string_value', '3': 5, '4': 1, '5': 9, '9': 0, '10': 'stringValue'},
     const {'1': 'int_value', '3': 6, '4': 1, '5': 3, '9': 0, '10': 'intValue'},
     const {'1': 'float_value', '3': 7, '4': 1, '5': 1, '9': 0, '10': 'floatValue'},
     const {'1': 'bool_value', '3': 8, '4': 1, '5': 8, '9': 0, '10': 'boolValue'},
     const {'1': 'json_value', '3': 9, '4': 1, '5': 9, '9': 0, '10': 'jsonValue'},
-    const {'1': 'type', '3': 10, '4': 1, '5': 9, '8': const {}, '10': 'type'},
-    const {'1': 'metadata', '3': 11, '4': 1, '5': 9, '9': 3, '10': 'metadata', '17': true},
+    const {'1': 'type', '3': 10, '4': 1, '5': 14, '6': '.v1.ValueType', '10': 'type'},
+    const {'1': 'metadata', '3': 11, '4': 1, '5': 9, '9': 1, '10': 'metadata', '17': true},
   ],
   '8': const [
     const {'1': 'value'},
+    const {'1': '_metadata'},
+  ],
+};
+
+/// Descriptor for `CreateConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createConfigRequestDescriptor = $convert.base64Decode('ChNDcmVhdGVDb25maWdSZXF1ZXN0EiQKCWVudGl0eV9pZBgBIAEoA0IH+kIEIgIgAFIIZW50aXR5SWQSHAoDa2V5GAIgASgJQgr6QgdyBRABGP8BUgNrZXkSKwoMZGlzcGxheV9uYW1lGAMgASgJQgj6QgVyAxj/AVILZGlzcGxheU5hbWUSIAoLZGVzY3JpcHRpb24YBCABKAlSC2Rlc2NyaXB0aW9uEiMKDHN0cmluZ192YWx1ZRgFIAEoCUgAUgtzdHJpbmdWYWx1ZRIdCglpbnRfdmFsdWUYBiABKANIAFIIaW50VmFsdWUSIQoLZmxvYXRfdmFsdWUYByABKAFIAFIKZmxvYXRWYWx1ZRIfCgpib29sX3ZhbHVlGAggASgISABSCWJvb2xWYWx1ZRIfCgpqc29uX3ZhbHVlGAkgASgJSABSCWpzb25WYWx1ZRIhCgR0eXBlGAogASgOMg0udjEuVmFsdWVUeXBlUgR0eXBlEh8KCG1ldGFkYXRhGAsgASgJSAFSCG1ldGFkYXRhiAEBQgcKBXZhbHVlQgsKCV9tZXRhZGF0YQ==');
+@$core.Deprecated('Use updateConfigRequestDescriptor instead')
+const UpdateConfigRequest$json = const {
+  '1': 'UpdateConfigRequest',
+  '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'id'},
+    const {'1': 'name', '3': 2, '4': 1, '5': 9, '8': const {}, '9': 1, '10': 'name', '17': true},
+    const {'1': 'display_name', '3': 3, '4': 1, '5': 9, '8': const {}, '9': 2, '10': 'displayName', '17': true},
+    const {'1': 'description', '3': 4, '4': 1, '5': 9, '9': 3, '10': 'description', '17': true},
+    const {'1': 'string_value', '3': 5, '4': 1, '5': 9, '9': 0, '10': 'stringValue'},
+    const {'1': 'int_value', '3': 6, '4': 1, '5': 3, '9': 0, '10': 'intValue'},
+    const {'1': 'float_value', '3': 7, '4': 1, '5': 1, '9': 0, '10': 'floatValue'},
+    const {'1': 'bool_value', '3': 8, '4': 1, '5': 8, '9': 0, '10': 'boolValue'},
+    const {'1': 'json_value', '3': 9, '4': 1, '5': 9, '9': 0, '10': 'jsonValue'},
+    const {'1': 'metadata', '3': 10, '4': 1, '5': 9, '9': 4, '10': 'metadata', '17': true},
+  ],
+  '8': const [
+    const {'1': 'value'},
+    const {'1': '_name'},
     const {'1': '_display_name'},
     const {'1': '_description'},
     const {'1': '_metadata'},
   ],
 };
 
-/// Descriptor for `CreateConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createConfigRequestDescriptor = $convert.base64Decode('ChNDcmVhdGVDb25maWdSZXF1ZXN0EiQKCWVudGl0eV9pZBgBIAEoA0IH+kIEIgIgAFIIZW50aXR5SWQSNwoDa2V5GAIgASgJQiX6QiJyIBABGP8BMhleW2EtekEtWl1bYS16QS1aMC05Xy4tXSokUgNrZXkSMAoMZGlzcGxheV9uYW1lGAMgASgJQgj6QgVyAxj/AUgBUgtkaXNwbGF5TmFtZYgBARIlCgtkZXNjcmlwdGlvbhgEIAEoCUgCUgtkZXNjcmlwdGlvbogBARIjCgxzdHJpbmdfdmFsdWUYBSABKAlIAFILc3RyaW5nVmFsdWUSHQoJaW50X3ZhbHVlGAYgASgDSABSCGludFZhbHVlEiEKC2Zsb2F0X3ZhbHVlGAcgASgBSABSCmZsb2F0VmFsdWUSHwoKYm9vbF92YWx1ZRgIIAEoCEgAUglib29sVmFsdWUSHwoKanNvbl92YWx1ZRgJIAEoCUgAUglqc29uVmFsdWUSQQoEdHlwZRgKIAEoCUIt+kIqcihSBnN0cmluZ1IDaW50UgVmbG9hdFIEYm9vbFIEanNvblIGY2hvaWNlUgR0eXBlEh8KCG1ldGFkYXRhGAsgASgJSANSCG1ldGFkYXRhiAEBQgcKBXZhbHVlQg8KDV9kaXNwbGF5X25hbWVCDgoMX2Rlc2NyaXB0aW9uQgsKCV9tZXRhZGF0YQ==');
+/// Descriptor for `UpdateConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateConfigRequestDescriptor = $convert.base64Decode('ChNVcGRhdGVDb25maWdSZXF1ZXN0EhcKAmlkGAEgASgDQgf6QgQiAiAAUgJpZBIjCgRuYW1lGAIgASgJQgr6QgdyBRABGP8BSAFSBG5hbWWIAQESMAoMZGlzcGxheV9uYW1lGAMgASgJQgj6QgVyAxj/AUgCUgtkaXNwbGF5TmFtZYgBARIlCgtkZXNjcmlwdGlvbhgEIAEoCUgDUgtkZXNjcmlwdGlvbogBARIjCgxzdHJpbmdfdmFsdWUYBSABKAlIAFILc3RyaW5nVmFsdWUSHQoJaW50X3ZhbHVlGAYgASgDSABSCGludFZhbHVlEiEKC2Zsb2F0X3ZhbHVlGAcgASgBSABSCmZsb2F0VmFsdWUSHwoKYm9vbF92YWx1ZRgIIAEoCEgAUglib29sVmFsdWUSHwoKanNvbl92YWx1ZRgJIAEoCUgAUglqc29uVmFsdWUSHwoIbWV0YWRhdGEYCiABKAlIBFIIbWV0YWRhdGGIAQFCBwoFdmFsdWVCBwoFX25hbWVCDwoNX2Rpc3BsYXlfbmFtZUIOCgxfZGVzY3JpcHRpb25CCwoJX21ldGFkYXRh');
+@$core.Deprecated('Use deleteConfigRequestDescriptor instead')
+const DeleteConfigRequest$json = const {
+  '1': 'DeleteConfigRequest',
+  '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DeleteConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteConfigRequestDescriptor = $convert.base64Decode('ChNEZWxldGVDb25maWdSZXF1ZXN0EhcKAmlkGAEgASgDQgf6QgQiAiAAUgJpZA==');
 @$core.Deprecated('Use getConfigRequestDescriptor instead')
 const GetConfigRequest$json = const {
   '1': 'GetConfigRequest',
@@ -236,40 +278,6 @@ const ListConfigsResponse$json = const {
 
 /// Descriptor for `ListConfigsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listConfigsResponseDescriptor = $convert.base64Decode('ChNMaXN0Q29uZmlnc1Jlc3BvbnNlEiQKB2NvbmZpZ3MYASADKAsyCi52MS5Db25maWdSB2NvbmZpZ3MSFAoFdG90YWwYAiABKANSBXRvdGFs');
-@$core.Deprecated('Use updateConfigRequestDescriptor instead')
-const UpdateConfigRequest$json = const {
-  '1': 'UpdateConfigRequest',
-  '2': const [
-    const {'1': 'id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'id'},
-    const {'1': 'display_name', '3': 2, '4': 1, '5': 9, '8': const {}, '9': 1, '10': 'displayName', '17': true},
-    const {'1': 'description', '3': 3, '4': 1, '5': 9, '9': 2, '10': 'description', '17': true},
-    const {'1': 'string_value', '3': 4, '4': 1, '5': 9, '9': 0, '10': 'stringValue'},
-    const {'1': 'int_value', '3': 5, '4': 1, '5': 3, '9': 0, '10': 'intValue'},
-    const {'1': 'float_value', '3': 6, '4': 1, '5': 1, '9': 0, '10': 'floatValue'},
-    const {'1': 'bool_value', '3': 7, '4': 1, '5': 8, '9': 0, '10': 'boolValue'},
-    const {'1': 'json_value', '3': 8, '4': 1, '5': 9, '9': 0, '10': 'jsonValue'},
-    const {'1': 'metadata', '3': 9, '4': 1, '5': 9, '9': 3, '10': 'metadata', '17': true},
-  ],
-  '8': const [
-    const {'1': 'value'},
-    const {'1': '_display_name'},
-    const {'1': '_description'},
-    const {'1': '_metadata'},
-  ],
-};
-
-/// Descriptor for `UpdateConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List updateConfigRequestDescriptor = $convert.base64Decode('ChNVcGRhdGVDb25maWdSZXF1ZXN0EhcKAmlkGAEgASgDQgf6QgQiAiAAUgJpZBIwCgxkaXNwbGF5X25hbWUYAiABKAlCCPpCBXIDGP8BSAFSC2Rpc3BsYXlOYW1liAEBEiUKC2Rlc2NyaXB0aW9uGAMgASgJSAJSC2Rlc2NyaXB0aW9uiAEBEiMKDHN0cmluZ192YWx1ZRgEIAEoCUgAUgtzdHJpbmdWYWx1ZRIdCglpbnRfdmFsdWUYBSABKANIAFIIaW50VmFsdWUSIQoLZmxvYXRfdmFsdWUYBiABKAFIAFIKZmxvYXRWYWx1ZRIfCgpib29sX3ZhbHVlGAcgASgISABSCWJvb2xWYWx1ZRIfCgpqc29uX3ZhbHVlGAggASgJSABSCWpzb25WYWx1ZRIfCghtZXRhZGF0YRgJIAEoCUgDUghtZXRhZGF0YYgBAUIHCgV2YWx1ZUIPCg1fZGlzcGxheV9uYW1lQg4KDF9kZXNjcmlwdGlvbkILCglfbWV0YWRhdGE=');
-@$core.Deprecated('Use deleteConfigRequestDescriptor instead')
-const DeleteConfigRequest$json = const {
-  '1': 'DeleteConfigRequest',
-  '2': const [
-    const {'1': 'id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'id'},
-  ],
-};
-
-/// Descriptor for `DeleteConfigRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deleteConfigRequestDescriptor = $convert.base64Decode('ChNEZWxldGVDb25maWdSZXF1ZXN0EhcKAmlkGAEgASgDQgf6QgQiAiAAUgJpZA==');
 @$core.Deprecated('Use getConfigsByKeysRequestDescriptor instead')
 const GetConfigsByKeysRequest$json = const {
   '1': 'GetConfigsByKeysRequest',
@@ -320,3 +328,27 @@ const DeleteResponse$json = const {
 
 /// Descriptor for `DeleteResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List deleteResponseDescriptor = $convert.base64Decode('Cg5EZWxldGVSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEh0KB21lc3NhZ2UYAiABKAlIAFIHbWVzc2FnZYgBAUIKCghfbWVzc2FnZQ==');
+@$core.Deprecated('Use updateResponseDescriptor instead')
+const UpdateResponse$json = const {
+  '1': 'UpdateResponse',
+  '2': const [
+    const {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    const {'1': 'message', '3': 2, '4': 1, '5': 9, '9': 0, '10': 'message', '17': true},
+  ],
+  '8': const [
+    const {'1': '_message'},
+  ],
+};
+
+/// Descriptor for `UpdateResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateResponseDescriptor = $convert.base64Decode('Cg5VcGRhdGVSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEh0KB21lc3NhZ2UYAiABKAlIAFIHbWVzc2FnZYgBAUIKCghfbWVzc2FnZQ==');
+@$core.Deprecated('Use metadataDescriptor instead')
+const Metadata$json = const {
+  '1': 'Metadata',
+  '2': const [
+    const {'1': 'options', '3': 1, '4': 3, '5': 9, '10': 'options'},
+  ],
+};
+
+/// Descriptor for `Metadata`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List metadataDescriptor = $convert.base64Decode('CghNZXRhZGF0YRIYCgdvcHRpb25zGAEgAygJUgdvcHRpb25z');

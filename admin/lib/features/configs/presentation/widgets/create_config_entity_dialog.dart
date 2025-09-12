@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fixnum/fixnum.dart';
 import 'package:openauth/src/generated/openauth/v1/configs.pb.dart';
 import '../../../../shared/shared.dart';
 import '../bloc/config_entities_bloc.dart';
@@ -209,8 +208,8 @@ class _CreateConfigEntityDialogState extends State<CreateConfigEntityDialog> {
               name: _nameController.text.trim(),
               displayName: _displayNameController.text.trim(),
               description: _descriptionController.text.trim(),
-              readPerm: readPerm.isEmpty ? null : Int64(int.parse(readPerm)),
-              writePerm: writePerm.isEmpty ? null : Int64(int.parse(writePerm)),
+              readPerm: readPerm.isEmpty ? null : readPerm,
+              writePerm: writePerm.isEmpty ? null :writePerm,
             ),
           );
     }

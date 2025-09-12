@@ -203,9 +203,9 @@ class OpenAuthApi {
     var emptyResponse = $7.ConfigEntity();
     return _client.invoke<$7.ConfigEntity>(ctx, 'OpenAuth', 'CreateConfigEntity', request, emptyResponse);
   }
-  $async.Future<$7.ConfigEntity> updateConfigEntity($pb.ClientContext? ctx, $7.UpdateConfigEntityRequest request) {
-    var emptyResponse = $7.ConfigEntity();
-    return _client.invoke<$7.ConfigEntity>(ctx, 'OpenAuth', 'UpdateConfigEntity', request, emptyResponse);
+  $async.Future<$7.UpdateResponse> updateConfigEntity($pb.ClientContext? ctx, $7.UpdateConfigEntityRequest request) {
+    var emptyResponse = $7.UpdateResponse();
+    return _client.invoke<$7.UpdateResponse>(ctx, 'OpenAuth', 'UpdateConfigEntity', request, emptyResponse);
   }
   $async.Future<$7.ConfigEntity> getConfigEntity($pb.ClientContext? ctx, $7.GetConfigEntityRequest request) {
     var emptyResponse = $7.ConfigEntity();
@@ -223,6 +223,14 @@ class OpenAuthApi {
     var emptyResponse = $7.Config();
     return _client.invoke<$7.Config>(ctx, 'OpenAuth', 'CreateConfig', request, emptyResponse);
   }
+  $async.Future<$7.UpdateResponse> updateConfig($pb.ClientContext? ctx, $7.UpdateConfigRequest request) {
+    var emptyResponse = $7.UpdateResponse();
+    return _client.invoke<$7.UpdateResponse>(ctx, 'OpenAuth', 'UpdateConfig', request, emptyResponse);
+  }
+  $async.Future<$7.DeleteResponse> deleteConfig($pb.ClientContext? ctx, $7.DeleteConfigRequest request) {
+    var emptyResponse = $7.DeleteResponse();
+    return _client.invoke<$7.DeleteResponse>(ctx, 'OpenAuth', 'DeleteConfig', request, emptyResponse);
+  }
   $async.Future<$7.Config> getConfig($pb.ClientContext? ctx, $7.GetConfigRequest request) {
     var emptyResponse = $7.Config();
     return _client.invoke<$7.Config>(ctx, 'OpenAuth', 'GetConfig', request, emptyResponse);
@@ -238,14 +246,6 @@ class OpenAuthApi {
   $async.Future<$7.ListConfigsResponse> listConfigs($pb.ClientContext? ctx, $7.ListConfigsRequest request) {
     var emptyResponse = $7.ListConfigsResponse();
     return _client.invoke<$7.ListConfigsResponse>(ctx, 'OpenAuth', 'ListConfigs', request, emptyResponse);
-  }
-  $async.Future<$7.Config> updateConfig($pb.ClientContext? ctx, $7.UpdateConfigRequest request) {
-    var emptyResponse = $7.Config();
-    return _client.invoke<$7.Config>(ctx, 'OpenAuth', 'UpdateConfig', request, emptyResponse);
-  }
-  $async.Future<$7.DeleteResponse> deleteConfig($pb.ClientContext? ctx, $7.DeleteConfigRequest request) {
-    var emptyResponse = $7.DeleteResponse();
-    return _client.invoke<$7.DeleteResponse>(ctx, 'OpenAuth', 'DeleteConfig', request, emptyResponse);
   }
 }
 

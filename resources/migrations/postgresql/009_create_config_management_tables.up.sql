@@ -21,7 +21,7 @@ CREATE TABLE configs (
     display_name VARCHAR(255),
     description TEXT,
     value JSONB,
-    type VARCHAR(50) NOT NULL CHECK (type IN ('string', 'int', 'float', 'bool', 'json', 'choice')),
+    type VARCHAR(20) NOT NULL CHECK (type IN ('string', 'int', 'float', 'bool', 'json', 'choice')),
     metadata JSONB,
     created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     updated_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,

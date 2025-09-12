@@ -61,6 +61,10 @@ func (m *ConfigEntity) validate(all bool) error {
 
 	// no validation rules for Name
 
+	// no validation rules for DisplayName
+
+	// no validation rules for Description
+
 	// no validation rules for ReadPerm
 
 	// no validation rules for WritePerm
@@ -70,14 +74,6 @@ func (m *ConfigEntity) validate(all bool) error {
 	// no validation rules for CreatedAt
 
 	// no validation rules for UpdatedAt
-
-	if m.DisplayName != nil {
-		// no validation rules for DisplayName
-	}
-
-	if m.Description != nil {
-		// no validation rules for Description
-	}
 
 	if len(errors) > 0 {
 		return ConfigEntityMultiError(errors)
@@ -183,6 +179,10 @@ func (m *Config) validate(all bool) error {
 
 	// no validation rules for Key
 
+	// no validation rules for DisplayName
+
+	// no validation rules for Description
+
 	// no validation rules for Type
 
 	// no validation rules for Metadata
@@ -258,14 +258,6 @@ func (m *Config) validate(all bool) error {
 		// no validation rules for JsonValue
 	default:
 		_ = v // ensures v is used
-	}
-
-	if m.DisplayName != nil {
-		// no validation rules for DisplayName
-	}
-
-	if m.Description != nil {
-		// no validation rules for Description
 	}
 
 	if len(errors) > 0 {
@@ -378,10 +370,10 @@ func (m *CreateConfigEntityRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if !_CreateConfigEntityRequest_Name_Pattern.MatchString(m.GetName()) {
+	if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
 		err := CreateConfigEntityRequestValidationError{
-			field:  "Name",
-			reason: "value does not match regex pattern \"^[a-z][a-z0-9_-]*$\"",
+			field:  "DisplayName",
+			reason: "value length must be at most 255 runes",
 		}
 		if !all {
 			return err
@@ -389,10 +381,12 @@ func (m *CreateConfigEntityRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetReadPerm() <= 0 {
+	// no validation rules for Description
+
+	if l := utf8.RuneCountInString(m.GetReadPerm()); l < 1 || l > 100 {
 		err := CreateConfigEntityRequestValidationError{
 			field:  "ReadPerm",
-			reason: "value must be greater than 0",
+			reason: "value length must be between 1 and 100 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -400,34 +394,15 @@ func (m *CreateConfigEntityRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetWritePerm() <= 0 {
+	if l := utf8.RuneCountInString(m.GetWritePerm()); l < 1 || l > 100 {
 		err := CreateConfigEntityRequestValidationError{
 			field:  "WritePerm",
-			reason: "value must be greater than 0",
+			reason: "value length must be between 1 and 100 runes, inclusive",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	if m.DisplayName != nil {
-
-		if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
-			err := CreateConfigEntityRequestValidationError{
-				field:  "DisplayName",
-				reason: "value length must be at most 255 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Description != nil {
-		// no validation rules for Description
 	}
 
 	if len(errors) > 0 {
@@ -509,8 +484,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateConfigEntityRequestValidationError{}
-
-var _CreateConfigEntityRequest_Name_Pattern = regexp.MustCompile("^[a-z][a-z0-9_-]*$")
 
 // Validate checks the field values on GetConfigEntityRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1049,6 +1022,21 @@ func (m *UpdateConfigEntityRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.Name != nil {
+
+		if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 255 {
+			err := UpdateConfigEntityRequestValidationError{
+				field:  "Name",
+				reason: "value length must be between 1 and 255 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.DisplayName != nil {
 
 		if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
@@ -1070,10 +1058,10 @@ func (m *UpdateConfigEntityRequest) validate(all bool) error {
 
 	if m.ReadPerm != nil {
 
-		if m.GetReadPerm() <= 0 {
+		if l := utf8.RuneCountInString(m.GetReadPerm()); l < 1 || l > 100 {
 			err := UpdateConfigEntityRequestValidationError{
 				field:  "ReadPerm",
-				reason: "value must be greater than 0",
+				reason: "value length must be between 1 and 100 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -1085,10 +1073,10 @@ func (m *UpdateConfigEntityRequest) validate(all bool) error {
 
 	if m.WritePerm != nil {
 
-		if m.GetWritePerm() <= 0 {
+		if l := utf8.RuneCountInString(m.GetWritePerm()); l < 1 || l > 100 {
 			err := UpdateConfigEntityRequestValidationError{
 				field:  "WritePerm",
-				reason: "value must be greater than 0",
+				reason: "value length must be between 1 and 100 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -1335,10 +1323,10 @@ func (m *CreateConfigRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if !_CreateConfigRequest_Key_Pattern.MatchString(m.GetKey()) {
+	if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
 		err := CreateConfigRequestValidationError{
-			field:  "Key",
-			reason: "value does not match regex pattern \"^[a-zA-Z][a-zA-Z0-9_.-]*$\"",
+			field:  "DisplayName",
+			reason: "value length must be at most 255 runes",
 		}
 		if !all {
 			return err
@@ -1346,16 +1334,9 @@ func (m *CreateConfigRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := _CreateConfigRequest_Type_InLookup[m.GetType()]; !ok {
-		err := CreateConfigRequestValidationError{
-			field:  "Type",
-			reason: "value must be in list [string int float bool json choice]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Description
+
+	// no validation rules for Type
 
 	switch v := m.Value.(type) {
 	case *CreateConfigRequest_StringValue:
@@ -1420,25 +1401,6 @@ func (m *CreateConfigRequest) validate(all bool) error {
 		// no validation rules for JsonValue
 	default:
 		_ = v // ensures v is used
-	}
-
-	if m.DisplayName != nil {
-
-		if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
-			err := CreateConfigRequestValidationError{
-				field:  "DisplayName",
-				reason: "value length must be at most 255 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Description != nil {
-		// no validation rules for Description
 	}
 
 	if m.Metadata != nil {
@@ -1525,16 +1487,334 @@ var _ interface {
 	ErrorName() string
 } = CreateConfigRequestValidationError{}
 
-var _CreateConfigRequest_Key_Pattern = regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9_.-]*$")
-
-var _CreateConfigRequest_Type_InLookup = map[string]struct{}{
-	"string": {},
-	"int":    {},
-	"float":  {},
-	"bool":   {},
-	"json":   {},
-	"choice": {},
+// Validate checks the field values on UpdateConfigRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateConfigRequest) Validate() error {
+	return m.validate(false)
 }
+
+// ValidateAll checks the field values on UpdateConfigRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateConfigRequestMultiError, or nil if none found.
+func (m *UpdateConfigRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateConfigRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() <= 0 {
+		err := UpdateConfigRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	switch v := m.Value.(type) {
+	case *UpdateConfigRequest_StringValue:
+		if v == nil {
+			err := UpdateConfigRequestValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for StringValue
+	case *UpdateConfigRequest_IntValue:
+		if v == nil {
+			err := UpdateConfigRequestValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for IntValue
+	case *UpdateConfigRequest_FloatValue:
+		if v == nil {
+			err := UpdateConfigRequestValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for FloatValue
+	case *UpdateConfigRequest_BoolValue:
+		if v == nil {
+			err := UpdateConfigRequestValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for BoolValue
+	case *UpdateConfigRequest_JsonValue:
+		if v == nil {
+			err := UpdateConfigRequestValidationError{
+				field:  "Value",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for JsonValue
+	default:
+		_ = v // ensures v is used
+	}
+
+	if m.Name != nil {
+
+		if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 255 {
+			err := UpdateConfigRequestValidationError{
+				field:  "Name",
+				reason: "value length must be between 1 and 255 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.DisplayName != nil {
+
+		if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
+			err := UpdateConfigRequestValidationError{
+				field:  "DisplayName",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Description != nil {
+		// no validation rules for Description
+	}
+
+	if m.Metadata != nil {
+		// no validation rules for Metadata
+	}
+
+	if len(errors) > 0 {
+		return UpdateConfigRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateConfigRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateConfigRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateConfigRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateConfigRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateConfigRequestMultiError) AllErrors() []error { return m }
+
+// UpdateConfigRequestValidationError is the validation error returned by
+// UpdateConfigRequest.Validate if the designated constraints aren't met.
+type UpdateConfigRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateConfigRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateConfigRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateConfigRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateConfigRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateConfigRequestValidationError) ErrorName() string {
+	return "UpdateConfigRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateConfigRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateConfigRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateConfigRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateConfigRequestValidationError{}
+
+// Validate checks the field values on DeleteConfigRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteConfigRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteConfigRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteConfigRequestMultiError, or nil if none found.
+func (m *DeleteConfigRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteConfigRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() <= 0 {
+		err := DeleteConfigRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteConfigRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteConfigRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteConfigRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteConfigRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteConfigRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteConfigRequestMultiError) AllErrors() []error { return m }
+
+// DeleteConfigRequestValidationError is the validation error returned by
+// DeleteConfigRequest.Validate if the designated constraints aren't met.
+type DeleteConfigRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteConfigRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteConfigRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteConfigRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteConfigRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteConfigRequestValidationError) ErrorName() string {
+	return "DeleteConfigRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteConfigRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteConfigRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteConfigRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteConfigRequestValidationError{}
 
 // Validate checks the field values on GetConfigRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -2129,320 +2409,6 @@ var _ interface {
 	ErrorName() string
 } = ListConfigsResponseValidationError{}
 
-// Validate checks the field values on UpdateConfigRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateConfigRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateConfigRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateConfigRequestMultiError, or nil if none found.
-func (m *UpdateConfigRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateConfigRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.GetId() <= 0 {
-		err := UpdateConfigRequestValidationError{
-			field:  "Id",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	switch v := m.Value.(type) {
-	case *UpdateConfigRequest_StringValue:
-		if v == nil {
-			err := UpdateConfigRequestValidationError{
-				field:  "Value",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		// no validation rules for StringValue
-	case *UpdateConfigRequest_IntValue:
-		if v == nil {
-			err := UpdateConfigRequestValidationError{
-				field:  "Value",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		// no validation rules for IntValue
-	case *UpdateConfigRequest_FloatValue:
-		if v == nil {
-			err := UpdateConfigRequestValidationError{
-				field:  "Value",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		// no validation rules for FloatValue
-	case *UpdateConfigRequest_BoolValue:
-		if v == nil {
-			err := UpdateConfigRequestValidationError{
-				field:  "Value",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		// no validation rules for BoolValue
-	case *UpdateConfigRequest_JsonValue:
-		if v == nil {
-			err := UpdateConfigRequestValidationError{
-				field:  "Value",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		// no validation rules for JsonValue
-	default:
-		_ = v // ensures v is used
-	}
-
-	if m.DisplayName != nil {
-
-		if utf8.RuneCountInString(m.GetDisplayName()) > 255 {
-			err := UpdateConfigRequestValidationError{
-				field:  "DisplayName",
-				reason: "value length must be at most 255 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Description != nil {
-		// no validation rules for Description
-	}
-
-	if m.Metadata != nil {
-		// no validation rules for Metadata
-	}
-
-	if len(errors) > 0 {
-		return UpdateConfigRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdateConfigRequestMultiError is an error wrapping multiple validation
-// errors returned by UpdateConfigRequest.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateConfigRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateConfigRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateConfigRequestMultiError) AllErrors() []error { return m }
-
-// UpdateConfigRequestValidationError is the validation error returned by
-// UpdateConfigRequest.Validate if the designated constraints aren't met.
-type UpdateConfigRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateConfigRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateConfigRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateConfigRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateConfigRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateConfigRequestValidationError) ErrorName() string {
-	return "UpdateConfigRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateConfigRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateConfigRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateConfigRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateConfigRequestValidationError{}
-
-// Validate checks the field values on DeleteConfigRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteConfigRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DeleteConfigRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DeleteConfigRequestMultiError, or nil if none found.
-func (m *DeleteConfigRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DeleteConfigRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.GetId() <= 0 {
-		err := DeleteConfigRequestValidationError{
-			field:  "Id",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return DeleteConfigRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// DeleteConfigRequestMultiError is an error wrapping multiple validation
-// errors returned by DeleteConfigRequest.ValidateAll() if the designated
-// constraints aren't met.
-type DeleteConfigRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DeleteConfigRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DeleteConfigRequestMultiError) AllErrors() []error { return m }
-
-// DeleteConfigRequestValidationError is the validation error returned by
-// DeleteConfigRequest.Validate if the designated constraints aren't met.
-type DeleteConfigRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DeleteConfigRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DeleteConfigRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DeleteConfigRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DeleteConfigRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DeleteConfigRequestValidationError) ErrorName() string {
-	return "DeleteConfigRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e DeleteConfigRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDeleteConfigRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DeleteConfigRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DeleteConfigRequestValidationError{}
-
 // Validate checks the field values on GetConfigsByKeysRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -2876,3 +2842,208 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteResponseValidationError{}
+
+// Validate checks the field values on UpdateResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UpdateResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UpdateResponseMultiError,
+// or nil if none found.
+func (m *UpdateResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if m.Message != nil {
+		// no validation rules for Message
+	}
+
+	if len(errors) > 0 {
+		return UpdateResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateResponseMultiError is an error wrapping multiple validation errors
+// returned by UpdateResponse.ValidateAll() if the designated constraints
+// aren't met.
+type UpdateResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateResponseMultiError) AllErrors() []error { return m }
+
+// UpdateResponseValidationError is the validation error returned by
+// UpdateResponse.Validate if the designated constraints aren't met.
+type UpdateResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateResponseValidationError) ErrorName() string { return "UpdateResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UpdateResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateResponseValidationError{}
+
+// Validate checks the field values on Metadata with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Metadata) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Metadata with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in MetadataMultiError, or nil
+// if none found.
+func (m *Metadata) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Metadata) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return MetadataMultiError(errors)
+	}
+
+	return nil
+}
+
+// MetadataMultiError is an error wrapping multiple validation errors returned
+// by Metadata.ValidateAll() if the designated constraints aren't met.
+type MetadataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MetadataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MetadataMultiError) AllErrors() []error { return m }
+
+// MetadataValidationError is the validation error returned by
+// Metadata.Validate if the designated constraints aren't met.
+type MetadataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MetadataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MetadataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MetadataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MetadataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MetadataValidationError) ErrorName() string { return "MetadataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e MetadataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMetadata.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MetadataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MetadataValidationError{}

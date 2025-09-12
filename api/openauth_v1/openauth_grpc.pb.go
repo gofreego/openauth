@@ -69,12 +69,12 @@ const (
 	OpenAuth_ListConfigEntities_FullMethodName          = "/v1.OpenAuth/ListConfigEntities"
 	OpenAuth_DeleteConfigEntity_FullMethodName          = "/v1.OpenAuth/DeleteConfigEntity"
 	OpenAuth_CreateConfig_FullMethodName                = "/v1.OpenAuth/CreateConfig"
+	OpenAuth_UpdateConfig_FullMethodName                = "/v1.OpenAuth/UpdateConfig"
+	OpenAuth_DeleteConfig_FullMethodName                = "/v1.OpenAuth/DeleteConfig"
 	OpenAuth_GetConfig_FullMethodName                   = "/v1.OpenAuth/GetConfig"
 	OpenAuth_GetConfigByKey_FullMethodName              = "/v1.OpenAuth/GetConfigByKey"
 	OpenAuth_GetConfigsByKeys_FullMethodName            = "/v1.OpenAuth/GetConfigsByKeys"
 	OpenAuth_ListConfigs_FullMethodName                 = "/v1.OpenAuth/ListConfigs"
-	OpenAuth_UpdateConfig_FullMethodName                = "/v1.OpenAuth/UpdateConfig"
-	OpenAuth_DeleteConfig_FullMethodName                = "/v1.OpenAuth/DeleteConfig"
 )
 
 // OpenAuthClient is the client API for OpenAuth service.
@@ -345,7 +345,7 @@ type OpenAuthClient interface {
 	// CreateConfigEntity creates a new configuration entity
 	CreateConfigEntity(ctx context.Context, in *CreateConfigEntityRequest, opts ...grpc.CallOption) (*ConfigEntity, error)
 	// UpdateConfigEntity updates an existing config entity
-	UpdateConfigEntity(ctx context.Context, in *UpdateConfigEntityRequest, opts ...grpc.CallOption) (*ConfigEntity, error)
+	UpdateConfigEntity(ctx context.Context, in *UpdateConfigEntityRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 	// GetConfigEntity retrieves a specific config entity by ID
 	GetConfigEntity(ctx context.Context, in *GetConfigEntityRequest, opts ...grpc.CallOption) (*ConfigEntity, error)
 	// ListConfigEntities lists config entities with optional filtering and pagination
@@ -354,6 +354,10 @@ type OpenAuthClient interface {
 	DeleteConfigEntity(ctx context.Context, in *DeleteConfigEntityRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	// CreateConfig creates a new configuration
 	CreateConfig(ctx context.Context, in *CreateConfigRequest, opts ...grpc.CallOption) (*Config, error)
+	// UpdateConfig updates an existing config
+	UpdateConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
+	// DeleteConfig deletes a config
+	DeleteConfig(ctx context.Context, in *DeleteConfigRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	// GetConfig retrieves a specific config by ID
 	GetConfig(ctx context.Context, in *GetConfigRequest, opts ...grpc.CallOption) (*Config, error)
 	// GetConfigByKey retrieves a specific config by entity and key
@@ -362,10 +366,6 @@ type OpenAuthClient interface {
 	GetConfigsByKeys(ctx context.Context, in *GetConfigsByKeysRequest, opts ...grpc.CallOption) (*GetConfigsByKeysResponse, error)
 	// ListConfigs lists configs with optional filtering and pagination
 	ListConfigs(ctx context.Context, in *ListConfigsRequest, opts ...grpc.CallOption) (*ListConfigsResponse, error)
-	// UpdateConfig updates an existing config
-	UpdateConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*Config, error)
-	// DeleteConfig deletes a config
-	DeleteConfig(ctx context.Context, in *DeleteConfigRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
 type openAuthClient struct {
@@ -826,9 +826,9 @@ func (c *openAuthClient) CreateConfigEntity(ctx context.Context, in *CreateConfi
 	return out, nil
 }
 
-func (c *openAuthClient) UpdateConfigEntity(ctx context.Context, in *UpdateConfigEntityRequest, opts ...grpc.CallOption) (*ConfigEntity, error) {
+func (c *openAuthClient) UpdateConfigEntity(ctx context.Context, in *UpdateConfigEntityRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConfigEntity)
+	out := new(UpdateResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_UpdateConfigEntity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -876,6 +876,26 @@ func (c *openAuthClient) CreateConfig(ctx context.Context, in *CreateConfigReque
 	return out, nil
 }
 
+func (c *openAuthClient) UpdateConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_UpdateConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) DeleteConfig(ctx context.Context, in *DeleteConfigRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_DeleteConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *openAuthClient) GetConfig(ctx context.Context, in *GetConfigRequest, opts ...grpc.CallOption) (*Config, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Config)
@@ -910,26 +930,6 @@ func (c *openAuthClient) ListConfigs(ctx context.Context, in *ListConfigsRequest
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListConfigsResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_ListConfigs_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *openAuthClient) UpdateConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*Config, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Config)
-	err := c.cc.Invoke(ctx, OpenAuth_UpdateConfig_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *openAuthClient) DeleteConfig(ctx context.Context, in *DeleteConfigRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, OpenAuth_DeleteConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1204,7 +1204,7 @@ type OpenAuthServer interface {
 	// CreateConfigEntity creates a new configuration entity
 	CreateConfigEntity(context.Context, *CreateConfigEntityRequest) (*ConfigEntity, error)
 	// UpdateConfigEntity updates an existing config entity
-	UpdateConfigEntity(context.Context, *UpdateConfigEntityRequest) (*ConfigEntity, error)
+	UpdateConfigEntity(context.Context, *UpdateConfigEntityRequest) (*UpdateResponse, error)
 	// GetConfigEntity retrieves a specific config entity by ID
 	GetConfigEntity(context.Context, *GetConfigEntityRequest) (*ConfigEntity, error)
 	// ListConfigEntities lists config entities with optional filtering and pagination
@@ -1213,6 +1213,10 @@ type OpenAuthServer interface {
 	DeleteConfigEntity(context.Context, *DeleteConfigEntityRequest) (*DeleteResponse, error)
 	// CreateConfig creates a new configuration
 	CreateConfig(context.Context, *CreateConfigRequest) (*Config, error)
+	// UpdateConfig updates an existing config
+	UpdateConfig(context.Context, *UpdateConfigRequest) (*UpdateResponse, error)
+	// DeleteConfig deletes a config
+	DeleteConfig(context.Context, *DeleteConfigRequest) (*DeleteResponse, error)
 	// GetConfig retrieves a specific config by ID
 	GetConfig(context.Context, *GetConfigRequest) (*Config, error)
 	// GetConfigByKey retrieves a specific config by entity and key
@@ -1221,10 +1225,6 @@ type OpenAuthServer interface {
 	GetConfigsByKeys(context.Context, *GetConfigsByKeysRequest) (*GetConfigsByKeysResponse, error)
 	// ListConfigs lists configs with optional filtering and pagination
 	ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error)
-	// UpdateConfig updates an existing config
-	UpdateConfig(context.Context, *UpdateConfigRequest) (*Config, error)
-	// DeleteConfig deletes a config
-	DeleteConfig(context.Context, *DeleteConfigRequest) (*DeleteResponse, error)
 	mustEmbedUnimplementedOpenAuthServer()
 }
 
@@ -1370,7 +1370,7 @@ func (UnimplementedOpenAuthServer) TerminateSession(context.Context, *TerminateS
 func (UnimplementedOpenAuthServer) CreateConfigEntity(context.Context, *CreateConfigEntityRequest) (*ConfigEntity, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateConfigEntity not implemented")
 }
-func (UnimplementedOpenAuthServer) UpdateConfigEntity(context.Context, *UpdateConfigEntityRequest) (*ConfigEntity, error) {
+func (UnimplementedOpenAuthServer) UpdateConfigEntity(context.Context, *UpdateConfigEntityRequest) (*UpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfigEntity not implemented")
 }
 func (UnimplementedOpenAuthServer) GetConfigEntity(context.Context, *GetConfigEntityRequest) (*ConfigEntity, error) {
@@ -1385,6 +1385,12 @@ func (UnimplementedOpenAuthServer) DeleteConfigEntity(context.Context, *DeleteCo
 func (UnimplementedOpenAuthServer) CreateConfig(context.Context, *CreateConfigRequest) (*Config, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateConfig not implemented")
 }
+func (UnimplementedOpenAuthServer) UpdateConfig(context.Context, *UpdateConfigRequest) (*UpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfig not implemented")
+}
+func (UnimplementedOpenAuthServer) DeleteConfig(context.Context, *DeleteConfigRequest) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteConfig not implemented")
+}
 func (UnimplementedOpenAuthServer) GetConfig(context.Context, *GetConfigRequest) (*Config, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
 }
@@ -1396,12 +1402,6 @@ func (UnimplementedOpenAuthServer) GetConfigsByKeys(context.Context, *GetConfigs
 }
 func (UnimplementedOpenAuthServer) ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListConfigs not implemented")
-}
-func (UnimplementedOpenAuthServer) UpdateConfig(context.Context, *UpdateConfigRequest) (*Config, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfig not implemented")
-}
-func (UnimplementedOpenAuthServer) DeleteConfig(context.Context, *DeleteConfigRequest) (*DeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteConfig not implemented")
 }
 func (UnimplementedOpenAuthServer) mustEmbedUnimplementedOpenAuthServer() {}
 func (UnimplementedOpenAuthServer) testEmbeddedByValue()                  {}
@@ -2324,6 +2324,42 @@ func _OpenAuth_CreateConfig_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_UpdateConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).UpdateConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_UpdateConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).UpdateConfig(ctx, req.(*UpdateConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_DeleteConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).DeleteConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_DeleteConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).DeleteConfig(ctx, req.(*DeleteConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OpenAuth_GetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetConfigRequest)
 	if err := dec(in); err != nil {
@@ -2392,42 +2428,6 @@ func _OpenAuth_ListConfigs_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OpenAuthServer).ListConfigs(ctx, req.(*ListConfigsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OpenAuth_UpdateConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateConfigRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OpenAuthServer).UpdateConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OpenAuth_UpdateConfig_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpenAuthServer).UpdateConfig(ctx, req.(*UpdateConfigRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OpenAuth_DeleteConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteConfigRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OpenAuthServer).DeleteConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OpenAuth_DeleteConfig_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpenAuthServer).DeleteConfig(ctx, req.(*DeleteConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2640,6 +2640,14 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OpenAuth_CreateConfig_Handler,
 		},
 		{
+			MethodName: "UpdateConfig",
+			Handler:    _OpenAuth_UpdateConfig_Handler,
+		},
+		{
+			MethodName: "DeleteConfig",
+			Handler:    _OpenAuth_DeleteConfig_Handler,
+		},
+		{
 			MethodName: "GetConfig",
 			Handler:    _OpenAuth_GetConfig_Handler,
 		},
@@ -2654,14 +2662,6 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListConfigs",
 			Handler:    _OpenAuth_ListConfigs_Handler,
-		},
-		{
-			MethodName: "UpdateConfig",
-			Handler:    _OpenAuth_UpdateConfig_Handler,
-		},
-		{
-			MethodName: "DeleteConfig",
-			Handler:    _OpenAuth_DeleteConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

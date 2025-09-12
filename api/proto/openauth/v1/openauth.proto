@@ -834,7 +834,7 @@ service OpenAuth {
     }
 
     // UpdateConfigEntity updates an existing config entity
-    rpc UpdateConfigEntity (UpdateConfigEntityRequest) returns (ConfigEntity) {
+    rpc UpdateConfigEntity (UpdateConfigEntityRequest) returns (UpdateResponse) {
         option (google.api.http) = {
             put: "/openauth/v1/config-entities/{id}"
             body: "*"
@@ -898,6 +898,32 @@ service OpenAuth {
         };
     }
 
+       // UpdateConfig updates an existing config
+    rpc UpdateConfig (UpdateConfigRequest) returns (UpdateResponse) {
+        option (google.api.http) = {
+            put: "/openauth/v1/configs/{id}"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Update config"
+            description: "Update an existing configuration."
+        };
+    }
+
+    // DeleteConfig deletes a config
+    rpc DeleteConfig (DeleteConfigRequest) returns (DeleteResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/configs/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Config Management"
+            summary: "Delete config"
+            description: "Delete a configuration."
+        };
+    }
+
+
     // GetConfig retrieves a specific config by ID
     rpc GetConfig (GetConfigRequest) returns (Config) {
         option (google.api.http) = {
@@ -954,29 +980,5 @@ service OpenAuth {
         };
     }
 
-    // UpdateConfig updates an existing config
-    rpc UpdateConfig (UpdateConfigRequest) returns (Config) {
-        option (google.api.http) = {
-            put: "/openauth/v1/configs/{id}"
-            body: "*"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: "Config Management"
-            summary: "Update config"
-            description: "Update an existing configuration."
-        };
-    }
-
-    // DeleteConfig deletes a config
-    rpc DeleteConfig (DeleteConfigRequest) returns (DeleteResponse) {
-        option (google.api.http) = {
-            delete: "/openauth/v1/configs/{id}"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: "Config Management"
-            summary: "Delete config"
-            description: "Delete a configuration."
-        };
-    }
 }
 

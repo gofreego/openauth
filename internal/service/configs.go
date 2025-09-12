@@ -48,29 +48,29 @@ func (s *Service) CreateConfigEntity(ctx context.Context, req *openauth_v1.Creat
 	}
 
 	// Validate that the specified permissions exist
-	readPerm, err := s.repo.GetPermissionByID(ctx, req.ReadPerm)
+	readPerm, err := s.repo.GetPermissionByName(ctx, req.ReadPerm)
 	if err != nil || readPerm == nil {
-		logger.Warn(ctx, "Read permission ID %d not found", req.ReadPerm)
+		logger.Warn(ctx, "Read permission name %s not found", req.ReadPerm)
 		return nil, status.Error(codes.NotFound, "read permission not found")
 	}
 
-	writePerm, err := s.repo.GetPermissionByID(ctx, req.WritePerm)
+	writePerm, err := s.repo.GetPermissionByName(ctx, req.WritePerm)
 	if err != nil || writePerm == nil {
-		logger.Warn(ctx, "Write permission ID %d not found", req.WritePerm)
+		logger.Warn(ctx, "Write permission name %s not found", req.WritePerm)
 		return nil, status.Error(codes.NotFound, "write permission not found")
 	}
 
-	entity := new(dao.ConfigEntity).FromCreateConfigEntityRequest(req, claims.UserID)
+	entity := new(dao.ConfigEntity).FromCreateConfigEntityRequest(req, readPerm.ID, writePerm.ID, claims.UserID)
 
 	// Create the config entity
-	createdEntity, err := s.repo.CreateConfigEntity(ctx, entity)
+	err = s.repo.CreateConfigEntity(ctx, entity)
 	if err != nil {
 		logger.Error(ctx, "Failed to create config entity: %v", err)
 		return nil, status.Error(codes.Internal, "failed to create config entity")
 	}
 
-	logger.Info(ctx, "Config entity created successfully with ID=%d, name=%s", createdEntity.ID, createdEntity.Name)
-	return createdEntity.ToProtoConfigEntity(), nil
+	logger.Info(ctx, "Config entity created successfully with ID=%d, name=%s", entity.ID, entity.Name)
+	return entity.ToProtoConfigEntity(), nil
 }
 
 // GetConfigEntity retrieves a config entity by ID
@@ -156,7 +156,7 @@ func (s *Service) ListConfigEntities(ctx context.Context, req *openauth_v1.ListC
 }
 
 // UpdateConfigEntity updates an existing config entity
-func (s *Service) UpdateConfigEntity(ctx context.Context, req *openauth_v1.UpdateConfigEntityRequest) (*openauth_v1.ConfigEntity, error) {
+func (s *Service) UpdateConfigEntity(ctx context.Context, req *openauth_v1.UpdateConfigEntityRequest) (*openauth_v1.UpdateResponse, error) {
 	logger.Info(ctx, "Update config entity request for ID: %d", req.Id)
 
 	// Validate request
@@ -199,27 +199,32 @@ func (s *Service) UpdateConfigEntity(ctx context.Context, req *openauth_v1.Updat
 	}
 	if req.ReadPerm != nil {
 		// Validate the permission exists
-		if readPerm, err := s.repo.GetPermissionByID(ctx, *req.ReadPerm); err != nil || readPerm == nil {
+		readPerm, err := s.repo.GetPermissionByName(ctx, *req.ReadPerm)
+		if err != nil || readPerm == nil {
 			return nil, status.Error(codes.NotFound, "read permission not found")
 		}
-		updates["read_perm"] = *req.ReadPerm
+		updates["read_perm"] = readPerm.ID
 	}
 	if req.WritePerm != nil {
 		// Validate the permission exists
-		if writePerm, err := s.repo.GetPermissionByID(ctx, *req.WritePerm); err != nil || writePerm == nil {
+		writePerm, err := s.repo.GetPermissionByName(ctx, *req.WritePerm)
+		if err != nil || writePerm == nil {
 			return nil, status.Error(codes.NotFound, "write permission not found")
 		}
-		updates["write_perm"] = *req.WritePerm
+		updates["write_perm"] = writePerm.ID
 	}
 
-	updatedEntity, err := s.repo.UpdateConfigEntity(ctx, req.Id, updates)
+	err = s.repo.UpdateConfigEntity(ctx, req.Id, updates)
 	if err != nil {
 		logger.Error(ctx, "Failed to update config entity: %v", err)
 		return nil, status.Error(codes.Internal, "failed to update config entity")
 	}
 
-	logger.Info(ctx, "Config entity updated successfully with ID=%d", updatedEntity.ID)
-	return updatedEntity.ToProtoConfigEntity(), nil
+	logger.Info(ctx, "Config entity updated successfully with ID=%d", req.Id)
+	return &openauth_v1.UpdateResponse{
+		Success: true,
+		Message: stringPtr("config entity updated successfully"),
+	}, nil
 }
 
 // DeleteConfigEntity deletes a config entity
@@ -320,14 +325,14 @@ func (s *Service) CreateConfig(ctx context.Context, req *openauth_v1.CreateConfi
 	config := new(dao.Config).FromCreateConfigRequest(req, claims.UserID)
 
 	// Create the config
-	createdConfig, err := s.repo.CreateConfig(ctx, config)
+	err = s.repo.CreateConfig(ctx, config)
 	if err != nil {
 		logger.Error(ctx, "Failed to create config: %v", err)
 		return nil, status.Error(codes.Internal, "failed to create config")
 	}
 
-	logger.Info(ctx, "Config created successfully with ID=%d, key=%s", createdConfig.ID, createdConfig.Key)
-	return createdConfig.ToProtoConfig(), nil
+	logger.Info(ctx, "Config created successfully with ID=%d, key=%s", config.ID, config.Key)
+	return config.ToProtoConfig(), nil
 }
 
 // GetConfig retrieves a config by ID
@@ -573,7 +578,7 @@ func (s *Service) ListConfigs(ctx context.Context, req *openauth_v1.ListConfigsR
 }
 
 // UpdateConfig updates an existing config
-func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfigRequest) (*openauth_v1.Config, error) {
+func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfigRequest) (*openauth_v1.UpdateResponse, error) {
 	logger.Info(ctx, "Update config request for ID: %d", req.Id)
 
 	// Validate request
@@ -634,14 +639,17 @@ func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfi
 		updates["metadata"] = config.Metadata
 	}
 
-	updatedConfig, err := s.repo.UpdateConfig(ctx, req.Id, updates)
+	err = s.repo.UpdateConfig(ctx, req.Id, updates)
 	if err != nil {
 		logger.Error(ctx, "Failed to update config: %v", err)
 		return nil, status.Error(codes.Internal, "failed to update config")
 	}
 
-	logger.Info(ctx, "Config updated successfully with ID=%d", updatedConfig.ID)
-	return updatedConfig.ToProtoConfig(), nil
+	logger.Info(ctx, "Config updated successfully with ID=%d", req.Id)
+	return &openauth_v1.UpdateResponse{
+		Success: true,
+		Message: stringPtr("config updated successfully"),
+	}, nil
 }
 
 // DeleteConfig deletes a config

@@ -362,7 +362,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ConfigEntity"
+              "$ref": "#/definitions/v1UpdateResponse"
             }
           },
           "default": {
@@ -571,7 +571,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Config"
+              "$ref": "#/definitions/v1UpdateResponse"
             }
           },
           "default": {
@@ -2510,6 +2510,9 @@
     "OpenAuthUpdateConfigBody": {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string"
+        },
         "displayName": {
           "type": "string",
           "title": "New display name (optional)"
@@ -2546,6 +2549,10 @@
     "OpenAuthUpdateConfigEntityBody": {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string",
+          "title": "New name (optional)"
+        },
         "displayName": {
           "type": "string",
           "title": "New display name (optional)"
@@ -2556,12 +2563,10 @@
         },
         "readPerm": {
           "type": "string",
-          "format": "int64",
           "title": "New read permission ID (optional)"
         },
         "writePerm": {
           "type": "string",
-          "format": "int64",
           "title": "New write permission ID (optional)"
         }
       },
@@ -2828,7 +2833,7 @@
           "title": "For complex JSON objects"
         },
         "type": {
-          "type": "string",
+          "$ref": "#/definitions/v1ValueType",
           "title": "Type of the configuration value"
         },
         "metadata": {
@@ -2880,12 +2885,10 @@
         },
         "readPerm": {
           "type": "string",
-          "format": "int64",
           "title": "Permission ID required to read configs from this entity"
         },
         "writePerm": {
           "type": "string",
-          "format": "int64",
           "title": "Permission ID required to write/modify configs in this entity"
         },
         "createdBy": {
@@ -2919,16 +2922,14 @@
         },
         "description": {
           "type": "string",
-          "title": "Optional description"
+          "title": "description"
         },
         "readPerm": {
           "type": "string",
-          "format": "int64",
           "title": "Permission ID required to read configs from this entity"
         },
         "writePerm": {
           "type": "string",
-          "format": "int64",
           "title": "Permission ID required to write/modify configs in this entity"
         }
       },
@@ -2973,7 +2974,7 @@
           "title": "For complex JSON objects"
         },
         "type": {
-          "type": "string",
+          "$ref": "#/definitions/v1ValueType",
           "title": "Type of the configuration value"
         },
         "metadata": {
@@ -3888,6 +3889,17 @@
       },
       "title": "UpdateProfileResponse"
     },
+    "v1UpdateResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "v1UpdateUserResponse": {
       "type": "object",
       "properties": {
@@ -4106,6 +4118,19 @@
         }
       },
       "title": "ValidateTokenResponse"
+    },
+    "v1ValueType": {
+      "type": "string",
+      "enum": [
+        "VALUE_TYPE_UNSPECIFIED",
+        "VALUE_TYPE_STRING",
+        "VALUE_TYPE_INT",
+        "VALUE_TYPE_FLOAT",
+        "VALUE_TYPE_BOOL",
+        "VALUE_TYPE_JSON",
+        "VALUE_TYPE_CHOICE"
+      ],
+      "default": "VALUE_TYPE_UNSPECIFIED"
     },
     "v1VerificationResponse": {
       "type": "object",

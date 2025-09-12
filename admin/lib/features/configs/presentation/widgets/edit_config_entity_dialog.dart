@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fixnum/fixnum.dart';
 import 'package:openauth/src/generated/openauth/v1/configs.pb.dart';
 import 'package:openauth/shared/widgets/info_row_with_copy.dart';
 import '../../../../shared/shared.dart';
@@ -335,8 +334,8 @@ class _EditConfigEntityDialogState extends State<EditConfigEntityDialog> {
               id: widget.entity.id,
               displayName: _displayNameController.text.trim(),
               description: _descriptionController.text.trim(),
-              readPerm: readPerm.isEmpty ? null : Int64(int.parse(readPerm)),
-              writePerm: writePerm.isEmpty ? null : Int64(int.parse(writePerm)),
+              readPerm: readPerm.isEmpty ? null : readPerm,
+              writePerm: writePerm.isEmpty ? null : writePerm,
             ),
           );
     }
