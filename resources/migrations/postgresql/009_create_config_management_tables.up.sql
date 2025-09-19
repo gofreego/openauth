@@ -7,7 +7,8 @@ CREATE TABLE config_entities (
     display_name VARCHAR(255),
     description TEXT,
     read_perm INTEGER NOT NULL REFERENCES permissions(id) ON DELETE RESTRICT,
-    write_perm INTEGER NOT NULL REFERENCES permissions(id) ON DELETE RESTRICT,
+    write_perm INTEGER NOT NULL REFERENCES permissions(id) ON DELETE RESTRICT,  
+    is_system BOOLEAN DEFAULT FALSE,
     created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,
     updated_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000
@@ -23,6 +24,7 @@ CREATE TABLE configs (
     value JSONB,
     type VARCHAR(20) NOT NULL CHECK (type IN ('string', 'int', 'float', 'bool', 'json', 'choice')),
     metadata JSONB,
+    is_system BOOLEAN DEFAULT FALSE,
     created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     updated_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_at BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000,

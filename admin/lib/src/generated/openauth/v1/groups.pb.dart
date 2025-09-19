@@ -1058,7 +1058,6 @@ class ListGroupUsersRequest extends $pb.GeneratedMessage {
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
-    ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'all')
     ..hasRequiredFields = false
   ;
 
@@ -1067,7 +1066,6 @@ class ListGroupUsersRequest extends $pb.GeneratedMessage {
     $fixnum.Int64? groupId,
     $core.int? limit,
     $core.int? offset,
-    $core.bool? all,
   }) {
     final _result = create();
     if (groupId != null) {
@@ -1078,9 +1076,6 @@ class ListGroupUsersRequest extends $pb.GeneratedMessage {
     }
     if (offset != null) {
       _result.offset = offset;
-    }
-    if (all != null) {
-      _result.all = all;
     }
     return _result;
   }
@@ -1131,15 +1126,6 @@ class ListGroupUsersRequest extends $pb.GeneratedMessage {
   $core.bool hasOffset() => $_has(2);
   @$pb.TagNumber(4)
   void clearOffset() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.bool get all => $_getBF(3);
-  @$pb.TagNumber(5)
-  set all($core.bool v) { $_setBool(3, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasAll() => $_has(3);
-  @$pb.TagNumber(5)
-  void clearAll() => clearField(5);
 }
 
 class ListGroupUsersResponse extends $pb.GeneratedMessage {

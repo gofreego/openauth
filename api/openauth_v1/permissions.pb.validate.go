@@ -426,27 +426,9 @@ func (m *ListPermissionsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
-		err := ListPermissionsRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Limit
 
-	if m.GetOffset() < 0 {
-		err := ListPermissionsRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Offset
 
 	// no validation rules for All
 

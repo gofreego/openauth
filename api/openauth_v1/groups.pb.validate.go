@@ -1197,27 +1197,9 @@ func (m *ListGroupsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
-		err := ListGroupsRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Limit
 
-	if m.GetOffset() < 0 {
-		err := ListGroupsRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Offset
 
 	// no validation rules for All
 
@@ -2009,29 +1991,9 @@ func (m *ListGroupUsersRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
-		err := ListGroupUsersRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Limit
 
-	if m.GetOffset() < 0 {
-		err := ListGroupUsersRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for All
+	// no validation rules for Offset
 
 	if len(errors) > 0 {
 		return ListGroupUsersRequestMultiError(errors)
@@ -2407,27 +2369,9 @@ func (m *ListUserGroupsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
-		err := ListUserGroupsRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Limit
 
-	if m.GetOffset() < 0 {
-		err := ListUserGroupsRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Offset
 
 	// no validation rules for All
 

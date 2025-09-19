@@ -24,7 +24,11 @@ INSERT INTO permissions (name, display_name, description, is_system, created_by)
     ('audit.read', 'Read Audit Logs', 'View audit logs and security events', true, (SELECT id FROM users WHERE username = 'admin')),
     ('security.manage', 'Manage Security', 'Manage security settings and events', true, (SELECT id FROM users WHERE username = 'admin')),
     ('system.admin', 'System Administration', 'Full system administration access', true, (SELECT id FROM users WHERE username = 'admin')),
-    ('system.config', 'System Configuration', 'Manage system configuration', true, (SELECT id FROM users WHERE username = 'admin'));
+    ('system.config', 'System Configuration', 'Manage system configuration', true, (SELECT id FROM users WHERE username = 'admin')),
+    ('config.entity.create', 'Create Configurations Entities', 'Create new configuration entities', true, (SELECT id FROM users WHERE username = 'admin')),
+    ('config.entity.read', 'Read Configurations Entities', 'View configuration entities', true, (SELECT id FROM users WHERE username = 'admin')),
+    ('openauth.config.read', 'Read OpenAuth Configurations', 'View OpenAuth specific configurations', true, (SELECT id FROM users WHERE username = 'admin')),
+    ('openauth.config.edit', 'Edit OpenAuth Configurations', 'Modify OpenAuth specific configurations', true, (SELECT id FROM users WHERE username = 'admin'));
 
 INSERT INTO groups (name, display_name, description, is_system, is_default, created_by) VALUES
     ('super_admin', 'Super Administrator', 'Full system access with all permissions', true, false, (SELECT id FROM users WHERE username = 'admin'));

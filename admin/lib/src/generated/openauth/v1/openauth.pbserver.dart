@@ -76,7 +76,6 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
   $async.Future<$7.UpdateResponse> updateConfig($pb.ServerContext ctx, $7.UpdateConfigRequest request);
   $async.Future<$7.DeleteResponse> deleteConfig($pb.ServerContext ctx, $7.DeleteConfigRequest request);
   $async.Future<$7.Config> getConfig($pb.ServerContext ctx, $7.GetConfigRequest request);
-  $async.Future<$7.Config> getConfigByKey($pb.ServerContext ctx, $7.GetConfigByKeyRequest request);
   $async.Future<$7.GetConfigsByKeysResponse> getConfigsByKeys($pb.ServerContext ctx, $7.GetConfigsByKeysRequest request);
   $async.Future<$7.ListConfigsResponse> listConfigs($pb.ServerContext ctx, $7.ListConfigsRequest request);
 
@@ -135,7 +134,6 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'UpdateConfig': return $7.UpdateConfigRequest();
       case 'DeleteConfig': return $7.DeleteConfigRequest();
       case 'GetConfig': return $7.GetConfigRequest();
-      case 'GetConfigByKey': return $7.GetConfigByKeyRequest();
       case 'GetConfigsByKeys': return $7.GetConfigsByKeysRequest();
       case 'ListConfigs': return $7.ListConfigsRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
@@ -197,7 +195,6 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'UpdateConfig': return this.updateConfig(ctx, request as $7.UpdateConfigRequest);
       case 'DeleteConfig': return this.deleteConfig(ctx, request as $7.DeleteConfigRequest);
       case 'GetConfig': return this.getConfig(ctx, request as $7.GetConfigRequest);
-      case 'GetConfigByKey': return this.getConfigByKey(ctx, request as $7.GetConfigByKeyRequest);
       case 'GetConfigsByKeys': return this.getConfigsByKeys(ctx, request as $7.GetConfigsByKeysRequest);
       case 'ListConfigs': return this.listConfigs(ctx, request as $7.ListConfigsRequest);
       default: throw $core.ArgumentError('Unknown method: $method');

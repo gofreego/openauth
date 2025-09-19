@@ -292,7 +292,7 @@ class UserProfile extends $pb.GeneratedMessage {
     ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bio')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'avatarUrl')
-    ..aInt64(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateOfBirth')
+    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateOfBirth')
     ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'gender')
     ..aOS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timezone')
     ..aOS(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'locale')
@@ -318,7 +318,7 @@ class UserProfile extends $pb.GeneratedMessage {
     $core.String? displayName,
     $core.String? bio,
     $core.String? avatarUrl,
-    $fixnum.Int64? dateOfBirth,
+    $core.String? dateOfBirth,
     $core.String? gender,
     $core.String? timezone,
     $core.String? locale,
@@ -500,9 +500,9 @@ class UserProfile extends $pb.GeneratedMessage {
   void clearAvatarUrl() => clearField(9);
 
   @$pb.TagNumber(10)
-  $fixnum.Int64 get dateOfBirth => $_getI64(9);
+  $core.String get dateOfBirth => $_getSZ(9);
   @$pb.TagNumber(10)
-  set dateOfBirth($fixnum.Int64 v) { $_setInt64(9, v); }
+  set dateOfBirth($core.String v) { $_setString(9, v); }
   @$pb.TagNumber(10)
   $core.bool hasDateOfBirth() => $_has(9);
   @$pb.TagNumber(10)
@@ -1368,7 +1368,7 @@ class CreateProfileRequest extends $pb.GeneratedMessage {
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bio')
     ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'avatarUrl')
-    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateOfBirth')
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateOfBirth')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'gender')
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timezone')
     ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'locale')
@@ -1390,7 +1390,7 @@ class CreateProfileRequest extends $pb.GeneratedMessage {
     $core.String? displayName,
     $core.String? bio,
     $core.String? avatarUrl,
-    $fixnum.Int64? dateOfBirth,
+    $core.String? dateOfBirth,
     $core.String? gender,
     $core.String? timezone,
     $core.String? locale,
@@ -1540,9 +1540,9 @@ class CreateProfileRequest extends $pb.GeneratedMessage {
   void clearAvatarUrl() => clearField(7);
 
   @$pb.TagNumber(8)
-  $fixnum.Int64 get dateOfBirth => $_getI64(7);
+  $core.String get dateOfBirth => $_getSZ(7);
   @$pb.TagNumber(8)
-  set dateOfBirth($fixnum.Int64 v) { $_setInt64(7, v); }
+  set dateOfBirth($core.String v) { $_setString(7, v); }
   @$pb.TagNumber(8)
   $core.bool hasDateOfBirth() => $_has(7);
   @$pb.TagNumber(8)
@@ -1818,7 +1818,7 @@ class UpdateProfileRequest extends $pb.GeneratedMessage {
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'displayName')
     ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bio')
     ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'avatarUrl')
-    ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateOfBirth')
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateOfBirth')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'gender')
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timezone')
     ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'locale')
@@ -1840,7 +1840,7 @@ class UpdateProfileRequest extends $pb.GeneratedMessage {
     $core.String? displayName,
     $core.String? bio,
     $core.String? avatarUrl,
-    $fixnum.Int64? dateOfBirth,
+    $core.String? dateOfBirth,
     $core.String? gender,
     $core.String? timezone,
     $core.String? locale,
@@ -1990,9 +1990,9 @@ class UpdateProfileRequest extends $pb.GeneratedMessage {
   void clearAvatarUrl() => clearField(7);
 
   @$pb.TagNumber(8)
-  $fixnum.Int64 get dateOfBirth => $_getI64(7);
+  $core.String get dateOfBirth => $_getSZ(7);
   @$pb.TagNumber(8)
-  set dateOfBirth($fixnum.Int64 v) { $_setInt64(7, v); }
+  set dateOfBirth($core.String v) { $_setString(7, v); }
   @$pb.TagNumber(8)
   $core.bool hasDateOfBirth() => $_has(7);
   @$pb.TagNumber(8)

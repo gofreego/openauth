@@ -131,7 +131,7 @@ class ConfigsRemoteDataSourceImpl implements ConfigsRemoteDataSource {
   @override
   Future<pb.GetConfigsByKeysResponse> getConfigsByKeys(pb.GetConfigsByKeysRequest request) async {
     final response = await apiService.post(
-      '/openauth/v1/entities/${request.entityId}/configs/batch',
+      '/openauth/v1/entities/${request.entityName}/configs/batch',
       data: request.toProto3Json(),
     );
     var res = pb.GetConfigsByKeysResponse();

@@ -34,7 +34,7 @@ type Profile struct {
 func (p *Profile) FromCreateProfileRequest(req *openauth_v1.CreateProfileRequest, userId int64) *Profile {
 	var dob *time.Time
 	if req.DateOfBirth != nil {
-		d := time.UnixMilli(*req.DateOfBirth)
+		d, _ := time.Parse(time.DateOnly, *req.DateOfBirth)
 		dob = &d
 	}
 	now := time.Now().UnixMilli()
@@ -67,7 +67,10 @@ func (p *Profile) ToProtoUserProfile() *openauth_v1.UserProfile {
 		timestamp := p.DateOfBirth.UnixMilli()
 		dateOfBirth = &timestamp
 	}
-
+	var dob string
+	if dateOfBirth != nil {
+		dob = time.UnixMilli(*dateOfBirth).Format("2006-01-02")
+	}
 	return &openauth_v1.UserProfile{
 		Id:          p.ID,
 		Uuid:        p.UUID.String(),
@@ -78,7 +81,7 @@ func (p *Profile) ToProtoUserProfile() *openauth_v1.UserProfile {
 		DisplayName: p.DisplayName,
 		Bio:         p.Bio,
 		AvatarUrl:   p.AvatarURL,
-		DateOfBirth: dateOfBirth,
+		DateOfBirth: &dob,
 		Gender:      p.Gender,
 		Timezone:    p.Timezone,
 		Locale:      p.Locale,

@@ -57,8 +57,8 @@ final $typed_data.Uint8List getPermissionRequestDescriptor = $convert.base64Deco
 const ListPermissionsRequest$json = const {
   '1': 'ListPermissionsRequest',
   '2': const [
-    const {'1': 'limit', '3': 1, '4': 1, '5': 5, '8': const {}, '10': 'limit'},
-    const {'1': 'offset', '3': 2, '4': 1, '5': 5, '8': const {}, '10': 'offset'},
+    const {'1': 'limit', '3': 1, '4': 1, '5': 5, '10': 'limit'},
+    const {'1': 'offset', '3': 2, '4': 1, '5': 5, '10': 'offset'},
     const {'1': 'id', '3': 3, '4': 1, '5': 3, '8': const {}, '9': 0, '10': 'id', '17': true},
     const {'1': 'search', '3': 4, '4': 1, '5': 9, '8': const {}, '9': 1, '10': 'search', '17': true},
     const {'1': 'all', '3': 5, '4': 1, '5': 8, '10': 'all'},
@@ -70,7 +70,7 @@ const ListPermissionsRequest$json = const {
 };
 
 /// Descriptor for `ListPermissionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listPermissionsRequestDescriptor = $convert.base64Decode('ChZMaXN0UGVybWlzc2lvbnNSZXF1ZXN0Eh8KBWxpbWl0GAEgASgFQgn6QgYaBBhkKAFSBWxpbWl0Eh8KBm9mZnNldBgCIAEoBUIH+kIEGgIoAFIGb2Zmc2V0EhwKAmlkGAMgASgDQgf6QgQiAiAASABSAmlkiAEBEiUKBnNlYXJjaBgEIAEoCUII+kIFcgMY/wFIAVIGc2VhcmNoiAEBEhAKA2FsbBgFIAEoCFIDYWxsQgUKA19pZEIJCgdfc2VhcmNo');
+final $typed_data.Uint8List listPermissionsRequestDescriptor = $convert.base64Decode('ChZMaXN0UGVybWlzc2lvbnNSZXF1ZXN0EhQKBWxpbWl0GAEgASgFUgVsaW1pdBIWCgZvZmZzZXQYAiABKAVSBm9mZnNldBIcCgJpZBgDIAEoA0IH+kIEIgIgAEgAUgJpZIgBARIlCgZzZWFyY2gYBCABKAlCCPpCBXIDGP8BSAFSBnNlYXJjaIgBARIQCgNhbGwYBSABKAhSA2FsbEIFCgNfaWRCCQoHX3NlYXJjaA==');
 @$core.Deprecated('Use listPermissionsResponseDescriptor instead')
 const ListPermissionsResponse$json = const {
   '1': 'ListPermissionsResponse',

@@ -25,9 +25,9 @@ class PermissionDetailsDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDetailRow('Name', permission.name),
+            InfoRowWithCopy(label: 'Name', value: permission.name, copy: true,),
             const SizedBox(height: 12),
-            _buildDetailRow('Description', permission.description),
+            InfoRowWithCopy(label: 'Description', value: permission.description),
             const SizedBox(height: 12),
             InfoRowWithCopy(label: 'Created At', value: UtilityFunctions.formatDate(permission.createdAt)),
             const SizedBox(height: 12),
@@ -54,24 +54,4 @@ class PermissionDetailsDialog extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(value),
-      ],
-    );
-  }
-
-
 }

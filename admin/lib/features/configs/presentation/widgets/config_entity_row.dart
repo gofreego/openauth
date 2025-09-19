@@ -37,7 +37,9 @@ class ConfigEntityRow extends StatelessWidget {
               flex: 2,
               child: Text(
                 entity.displayName.isNotEmpty ? entity.displayName : '-',
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.bold ,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -45,14 +47,14 @@ class ConfigEntityRow extends StatelessWidget {
               flex: 3,
               child: Text(
                 entity.description.isNotEmpty ? entity.description : '-',
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodySmall,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
             ),
             Expanded(
               child: OutlinedButton(
-                onPressed: () => context.push(AppRoutes.comingSoon),
+                onPressed: () => context.push('${AppRoutes.configs}/${entity.id}'),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   minimumSize: const Size(0, 32),

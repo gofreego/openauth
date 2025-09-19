@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/features/profiles/data/profile_repository.dart';
 import 'package:openauth/shared/shared.dart';
-import 'package:openauth/shared/utils/utility_functions.dart';
+import 'package:openauth/shared/widgets/avatar.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart' as pb;
 import '../../../../config/dependency_injection/service_locator.dart';
 import '../bloc/profiles_bloc.dart';
@@ -78,19 +78,10 @@ class _UserProfilesDialogContentState
     return AlertDialog(
             title: Row(
               children: [
-                CircleAvatar(
+                CustomAvatar(
+                  imageUrl: widget.user.avatarUrl,
+                  name: widget.user.name,
                   radius: 20,
-                  backgroundColor: theme.colorScheme.primary,
-                  backgroundImage: widget.user.avatarUrl.isNotEmpty
-                      ? NetworkImage(widget.user.avatarUrl)
-                      : null,
-                  child: widget.user.avatarUrl.isEmpty
-                      ? Text(
-                          UtilityFunctions.getInitials(widget.user.name),
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        )
-                      : null,
                 ),
                 const SizedBox(width: 12),
                 Expanded(

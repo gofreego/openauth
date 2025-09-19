@@ -162,12 +162,13 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 
 // skipAuth checks if the gRPC method should skip authentication
 func (a *AuthMiddleware) skipAuth(method string) bool {
+	logger.Info(context.Background(), "Checking if method should skip auth: %s", method)
 	skipMethods := []string{
-		"/openauth.v1.OpenAuthService/Ping",
-		"/openauth.v1.OpenAuthService/SignUp",
-		"/openauth.v1.OpenAuthService/SignIn",
-		"/openauth.v1.OpenAuthService/RefreshToken",
-		"/openauth.v1.OpenAuthService/ValidateToken",
+		"/v1.OpenAuth/Ping",
+		"/v1.OpenAuth/SignUp",
+		"/v1.OpenAuth/SignIn",
+		"/v1.OpenAuth/RefreshToken",
+		"/v1.OpenAuth/ValidateToken",
 	}
 
 	for _, skipMethod := range skipMethods {

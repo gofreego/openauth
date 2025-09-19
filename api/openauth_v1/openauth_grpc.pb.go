@@ -72,7 +72,6 @@ const (
 	OpenAuth_UpdateConfig_FullMethodName                = "/v1.OpenAuth/UpdateConfig"
 	OpenAuth_DeleteConfig_FullMethodName                = "/v1.OpenAuth/DeleteConfig"
 	OpenAuth_GetConfig_FullMethodName                   = "/v1.OpenAuth/GetConfig"
-	OpenAuth_GetConfigByKey_FullMethodName              = "/v1.OpenAuth/GetConfigByKey"
 	OpenAuth_GetConfigsByKeys_FullMethodName            = "/v1.OpenAuth/GetConfigsByKeys"
 	OpenAuth_ListConfigs_FullMethodName                 = "/v1.OpenAuth/ListConfigs"
 )
@@ -360,8 +359,6 @@ type OpenAuthClient interface {
 	DeleteConfig(ctx context.Context, in *DeleteConfigRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	// GetConfig retrieves a specific config by ID
 	GetConfig(ctx context.Context, in *GetConfigRequest, opts ...grpc.CallOption) (*Config, error)
-	// GetConfigByKey retrieves a specific config by entity and key
-	GetConfigByKey(ctx context.Context, in *GetConfigByKeyRequest, opts ...grpc.CallOption) (*Config, error)
 	// GetConfigsByKeys retrieves multiple configs by keys within an entity
 	GetConfigsByKeys(ctx context.Context, in *GetConfigsByKeysRequest, opts ...grpc.CallOption) (*GetConfigsByKeysResponse, error)
 	// ListConfigs lists configs with optional filtering and pagination
@@ -906,16 +903,6 @@ func (c *openAuthClient) GetConfig(ctx context.Context, in *GetConfigRequest, op
 	return out, nil
 }
 
-func (c *openAuthClient) GetConfigByKey(ctx context.Context, in *GetConfigByKeyRequest, opts ...grpc.CallOption) (*Config, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Config)
-	err := c.cc.Invoke(ctx, OpenAuth_GetConfigByKey_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *openAuthClient) GetConfigsByKeys(ctx context.Context, in *GetConfigsByKeysRequest, opts ...grpc.CallOption) (*GetConfigsByKeysResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetConfigsByKeysResponse)
@@ -1219,8 +1206,6 @@ type OpenAuthServer interface {
 	DeleteConfig(context.Context, *DeleteConfigRequest) (*DeleteResponse, error)
 	// GetConfig retrieves a specific config by ID
 	GetConfig(context.Context, *GetConfigRequest) (*Config, error)
-	// GetConfigByKey retrieves a specific config by entity and key
-	GetConfigByKey(context.Context, *GetConfigByKeyRequest) (*Config, error)
 	// GetConfigsByKeys retrieves multiple configs by keys within an entity
 	GetConfigsByKeys(context.Context, *GetConfigsByKeysRequest) (*GetConfigsByKeysResponse, error)
 	// ListConfigs lists configs with optional filtering and pagination
@@ -1393,9 +1378,6 @@ func (UnimplementedOpenAuthServer) DeleteConfig(context.Context, *DeleteConfigRe
 }
 func (UnimplementedOpenAuthServer) GetConfig(context.Context, *GetConfigRequest) (*Config, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
-}
-func (UnimplementedOpenAuthServer) GetConfigByKey(context.Context, *GetConfigByKeyRequest) (*Config, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetConfigByKey not implemented")
 }
 func (UnimplementedOpenAuthServer) GetConfigsByKeys(context.Context, *GetConfigsByKeysRequest) (*GetConfigsByKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfigsByKeys not implemented")
@@ -2378,24 +2360,6 @@ func _OpenAuth_GetConfig_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OpenAuth_GetConfigByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetConfigByKeyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OpenAuthServer).GetConfigByKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OpenAuth_GetConfigByKey_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpenAuthServer).GetConfigByKey(ctx, req.(*GetConfigByKeyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _OpenAuth_GetConfigsByKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetConfigsByKeysRequest)
 	if err := dec(in); err != nil {
@@ -2650,10 +2614,6 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConfig",
 			Handler:    _OpenAuth_GetConfig_Handler,
-		},
-		{
-			MethodName: "GetConfigByKey",
-			Handler:    _OpenAuth_GetConfigByKey_Handler,
 		},
 		{
 			MethodName: "GetConfigsByKeys",

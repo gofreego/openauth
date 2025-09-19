@@ -20,6 +20,25 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     version: "v1.0.0"
     description: "OpenAuth is an open-source authentication and authorization service providing user management, RBAC, and secure access control for applications."
   }
+  security_definitions: {
+    security: {
+      key: "Bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+        description: "Bearer token for authentication. Format: 'Bearer <token>'"
+      }
+    }
+  }
+  security: [
+    {
+      security_requirement: {
+        key: "Bearer"
+        value: {}
+      }
+    }
+  ]
   tags: [
     {
       name: "Ping"
@@ -936,30 +955,11 @@ service OpenAuth {
         };
     }
 
-    // GetConfigByKey retrieves a specific config by entity and key
-    rpc GetConfigByKey (GetConfigByKeyRequest) returns (Config) {
-        option (google.api.http) = {
-            get: "/openauth/v1/entities/{entity_id}/configs/{key}"
-            additional_bindings: {
-                get: "/openauth/v1/entities/by-name/{entity_name}/configs/{key}"
-            }
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: "Config Management"
-            summary: "Get config by entity and key"
-            description: "Retrieve a specific configuration by entity and key."
-        };
-    }
-
     // GetConfigsByKeys retrieves multiple configs by keys within an entity
     rpc GetConfigsByKeys (GetConfigsByKeysRequest) returns (GetConfigsByKeysResponse) {
         option (google.api.http) = {
-            post: "/openauth/v1/entities/{entity_id}/configs/batch"
+            post: "/openauth/v1/entities/{entity_name}/configs/batch"
             body: "*"
-            additional_bindings: {
-                post: "/openauth/v1/entities/by-name/{entity_name}/configs/batch"
-                body: "*"
-            }
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             tags: "Config Management"

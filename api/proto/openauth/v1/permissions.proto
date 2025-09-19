@@ -70,10 +70,10 @@ message GetPermissionRequest {
 // Request to list permissions with optional filtering and pagination
 message ListPermissionsRequest {
     // Maximum number of permissions to return (default: 10, max: 100)
-    int32 limit = 1 [(validate.rules).int32 = {gte: 1, lte: 100}];
+    int32 limit = 1;
     
     // Number of permissions to skip for pagination (default: 0)
-    int32 offset = 2 [(validate.rules).int32.gte = 0];
+    int32 offset = 2;
 
     optional int64 id = 3 [(validate.rules).int64.gt = 0];
     

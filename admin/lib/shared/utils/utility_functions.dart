@@ -16,7 +16,7 @@ class UtilityFunctions {
     if (firstName.isNotEmpty) {
       initials += firstName[0].toUpperCase();
     }
-    if (lastName.isNotEmpty) {
+    if (name.contains(' ') && lastName.isNotEmpty) {
       initials += lastName[0].toUpperCase();
     }
     return initials;
@@ -66,4 +66,23 @@ class UtilityFunctions {
     final mobileNumberRegex = RegExp(r'^(\+91[\-\s]?)?[6-9]\d{9}$');
     return mobileNumberRegex.hasMatch(query);
   }
+
+  static DateTime fromDateOnlyString(String dateString) {
+    try {
+      final parts = dateString.split('-');
+      if (parts.length != 3) throw const FormatException('Invalid date format');
+      final year = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final day = int.parse(parts[2]);
+      return DateTime(year, month, day);
+    } catch (e) {
+      throw FormatException('Invalid date format: $e');
+    }
+  }
+
+  // Converts a DateTime to a 'YYYY-MM-DD' formatted string
+  static String toDateOnlyString(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
 }

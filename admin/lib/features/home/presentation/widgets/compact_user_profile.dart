@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+import 'package:openauth/shared/widgets/avatar.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 
@@ -36,7 +36,7 @@ class CompactUserProfile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                _buildAvatar(context, user),
+                CustomAvatar(imageUrl: user.avatarUrl, name: user.name),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -75,45 +75,5 @@ class CompactUserProfile extends StatelessWidget {
         );
       },
     );
-  }
-
-  Widget _buildAvatar(BuildContext context, User user) {
-    final theme = Theme.of(context);
-
-    if ( user.avatarUrl.isNotEmpty) {
-      return CircleAvatar(
-        radius: 20,
-        backgroundImage: NetworkImage(user.avatarUrl),
-        onBackgroundImageError: (_, __) {
-          // Fallback to initials if image fails to load
-        },
-        child: null,
-      );
-    }
-    
-    // Fallback to initials avatar
-    final initials = _getInitials(user.name);
-    return CircleAvatar(
-      radius: 20,
-      backgroundColor: theme.colorScheme.primary,
-      child: Text(
-        initials,
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onPrimary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  String _getInitials(String username) {
-    if (username.isEmpty) return 'U';
-    
-    final parts = username.split(' ');
-    if (parts.length >= 2) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    }
-    
-    return username.substring(0, 1).toUpperCase();
   }
 }

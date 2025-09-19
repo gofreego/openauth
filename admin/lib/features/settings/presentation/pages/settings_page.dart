@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openauth/shared/utils/toast_utils.dart';
-import 'package:openauth/shared/utils/utility_functions.dart';
-import 'package:openauth/src/generated/openauth/v1/users.pb.dart';
+import 'package:openauth/shared/widgets/avatar.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
@@ -62,9 +61,6 @@ class SettingsPage extends StatelessWidget {
                 }
 
                 final user = state.user;
-                // TODO: Profile is not part of SignInResponse, need to fetch separately
-                const profile = null; // state.session.profile;
-
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -77,7 +73,7 @@ class SettingsPage extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                _buildAvatar(context, user),
+                                CustomAvatar(imageUrl: user.avatarUrl, name: user.name, radius: 40),
                                 const SizedBox(width: 20),
                                 Expanded(
                                   child: Column(
@@ -137,28 +133,6 @@ class SettingsPage extends StatelessWidget {
                                   _InfoItem('Last Login', _formatDateTime(user.lastLoginAt.toInt())),
                               ],
                             ),
-                            
-                            if (profile != null && (profile.firstName.isNotEmpty || profile.lastName.isNotEmpty || profile.bio.isNotEmpty)) ...[
-                              const SizedBox(height: 32),
-                              _buildInfoSection(
-                                context,
-                                'Profile Information',
-                                [
-                                  if (profile.firstName.isNotEmpty)
-                                    _InfoItem('First Name', profile.firstName),
-                                  if (profile.lastName.isNotEmpty)
-                                    _InfoItem('Last Name', profile.lastName),
-                                  if (profile.bio.isNotEmpty)
-                                    _InfoItem('Bio', profile.bio),
-                                  if (profile.country.isNotEmpty)
-                                    _InfoItem('Country', profile.country),
-                                  if (profile.city.isNotEmpty)
-                                    _InfoItem('City', profile.city),
-                                  if (profile.timezone.isNotEmpty)
-                                    _InfoItem('Timezone', profile.timezone),
-                                ],
-                              ),
-                            ],
                           ],
                         ),
                       ),
@@ -380,25 +354,6 @@ class SettingsPage extends StatelessWidget {
   void _showFeatureNotImplemented(BuildContext context) {
     ToastUtils.showInfo('This feature will be implemented in a future update');
   }
-
-  Widget _buildAvatar(BuildContext context, User user) {
-    final theme = Theme.of(context);
-    
-    return CircleAvatar(
-      radius: 40,
-      backgroundImage: NetworkImage(user.avatarUrl),
-      onBackgroundImageError: (_, __) {
-       Text(
-      UtilityFunctions.getInitials(user.name),
-      style: theme.textTheme.headlineSmall?.copyWith(
-        color: theme.colorScheme.onPrimary,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-      },
-    );
-  }
-
   Widget _buildInfoSection(BuildContext context, String title, List<_InfoItem> items) {
     final theme = Theme.of(context);
     

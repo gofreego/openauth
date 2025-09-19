@@ -335,10 +335,8 @@ func (r *Repository) ListGroupUsers(ctx context.Context, filters *filter.GroupUs
 
 	params := []any{filters.GroupID}
 
-	if !filters.All {
-		query += " LIMIT $2 OFFSET $3"
-		params = append(params, filters.Limit, filters.Offset)
-	}
+	query += " LIMIT $2 OFFSET $3"
+	params = append(params, filters.Limit, filters.Offset)
 
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, params...)
 	if err != nil {

@@ -33,9 +33,9 @@ func (s *Service) CreateConfigEntity(ctx context.Context, req *openauth_v1.Creat
 	}
 
 	// Check for permissions (assuming we have a config management permission)
-	if !claims.HasPermission(constants.PermissionConfigsCreate) {
+	if !claims.HasPermission(constants.PermissionConfigEntitiesCreate) {
 		logger.Warn(ctx, "userID=%d does not have permission to create config entities", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to create config entities")
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to create config entities", constants.PermissionConfigEntitiesCreate))
 	}
 
 	logger.Debug(ctx, "Config entity creation authorized by userID=%d for name: %s", claims.UserID, req.Name)
@@ -119,17 +119,17 @@ func (s *Service) ListConfigEntities(ctx context.Context, req *openauth_v1.ListC
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
 	}
 
-	// Get current user for permission checking
+	// Get current user ID from context
 	claims, err := jwtutils.GetUserFromContext(ctx)
 	if err != nil {
 		logger.Warn(ctx, "failed to get user from context, err: %s", err.Error())
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 
-	// Check for list permission
-	if !claims.HasPermission(constants.PermissionConfigsList) {
-		logger.Warn(ctx, "userID=%d does not have permission to list config entities", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to list config entities")
+	// Check for permissions (assuming we have a config management permission)
+	if !claims.HasPermission(constants.PermissionConfigEntitiesRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read config entities", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to read config entities", constants.PermissionConfigEntitiesRead))
 	}
 
 	filters := filter.NewConfigEntityFilterFromProtoRequest(req)
@@ -142,11 +142,7 @@ func (s *Service) ListConfigEntities(ctx context.Context, req *openauth_v1.ListC
 	// Convert to protobuf and filter based on read permissions
 	var protoEntities []*openauth_v1.ConfigEntity
 	for _, entity := range entities {
-		// Check if user has read permission for this entity
-		readPerm, _ := s.repo.GetPermissionByID(ctx, entity.ReadPerm)
-		if readPerm == nil || claims.HasPermission(readPerm.Name) {
-			protoEntities = append(protoEntities, entity.ToProtoConfigEntity())
-		}
+		protoEntities = append(protoEntities, entity.ToProtoConfigEntity())
 	}
 
 	logger.Debug(ctx, "Successfully retrieved %d config entities", len(protoEntities))
@@ -186,7 +182,7 @@ func (s *Service) UpdateConfigEntity(ctx context.Context, req *openauth_v1.Updat
 	writePerm, _ := s.repo.GetPermissionByID(ctx, entity.WritePerm)
 	if writePerm != nil && !claims.HasPermission(writePerm.Name) {
 		logger.Warn(ctx, "userID=%d does not have write permission for config entity %d", claims.UserID, req.Id)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update this config entity")
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to update this config entity", writePerm.Name))
 	}
 
 	// Build updates map
@@ -258,7 +254,7 @@ func (s *Service) DeleteConfigEntity(ctx context.Context, req *openauth_v1.Delet
 	writePerm, _ := s.repo.GetPermissionByID(ctx, entity.WritePerm)
 	if writePerm != nil && !claims.HasPermission(writePerm.Name) {
 		logger.Warn(ctx, "userID=%d does not have write permission for config entity %d", claims.UserID, req.Id)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete this config entity")
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to delete this config entity", writePerm.Name))
 	}
 
 	err = s.repo.DeleteConfigEntity(ctx, req.Id)
@@ -310,7 +306,7 @@ func (s *Service) CreateConfig(ctx context.Context, req *openauth_v1.CreateConfi
 	writePerm, _ := s.repo.GetPermissionByID(ctx, entity.WritePerm)
 	if writePerm != nil && !claims.HasPermission(writePerm.Name) {
 		logger.Warn(ctx, "userID=%d does not have write permission for config entity %d", claims.UserID, req.EntityId)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to create configs in this entity")
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to create configs in this entity", writePerm.Name))
 	}
 
 	logger.Debug(ctx, "Config creation authorized by userID=%d for entity_id=%d, key=%s", claims.UserID, req.EntityId, req.Key)
@@ -378,67 +374,6 @@ func (s *Service) GetConfig(ctx context.Context, req *openauth_v1.GetConfigReque
 	return config.ToProtoConfig(), nil
 }
 
-// GetConfigByKey retrieves a config by entity and key
-func (s *Service) GetConfigByKey(ctx context.Context, req *openauth_v1.GetConfigByKeyRequest) (*openauth_v1.Config, error) {
-	logger.Debug(ctx, "Get config by key request for key: %s", req.Key)
-
-	// Validate request
-	if err := req.Validate(); err != nil {
-		logger.Warn(ctx, "Get config by key failed validation: %v", err)
-		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
-	}
-
-	// Get current user for permission checking
-	claims, err := jwtutils.GetUserFromContext(ctx)
-	if err != nil {
-		logger.Warn(ctx, "failed to get user from context, err: %s", err.Error())
-		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
-	}
-
-	var config *dao.Config
-	var entity *dao.ConfigEntity
-
-	// Handle entity identifier (ID or name)
-	switch identifier := req.EntityIdentifier.(type) {
-	case *openauth_v1.GetConfigByKeyRequest_EntityId:
-		config, err = s.repo.GetConfigByEntityAndKey(ctx, identifier.EntityId, req.Key)
-		if err != nil {
-			logger.Error(ctx, "Failed to get config by entity ID and key: %v", err)
-			return nil, status.Error(codes.Internal, "failed to get config")
-		}
-		if config == nil {
-			return nil, status.Error(codes.NotFound, "config not found")
-		}
-		entity, err = s.repo.GetConfigEntityByID(ctx, identifier.EntityId)
-	case *openauth_v1.GetConfigByKeyRequest_EntityName:
-		config, err = s.repo.GetConfigByEntityNameAndKey(ctx, identifier.EntityName, req.Key)
-		if err != nil {
-			logger.Error(ctx, "Failed to get config by entity name and key: %v", err)
-			return nil, status.Error(codes.Internal, "failed to get config")
-		}
-		if config == nil {
-			return nil, status.Error(codes.NotFound, "config not found")
-		}
-		entity, err = s.repo.GetConfigEntityByName(ctx, identifier.EntityName)
-	default:
-		return nil, status.Error(codes.InvalidArgument, "entity identifier is required")
-	}
-
-	if err != nil || entity == nil {
-		logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
-		return nil, status.Error(codes.Internal, "failed to verify permissions")
-	}
-
-	// Check read permission
-	readPerm, _ := s.repo.GetPermissionByID(ctx, entity.ReadPerm)
-	if readPerm != nil && !claims.HasPermission(readPerm.Name) {
-		logger.Warn(ctx, "userID=%d does not have read permission for config %s", claims.UserID, req.Key)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read this config")
-	}
-
-	return config.ToProtoConfig(), nil
-}
-
 // GetConfigsByKeys retrieves multiple configs by keys within an entity
 func (s *Service) GetConfigsByKeys(ctx context.Context, req *openauth_v1.GetConfigsByKeysRequest) (*openauth_v1.GetConfigsByKeysResponse, error) {
 	logger.Debug(ctx, "Get configs by keys request for %d keys", len(req.Keys))
@@ -456,39 +391,25 @@ func (s *Service) GetConfigsByKeys(ctx context.Context, req *openauth_v1.GetConf
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 
-	var configs map[string]*dao.Config
 	var entity *dao.ConfigEntity
-
-	// Handle entity identifier (ID or name)
-	switch identifier := req.EntityIdentifier.(type) {
-	case *openauth_v1.GetConfigsByKeysRequest_EntityId:
-		configs, err = s.repo.GetConfigsByEntityAndKeys(ctx, identifier.EntityId, req.Keys)
-		if err != nil {
-			logger.Error(ctx, "Failed to get configs by entity ID and keys: %v", err)
-			return nil, status.Error(codes.Internal, "failed to get configs")
-		}
-		entity, err = s.repo.GetConfigEntityByID(ctx, identifier.EntityId)
-	case *openauth_v1.GetConfigsByKeysRequest_EntityName:
-		configs, err = s.repo.GetConfigsByEntityNameAndKeys(ctx, identifier.EntityName, req.Keys)
-		if err != nil {
-			logger.Error(ctx, "Failed to get configs by entity name and keys: %v", err)
-			return nil, status.Error(codes.Internal, "failed to get configs")
-		}
-		entity, err = s.repo.GetConfigEntityByName(ctx, identifier.EntityName)
-	default:
-		return nil, status.Error(codes.InvalidArgument, "entity identifier is required")
-	}
+	entity, err = s.repo.GetConfigEntityByName(ctx, req.EntityName)
 
 	if err != nil || entity == nil {
 		logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
 		return nil, status.Error(codes.Internal, "failed to verify permissions")
 	}
 
-	// Check read permission
-	readPerm, _ := s.repo.GetPermissionByID(ctx, entity.ReadPerm)
-	if readPerm != nil && !claims.HasPermission(readPerm.Name) {
-		logger.Warn(ctx, "userID=%d does not have read permission for entity", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read configs from this entity")
+	if !claims.HasPermission(entity.ReadPermName) {
+		logger.Warn(ctx, "userID=%d does not have `%s` read permission for entity", claims.UserID, entity.ReadPermName)
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to read configs from this entity", entity.ReadPermName))
+	}
+
+	var configs map[string]*dao.Config
+
+	configs, err = s.repo.GetConfigsByEntityNameAndKeys(ctx, req.EntityName, req.Keys)
+	if err != nil {
+		logger.Error(ctx, "Failed to get configs by entity name and keys: %v", err)
+		return nil, status.Error(codes.Internal, "failed to get configs")
 	}
 
 	// Convert to protobuf
@@ -519,12 +440,6 @@ func (s *Service) ListConfigs(ctx context.Context, req *openauth_v1.ListConfigsR
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 
-	// Check for general list permission
-	if !claims.HasPermission(constants.PermissionConfigsList) {
-		logger.Warn(ctx, "userID=%d does not have permission to list configs", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to list configs")
-	}
-
 	filters := filter.NewConfigFilterFromProtoRequest(req)
 	configs, total, err := s.repo.ListConfigs(ctx, filters)
 	if err != nil {
@@ -532,42 +447,22 @@ func (s *Service) ListConfigs(ctx context.Context, req *openauth_v1.ListConfigsR
 		return nil, status.Error(codes.Internal, "failed to list configs")
 	}
 
-	// If filtering by specific entity, check read permission for that entity
-	if filters.EntityID != nil {
-		entity, err := s.repo.GetConfigEntityByID(ctx, *filters.EntityID)
-		if err != nil || entity == nil {
-			logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
-			return nil, status.Error(codes.Internal, "failed to verify permissions")
-		}
+	entity, err := s.repo.GetConfigEntityByID(ctx, filters.EntityID)
+	if err != nil || entity == nil {
+		logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
+		return nil, status.Error(codes.Internal, "failed to verify permissions")
+	}
 
-		readPerm, _ := s.repo.GetPermissionByID(ctx, entity.ReadPerm)
-		if readPerm != nil && !claims.HasPermission(readPerm.Name) {
-			logger.Warn(ctx, "userID=%d does not have read permission for entity %d", claims.UserID, *filters.EntityID)
-			return nil, status.Error(codes.PermissionDenied, "user does not have permission to read configs from this entity")
-		}
+	if !claims.HasPermission(entity.ReadPermName) {
+		logger.Warn(ctx, "userID=%d does not have read permission for entity %d", claims.UserID, filters.EntityID)
+		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to read configs from this entity", entity.ReadPermName))
 	}
 
 	// Convert to protobuf and filter based on entity read permissions
 	var protoConfigs []*openauth_v1.Config
-	entityPermCache := make(map[int64]bool) // Cache for entity permissions
 
 	for _, config := range configs {
-		// Check if we've already verified permissions for this entity
-		hasPermission, cached := entityPermCache[config.EntityID]
-		if !cached {
-			entity, err := s.repo.GetConfigEntityByID(ctx, config.EntityID)
-			if err != nil || entity == nil {
-				hasPermission = false
-			} else {
-				readPerm, _ := s.repo.GetPermissionByID(ctx, entity.ReadPerm)
-				hasPermission = readPerm == nil || claims.HasPermission(readPerm.Name)
-			}
-			entityPermCache[config.EntityID] = hasPermission
-		}
-
-		if hasPermission {
-			protoConfigs = append(protoConfigs, config.ToProtoConfig())
-		}
+		protoConfigs = append(protoConfigs, config.ToProtoConfig())
 	}
 
 	logger.Debug(ctx, "Successfully retrieved %d configs out of %d total", len(protoConfigs), total)
@@ -612,8 +507,7 @@ func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfi
 	}
 
 	// Check write permission
-	writePerm, _ := s.repo.GetPermissionByID(ctx, entity.WritePerm)
-	if writePerm != nil && !claims.HasPermission(writePerm.Name) {
+	if !claims.HasPermission(entity.WritePermName) {
 		logger.Warn(ctx, "userID=%d does not have write permission for config %d", claims.UserID, req.Id)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update this config")
 	}
@@ -624,7 +518,6 @@ func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfi
 	// Build updates map for repository
 	updates := make(map[string]interface{})
 	updates["updated_by"] = claims.UserID
-	updates["updated_at"] = config.UpdatedAt
 
 	if req.DisplayName != nil {
 		updates["display_name"] = req.DisplayName
@@ -632,6 +525,9 @@ func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfi
 	if req.Description != nil {
 		updates["description"] = req.Description
 	}
+
+	updates["type"] = config.Type // Type is required, always update
+
 	if req.Value != nil {
 		updates["value"] = config.Value
 	}
@@ -685,10 +581,7 @@ func (s *Service) DeleteConfig(ctx context.Context, req *openauth_v1.DeleteConfi
 		logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
 		return nil, status.Error(codes.Internal, "failed to verify permissions")
 	}
-
-	// Check write permission (delete requires write permission)
-	writePerm, _ := s.repo.GetPermissionByID(ctx, entity.WritePerm)
-	if writePerm != nil && !claims.HasPermission(writePerm.Name) {
+	if !claims.HasPermission(entity.WritePermName) {
 		logger.Warn(ctx, "userID=%d does not have write permission for config %d", claims.UserID, req.Id)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete this config")
 	}

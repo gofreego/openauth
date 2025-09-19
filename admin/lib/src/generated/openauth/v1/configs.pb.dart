@@ -25,6 +25,7 @@ class ConfigEntity extends $pb.GeneratedMessage {
     ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdBy')
     ..aInt64(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
     ..aInt64(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..aOB(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isSystem')
     ..hasRequiredFields = false
   ;
 
@@ -39,6 +40,7 @@ class ConfigEntity extends $pb.GeneratedMessage {
     $fixnum.Int64? createdBy,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
+    $core.bool? isSystem,
   }) {
     final _result = create();
     if (id != null) {
@@ -67,6 +69,9 @@ class ConfigEntity extends $pb.GeneratedMessage {
     }
     if (updatedAt != null) {
       _result.updatedAt = updatedAt;
+    }
+    if (isSystem != null) {
+      _result.isSystem = isSystem;
     }
     return _result;
   }
@@ -171,6 +176,15 @@ class ConfigEntity extends $pb.GeneratedMessage {
   $core.bool hasUpdatedAt() => $_has(8);
   @$pb.TagNumber(9)
   void clearUpdatedAt() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.bool get isSystem => $_getBF(9);
+  @$pb.TagNumber(10)
+  set isSystem($core.bool v) { $_setBool(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasIsSystem() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearIsSystem() => clearField(10);
 }
 
 enum Config_Value {
@@ -209,6 +223,7 @@ class Config extends $pb.GeneratedMessage {
     ..aInt64(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedBy')
     ..aInt64(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
     ..aInt64(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedAt')
+    ..aOB(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isSystem')
     ..hasRequiredFields = false
   ;
 
@@ -230,6 +245,7 @@ class Config extends $pb.GeneratedMessage {
     $fixnum.Int64? updatedBy,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
+    $core.bool? isSystem,
   }) {
     final _result = create();
     if (id != null) {
@@ -279,6 +295,9 @@ class Config extends $pb.GeneratedMessage {
     }
     if (updatedAt != null) {
       _result.updatedAt = updatedAt;
+    }
+    if (isSystem != null) {
+      _result.isSystem = isSystem;
     }
     return _result;
   }
@@ -449,6 +468,15 @@ class Config extends $pb.GeneratedMessage {
   $core.bool hasUpdatedAt() => $_has(15);
   @$pb.TagNumber(16)
   void clearUpdatedAt() => clearField(16);
+
+  @$pb.TagNumber(17)
+  $core.bool get isSystem => $_getBF(16);
+  @$pb.TagNumber(17)
+  set isSystem($core.bool v) { $_setBool(16, v); }
+  @$pb.TagNumber(17)
+  $core.bool hasIsSystem() => $_has(16);
+  @$pb.TagNumber(17)
+  void clearIsSystem() => clearField(17);
 }
 
 class CreateConfigEntityRequest extends $pb.GeneratedMessage {
@@ -1438,21 +1466,8 @@ class GetConfigRequest extends $pb.GeneratedMessage {
   void clearId() => clearField(1);
 }
 
-enum GetConfigByKeyRequest_EntityIdentifier {
-  entityId, 
-  entityName, 
-  notSet
-}
-
 class GetConfigByKeyRequest extends $pb.GeneratedMessage {
-  static const $core.Map<$core.int, GetConfigByKeyRequest_EntityIdentifier> _GetConfigByKeyRequest_EntityIdentifierByTag = {
-    1 : GetConfigByKeyRequest_EntityIdentifier.entityId,
-    2 : GetConfigByKeyRequest_EntityIdentifier.entityName,
-    0 : GetConfigByKeyRequest_EntityIdentifier.notSet
-  };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetConfigByKeyRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..oo(0, [1, 2])
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityId')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityName')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'key')
     ..hasRequiredFields = false
@@ -1460,14 +1475,10 @@ class GetConfigByKeyRequest extends $pb.GeneratedMessage {
 
   GetConfigByKeyRequest._() : super();
   factory GetConfigByKeyRequest({
-    $fixnum.Int64? entityId,
     $core.String? entityName,
     $core.String? key,
   }) {
     final _result = create();
-    if (entityId != null) {
-      _result.entityId = entityId;
-    }
     if (entityName != null) {
       _result.entityName = entityName;
     }
@@ -1497,33 +1508,21 @@ class GetConfigByKeyRequest extends $pb.GeneratedMessage {
   static GetConfigByKeyRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetConfigByKeyRequest>(create);
   static GetConfigByKeyRequest? _defaultInstance;
 
-  GetConfigByKeyRequest_EntityIdentifier whichEntityIdentifier() => _GetConfigByKeyRequest_EntityIdentifierByTag[$_whichOneof(0)]!;
-  void clearEntityIdentifier() => clearField($_whichOneof(0));
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get entityId => $_getI64(0);
-  @$pb.TagNumber(1)
-  set entityId($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasEntityId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearEntityId() => clearField(1);
-
   @$pb.TagNumber(2)
-  $core.String get entityName => $_getSZ(1);
+  $core.String get entityName => $_getSZ(0);
   @$pb.TagNumber(2)
-  set entityName($core.String v) { $_setString(1, v); }
+  set entityName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(2)
-  $core.bool hasEntityName() => $_has(1);
+  $core.bool hasEntityName() => $_has(0);
   @$pb.TagNumber(2)
   void clearEntityName() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get key => $_getSZ(2);
+  $core.String get key => $_getSZ(1);
   @$pb.TagNumber(3)
-  set key($core.String v) { $_setString(2, v); }
+  set key($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(3)
-  $core.bool hasKey() => $_has(2);
+  $core.bool hasKey() => $_has(1);
   @$pb.TagNumber(3)
   void clearKey() => clearField(3);
 }
@@ -1534,7 +1533,6 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
-    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type')
     ..aOB(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'all')
     ..hasRequiredFields = false
   ;
@@ -1545,7 +1543,6 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
     $core.int? limit,
     $core.int? offset,
     $core.String? search,
-    $core.String? type,
     $core.bool? all,
   }) {
     final _result = create();
@@ -1560,9 +1557,6 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
     }
     if (search != null) {
       _result.search = search;
-    }
-    if (type != null) {
-      _result.type = type;
     }
     if (all != null) {
       _result.all = all;
@@ -1626,21 +1620,12 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearSearch() => clearField(4);
 
-  @$pb.TagNumber(5)
-  $core.String get type => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set type($core.String v) { $_setString(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasType() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearType() => clearField(5);
-
   @$pb.TagNumber(6)
-  $core.bool get all => $_getBF(5);
+  $core.bool get all => $_getBF(4);
   @$pb.TagNumber(6)
-  set all($core.bool v) { $_setBool(5, v); }
+  set all($core.bool v) { $_setBool(4, v); }
   @$pb.TagNumber(6)
-  $core.bool hasAll() => $_has(5);
+  $core.bool hasAll() => $_has(4);
   @$pb.TagNumber(6)
   void clearAll() => clearField(6);
 }
@@ -1700,21 +1685,8 @@ class ListConfigsResponse extends $pb.GeneratedMessage {
   void clearTotal() => clearField(2);
 }
 
-enum GetConfigsByKeysRequest_EntityIdentifier {
-  entityId, 
-  entityName, 
-  notSet
-}
-
 class GetConfigsByKeysRequest extends $pb.GeneratedMessage {
-  static const $core.Map<$core.int, GetConfigsByKeysRequest_EntityIdentifier> _GetConfigsByKeysRequest_EntityIdentifierByTag = {
-    1 : GetConfigsByKeysRequest_EntityIdentifier.entityId,
-    2 : GetConfigsByKeysRequest_EntityIdentifier.entityName,
-    0 : GetConfigsByKeysRequest_EntityIdentifier.notSet
-  };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetConfigsByKeysRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
-    ..oo(0, [1, 2])
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityId')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityName')
     ..pPS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'keys')
     ..hasRequiredFields = false
@@ -1722,14 +1694,10 @@ class GetConfigsByKeysRequest extends $pb.GeneratedMessage {
 
   GetConfigsByKeysRequest._() : super();
   factory GetConfigsByKeysRequest({
-    $fixnum.Int64? entityId,
     $core.String? entityName,
     $core.Iterable<$core.String>? keys,
   }) {
     final _result = create();
-    if (entityId != null) {
-      _result.entityId = entityId;
-    }
     if (entityName != null) {
       _result.entityName = entityName;
     }
@@ -1759,29 +1727,17 @@ class GetConfigsByKeysRequest extends $pb.GeneratedMessage {
   static GetConfigsByKeysRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetConfigsByKeysRequest>(create);
   static GetConfigsByKeysRequest? _defaultInstance;
 
-  GetConfigsByKeysRequest_EntityIdentifier whichEntityIdentifier() => _GetConfigsByKeysRequest_EntityIdentifierByTag[$_whichOneof(0)]!;
-  void clearEntityIdentifier() => clearField($_whichOneof(0));
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get entityId => $_getI64(0);
-  @$pb.TagNumber(1)
-  set entityId($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasEntityId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearEntityId() => clearField(1);
-
   @$pb.TagNumber(2)
-  $core.String get entityName => $_getSZ(1);
+  $core.String get entityName => $_getSZ(0);
   @$pb.TagNumber(2)
-  set entityName($core.String v) { $_setString(1, v); }
+  set entityName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(2)
-  $core.bool hasEntityName() => $_has(1);
+  $core.bool hasEntityName() => $_has(0);
   @$pb.TagNumber(2)
   void clearEntityName() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.String> get keys => $_getList(2);
+  $core.List<$core.String> get keys => $_getList(1);
 }
 
 class GetConfigsByKeysResponse extends $pb.GeneratedMessage {

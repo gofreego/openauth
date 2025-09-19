@@ -16,7 +16,6 @@ class ValueType extends $pb.ProtobufEnum {
   static const ValueType VALUE_TYPE_FLOAT = ValueType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VALUE_TYPE_FLOAT');
   static const ValueType VALUE_TYPE_BOOL = ValueType._(4, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VALUE_TYPE_BOOL');
   static const ValueType VALUE_TYPE_JSON = ValueType._(5, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VALUE_TYPE_JSON');
-  static const ValueType VALUE_TYPE_CHOICE = ValueType._(6, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VALUE_TYPE_CHOICE');
 
   static const $core.List<ValueType> values = <ValueType> [
     VALUE_TYPE_UNSPECIFIED,
@@ -25,7 +24,6 @@ class ValueType extends $pb.ProtobufEnum {
     VALUE_TYPE_FLOAT,
     VALUE_TYPE_BOOL,
     VALUE_TYPE_JSON,
-    VALUE_TYPE_CHOICE,
   ];
 
   static final $core.Map<$core.int, ValueType> _byValue = $pb.ProtobufEnum.initByValue(values);

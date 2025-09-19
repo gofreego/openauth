@@ -64,12 +64,6 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 		profile.Metadata = nil
 	}
 
-	// Handle date of birth conversion
-	if req.DateOfBirth != nil {
-		dob := time.Unix(*req.DateOfBirth, 0)
-		profile.DateOfBirth = &dob
-	}
-
 	// Debug: Log the metadata being passed
 	logger.Info(ctx, "Creating profile with metadata: %s", string(profile.Metadata))
 
@@ -181,7 +175,11 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 		updates["avatar_url"] = *req.AvatarUrl
 	}
 	if req.DateOfBirth != nil {
-		dob := time.Unix(*req.DateOfBirth, 0)
+		dob, err := time.Parse(time.DateOnly, *req.DateOfBirth)
+		if err != nil {
+			logger.Error(ctx, "Invalid date_of_birth format provided for profile UUID %s: %s", req.ProfileUuid, *req.DateOfBirth)
+			return nil, status.Error(codes.InvalidArgument, "date_of_birth must be in yyyy-mm-dd format")
+		}
 		updates["date_of_birth"] = dob
 	}
 	if req.Gender != nil {

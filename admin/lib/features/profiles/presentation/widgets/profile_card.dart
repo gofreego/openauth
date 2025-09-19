@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openauth/shared/widgets/avatar.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart' as pb;
 
 class ProfileCard extends StatelessWidget {
@@ -23,27 +24,6 @@ class ProfileCard extends StatelessWidget {
     }
   }
 
-  String get _initials {
-    if (profile.firstName.isNotEmpty && profile.lastName.isNotEmpty) {
-      return '${profile.firstName[0]}${profile.lastName[0]}'.toUpperCase();
-    } else if (profile.firstName.isNotEmpty) {
-      return profile.firstName[0].toUpperCase();
-    } else if (profile.lastName.isNotEmpty) {
-      return profile.lastName[0].toUpperCase();
-    } else if (profile.displayName.isNotEmpty) {
-      final parts = profile.displayName.split(' ');
-      if (parts.length >= 2) {
-        return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-      } else {
-        return profile.displayName[0].toUpperCase();
-      }
-    } else if (profile.profileName.isNotEmpty) {
-      return profile.profileName[0].toUpperCase();
-    } else {
-      return 'U';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -57,41 +37,7 @@ class ProfileCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                child: ClipOval(
-                  child: Image.network(
-                    profile.avatarUrl,
-                    width: 48,
-                    height: 48,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Text(
-                          _initials,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                          strokeWidth: 2,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+              CustomAvatar(imageUrl: profile.avatarUrl, name: _displayName, radius: 24,),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

@@ -15,9 +15,6 @@ type GroupUsersFilter struct {
 
 	// Offset for pagination (number of records to skip)
 	Offset int32 `json:"offset,omitempty"`
-
-	// All indicates whether to fetch all users without pagination
-	All bool `json:"all,omitempty"`
 }
 
 // UserGroupsFilter represents the filter criteria for listing groups for a user
@@ -74,7 +71,6 @@ func NewGroupUsersFilter(req *openauth_v1.ListGroupUsersRequest) *GroupUsersFilt
 	return &GroupUsersFilter{
 		GroupID: req.GroupId,
 		Limit:   req.Limit,
-		All:     req.All,
 		Offset:  req.Offset,
 	}
 }

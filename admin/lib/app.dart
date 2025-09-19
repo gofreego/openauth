@@ -55,8 +55,29 @@ class _OpenAuthAdminState extends State<OpenAuthAdmin> {
           builder: (context, state) => const HomePage(),
         ),
         GoRoute(
+          path: '${AppRoutes.configs}/:entityId',
+          builder: (context, state) {
+            final entityIdStr = state.pathParameters['entityId']!;
+            final entityId = int.tryParse(entityIdStr);
+            if (entityId == null) {
+              return Scaffold(
+                appBar: AppBar(title: const Text('Error')),
+                body: const Center(
+                  child: Text('Invalid entity ID'),
+                ),
+              );
+            }
+            return ConfigsPage(entityId: entityId);
+          },
+        ),
+        GoRoute(
           path: AppRoutes.comingSoon,
-          builder: (context, state) => const ComingSoonPage(),
+          builder: (context, state) => const Scaffold(
+            appBar: null,
+            body: Center(
+              child: Text('Coming Soon'),
+            ),
+          ),
         ),
       ],
       redirect: (context, state) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openauth/shared/utils/utility_functions.dart';
+import 'package:openauth/shared/widgets/avatar.dart';
 import '../../../../src/generated/openauth/v1/users.pb.dart' as pb;
 import 'edit_user_dialog.dart';
 
@@ -33,21 +34,10 @@ class UserRow extends StatelessWidget {
               flex: 2,
               child: Row(
                 children: [
-                  CircleAvatar(
+                  CustomAvatar(
+                    imageUrl: user.avatarUrl,
+                    name: user.name,
                     radius: 20,
-                    backgroundColor: theme.colorScheme.primary,
-                    backgroundImage: user.avatarUrl.isNotEmpty 
-                        ? NetworkImage(user.avatarUrl) 
-                        : null,
-                    child: user.avatarUrl.isEmpty 
-                        ? Text(
-                            UtilityFunctions.getInitials(user.name),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        : null,
                   ),
                   const SizedBox(width: 12),
                   Expanded(

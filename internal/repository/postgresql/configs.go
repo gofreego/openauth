@@ -559,12 +559,9 @@ func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilt
 	var args []interface{}
 	argIndex := 1
 
-	// Build WHERE conditions
-	if filters.EntityID != nil {
-		conditions = append(conditions, fmt.Sprintf("c.entity_id = $%d", argIndex))
-		args = append(args, *filters.EntityID)
-		argIndex++
-	}
+	conditions = append(conditions, fmt.Sprintf("c.entity_id = $%d", argIndex))
+	args = append(args, filters.EntityID)
+	argIndex++
 
 	if filters.Search != nil && *filters.Search != "" {
 		conditions = append(conditions, fmt.Sprintf("(c.key ILIKE $%d OR c.display_name ILIKE $%d)", argIndex, argIndex))

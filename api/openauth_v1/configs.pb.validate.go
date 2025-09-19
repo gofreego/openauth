@@ -75,6 +75,8 @@ func (m *ConfigEntity) validate(all bool) error {
 
 	// no validation rules for UpdatedAt
 
+	// no validation rules for IsSystem
+
 	if len(errors) > 0 {
 		return ConfigEntityMultiError(errors)
 	}
@@ -185,8 +187,6 @@ func (m *Config) validate(all bool) error {
 
 	// no validation rules for Type
 
-	// no validation rules for Metadata
-
 	// no validation rules for CreatedBy
 
 	// no validation rules for UpdatedBy
@@ -194,6 +194,8 @@ func (m *Config) validate(all bool) error {
 	// no validation rules for CreatedAt
 
 	// no validation rules for UpdatedAt
+
+	// no validation rules for IsSystem
 
 	switch v := m.Value.(type) {
 	case *Config_StringValue:
@@ -258,6 +260,10 @@ func (m *Config) validate(all bool) error {
 		// no validation rules for JsonValue
 	default:
 		_ = v // ensures v is used
+	}
+
+	if m.Metadata != nil {
+		// no validation rules for Metadata
 	}
 
 	if len(errors) > 0 {
@@ -743,27 +749,9 @@ func (m *ListConfigEntitiesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
-		err := ListConfigEntitiesRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Limit
 
-	if m.GetOffset() < 0 {
-		err := ListConfigEntitiesRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Offset
 
 	// no validation rules for All
 
@@ -1969,6 +1957,17 @@ func (m *GetConfigByKeyRequest) validate(all bool) error {
 
 	var errors []error
 
+	if l := utf8.RuneCountInString(m.GetEntityName()); l < 1 || l > 255 {
+		err := GetConfigByKeyRequestValidationError{
+			field:  "EntityName",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if l := utf8.RuneCountInString(m.GetKey()); l < 1 || l > 255 {
 		err := GetConfigByKeyRequestValidationError{
 			field:  "Key",
@@ -1978,57 +1977,6 @@ func (m *GetConfigByKeyRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	switch v := m.EntityIdentifier.(type) {
-	case *GetConfigByKeyRequest_EntityId:
-		if v == nil {
-			err := GetConfigByKeyRequestValidationError{
-				field:  "EntityIdentifier",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if m.GetEntityId() <= 0 {
-			err := GetConfigByKeyRequestValidationError{
-				field:  "EntityId",
-				reason: "value must be greater than 0",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	case *GetConfigByKeyRequest_EntityName:
-		if v == nil {
-			err := GetConfigByKeyRequestValidationError{
-				field:  "EntityIdentifier",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if l := utf8.RuneCountInString(m.GetEntityName()); l < 1 || l > 255 {
-			err := GetConfigByKeyRequestValidationError{
-				field:  "EntityName",
-				reason: "value length must be between 1 and 255 runes, inclusive",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	default:
-		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -2133,21 +2081,10 @@ func (m *ListConfigsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
+	if m.GetEntityId() <= 0 {
 		err := ListConfigsRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetOffset() < 0 {
-		err := ListConfigsRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
+			field:  "EntityId",
+			reason: "value must be greater than 0",
 		}
 		if !all {
 			return err
@@ -2157,19 +2094,12 @@ func (m *ListConfigsRequest) validate(all bool) error {
 
 	// no validation rules for All
 
-	if m.EntityId != nil {
+	if m.Limit != nil {
+		// no validation rules for Limit
+	}
 
-		if m.GetEntityId() <= 0 {
-			err := ListConfigsRequestValidationError{
-				field:  "EntityId",
-				reason: "value must be greater than 0",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
+	if m.Offset != nil {
+		// no validation rules for Offset
 	}
 
 	if m.Search != nil {
@@ -2178,21 +2108,6 @@ func (m *ListConfigsRequest) validate(all bool) error {
 			err := ListConfigsRequestValidationError{
 				field:  "Search",
 				reason: "value length must be at most 255 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Type != nil {
-
-		if _, ok := _ListConfigsRequest_Type_InLookup[m.GetType()]; !ok {
-			err := ListConfigsRequestValidationError{
-				field:  "Type",
-				reason: "value must be in list [string int float bool json choice]",
 			}
 			if !all {
 				return err
@@ -2281,15 +2196,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListConfigsRequestValidationError{}
-
-var _ListConfigsRequest_Type_InLookup = map[string]struct{}{
-	"string": {},
-	"int":    {},
-	"float":  {},
-	"bool":   {},
-	"json":   {},
-	"choice": {},
-}
 
 // Validate checks the field values on ListConfigsResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -2451,6 +2357,17 @@ func (m *GetConfigsByKeysRequest) validate(all bool) error {
 
 	var errors []error
 
+	if l := utf8.RuneCountInString(m.GetEntityName()); l < 1 || l > 255 {
+		err := GetConfigsByKeysRequestValidationError{
+			field:  "EntityName",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if l := len(m.GetKeys()); l < 1 || l > 100 {
 		err := GetConfigsByKeysRequestValidationError{
 			field:  "Keys",
@@ -2476,57 +2393,6 @@ func (m *GetConfigsByKeysRequest) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
-	}
-
-	switch v := m.EntityIdentifier.(type) {
-	case *GetConfigsByKeysRequest_EntityId:
-		if v == nil {
-			err := GetConfigsByKeysRequestValidationError{
-				field:  "EntityIdentifier",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if m.GetEntityId() <= 0 {
-			err := GetConfigsByKeysRequestValidationError{
-				field:  "EntityId",
-				reason: "value must be greater than 0",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	case *GetConfigsByKeysRequest_EntityName:
-		if v == nil {
-			err := GetConfigsByKeysRequestValidationError{
-				field:  "EntityIdentifier",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if l := utf8.RuneCountInString(m.GetEntityName()); l < 1 || l > 255 {
-			err := GetConfigsByKeysRequestValidationError{
-				field:  "EntityName",
-				reason: "value length must be between 1 and 255 runes, inclusive",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	default:
-		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {

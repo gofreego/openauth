@@ -7,6 +7,51 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 )
 
+type ValueType string
+
+const (
+	ValueTypeString ValueType = "string"
+	ValueTypeInt    ValueType = "int"
+	ValueTypeFloat  ValueType = "float"
+	ValueTypeBool   ValueType = "bool"
+	ValueTypeJSON   ValueType = "json"
+)
+
+func (vt ValueType) FromProto(protoType openauth_v1.ValueType) ValueType {
+	switch protoType {
+	case openauth_v1.ValueType_VALUE_TYPE_STRING:
+		return ValueTypeString
+	case openauth_v1.ValueType_VALUE_TYPE_INT:
+		return ValueTypeInt
+	case openauth_v1.ValueType_VALUE_TYPE_FLOAT:
+		return ValueTypeFloat
+	case openauth_v1.ValueType_VALUE_TYPE_BOOL:
+		return ValueTypeBool
+	case openauth_v1.ValueType_VALUE_TYPE_JSON:
+		return ValueTypeJSON
+	default:
+		return ValueTypeString // default to string if unknown
+	}
+
+}
+
+func (vt ValueType) ToProto() openauth_v1.ValueType {
+	switch vt {
+	case ValueTypeString:
+		return openauth_v1.ValueType_VALUE_TYPE_STRING
+	case ValueTypeInt:
+		return openauth_v1.ValueType_VALUE_TYPE_INT
+	case ValueTypeFloat:
+		return openauth_v1.ValueType_VALUE_TYPE_FLOAT
+	case ValueTypeBool:
+		return openauth_v1.ValueType_VALUE_TYPE_BOOL
+	case ValueTypeJSON:
+		return openauth_v1.ValueType_VALUE_TYPE_JSON
+	default:
+		return openauth_v1.ValueType_VALUE_TYPE_STRING // default to string if unknown
+	}
+}
+
 // ConfigEntity represents the config_entities table
 type ConfigEntity struct {
 	ID            int64  `db:"id" json:"id"`
@@ -20,63 +65,6 @@ type ConfigEntity struct {
 	CreatedBy     int64  `db:"created_by" json:"createdBy"`
 	CreatedAt     int64  `db:"created_at" json:"createdAt"`
 	UpdatedAt     int64  `db:"updated_at" json:"updatedAt"`
-}
-
-type ValueType string
-
-func (vt ValueType) FromProto(protoType openauth_v1.ValueType) ValueType {
-	switch protoType {
-	case openauth_v1.ValueType_VALUE_TYPE_STRING:
-		return "string"
-	case openauth_v1.ValueType_VALUE_TYPE_INT:
-		return "int"
-	case openauth_v1.ValueType_VALUE_TYPE_FLOAT:
-		return "float"
-	case openauth_v1.ValueType_VALUE_TYPE_BOOL:
-		return "bool"
-	case openauth_v1.ValueType_VALUE_TYPE_JSON:
-		return "json"
-	case openauth_v1.ValueType_VALUE_TYPE_CHOICE:
-		return "choice"
-	default:
-		return "string" // default to string if unknown
-	}
-
-}
-
-func (vt ValueType) ToProto() openauth_v1.ValueType {
-	switch vt {
-	case "string":
-		return openauth_v1.ValueType_VALUE_TYPE_STRING
-	case "int":
-		return openauth_v1.ValueType_VALUE_TYPE_INT
-	case "float":
-		return openauth_v1.ValueType_VALUE_TYPE_FLOAT
-	case "bool":
-		return openauth_v1.ValueType_VALUE_TYPE_BOOL
-	case "json":
-		return openauth_v1.ValueType_VALUE_TYPE_JSON
-	case "choice":
-		return openauth_v1.ValueType_VALUE_TYPE_CHOICE
-	default:
-		return openauth_v1.ValueType_VALUE_TYPE_STRING // default to string if unknown
-	}
-}
-
-// Config represents the configs table
-type Config struct {
-	ID          int64           `db:"id" json:"id"`
-	EntityID    int64           `db:"entity_id" json:"entityId"`
-	Key         string          `db:"key" json:"key"`
-	DisplayName string          `db:"display_name" json:"displayName,omitempty"`
-	Description string          `db:"description" json:"description,omitempty"`
-	Value       json.RawMessage `db:"value" json:"value,omitempty"`
-	Type        ValueType       `db:"type" json:"type"`
-	Metadata    json.RawMessage `db:"metadata" json:"metadata,omitempty"`
-	CreatedBy   int64           `db:"created_by" json:"createdBy"`
-	UpdatedBy   int64           `db:"updated_by" json:"updatedBy"`
-	CreatedAt   int64           `db:"created_at" json:"createdAt"`
-	UpdatedAt   int64           `db:"updated_at" json:"updatedAt"`
 }
 
 // FromCreateConfigEntityRequest creates a ConfigEntity from a protobuf request
@@ -111,6 +99,22 @@ func (ce *ConfigEntity) ToProtoConfigEntity() *openauth_v1.ConfigEntity {
 	return proto
 }
 
+// Config represents the configs table
+type Config struct {
+	ID          int64     `db:"id" json:"id"`
+	EntityID    int64     `db:"entity_id" json:"entityId"`
+	Key         string    `db:"key" json:"key"`
+	DisplayName string    `db:"display_name" json:"displayName,omitempty"`
+	Description string    `db:"description" json:"description,omitempty"`
+	Value       string    `db:"value" json:"value,omitempty"`
+	Type        ValueType `db:"type" json:"type"`
+	Metadata    *string   `db:"metadata" json:"metadata,omitempty"`
+	CreatedBy   int64     `db:"created_by" json:"createdBy"`
+	UpdatedBy   int64     `db:"updated_by" json:"updatedBy"`
+	CreatedAt   int64     `db:"created_at" json:"createdAt"`
+	UpdatedAt   int64     `db:"updated_at" json:"updatedAt"`
+}
+
 // FromCreateConfigRequest creates a Config from a protobuf request
 func (c *Config) FromCreateConfigRequest(req *openauth_v1.CreateConfigRequest, createdBy int64) *Config {
 	c.EntityID = req.EntityId
@@ -143,12 +147,7 @@ func (c *Config) FromCreateConfigRequest(req *openauth_v1.CreateConfigRequest, c
 			}
 		}
 	}
-
-	// Handle metadata
-	if req.Metadata != nil {
-		c.Metadata = []byte(*req.Metadata)
-	}
-
+	c.Metadata = req.Metadata
 	return c
 }
 
@@ -168,13 +167,18 @@ func (c *Config) FromUpdateConfigRequest(req *openauth_v1.UpdateConfigRequest, u
 		switch v := req.Value.(type) {
 		case *openauth_v1.UpdateConfigRequest_StringValue:
 			c.SetValue(v.StringValue)
+			c.Type = ValueTypeString
 		case *openauth_v1.UpdateConfigRequest_IntValue:
 			c.SetValue(v.IntValue)
+			c.Type = ValueTypeInt
 		case *openauth_v1.UpdateConfigRequest_FloatValue:
 			c.SetValue(v.FloatValue)
+			c.Type = ValueTypeFloat
 		case *openauth_v1.UpdateConfigRequest_BoolValue:
 			c.SetValue(v.BoolValue)
+			c.Type = ValueTypeBool
 		case *openauth_v1.UpdateConfigRequest_JsonValue:
+			c.Type = ValueTypeJSON
 			var jsonValue interface{}
 			if err := json.Unmarshal([]byte(v.JsonValue), &jsonValue); err == nil {
 				c.SetValue(jsonValue)
@@ -183,12 +187,7 @@ func (c *Config) FromUpdateConfigRequest(req *openauth_v1.UpdateConfigRequest, u
 			}
 		}
 	}
-
-	// Handle metadata updates
-	if req.Metadata != nil {
-		c.Metadata = []byte(*req.Metadata)
-	}
-
+	c.Metadata = req.Metadata
 	c.UpdatedBy = updatedBy
 	c.UpdatedAt = time.Now().UnixMilli()
 
@@ -214,37 +213,33 @@ func (c *Config) ToProtoConfig() *openauth_v1.Config {
 
 	// Handle value conversion based on type
 	if len(c.Value) > 0 {
+		value := []byte(c.Value)
 		switch c.Type {
 		case "string":
 			var stringValue string
-			if err := json.Unmarshal(c.Value, &stringValue); err == nil {
+			if err := json.Unmarshal(value, &stringValue); err == nil {
 				proto.Value = &openauth_v1.Config_StringValue{StringValue: stringValue}
 			}
 		case "int":
 			var intValue int64
-			if err := json.Unmarshal(c.Value, &intValue); err == nil {
+			if err := json.Unmarshal(value, &intValue); err == nil {
 				proto.Value = &openauth_v1.Config_IntValue{IntValue: intValue}
 			}
 		case "float":
 			var floatValue float64
-			if err := json.Unmarshal(c.Value, &floatValue); err == nil {
+			if err := json.Unmarshal(value, &floatValue); err == nil {
 				proto.Value = &openauth_v1.Config_FloatValue{FloatValue: floatValue}
 			}
 		case "bool":
 			var boolValue bool
-			if err := json.Unmarshal(c.Value, &boolValue); err == nil {
+			if err := json.Unmarshal(value, &boolValue); err == nil {
 				proto.Value = &openauth_v1.Config_BoolValue{BoolValue: boolValue}
 			}
-		case "json", "choice":
-			proto.Value = &openauth_v1.Config_JsonValue{JsonValue: string(c.Value)}
+		case "json":
+			proto.Value = &openauth_v1.Config_JsonValue{JsonValue: c.Value}
 		}
 	}
-
-	// Handle metadata conversion
-	if len(c.Metadata) > 0 {
-		proto.Metadata = string(c.Metadata)
-	}
-
+	proto.Metadata = c.Metadata
 	return proto
 }
 
@@ -254,6 +249,6 @@ func (c *Config) SetValue(value interface{}) error {
 	if err != nil {
 		return err
 	}
-	c.Value = valueBytes
+	c.Value = string(valueBytes)
 	return nil
 }

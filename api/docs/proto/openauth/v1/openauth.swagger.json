@@ -447,13 +447,6 @@
             "type": "string"
           },
           {
-            "name": "type",
-            "description": "Filter by type",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "all",
             "description": "Return all configs without pagination",
             "in": "query",
@@ -604,93 +597,7 @@
         ]
       }
     },
-    "/openauth/v1/entities/by-name/{entityName}/configs/batch": {
-      "post": {
-        "summary": "Get multiple configs by keys",
-        "description": "Retrieve multiple configurations by their keys within an entity.",
-        "operationId": "OpenAuth_GetConfigsByKeys2",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetConfigsByKeysResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "entityName",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/OpenAuthGetConfigsByKeysBody"
-            }
-          }
-        ],
-        "tags": [
-          "Config Management"
-        ]
-      }
-    },
-    "/openauth/v1/entities/by-name/{entityName}/configs/{key}": {
-      "get": {
-        "summary": "Get config by entity and key",
-        "description": "Retrieve a specific configuration by entity and key.",
-        "operationId": "OpenAuth_GetConfigByKey2",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1Config"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "entityName",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "key",
-            "description": "The configuration key",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "entityId",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Config Management"
-        ]
-      }
-    },
-    "/openauth/v1/entities/{entityId}/configs/batch": {
+    "/openauth/v1/entities/{entityName}/configs/batch": {
       "post": {
         "summary": "Get multiple configs by keys",
         "description": "Retrieve multiple configurations by their keys within an entity.",
@@ -711,11 +618,10 @@
         },
         "parameters": [
           {
-            "name": "entityId",
+            "name": "entityName",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "body",
@@ -724,52 +630,6 @@
             "schema": {
               "$ref": "#/definitions/OpenAuthGetConfigsByKeysBody"
             }
-          }
-        ],
-        "tags": [
-          "Config Management"
-        ]
-      }
-    },
-    "/openauth/v1/entities/{entityId}/configs/{key}": {
-      "get": {
-        "summary": "Get config by entity and key",
-        "description": "Retrieve a specific configuration by entity and key.",
-        "operationId": "OpenAuth_GetConfigByKey",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1Config"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "entityId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "key",
-            "description": "The configuration key",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "entityName",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1026,12 +886,6 @@
             "required": false,
             "type": "integer",
             "format": "int32"
-          },
-          {
-            "name": "all",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "tags": [
@@ -2416,7 +2270,7 @@
         },
         "dateOfBirth": {
           "type": "string",
-          "format": "int64"
+          "title": "yyyy-mm-dd"
         },
         "gender": {
           "type": "string"
@@ -2452,10 +2306,6 @@
     "OpenAuthGetConfigsByKeysBody": {
       "type": "object",
       "properties": {
-        "entityId": {
-          "type": "string",
-          "format": "int64"
-        },
         "keys": {
           "type": "array",
           "items": {
@@ -2631,7 +2481,7 @@
         },
         "dateOfBirth": {
           "type": "string",
-          "format": "int64"
+          "title": "yyyy-mm-dd"
         },
         "gender": {
           "type": "string"
@@ -2859,6 +2709,10 @@
           "type": "string",
           "format": "int64",
           "title": "Unix timestamp when the config was last updated"
+        },
+        "isSystem": {
+          "type": "boolean",
+          "title": "Flag indicating if this config is a system config"
         }
       },
       "title": "Config represents a single configuration key-value pair within an entity"
@@ -2905,6 +2759,10 @@
           "type": "string",
           "format": "int64",
           "title": "Unix timestamp when the entity was last updated"
+        },
+        "isSystem": {
+          "type": "boolean",
+          "title": "Flag indicating if this entity is a system entity"
         }
       },
       "title": "ConfigEntity represents a configuration entity that groups related configs"
@@ -4046,8 +3904,7 @@
         },
         "dateOfBirth": {
           "type": "string",
-          "format": "int64",
-          "title": "Unix timestamp"
+          "title": "yyyy-mm-dd"
         },
         "gender": {
           "type": "string"
@@ -4127,8 +3984,7 @@
         "VALUE_TYPE_INT",
         "VALUE_TYPE_FLOAT",
         "VALUE_TYPE_BOOL",
-        "VALUE_TYPE_JSON",
-        "VALUE_TYPE_CHOICE"
+        "VALUE_TYPE_JSON"
       ],
       "default": "VALUE_TYPE_UNSPECIFIED"
     },
@@ -4168,5 +4024,18 @@
       },
       "title": "VerifyPhoneRequest for phone verification"
     }
-  }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "description": "Bearer token for authentication. Format: 'Bearer \u003ctoken\u003e'",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

@@ -235,10 +235,6 @@ class OpenAuthApi {
     var emptyResponse = $7.Config();
     return _client.invoke<$7.Config>(ctx, 'OpenAuth', 'GetConfig', request, emptyResponse);
   }
-  $async.Future<$7.Config> getConfigByKey($pb.ClientContext? ctx, $7.GetConfigByKeyRequest request) {
-    var emptyResponse = $7.Config();
-    return _client.invoke<$7.Config>(ctx, 'OpenAuth', 'GetConfigByKey', request, emptyResponse);
-  }
   $async.Future<$7.GetConfigsByKeysResponse> getConfigsByKeys($pb.ClientContext? ctx, $7.GetConfigsByKeysRequest request) {
     var emptyResponse = $7.GetConfigsByKeysResponse();
     return _client.invoke<$7.GetConfigsByKeysResponse>(ctx, 'OpenAuth', 'GetConfigsByKeys', request, emptyResponse);

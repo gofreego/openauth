@@ -50,16 +50,6 @@ const (
 	PermissionSystemConfig = "system.config"
 
 	// Config management permissions
-	PermissionConfigsCreate = "configs.create"
-	PermissionConfigsRead   = "configs.read"
-	PermissionConfigsUpdate = "configs.update"
-	PermissionConfigsDelete = "configs.delete"
-	PermissionConfigsList   = "configs.list"
-
-	// Config entity management permissions
-	PermissionConfigEntitiesCreate = "config_entities.create"
-	PermissionConfigEntitiesRead   = "config_entities.read"
-	PermissionConfigEntitiesUpdate = "config_entities.update"
-	PermissionConfigEntitiesDelete = "config_entities.delete"
-	PermissionConfigEntitiesList   = "config_entities.list"
+	PermissionConfigEntitiesCreate = "config.entity.create"
+	PermissionConfigEntitiesRead   = "config.entity.read"
 )

@@ -2068,10 +2068,10 @@ func (m *CreateProfileRequest) validate(all bool) error {
 
 	if m.DateOfBirth != nil {
 
-		if m.GetDateOfBirth() < 0 {
+		if !_CreateProfileRequest_DateOfBirth_Pattern.MatchString(m.GetDateOfBirth()) {
 			err := CreateProfileRequestValidationError{
 				field:  "DateOfBirth",
-				reason: "value must be greater than or equal to 0",
+				reason: "value does not match regex pattern \"^(19|20)\\\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\\\d|3[01])$\"",
 			}
 			if !all {
 				return err
@@ -2302,6 +2302,8 @@ var _ interface {
 	ErrorName() string
 } = CreateProfileRequestValidationError{}
 
+var _CreateProfileRequest_DateOfBirth_Pattern = regexp.MustCompile("^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$")
+
 // Validate checks the field values on CreateProfileResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -2468,27 +2470,9 @@ func (m *ListUserProfilesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
-		err := ListUserProfilesRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Limit
 
-	if m.GetOffset() < 0 {
-		err := ListUserProfilesRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Offset
 
 	if len(errors) > 0 {
 		return ListUserProfilesRequestMultiError(errors)
@@ -2863,10 +2847,10 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	if m.DateOfBirth != nil {
 
-		if m.GetDateOfBirth() < 0 {
+		if !_UpdateProfileRequest_DateOfBirth_Pattern.MatchString(m.GetDateOfBirth()) {
 			err := UpdateProfileRequestValidationError{
 				field:  "DateOfBirth",
-				reason: "value must be greater than or equal to 0",
+				reason: "value does not match regex pattern \"^(19|20)\\\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\\\d|3[01])$\"",
 			}
 			if !all {
 				return err
@@ -3096,6 +3080,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateProfileRequestValidationError{}
+
+var _UpdateProfileRequest_DateOfBirth_Pattern = regexp.MustCompile("^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$")
 
 // Validate checks the field values on UpdateProfileResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -4438,27 +4424,9 @@ func (m *ListUsersRequest) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetLimit(); val < 1 || val > 100 {
-		err := ListUsersRequestValidationError{
-			field:  "Limit",
-			reason: "value must be inside range [1, 100]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Limit
 
-	if m.GetOffset() < 0 {
-		err := ListUsersRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Offset
 
 	if m.Search != nil {
 

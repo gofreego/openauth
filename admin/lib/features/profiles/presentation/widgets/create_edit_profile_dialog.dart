@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:openauth/shared/shared.dart';
+import 'package:openauth/shared/utils/utility_functions.dart';
 import 'package:openauth/src/generated/openauth/v1/users.pb.dart' as pb;
 import '../bloc/profiles_bloc.dart';
 import '../bloc/profiles_state.dart';
@@ -66,8 +67,8 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
     _postalCodeController = TextEditingController(text: profile?.postalCode ?? '');
     
     // Handle date of birth - convert from timestamp if it exists
-    if (profile?.dateOfBirth != null && profile!.dateOfBirth.toInt() > 0) {
-      _selectedDateOfBirth = DateTime.fromMillisecondsSinceEpoch(profile.dateOfBirth.toInt() * 1000);
+    if (profile?.dateOfBirth != null && profile!.dateOfBirth.isNotEmpty) {
+      _selectedDateOfBirth = UtilityFunctions.fromDateOnlyString(profile.dateOfBirth);
     }
   }
 
@@ -423,7 +424,7 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
                 ? _websiteUrlController.text.trim() 
                 : null,
             dateOfBirth: _selectedDateOfBirth != null 
-                ? Int64(_selectedDateOfBirth!.millisecondsSinceEpoch ~/ 1000)
+                ? UtilityFunctions.toDateOnlyString(_selectedDateOfBirth!)
                 : null,
             gender: _genderController.text.trim().isNotEmpty 
                 ? _genderController.text.trim() 
@@ -474,7 +475,7 @@ class _CreateEditProfileDialogState extends State<CreateEditProfileDialog> {
                 ? _websiteUrlController.text.trim() 
                 : null,
             dateOfBirth: _selectedDateOfBirth != null 
-                ? Int64(_selectedDateOfBirth!.millisecondsSinceEpoch ~/ 1000)
+                ? UtilityFunctions.toDateOnlyString(_selectedDateOfBirth!)
                 : null,
             gender: _genderController.text.trim().isNotEmpty 
                 ? _genderController.text.trim() 
