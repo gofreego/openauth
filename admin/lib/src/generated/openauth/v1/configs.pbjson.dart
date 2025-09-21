@@ -249,13 +249,15 @@ final $typed_data.Uint8List getConfigByKeyRequestDescriptor = $convert.base64Dec
 const ListConfigsRequest$json = const {
   '1': 'ListConfigsRequest',
   '2': const [
-    const {'1': 'entity_id', '3': 1, '4': 1, '5': 3, '8': const {}, '10': 'entityId'},
-    const {'1': 'limit', '3': 2, '4': 1, '5': 5, '9': 0, '10': 'limit', '17': true},
-    const {'1': 'offset', '3': 3, '4': 1, '5': 5, '9': 1, '10': 'offset', '17': true},
-    const {'1': 'search', '3': 4, '4': 1, '5': 9, '8': const {}, '9': 2, '10': 'search', '17': true},
+    const {'1': 'entity_id', '3': 1, '4': 1, '5': 3, '8': const {}, '9': 0, '10': 'entityId'},
+    const {'1': 'entity_name', '3': 7, '4': 1, '5': 9, '8': const {}, '9': 0, '10': 'entityName'},
+    const {'1': 'limit', '3': 2, '4': 1, '5': 5, '9': 1, '10': 'limit', '17': true},
+    const {'1': 'offset', '3': 3, '4': 1, '5': 5, '9': 2, '10': 'offset', '17': true},
+    const {'1': 'search', '3': 4, '4': 1, '5': 9, '8': const {}, '9': 3, '10': 'search', '17': true},
     const {'1': 'all', '3': 6, '4': 1, '5': 8, '10': 'all'},
   ],
   '8': const [
+    const {'1': 'entity'},
     const {'1': '_limit'},
     const {'1': '_offset'},
     const {'1': '_search'},
@@ -263,18 +265,17 @@ const ListConfigsRequest$json = const {
 };
 
 /// Descriptor for `ListConfigsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listConfigsRequestDescriptor = $convert.base64Decode('ChJMaXN0Q29uZmlnc1JlcXVlc3QSJAoJZW50aXR5X2lkGAEgASgDQgf6QgQiAiAAUghlbnRpdHlJZBIZCgVsaW1pdBgCIAEoBUgAUgVsaW1pdIgBARIbCgZvZmZzZXQYAyABKAVIAVIGb2Zmc2V0iAEBEiUKBnNlYXJjaBgEIAEoCUII+kIFcgMY/wFIAlIGc2VhcmNoiAEBEhAKA2FsbBgGIAEoCFIDYWxsQggKBl9saW1pdEIJCgdfb2Zmc2V0QgkKB19zZWFyY2g=');
+final $typed_data.Uint8List listConfigsRequestDescriptor = $convert.base64Decode('ChJMaXN0Q29uZmlnc1JlcXVlc3QSJgoJZW50aXR5X2lkGAEgASgDQgf6QgQiAiAASABSCGVudGl0eUlkEi0KC2VudGl0eV9uYW1lGAcgASgJQgr6QgdyBRABGP8BSABSCmVudGl0eU5hbWUSGQoFbGltaXQYAiABKAVIAVIFbGltaXSIAQESGwoGb2Zmc2V0GAMgASgFSAJSBm9mZnNldIgBARIlCgZzZWFyY2gYBCABKAlCCPpCBXIDGP8BSANSBnNlYXJjaIgBARIQCgNhbGwYBiABKAhSA2FsbEIICgZlbnRpdHlCCAoGX2xpbWl0QgkKB19vZmZzZXRCCQoHX3NlYXJjaA==');
 @$core.Deprecated('Use listConfigsResponseDescriptor instead')
 const ListConfigsResponse$json = const {
   '1': 'ListConfigsResponse',
   '2': const [
     const {'1': 'configs', '3': 1, '4': 3, '5': 11, '6': '.v1.Config', '10': 'configs'},
-    const {'1': 'total', '3': 2, '4': 1, '5': 3, '10': 'total'},
   ],
 };
 
 /// Descriptor for `ListConfigsResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listConfigsResponseDescriptor = $convert.base64Decode('ChNMaXN0Q29uZmlnc1Jlc3BvbnNlEiQKB2NvbmZpZ3MYASADKAsyCi52MS5Db25maWdSB2NvbmZpZ3MSFAoFdG90YWwYAiABKANSBXRvdGFs');
+final $typed_data.Uint8List listConfigsResponseDescriptor = $convert.base64Decode('ChNMaXN0Q29uZmlnc1Jlc3BvbnNlEiQKB2NvbmZpZ3MYASADKAsyCi52MS5Db25maWdSB2NvbmZpZ3M=');
 @$core.Deprecated('Use getConfigsByKeysRequestDescriptor instead')
 const GetConfigsByKeysRequest$json = const {
   '1': 'GetConfigsByKeysRequest',

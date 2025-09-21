@@ -134,12 +134,12 @@ final $typed_data.Uint8List logoutResponseDescriptor = $convert.base64Decode('Cg
 const ValidateTokenRequest$json = const {
   '1': 'ValidateTokenRequest',
   '2': const [
-    const {'1': 'access_token', '3': 1, '4': 1, '5': 9, '10': 'accessToken'},
+    const {'1': 'access_token', '3': 1, '4': 1, '5': 9, '8': const {}, '10': 'accessToken'},
   ],
 };
 
 /// Descriptor for `ValidateTokenRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List validateTokenRequestDescriptor = $convert.base64Decode('ChRWYWxpZGF0ZVRva2VuUmVxdWVzdBIhCgxhY2Nlc3NfdG9rZW4YASABKAlSC2FjY2Vzc1Rva2Vu');
+final $typed_data.Uint8List validateTokenRequestDescriptor = $convert.base64Decode('ChRWYWxpZGF0ZVRva2VuUmVxdWVzdBItCgxhY2Nlc3NfdG9rZW4YASABKAlCCvpCB3IFEAEYgAhSC2FjY2Vzc1Rva2Vu');
 @$core.Deprecated('Use validateTokenResponseDescriptor instead')
 const ValidateTokenResponse$json = const {
   '1': 'ValidateTokenResponse',
@@ -229,3 +229,24 @@ const TerminateSessionResponse$json = const {
 
 /// Descriptor for `TerminateSessionResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List terminateSessionResponseDescriptor = $convert.base64Decode('ChhUZXJtaW5hdGVTZXNzaW9uUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
+@$core.Deprecated('Use isAuthenticatedRequestDescriptor instead')
+const IsAuthenticatedRequest$json = const {
+  '1': 'IsAuthenticatedRequest',
+  '2': const [
+    const {'1': 'access_token', '3': 1, '4': 1, '5': 9, '8': const {}, '10': 'accessToken'},
+  ],
+};
+
+/// Descriptor for `IsAuthenticatedRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List isAuthenticatedRequestDescriptor = $convert.base64Decode('ChZJc0F1dGhlbnRpY2F0ZWRSZXF1ZXN0Ei0KDGFjY2Vzc190b2tlbhgBIAEoCUIK+kIHcgUQARiACFILYWNjZXNzVG9rZW4=');
+@$core.Deprecated('Use isAuthenticatedResponseDescriptor instead')
+const IsAuthenticatedResponse$json = const {
+  '1': 'IsAuthenticatedResponse',
+  '2': const [
+    const {'1': 'authenticated', '3': 1, '4': 1, '5': 8, '10': 'authenticated'},
+    const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+  ],
+};
+
+/// Descriptor for `IsAuthenticatedResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List isAuthenticatedResponseDescriptor = $convert.base64Decode('ChdJc0F1dGhlbnRpY2F0ZWRSZXNwb25zZRIkCg1hdXRoZW50aWNhdGVkGAEgASgIUg1hdXRoZW50aWNhdGVkEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2U=');

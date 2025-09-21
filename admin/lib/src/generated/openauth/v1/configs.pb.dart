@@ -1527,13 +1527,26 @@ class GetConfigByKeyRequest extends $pb.GeneratedMessage {
   void clearKey() => clearField(3);
 }
 
+enum ListConfigsRequest_Entity {
+  entityId, 
+  entityName, 
+  notSet
+}
+
 class ListConfigsRequest extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, ListConfigsRequest_Entity> _ListConfigsRequest_EntityByTag = {
+    1 : ListConfigsRequest_Entity.entityId,
+    7 : ListConfigsRequest_Entity.entityName,
+    0 : ListConfigsRequest_Entity.notSet
+  };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListConfigsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..oo(0, [1, 7])
     ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityId')
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit', $pb.PbFieldType.O3)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset', $pb.PbFieldType.O3)
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
     ..aOB(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'all')
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityName')
     ..hasRequiredFields = false
   ;
 
@@ -1544,6 +1557,7 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
     $core.int? offset,
     $core.String? search,
     $core.bool? all,
+    $core.String? entityName,
   }) {
     final _result = create();
     if (entityId != null) {
@@ -1560,6 +1574,9 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
     }
     if (all != null) {
       _result.all = all;
+    }
+    if (entityName != null) {
+      _result.entityName = entityName;
     }
     return _result;
   }
@@ -1583,6 +1600,9 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static ListConfigsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListConfigsRequest>(create);
   static ListConfigsRequest? _defaultInstance;
+
+  ListConfigsRequest_Entity whichEntity() => _ListConfigsRequest_EntityByTag[$_whichOneof(0)]!;
+  void clearEntity() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get entityId => $_getI64(0);
@@ -1628,26 +1648,30 @@ class ListConfigsRequest extends $pb.GeneratedMessage {
   $core.bool hasAll() => $_has(4);
   @$pb.TagNumber(6)
   void clearAll() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.String get entityName => $_getSZ(5);
+  @$pb.TagNumber(7)
+  set entityName($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasEntityName() => $_has(5);
+  @$pb.TagNumber(7)
+  void clearEntityName() => clearField(7);
 }
 
 class ListConfigsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListConfigsResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..pc<Config>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'configs', $pb.PbFieldType.PM, subBuilder: Config.create)
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'total')
     ..hasRequiredFields = false
   ;
 
   ListConfigsResponse._() : super();
   factory ListConfigsResponse({
     $core.Iterable<Config>? configs,
-    $fixnum.Int64? total,
   }) {
     final _result = create();
     if (configs != null) {
       _result.configs.addAll(configs);
-    }
-    if (total != null) {
-      _result.total = total;
     }
     return _result;
   }
@@ -1674,15 +1698,6 @@ class ListConfigsResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<Config> get configs => $_getList(0);
-
-  @$pb.TagNumber(2)
-  $fixnum.Int64 get total => $_getI64(1);
-  @$pb.TagNumber(2)
-  set total($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasTotal() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearTotal() => clearField(2);
 }
 
 class GetConfigsByKeysRequest extends $pb.GeneratedMessage {

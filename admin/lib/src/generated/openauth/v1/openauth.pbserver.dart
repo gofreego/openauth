@@ -65,6 +65,7 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
   $async.Future<$6.RefreshTokenResponse> refreshToken($pb.ServerContext ctx, $6.RefreshTokenRequest request);
   $async.Future<$6.LogoutResponse> logout($pb.ServerContext ctx, $6.LogoutRequest request);
   $async.Future<$6.ValidateTokenResponse> validateToken($pb.ServerContext ctx, $6.ValidateTokenRequest request);
+  $async.Future<$6.IsAuthenticatedResponse> isAuthenticated($pb.ServerContext ctx, $6.IsAuthenticatedRequest request);
   $async.Future<$6.ListUserSessionsResponse> listUserSessions($pb.ServerContext ctx, $6.ListUserSessionsRequest request);
   $async.Future<$6.TerminateSessionResponse> terminateSession($pb.ServerContext ctx, $6.TerminateSessionRequest request);
   $async.Future<$7.ConfigEntity> createConfigEntity($pb.ServerContext ctx, $7.CreateConfigEntityRequest request);
@@ -123,6 +124,7 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'RefreshToken': return $6.RefreshTokenRequest();
       case 'Logout': return $6.LogoutRequest();
       case 'ValidateToken': return $6.ValidateTokenRequest();
+      case 'IsAuthenticated': return $6.IsAuthenticatedRequest();
       case 'ListUserSessions': return $6.ListUserSessionsRequest();
       case 'TerminateSession': return $6.TerminateSessionRequest();
       case 'CreateConfigEntity': return $7.CreateConfigEntityRequest();
@@ -184,6 +186,7 @@ abstract class OpenAuthServiceBase extends $pb.GeneratedService {
       case 'RefreshToken': return this.refreshToken(ctx, request as $6.RefreshTokenRequest);
       case 'Logout': return this.logout(ctx, request as $6.LogoutRequest);
       case 'ValidateToken': return this.validateToken(ctx, request as $6.ValidateTokenRequest);
+      case 'IsAuthenticated': return this.isAuthenticated(ctx, request as $6.IsAuthenticatedRequest);
       case 'ListUserSessions': return this.listUserSessions(ctx, request as $6.ListUserSessionsRequest);
       case 'TerminateSession': return this.terminateSession(ctx, request as $6.TerminateSessionRequest);
       case 'CreateConfigEntity': return this.createConfigEntity(ctx, request as $7.CreateConfigEntityRequest);

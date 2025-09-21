@@ -191,6 +191,10 @@ class OpenAuthApi {
     var emptyResponse = $6.ValidateTokenResponse();
     return _client.invoke<$6.ValidateTokenResponse>(ctx, 'OpenAuth', 'ValidateToken', request, emptyResponse);
   }
+  $async.Future<$6.IsAuthenticatedResponse> isAuthenticated($pb.ClientContext? ctx, $6.IsAuthenticatedRequest request) {
+    var emptyResponse = $6.IsAuthenticatedResponse();
+    return _client.invoke<$6.IsAuthenticatedResponse>(ctx, 'OpenAuth', 'IsAuthenticated', request, emptyResponse);
+  }
   $async.Future<$6.ListUserSessionsResponse> listUserSessions($pb.ClientContext? ctx, $6.ListUserSessionsRequest request) {
     var emptyResponse = $6.ListUserSessionsResponse();
     return _client.invoke<$6.ListUserSessionsResponse>(ctx, 'OpenAuth', 'ListUserSessions', request, emptyResponse);

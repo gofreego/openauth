@@ -1314,3 +1314,111 @@ class TerminateSessionResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(2);
 }
 
+class IsAuthenticatedRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'IsAuthenticatedRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accessToken')
+    ..hasRequiredFields = false
+  ;
+
+  IsAuthenticatedRequest._() : super();
+  factory IsAuthenticatedRequest({
+    $core.String? accessToken,
+  }) {
+    final _result = create();
+    if (accessToken != null) {
+      _result.accessToken = accessToken;
+    }
+    return _result;
+  }
+  factory IsAuthenticatedRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory IsAuthenticatedRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  IsAuthenticatedRequest clone() => IsAuthenticatedRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  IsAuthenticatedRequest copyWith(void Function(IsAuthenticatedRequest) updates) => super.copyWith((message) => updates(message as IsAuthenticatedRequest)) as IsAuthenticatedRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static IsAuthenticatedRequest create() => IsAuthenticatedRequest._();
+  IsAuthenticatedRequest createEmptyInstance() => create();
+  static $pb.PbList<IsAuthenticatedRequest> createRepeated() => $pb.PbList<IsAuthenticatedRequest>();
+  @$core.pragma('dart2js:noInline')
+  static IsAuthenticatedRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<IsAuthenticatedRequest>(create);
+  static IsAuthenticatedRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get accessToken => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set accessToken($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasAccessToken() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearAccessToken() => clearField(1);
+}
+
+class IsAuthenticatedResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'IsAuthenticatedResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
+    ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'authenticated')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..hasRequiredFields = false
+  ;
+
+  IsAuthenticatedResponse._() : super();
+  factory IsAuthenticatedResponse({
+    $core.bool? authenticated,
+    $core.String? message,
+  }) {
+    final _result = create();
+    if (authenticated != null) {
+      _result.authenticated = authenticated;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    return _result;
+  }
+  factory IsAuthenticatedResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory IsAuthenticatedResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  IsAuthenticatedResponse clone() => IsAuthenticatedResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  IsAuthenticatedResponse copyWith(void Function(IsAuthenticatedResponse) updates) => super.copyWith((message) => updates(message as IsAuthenticatedResponse)) as IsAuthenticatedResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static IsAuthenticatedResponse create() => IsAuthenticatedResponse._();
+  IsAuthenticatedResponse createEmptyInstance() => create();
+  static $pb.PbList<IsAuthenticatedResponse> createRepeated() => $pb.PbList<IsAuthenticatedResponse>();
+  @$core.pragma('dart2js:noInline')
+  static IsAuthenticatedResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<IsAuthenticatedResponse>(create);
+  static IsAuthenticatedResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get authenticated => $_getBF(0);
+  @$pb.TagNumber(1)
+  set authenticated($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasAuthenticated() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearAuthenticated() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get message => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set message($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMessage() => clearField(2);
+}
+
