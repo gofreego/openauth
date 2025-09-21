@@ -17,15 +17,6 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 )
 
-type OpenauthClient struct {
-	client       openauth_v1.OpenAuthClient
-	conn         *grpc.ClientConn
-	config       *ClientConfig
-	token        string // current access token
-	refreshToken string // current refresh token
-	tokenMutex   sync.RWMutex
-}
-
 type ClientConfig struct {
 	Endpoint string
 	Username string
@@ -34,13 +25,13 @@ type ClientConfig struct {
 	Timeout  time.Duration
 }
 
-func NewOpenauthClient(ctx context.Context, config *ClientConfig) (*OpenauthClient, error) {
+func NewOpenAuthClientV1(ctx context.Context, config *ClientConfig) (openauth_v1.OpenAuthClient, *grpc.ClientConn, error) {
 	if config == nil {
-		return nil, fmt.Errorf("config cannot be nil")
+		return nil, nil, fmt.Errorf("config cannot be nil")
 	}
 
 	if config.Endpoint == "" {
-		return nil, fmt.Errorf("endpoint is required")
+		return nil, nil, fmt.Errorf("endpoint is required")
 	}
 
 	if config.Timeout == 0 {
@@ -63,28 +54,44 @@ func NewOpenauthClient(ctx context.Context, config *ClientConfig) (*OpenauthClie
 	// Establish connection
 	conn, err := grpc.NewClient(config.Endpoint, opts...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to OpenAuth server: %w", err)
+		return nil, nil, fmt.Errorf("failed to connect to OpenAuth server: %w", err)
 	}
+	return openauth_v1.NewOpenAuthClient(conn), conn, nil
+}
 
-	client := &OpenauthClient{
-		client: openauth_v1.NewOpenAuthClient(conn),
+type OpenauthConfigFetcher struct {
+	client       openauth_v1.OpenAuthClient
+	conn         *grpc.ClientConn
+	config       *ClientConfig
+	token        string // current access token
+	refreshToken string // current refresh token
+	tokenMutex   sync.RWMutex
+}
+
+func NewOpenauthConfigFetcher(ctx context.Context, config *ClientConfig) (*OpenauthConfigFetcher, error) {
+	client, conn, err := NewOpenAuthClientV1(ctx, config)
+	if err != nil {
+		return nil, err
+	}
+	fetcher := &OpenauthConfigFetcher{
+		client: client,
 		conn:   conn,
 		config: config,
 	}
 
 	// Auto-login if credentials are provided
 	if config.Username != "" && config.Password != "" {
-		if err := client.login(ctx); err != nil {
+		if err := fetcher.login(ctx); err != nil {
 			conn.Close()
 			return nil, fmt.Errorf("failed to login: %w", err)
 		}
 	}
 
-	return client, nil
+	return fetcher, nil
 }
 
 // Close closes the gRPC connection
-func (c *OpenauthClient) Close() error {
+func (c *OpenauthConfigFetcher) Close() error {
 	if c.conn != nil {
 		return c.conn.Close()
 	}
@@ -92,7 +99,7 @@ func (c *OpenauthClient) Close() error {
 }
 
 // login performs authentication and stores the access token
-func (c *OpenauthClient) login(ctx context.Context) error {
+func (c *OpenauthConfigFetcher) login(ctx context.Context) error {
 	password := c.config.Password
 	includePermissions := true
 	req := &openauth_v1.SignInRequest{
@@ -117,7 +124,7 @@ func (c *OpenauthClient) login(ctx context.Context) error {
 }
 
 // getAuthContext returns a context with authorization token
-func (c *OpenauthClient) getAuthContext(ctx context.Context) context.Context {
+func (c *OpenauthConfigFetcher) getAuthContext(ctx context.Context) context.Context {
 	c.tokenMutex.RLock()
 	token := c.token
 	c.tokenMutex.RUnlock()
@@ -129,7 +136,7 @@ func (c *OpenauthClient) getAuthContext(ctx context.Context) context.Context {
 }
 
 // isUnauthenticatedError checks if the error is due to authentication failure
-func (c *OpenauthClient) isUnauthenticatedError(err error) bool {
+func (c *OpenauthConfigFetcher) isUnauthenticatedError(err error) bool {
 	if err == nil {
 		return false
 	}
@@ -138,7 +145,7 @@ func (c *OpenauthClient) isUnauthenticatedError(err error) bool {
 }
 
 // refreshAccessToken attempts to refresh the access token using the refresh token
-func (c *OpenauthClient) refreshAccessToken(ctx context.Context) error {
+func (c *OpenauthConfigFetcher) refreshAccessToken(ctx context.Context) error {
 	c.tokenMutex.RLock()
 	refreshToken := c.refreshToken
 	c.tokenMutex.RUnlock()
@@ -168,7 +175,7 @@ func (c *OpenauthClient) refreshAccessToken(ctx context.Context) error {
 }
 
 // executeWithTokenRefresh executes a function with automatic token refresh on unauthenticated errors
-func (c *OpenauthClient) executeWithTokenRefresh(ctx context.Context, fn func(context.Context) error) error {
+func (c *OpenauthConfigFetcher) executeWithTokenRefresh(ctx context.Context, fn func(context.Context) error) error {
 	// First attempt with current token
 	authCtx := c.getAuthContext(ctx)
 	err := fn(authCtx)
@@ -190,7 +197,7 @@ func (c *OpenauthClient) executeWithTokenRefresh(ctx context.Context, fn func(co
 
 // Authentication Methods
 
-func (c *OpenauthClient) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
+func (c *OpenauthConfigFetcher) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
 	defer cancel()
 
@@ -208,7 +215,7 @@ func (c *OpenauthClient) SignIn(ctx context.Context, req *openauth_v1.SignInRequ
 	return resp, nil
 }
 
-func (c *OpenauthClient) RefreshToken(ctx context.Context, req *openauth_v1.RefreshTokenRequest) (*openauth_v1.RefreshTokenResponse, error) {
+func (c *OpenauthConfigFetcher) RefreshToken(ctx context.Context, req *openauth_v1.RefreshTokenRequest) (*openauth_v1.RefreshTokenResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
 	defer cancel()
 
@@ -225,7 +232,7 @@ func (c *OpenauthClient) RefreshToken(ctx context.Context, req *openauth_v1.Refr
 	return resp, nil
 }
 
-func (c *OpenauthClient) Logout(ctx context.Context, req *openauth_v1.LogoutRequest) (*openauth_v1.LogoutResponse, error) {
+func (c *OpenauthConfigFetcher) Logout(ctx context.Context, req *openauth_v1.LogoutRequest) (*openauth_v1.LogoutResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
 	defer cancel()
 
@@ -242,7 +249,7 @@ func (c *OpenauthClient) Logout(ctx context.Context, req *openauth_v1.LogoutRequ
 	return resp, nil
 }
 
-func (c *OpenauthClient) GetConfigsByKeys(ctx context.Context, in *openauth_v1.GetConfigsByKeysRequest) (*openauth_v1.GetConfigsByKeysResponse, error) {
+func (c *OpenauthConfigFetcher) GetConfigsByKeys(ctx context.Context, in *openauth_v1.GetConfigsByKeysRequest) (*openauth_v1.GetConfigsByKeysResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
 	defer cancel()
 
@@ -256,7 +263,7 @@ func (c *OpenauthClient) GetConfigsByKeys(ctx context.Context, in *openauth_v1.G
 	return resp, err
 }
 
-func (c *OpenauthClient) GetConfigsByEntityName(ctx context.Context, entityName string) (*openauth_v1.ListConfigsResponse, error) {
+func (c *OpenauthConfigFetcher) GetConfigsByEntityName(ctx context.Context, entityName string) (*openauth_v1.ListConfigsResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
 	defer cancel()
 	req := &openauth_v1.ListConfigsRequest{

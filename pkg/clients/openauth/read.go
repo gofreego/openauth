@@ -50,7 +50,7 @@ func NewConfigReader(fetcher ConfigFetcher, options ...ReadOptions) *ConfigReade
 }
 
 func NewOpenAuthConfigReader(cfg *ClientConfig, options ...ReadOptions) *ConfigReader {
-	fetcher, err := NewOpenauthClient(context.Background(), cfg)
+	fetcher, err := NewOpenauthConfigFetcher(context.Background(), cfg)
 	if err != nil {
 		panic(fmt.Sprintf("failed to create Openauth client: %v", err))
 	}
