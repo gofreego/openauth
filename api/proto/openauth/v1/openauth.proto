@@ -803,6 +803,19 @@ service OpenAuth {
         };
     }
 
+    // IsAuthenticated checks if the current request is authenticated.
+    // Returns true if the user is authenticated.
+    rpc IsAuthenticated(IsAuthenticatedRequest) returns (IsAuthenticatedResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/auth/is-authenticated"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Check if user is authenticated"
+            description: "Returns true if the user is authenticated."
+        };
+    }
+
     // ListUserSessions retrieves active sessions for a user.
     //
     // Shows all devices and sessions where the user is logged in.

@@ -1062,6 +1062,99 @@ func (x *TerminateSessionResponse) GetMessage() string {
 	return ""
 }
 
+type IsAuthenticatedRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *IsAuthenticatedRequest) Reset() {
+	*x = IsAuthenticatedRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_openauth_v1_sessions_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IsAuthenticatedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IsAuthenticatedRequest) ProtoMessage() {}
+
+func (x *IsAuthenticatedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IsAuthenticatedRequest.ProtoReflect.Descriptor instead.
+func (*IsAuthenticatedRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{14}
+}
+
+type IsAuthenticatedResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Authenticated bool   `protobuf:"varint,1,opt,name=authenticated,proto3" json:"authenticated,omitempty"`
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (x *IsAuthenticatedResponse) Reset() {
+	*x = IsAuthenticatedResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_openauth_v1_sessions_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IsAuthenticatedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IsAuthenticatedResponse) ProtoMessage() {}
+
+func (x *IsAuthenticatedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IsAuthenticatedResponse.ProtoReflect.Descriptor instead.
+func (*IsAuthenticatedResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *IsAuthenticatedResponse) GetAuthenticated() bool {
+	if x != nil {
+		return x.Authenticated
+	}
+	return false
+}
+
+func (x *IsAuthenticatedResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_proto_openauth_v1_sessions_proto protoreflect.FileDescriptor
 
 var file_proto_openauth_v1_sessions_proto_rawDesc = []byte{
@@ -1238,9 +1331,16 @@ var file_proto_openauth_v1_sessions_proto_rawDesc = []byte{
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73,
 	0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73,
 	0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f,
-	0x6f, 0x70, 0x65, 0x6e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x18, 0x0a, 0x16, 0x49, 0x73,
+	0x41, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61, 0x74, 0x65, 0x64, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x22, 0x59, 0x0a, 0x17, 0x49, 0x73, 0x41, 0x75, 0x74, 0x68, 0x65, 0x6e,
+	0x74, 0x69, 0x63, 0x61, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x24, 0x0a, 0x0d, 0x61, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69, 0x63, 0x61, 0x74, 0x65, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0d, 0x61, 0x75, 0x74, 0x68, 0x65, 0x6e, 0x74, 0x69,
+	0x63, 0x61, 0x74, 0x65, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x42,
+	0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x6f, 0x70, 0x65, 0x6e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1255,7 +1355,7 @@ func file_proto_openauth_v1_sessions_proto_rawDescGZIP() []byte {
 	return file_proto_openauth_v1_sessions_proto_rawDescData
 }
 
-var file_proto_openauth_v1_sessions_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_openauth_v1_sessions_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_proto_openauth_v1_sessions_proto_goTypes = []any{
 	(*SignInMetadata)(nil),           // 0: v1.SignInMetadata
 	(*SignInRequest)(nil),            // 1: v1.SignInRequest
@@ -1271,12 +1371,14 @@ var file_proto_openauth_v1_sessions_proto_goTypes = []any{
 	(*ListUserSessionsResponse)(nil), // 11: v1.ListUserSessionsResponse
 	(*TerminateSessionRequest)(nil),  // 12: v1.TerminateSessionRequest
 	(*TerminateSessionResponse)(nil), // 13: v1.TerminateSessionResponse
-	(*User)(nil),                     // 14: v1.User
+	(*IsAuthenticatedRequest)(nil),   // 14: v1.IsAuthenticatedRequest
+	(*IsAuthenticatedResponse)(nil),  // 15: v1.IsAuthenticatedResponse
+	(*User)(nil),                     // 16: v1.User
 }
 var file_proto_openauth_v1_sessions_proto_depIdxs = []int32{
 	0,  // 0: v1.SignInRequest.metadata:type_name -> v1.SignInMetadata
-	14, // 1: v1.SignInResponse.user:type_name -> v1.User
-	14, // 2: v1.ValidateTokenResponse.user:type_name -> v1.User
+	16, // 1: v1.SignInResponse.user:type_name -> v1.User
+	16, // 2: v1.ValidateTokenResponse.user:type_name -> v1.User
 	9,  // 3: v1.ListUserSessionsResponse.sessions:type_name -> v1.Session
 	4,  // [4:4] is the sub-list for method output_type
 	4,  // [4:4] is the sub-list for method input_type
@@ -1460,6 +1562,30 @@ func file_proto_openauth_v1_sessions_proto_init() {
 				return nil
 			}
 		}
+		file_proto_openauth_v1_sessions_proto_msgTypes[14].Exporter = func(v any, i int) any {
+			switch v := v.(*IsAuthenticatedRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_openauth_v1_sessions_proto_msgTypes[15].Exporter = func(v any, i int) any {
+			switch v := v.(*IsAuthenticatedResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_proto_openauth_v1_sessions_proto_msgTypes[0].OneofWrappers = []any{}
 	file_proto_openauth_v1_sessions_proto_msgTypes[1].OneofWrappers = []any{}
@@ -1474,7 +1600,7 @@ func file_proto_openauth_v1_sessions_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_openauth_v1_sessions_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

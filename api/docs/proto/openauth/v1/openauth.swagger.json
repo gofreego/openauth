@@ -65,6 +65,30 @@
     "application/json"
   ],
   "paths": {
+    "/openauth/v1/auth/is-authenticated": {
+      "get": {
+        "summary": "Check if user is authenticated",
+        "description": "Returns true if the user is authenticated.",
+        "operationId": "OpenAuth_IsAuthenticated",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1IsAuthenticatedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
     "/openauth/v1/auth/logout": {
       "post": {
         "summary": "Logout user",
@@ -3153,6 +3177,17 @@
         }
       },
       "title": "GroupUser represents a user's membership in a group"
+    },
+    "v1IsAuthenticatedResponse": {
+      "type": "object",
+      "properties": {
+        "authenticated": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
     },
     "v1ListConfigEntitiesResponse": {
       "type": "object",

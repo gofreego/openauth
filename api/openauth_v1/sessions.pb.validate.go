@@ -1802,3 +1802,211 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TerminateSessionResponseValidationError{}
+
+// Validate checks the field values on IsAuthenticatedRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *IsAuthenticatedRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IsAuthenticatedRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// IsAuthenticatedRequestMultiError, or nil if none found.
+func (m *IsAuthenticatedRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IsAuthenticatedRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return IsAuthenticatedRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// IsAuthenticatedRequestMultiError is an error wrapping multiple validation
+// errors returned by IsAuthenticatedRequest.ValidateAll() if the designated
+// constraints aren't met.
+type IsAuthenticatedRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IsAuthenticatedRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IsAuthenticatedRequestMultiError) AllErrors() []error { return m }
+
+// IsAuthenticatedRequestValidationError is the validation error returned by
+// IsAuthenticatedRequest.Validate if the designated constraints aren't met.
+type IsAuthenticatedRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IsAuthenticatedRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IsAuthenticatedRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IsAuthenticatedRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IsAuthenticatedRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IsAuthenticatedRequestValidationError) ErrorName() string {
+	return "IsAuthenticatedRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IsAuthenticatedRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIsAuthenticatedRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IsAuthenticatedRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IsAuthenticatedRequestValidationError{}
+
+// Validate checks the field values on IsAuthenticatedResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *IsAuthenticatedResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IsAuthenticatedResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// IsAuthenticatedResponseMultiError, or nil if none found.
+func (m *IsAuthenticatedResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IsAuthenticatedResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Authenticated
+
+	// no validation rules for Message
+
+	if len(errors) > 0 {
+		return IsAuthenticatedResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// IsAuthenticatedResponseMultiError is an error wrapping multiple validation
+// errors returned by IsAuthenticatedResponse.ValidateAll() if the designated
+// constraints aren't met.
+type IsAuthenticatedResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IsAuthenticatedResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IsAuthenticatedResponseMultiError) AllErrors() []error { return m }
+
+// IsAuthenticatedResponseValidationError is the validation error returned by
+// IsAuthenticatedResponse.Validate if the designated constraints aren't met.
+type IsAuthenticatedResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IsAuthenticatedResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IsAuthenticatedResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IsAuthenticatedResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IsAuthenticatedResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IsAuthenticatedResponseValidationError) ErrorName() string {
+	return "IsAuthenticatedResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e IsAuthenticatedResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIsAuthenticatedResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IsAuthenticatedResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IsAuthenticatedResponseValidationError{}

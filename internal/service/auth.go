@@ -501,3 +501,10 @@ func (s *Service) ValidateAccessToken(tokenString string) (*jwtutils.JWTClaims, 
 
 	return nil, fmt.Errorf("invalid token")
 }
+
+func (s *Service) IsAuthenticated(ctx context.Context, req *openauth_v1.IsAuthenticatedRequest) (*openauth_v1.IsAuthenticatedResponse, error) {
+	return &openauth_v1.IsAuthenticatedResponse{
+		Authenticated: true,
+		Message:       "User is authenticated",
+	}, nil
+}

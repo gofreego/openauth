@@ -61,6 +61,7 @@ const (
 	OpenAuth_RefreshToken_FullMethodName                = "/v1.OpenAuth/RefreshToken"
 	OpenAuth_Logout_FullMethodName                      = "/v1.OpenAuth/Logout"
 	OpenAuth_ValidateToken_FullMethodName               = "/v1.OpenAuth/ValidateToken"
+	OpenAuth_IsAuthenticated_FullMethodName             = "/v1.OpenAuth/IsAuthenticated"
 	OpenAuth_ListUserSessions_FullMethodName            = "/v1.OpenAuth/ListUserSessions"
 	OpenAuth_TerminateSession_FullMethodName            = "/v1.OpenAuth/TerminateSession"
 	OpenAuth_CreateConfigEntity_FullMethodName          = "/v1.OpenAuth/CreateConfigEntity"
@@ -329,6 +330,9 @@ type OpenAuthClient interface {
 	// Used for authentication middleware and token verification.
 	// Returns user information if token is valid.
 	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
+	// IsAuthenticated checks if the current request is authenticated.
+	// Returns true if the user is authenticated.
+	IsAuthenticated(ctx context.Context, in *IsAuthenticatedRequest, opts ...grpc.CallOption) (*IsAuthenticatedResponse, error)
 	// ListUserSessions retrieves active sessions for a user.
 	//
 	// Shows all devices and sessions where the user is logged in.
@@ -793,6 +797,16 @@ func (c *openAuthClient) ValidateToken(ctx context.Context, in *ValidateTokenReq
 	return out, nil
 }
 
+func (c *openAuthClient) IsAuthenticated(ctx context.Context, in *IsAuthenticatedRequest, opts ...grpc.CallOption) (*IsAuthenticatedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsAuthenticatedResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_IsAuthenticated_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *openAuthClient) ListUserSessions(ctx context.Context, in *ListUserSessionsRequest, opts ...grpc.CallOption) (*ListUserSessionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUserSessionsResponse)
@@ -1176,6 +1190,9 @@ type OpenAuthServer interface {
 	// Used for authentication middleware and token verification.
 	// Returns user information if token is valid.
 	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
+	// IsAuthenticated checks if the current request is authenticated.
+	// Returns true if the user is authenticated.
+	IsAuthenticated(context.Context, *IsAuthenticatedRequest) (*IsAuthenticatedResponse, error)
 	// ListUserSessions retrieves active sessions for a user.
 	//
 	// Shows all devices and sessions where the user is logged in.
@@ -1345,6 +1362,9 @@ func (UnimplementedOpenAuthServer) Logout(context.Context, *LogoutRequest) (*Log
 }
 func (UnimplementedOpenAuthServer) ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateToken not implemented")
+}
+func (UnimplementedOpenAuthServer) IsAuthenticated(context.Context, *IsAuthenticatedRequest) (*IsAuthenticatedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsAuthenticated not implemented")
 }
 func (UnimplementedOpenAuthServer) ListUserSessions(context.Context, *ListUserSessionsRequest) (*ListUserSessionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserSessions not implemented")
@@ -2162,6 +2182,24 @@ func _OpenAuth_ValidateToken_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_IsAuthenticated_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsAuthenticatedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).IsAuthenticated(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_IsAuthenticated_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).IsAuthenticated(ctx, req.(*IsAuthenticatedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OpenAuth_ListUserSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserSessionsRequest)
 	if err := dec(in); err != nil {
@@ -2570,6 +2608,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ValidateToken",
 			Handler:    _OpenAuth_ValidateToken_Handler,
+		},
+		{
+			MethodName: "IsAuthenticated",
+			Handler:    _OpenAuth_IsAuthenticated_Handler,
 		},
 		{
 			MethodName: "ListUserSessions",
