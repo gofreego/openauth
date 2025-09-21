@@ -3,15 +3,7 @@ Logger:
   AppName: openauth
   Build: dev
   Level: debug
-ConfigReader:
-  Name: ""
-  Format: ""
-  Consul:
-    Address: ""
-    Token: ""
-    Path: ""
 AppNames:
-# - SQL_MIGRATOR
 - HTTP_SERVER
 - GRPC_SERVER
 Server:
@@ -20,7 +12,7 @@ Server:
     AuthenticationEnabled: true
   GRPC:
     Port: 8086
-    AuthenticationEnabled: true
+    AuthenticationEnabled: false
 Repository:
   Name: Postgres
   Postgres:
@@ -40,7 +32,7 @@ Service:
   JWT:
     # JWT secret key for token signing - MUST be changed in production
     # Should be at least 32 characters long for HS256 algorithm
-    SecretKey: "dev-jwt-secret-key-256-bits-long-for-development-environment-only-change-in-prod"
+    SecretKey: d550d9f6c49b0470abda464e50a14d87 # Updated secret key for consistency
     AccessTokenTTL: "10m"   # Access token expiration time (10 seconds)
     RefreshTokenTTL: "168h"   # Refresh token expiration time in hours (7 days)
   Security:
