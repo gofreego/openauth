@@ -7,6 +7,7 @@ WORKDIR /app
 COPY bin/application .
 COPY dev.yaml .
 COPY api/docs /app/api/docs
+COPY admin/builds/web/ /app/admin/builds/web/
 RUN chmod +x application
 
 # Expose the ports the application uses
