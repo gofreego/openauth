@@ -311,9 +311,12 @@ func (s *Service) ValidateToken(ctx context.Context, req *openauth_v1.ValidateTo
 	if err := req.Validate(); err != nil {
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
 	}
-
+	accessTokenSplits := strings.Split(req.AccessToken, " ")
+	if len(accessTokenSplits) == 2 && strings.EqualFold(accessTokenSplits[0], "Bearer") {
+		req.AccessToken = accessTokenSplits[1]
+	}
 	// Parse and validate JWT token
-	claims, err := s.ValidateAccessToken(req.AccessToken)
+	claims, err := jwtutils.ParseAndValidateToken(req.AccessToken, s.cfg.JWT.SecretKey)
 	if err != nil {
 		logger.Warn(ctx, "Token validation failed: invalid JWT token: %v", err)
 		return &openauth_v1.ValidateTokenResponse{
@@ -481,32 +484,16 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 	return token.SignedString(s.cfg.JWT.GetSecretKey())
 }
 
-// ValidateAccessToken parses and validates a JWT access token
-func (s *Service) ValidateAccessToken(tokenString string) (*jwtutils.JWTClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &jwtutils.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return s.cfg.JWT.GetSecretKey(), nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	if claims, ok := token.Claims.(*jwtutils.JWTClaims); ok && token.Valid {
-		return claims, nil
-	}
-
-	return nil, fmt.Errorf("invalid token")
-}
-
 func (s *Service) IsAuthenticated(ctx context.Context, req *openauth_v1.IsAuthenticatedRequest) (*openauth_v1.IsAuthenticatedResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		return nil, err
 	}
-	_, err = s.ValidateAccessToken(req.AccessToken)
+	accessTokenSplits := strings.Split(req.AccessToken, " ")
+	if len(accessTokenSplits) == 2 && strings.EqualFold(accessTokenSplits[0], "Bearer") {
+		req.AccessToken = accessTokenSplits[1]
+	}
+	_, err = jwtutils.ParseAndValidateToken(req.AccessToken, s.cfg.JWT.SecretKey)
 	if err != nil {
 		return nil, status.New(codes.Unauthenticated, "invalid token").Err()
 	}
