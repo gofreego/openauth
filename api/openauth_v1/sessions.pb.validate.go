@@ -994,7 +994,16 @@ func (m *ValidateTokenRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for AccessToken
+	if l := utf8.RuneCountInString(m.GetAccessToken()); l < 1 || l > 1024 {
+		err := ValidateTokenRequestValidationError{
+			field:  "AccessToken",
+			reason: "value length must be between 1 and 1024 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ValidateTokenRequestMultiError(errors)
@@ -1824,6 +1833,17 @@ func (m *IsAuthenticatedRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if l := utf8.RuneCountInString(m.GetAccessToken()); l < 1 || l > 1024 {
+		err := IsAuthenticatedRequestValidationError{
+			field:  "AccessToken",
+			reason: "value length must be between 1 and 1024 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return IsAuthenticatedRequestMultiError(errors)

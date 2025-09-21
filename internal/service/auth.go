@@ -308,9 +308,8 @@ func (s *Service) Logout(ctx context.Context, req *openauth_v1.LogoutRequest) (*
 func (s *Service) ValidateToken(ctx context.Context, req *openauth_v1.ValidateTokenRequest) (*openauth_v1.ValidateTokenResponse, error) {
 	logger.Debug(ctx, "Token validation request initiated")
 
-	if req.AccessToken == "" {
-		logger.Warn(ctx, "Token validation failed: missing access token")
-		return nil, status.Error(codes.InvalidArgument, "access token is required")
+	if err := req.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
 	}
 
 	// Parse and validate JWT token
@@ -503,6 +502,15 @@ func (s *Service) ValidateAccessToken(tokenString string) (*jwtutils.JWTClaims, 
 }
 
 func (s *Service) IsAuthenticated(ctx context.Context, req *openauth_v1.IsAuthenticatedRequest) (*openauth_v1.IsAuthenticatedResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		return nil, err
+	}
+	_, err = s.ValidateAccessToken(req.AccessToken)
+	if err != nil {
+		return nil, status.New(codes.Unauthenticated, "invalid token").Err()
+	}
+
 	return &openauth_v1.IsAuthenticatedResponse{
 		Authenticated: true,
 		Message:       "User is authenticated",

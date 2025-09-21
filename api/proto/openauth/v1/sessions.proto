@@ -80,7 +80,10 @@ message LogoutResponse {
 
 // ValidateTokenRequest to check token validity
 message ValidateTokenRequest {
-    string access_token = 1;
+    string access_token = 1 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 1024
+    }];
 }
 
 // ValidateTokenResponse
@@ -134,7 +137,12 @@ message TerminateSessionResponse {
     string message = 2;
 }
 
-message IsAuthenticatedRequest {}
+message IsAuthenticatedRequest {
+    string access_token = 1 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 1024
+    }];
+}
 
 message IsAuthenticatedResponse {
     bool authenticated = 1;
