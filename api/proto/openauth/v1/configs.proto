@@ -296,8 +296,14 @@ message GetConfigByKeyRequest {
 
 // Request to list configs with optional filtering and pagination
 message ListConfigsRequest {
-    // Entity ID to filter configs (optional)
-    int64 entity_id = 1 [(validate.rules).int64.gt = 0];
+    // Filter by entity either by ID or name
+    oneof entity {
+        int64 entity_id = 1 [(validate.rules).int64.gt = 0];
+        string entity_name = 7 [(validate.rules).string = {
+            min_len: 1,
+            max_len: 255
+        }];
+    };
     
     // Maximum number of configs to return (default: 10, max: 100)
     optional int32 limit = 2;
@@ -316,9 +322,6 @@ message ListConfigsRequest {
 message ListConfigsResponse {
     // Array of configs matching the request criteria
     repeated Config configs = 1;
-    
-    // Total number of configs (for pagination)
-    int64 total = 2;
 }
 
 // Request to get multiple configs by keys within an entity

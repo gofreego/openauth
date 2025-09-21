@@ -439,23 +439,32 @@ func (s *Service) ListConfigs(ctx context.Context, req *openauth_v1.ListConfigsR
 		logger.Warn(ctx, "failed to get user from context, err: %s", err.Error())
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
-
-	filters := filter.NewConfigFilterFromProtoRequest(req)
-	configs, total, err := s.repo.ListConfigs(ctx, filters)
-	if err != nil {
-		logger.Error(ctx, "Failed to list configs: %v", err)
-		return nil, status.Error(codes.Internal, "failed to list configs")
-	}
-
-	entity, err := s.repo.GetConfigEntityByID(ctx, filters.EntityID)
-	if err != nil || entity == nil {
-		logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
-		return nil, status.Error(codes.Internal, "failed to verify permissions")
+	var entity *dao.ConfigEntity
+	if req.GetEntityId() != 0 {
+		entity, err = s.repo.GetConfigEntityByID(ctx, req.GetEntityId())
+		if err != nil || entity == nil {
+			logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
+			return nil, status.Error(codes.Internal, "failed to verify permissions")
+		}
+	} else {
+		entity, err = s.repo.GetConfigEntityByName(ctx, req.GetEntityName())
+		if err != nil || entity == nil {
+			logger.Error(ctx, "Failed to get config entity for permission check: %v", err)
+			return nil, status.Error(codes.Internal, "failed to verify permissions")
+		}
 	}
 
 	if !claims.HasPermission(entity.ReadPermName) {
-		logger.Warn(ctx, "userID=%d does not have read permission for entity %d", claims.UserID, filters.EntityID)
+		logger.Warn(ctx, "userID=%d does not have `%s` permission for entity %d", claims.UserID, entity.ReadPermName, entity.Name)
 		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("user does not have `%s` permission to read configs from this entity", entity.ReadPermName))
+	}
+
+	filters := filter.NewConfigFilterFromProtoRequest(req)
+	filters.SetEntityID(entity.ID)
+	configs, err := s.repo.ListConfigs(ctx, filters)
+	if err != nil {
+		logger.Error(ctx, "Failed to list configs: %v", err)
+		return nil, status.Error(codes.Internal, "failed to list configs")
 	}
 
 	// Convert to protobuf and filter based on entity read permissions
@@ -464,11 +473,8 @@ func (s *Service) ListConfigs(ctx context.Context, req *openauth_v1.ListConfigsR
 	for _, config := range configs {
 		protoConfigs = append(protoConfigs, config.ToProtoConfig())
 	}
-
-	logger.Debug(ctx, "Successfully retrieved %d configs out of %d total", len(protoConfigs), total)
 	return &openauth_v1.ListConfigsResponse{
 		Configs: protoConfigs,
-		Total:   total,
 	}, nil
 }
 

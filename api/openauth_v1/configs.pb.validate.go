@@ -2081,18 +2081,58 @@ func (m *ListConfigsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetEntityId() <= 0 {
-		err := ListConfigsRequestValidationError{
-			field:  "EntityId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	// no validation rules for All
+
+	switch v := m.Entity.(type) {
+	case *ListConfigsRequest_EntityId:
+		if v == nil {
+			err := ListConfigsRequestValidationError{
+				field:  "Entity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if m.GetEntityId() <= 0 {
+			err := ListConfigsRequestValidationError{
+				field:  "EntityId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	case *ListConfigsRequest_EntityName:
+		if v == nil {
+			err := ListConfigsRequestValidationError{
+				field:  "Entity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if l := utf8.RuneCountInString(m.GetEntityName()); l < 1 || l > 255 {
+			err := ListConfigsRequestValidationError{
+				field:  "EntityName",
+				reason: "value length must be between 1 and 255 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
 
 	if m.Limit != nil {
 		// no validation rules for Limit
@@ -2252,8 +2292,6 @@ func (m *ListConfigsResponse) validate(all bool) error {
 		}
 
 	}
-
-	// no validation rules for Total
 
 	if len(errors) > 0 {
 		return ListConfigsResponseMultiError(errors)

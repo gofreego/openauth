@@ -191,7 +191,7 @@ type Repository interface {
 	GetConfigByID(ctx context.Context, id int64) (*dao.Config, error)
 	GetConfigByEntityAndKey(ctx context.Context, entityID int64, key string) (*dao.Config, error)
 	GetConfigByEntityNameAndKey(ctx context.Context, entityName, key string) (*dao.Config, error)
-	ListConfigs(ctx context.Context, filters *filter.ConfigFilter) ([]*dao.Config, int64, error)
+	ListConfigs(ctx context.Context, filters *filter.ConfigFilter) ([]*dao.Config, error)
 	UpdateConfig(ctx context.Context, id int64, updates map[string]interface{}) error
 	DeleteConfig(ctx context.Context, id int64) error
 	GetConfigsByEntityAndKeys(ctx context.Context, entityID int64, keys []string) (map[string]*dao.Config, error)

@@ -255,3 +255,21 @@ func (c *OpenauthClient) GetConfigsByKeys(ctx context.Context, in *openauth_v1.G
 
 	return resp, err
 }
+
+func (c *OpenauthClient) GetConfigsByEntityName(ctx context.Context, entityName string) (*openauth_v1.ListConfigsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
+	defer cancel()
+	req := &openauth_v1.ListConfigsRequest{
+		Entity: &openauth_v1.ListConfigsRequest_EntityName{
+			EntityName: entityName,
+		},
+		All: true,
+	}
+	var resp *openauth_v1.ListConfigsResponse
+	err := c.executeWithTokenRefresh(ctx, func(authCtx context.Context) error {
+		var callErr error
+		resp, callErr = c.client.ListConfigs(authCtx, req)
+		return callErr
+	})
+	return resp, err
+}

@@ -417,11 +417,16 @@
         "parameters": [
           {
             "name": "entityId",
-            "description": "Entity ID to filter configs (optional)",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "entityName",
+            "in": "query",
+            "required": false,
+            "type": "string"
           },
           {
             "name": "limit",
@@ -3173,11 +3178,6 @@
             "$ref": "#/definitions/v1Config"
           },
           "title": "Array of configs matching the request criteria"
-        },
-        "total": {
-          "type": "string",
-          "format": "int64",
-          "title": "Total number of configs (for pagination)"
         }
       },
       "title": "Response containing a list of configs"

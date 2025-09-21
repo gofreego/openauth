@@ -552,7 +552,7 @@ func (r *Repository) GetConfigsByEntityNameAndKeys(ctx context.Context, entityNa
 }
 
 // ListConfigs lists configs with filtering and pagination
-func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilter) ([]*dao.Config, int64, error) {
+func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilter) ([]*dao.Config, error) {
 	logger.Debug(ctx, "Listing configs with filters")
 
 	var conditions []string
@@ -577,16 +577,6 @@ func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilt
 	if len(conditions) > 0 {
 		baseQuery += " WHERE " + strings.Join(conditions, " AND ")
 	}
-
-	// Get total count
-	countQuery := "SELECT COUNT(*) " + baseQuery
-	var total int64
-	err := r.connManager.Primary().QueryRowContext(ctx, countQuery, args...).Scan(&total)
-	if err != nil {
-		logger.Error(ctx, "Failed to get configs count: %v", err)
-		return nil, 0, fmt.Errorf("failed to get configs count: %w", err)
-	}
-
 	// Build main query
 	query := `
 		SELECT c.id, c.entity_id, c.key, c.display_name, c.description, c.value, c.type, c.metadata, c.created_by, c.updated_by, c.created_at, c.updated_at
@@ -601,7 +591,7 @@ func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilt
 	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
 	if err != nil {
 		logger.Error(ctx, "Failed to list configs: %v", err)
-		return nil, 0, fmt.Errorf("failed to list configs: %w", err)
+		return nil, fmt.Errorf("failed to list configs: %w", err)
 	}
 	defer rows.Close()
 
@@ -624,18 +614,18 @@ func (r *Repository) ListConfigs(ctx context.Context, filters *filter.ConfigFilt
 		)
 		if err != nil {
 			logger.Error(ctx, "Failed to scan config: %v", err)
-			return nil, 0, fmt.Errorf("failed to scan config: %w", err)
+			return nil, fmt.Errorf("failed to scan config: %w", err)
 		}
 		configs = append(configs, config)
 	}
 
 	if err = rows.Err(); err != nil {
 		logger.Error(ctx, "Error iterating configs: %v", err)
-		return nil, 0, fmt.Errorf("error iterating configs: %w", err)
+		return nil, fmt.Errorf("error iterating configs: %w", err)
 	}
 
-	logger.Debug(ctx, "Successfully retrieved %d configs out of %d total", len(configs), total)
-	return configs, total, nil
+	logger.Debug(ctx, "Successfully retrieved %d configs", len(configs))
+	return configs, nil
 }
 
 // UpdateConfig updates a config

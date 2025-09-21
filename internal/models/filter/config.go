@@ -61,11 +61,15 @@ type ConfigFilter struct {
 // NewConfigFilterFromProtoRequest creates a ConfigFilter from protobuf request
 func NewConfigFilterFromProtoRequest(req *openauth_v1.ListConfigsRequest) *ConfigFilter {
 	filter := &ConfigFilter{
-		EntityID: req.EntityId,
-		All:      req.All,
-		Search:   req.Search,
-		Offset:   req.GetOffset(),
-		Limit:    req.GetLimit(),
+		All:    req.All,
+		Search: req.Search,
+		Offset: req.GetOffset(),
+		Limit:  req.GetLimit(),
+	}
+
+	// Handle entity filter (by ID or name)
+	if entityID := req.GetEntityId(); entityID != 0 {
+		filter.EntityID = entityID
 	}
 
 	// Set default limit if not specified
@@ -73,4 +77,8 @@ func NewConfigFilterFromProtoRequest(req *openauth_v1.ListConfigsRequest) *Confi
 		filter.Limit = constants.DefaultPageSize
 	}
 	return filter
+}
+
+func (f *ConfigFilter) SetEntityID(entityID int64) {
+	f.EntityID = entityID
 }
