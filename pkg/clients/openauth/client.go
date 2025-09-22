@@ -18,11 +18,11 @@ import (
 )
 
 type ClientConfig struct {
-	Endpoint string
-	Username string
-	Password string
-	TLS      bool
-	Timeout  time.Duration
+	Host     string        `json:"host" yaml:"Host"`
+	Username string        `json:"username" yaml:"Username"`
+	Password string        `json:"password" yaml:"Password"`
+	TLS      bool          `json:"tls" yaml:"TLS"`
+	Timeout  time.Duration `json:"timeout" yaml:"Timeout"`
 }
 
 func NewOpenAuthClientV1(ctx context.Context, config *ClientConfig) (openauth_v1.OpenAuthClient, *grpc.ClientConn, error) {
@@ -30,7 +30,7 @@ func NewOpenAuthClientV1(ctx context.Context, config *ClientConfig) (openauth_v1
 		return nil, nil, fmt.Errorf("config cannot be nil")
 	}
 
-	if config.Endpoint == "" {
+	if config.Host == "" {
 		return nil, nil, fmt.Errorf("endpoint is required")
 	}
 
@@ -52,7 +52,7 @@ func NewOpenAuthClientV1(ctx context.Context, config *ClientConfig) (openauth_v1
 	}
 
 	// Establish connection
-	conn, err := grpc.NewClient(config.Endpoint, opts...)
+	conn, err := grpc.NewClient(config.Host, opts...)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to connect to OpenAuth server: %w", err)
 	}

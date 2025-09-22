@@ -25,7 +25,7 @@ type MyConfig struct {
 func main() {
 	cfg := &MyConfig{}
 	reader := openauth.NewOpenAuthConfigReader(&openauth.ClientConfig{
-		Endpoint: "localhost:8086",
+		Host:     "localhost:8086",
 		Username: "admin",
 		Password: "admin123",
 		TLS:      false,
