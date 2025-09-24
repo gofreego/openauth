@@ -142,18 +142,17 @@ func (s *Service) UpdateProfile(ctx context.Context, req *openauth_v1.UpdateProf
 		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
-	// check for permissions
-	if !claims.HasPermission(constants.PermissionProfilesUpdate) {
-		logger.Warn(ctx, "userID=%d does not have permission to update profiles", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update profiles")
-	}
 
 	// Get existing profile
 	profile, err := s.repo.GetProfileByUUID(ctx, req.ProfileUuid)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "profile not found")
 	}
-
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesUpdate) && claims.UserID != profile.UserID {
+		logger.Warn(ctx, "userID=%d does not have permission to update profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update profiles")
+	}
 	// Prepare updates
 	updates := make(map[string]interface{})
 	if req.ProfileName != nil {
@@ -258,16 +257,17 @@ func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProf
 		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
 		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
-	// check for permissions
-	if !claims.HasPermission(constants.PermissionProfilesDelete) {
-		logger.Warn(ctx, "userID=%d does not have permission to delete profiles", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete profiles")
-	}
 
 	// Get profile to ensure it exists
 	profile, err := s.repo.GetProfileByUUID(ctx, req.ProfileUuid)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "profile not found")
+	}
+
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesDelete) && claims.UserID != profile.UserID {
+		logger.Warn(ctx, "userID=%d does not have permission to delete profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete profiles")
 	}
 
 	// Get user to get UUID for counting profiles
