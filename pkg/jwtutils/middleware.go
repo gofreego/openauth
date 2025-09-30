@@ -14,16 +14,18 @@ import (
 
 // AuthMiddleware provides JWT authentication for gRPC and HTTP requests
 type AuthMiddleware struct {
-	jwtSecret string
-	enabled   bool
+	jwtSecret  string
+	enabled    bool
+	validation bool // whether to validate token expiration and signature
 }
 
 // NewAuthMiddleware creates a new auth middleware instance
-func NewAuthMiddleware(jwtSecret string, enabled bool) *AuthMiddleware {
-	logger.Info(context.Background(), "Initializing JWT Auth Middleware: enabled=%t", enabled)
+func NewAuthMiddleware(jwtSecret string, enabled bool, validation bool) *AuthMiddleware {
+	logger.Info(context.Background(), "Initializing JWT Auth Middleware: enabled=%t, validation=%t", enabled, validation)
 	return &AuthMiddleware{
-		jwtSecret: jwtSecret,
-		enabled:   enabled,
+		jwtSecret:  jwtSecret,
+		enabled:    enabled,
+		validation: validation,
 	}
 }
 
@@ -49,18 +51,26 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			logger.Warn(ctx, "Failed to extract token from metadata for method %s: %v", info.FullMethod, err)
 			return nil, err
 		}
-
-		claims, err := ParseAndValidateToken(token, a.jwtSecret)
-		if err != nil {
-			logger.Warn(ctx, "Invalid token for method %s: %v", info.FullMethod, err)
-			return nil, status.Error(codes.Unauthenticated, "invalid token")
+		var claims *JWTClaims
+		if a.validation {
+			claims, err = ParseAndValidateToken(token, a.jwtSecret)
+			if err != nil {
+				logger.Warn(ctx, "Invalid token for method %s: %v", info.FullMethod, err)
+				return nil, status.Error(codes.Unauthenticated, "invalid token")
+			}
+		} else {
+			claims, err = parseWithoutValidation(token)
+			if err != nil {
+				logger.Warn(ctx, "Failed to parse token without validation for method %s: %v", info.FullMethod, err)
+				return nil, status.Error(codes.Unauthenticated, "invalid token")
+			}
 		}
 
 		logger.Debug(ctx, "Token validated for user %s (userID=%d) accessing method: %s",
 			claims.UserUUID, claims.UserID, info.FullMethod)
 
 		// Add claims to context
-		ctx = SetUserInContext(ctx, claims)
+		ctx = setUserInContext(ctx, claims)
 
 		return handler(ctx, req)
 	}
@@ -99,7 +109,7 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 			claims.UserUUID, claims.UserID, info.FullMethod)
 
 		// Add claims to context
-		ctx := SetUserInContext(ss.Context(), claims)
+		ctx := setUserInContext(ss.Context(), claims)
 
 		// Create a new server stream with the updated context
 		wrappedStream := &wrappedServerStream{
@@ -153,7 +163,7 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 			claims.UserUUID, claims.UserID, r.Method, r.URL.Path)
 
 		// Add claims to request context
-		ctx := SetUserInContext(r.Context(), claims)
+		ctx := setUserInContext(r.Context(), claims)
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
@@ -207,10 +217,4 @@ type wrappedServerStream struct {
 
 func (w *wrappedServerStream) Context() context.Context {
 	return w.ctx
-}
-
-// InitAuthMiddleware initializes auth middleware with config
-func InitAuthMiddleware(secretKey string, enabled bool) *AuthMiddleware {
-	logger.Info(context.Background(), "Initializing Auth Middleware with enabled=%t", enabled)
-	return NewAuthMiddleware(secretKey, enabled)
 }

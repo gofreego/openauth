@@ -58,6 +58,29 @@ func ExtractTokenFromMetadata(ctx context.Context) (string, error) {
 	return token, nil
 }
 
+func GetClaimFromMetadata(ctx context.Context) (*JWTClaims, error) {
+	token, err := ExtractTokenFromMetadata(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	claims, err := parseWithoutValidation(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
+}
+
+func parseWithoutValidation(tokenString string) (*JWTClaims, error) {
+	claims := &JWTClaims{}
+	_, _, err := new(jwt.Parser).ParseUnverified(tokenString, claims)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse token without validation: %w", err)
+	}
+	return claims, nil
+}
+
 // ParseAndValidateToken parses and validates a JWT token
 func ParseAndValidateToken(tokenString, jwtSecret string) (*JWTClaims, error) {
 	claims := &JWTClaims{}
@@ -86,8 +109,8 @@ const (
 	JWT_CLAIM_KEY_USER JWT_CLAIM_KEY = "user_claims"
 )
 
-// SetUserInContext sets user claims in context
-func SetUserInContext(ctx context.Context, claims *JWTClaims) context.Context {
+// setUserInContext sets user claims in context
+func setUserInContext(ctx context.Context, claims *JWTClaims) context.Context {
 	return context.WithValue(ctx, JWT_CLAIM_KEY_USER, claims)
 }
 

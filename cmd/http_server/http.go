@@ -50,7 +50,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 	service := service.NewService(ctx, &a.cfg.Service, repository.GetInstance(ctx, &a.cfg.Repository))
 
 	// Create authentication middleware
-	authMiddleware := jwtutils.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.HTTP.AuthenticationEnabled)
+	authMiddleware := jwtutils.NewAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.HTTP.AuthenticationEnabled, true)
 
 	mux := runtime.NewServeMux()
 

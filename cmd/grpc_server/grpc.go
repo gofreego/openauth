@@ -46,7 +46,7 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 	service := service.NewService(ctx, &a.cfg.Service, repository)
 
 	// Create authentication middleware
-	authMiddleware := jwtutils.InitAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.GRPC.AuthenticationEnabled)
+	authMiddleware := jwtutils.NewAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.GRPC.AuthenticationEnabled, true)
 
 	// Create a new gRPC server with interceptors
 	a.server = grpc.NewServer(
