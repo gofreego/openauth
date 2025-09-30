@@ -14,9 +14,11 @@ import (
 
 // AuthMiddleware provides JWT authentication for gRPC and HTTP requests
 type AuthMiddleware struct {
-	jwtSecret  string
-	enabled    bool
-	validation bool // whether to validate token expiration and signature
+	jwtSecret   string
+	enabled     bool
+	validation  bool // whether to validate token expiration and signature
+	skipMethods map[string]bool
+	skipPaths   []string
 }
 
 // NewAuthMiddleware creates a new auth middleware instance
@@ -27,6 +29,17 @@ func NewAuthMiddleware(jwtSecret string, enabled bool, validation bool) *AuthMid
 		enabled:    enabled,
 		validation: validation,
 	}
+}
+
+func (a *AuthMiddleware) SetSkipMethods(methods []string) {
+	a.skipMethods = make(map[string]bool)
+	for _, method := range methods {
+		a.skipMethods[method] = true
+	}
+}
+
+func (a *AuthMiddleware) SetSkipPaths(paths []string) {
+	a.skipPaths = paths
 }
 
 // UnaryServerInterceptor provides JWT authentication for unary gRPC calls
@@ -98,13 +111,16 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 			logger.Warn(ss.Context(), "Failed to extract token from stream metadata for method %s: %v", info.FullMethod, err)
 			return err
 		}
-
-		claims, err := ParseAndValidateToken(token, a.jwtSecret)
+		var claims *JWTClaims
+		if a.validation {
+			claims, err = ParseAndValidateToken(token, a.jwtSecret)
+		} else {
+			claims, err = parseWithoutValidation(token)
+		}
 		if err != nil {
 			logger.Warn(ss.Context(), "Invalid token for stream method %s: %v", info.FullMethod, err)
 			return status.Error(codes.Unauthenticated, "invalid token")
 		}
-
 		logger.Debug(ss.Context(), "Stream token validated for user %s (userID=%d) accessing method: %s",
 			claims.UserUUID, claims.UserID, info.FullMethod)
 
@@ -152,7 +168,14 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-		claims, err := ParseAndValidateToken(token, a.jwtSecret)
+
+		var claims *JWTClaims
+		var err error
+		if a.validation {
+			claims, err = ParseAndValidateToken(token, a.jwtSecret)
+		} else {
+			claims, err = parseWithoutValidation(token)
+		}
 		if err != nil {
 			logger.Warn(r.Context(), "Invalid token for HTTP request %s %s: %v", r.Method, r.URL.Path, err)
 			http.Error(w, "invalid token", http.StatusUnauthorized)
@@ -172,36 +195,13 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 
 // skipAuth checks if the gRPC method should skip authentication
 func (a *AuthMiddleware) skipAuth(method string) bool {
-	logger.Info(context.Background(), "Checking if method should skip auth: %s", method)
-	skipMethods := []string{
-		"/v1.OpenAuth/Ping",
-		"/v1.OpenAuth/SignUp",
-		"/v1.OpenAuth/SignIn",
-		"/v1.OpenAuth/RefreshToken",
-		"/v1.OpenAuth/ValidateToken",
-	}
-
-	for _, skipMethod := range skipMethods {
-		if method == skipMethod {
-			return true
-		}
-	}
-	return false
+	return a.skipMethods[method]
 }
 
 // skipHTTPAuth checks if the HTTP path should skip authentication
 func (a *AuthMiddleware) skipHTTPAuth(path string) bool {
-	skipPaths := []string{
-		"/v1/ping",
-		"/v1/users/signup",
-		"/v1/auth/signin",
-		"/v1/auth/refresh",
-		"/v1/auth/validate",
-		"/openauth/v1/swagger",
-		"/openauth/admin",
-	}
 
-	for _, skipPath := range skipPaths {
+	for _, skipPath := range a.skipPaths {
 		if strings.HasSuffix(path, skipPath) || strings.HasPrefix(path, skipPath) {
 			return true
 		}

@@ -47,7 +47,13 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 
 	// Create authentication middleware
 	authMiddleware := jwtutils.NewAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.GRPC.AuthenticationEnabled, true)
-
+	authMiddleware.SetSkipMethods([]string{
+		"/v1.OpenAuth/Ping",
+		"/v1.OpenAuth/SignUp",
+		"/v1.OpenAuth/SignIn",
+		"/v1.OpenAuth/RefreshToken",
+		"/v1.OpenAuth/ValidateToken",
+	})
 	// Create a new gRPC server with interceptors
 	a.server = grpc.NewServer(
 		grpc.UnaryInterceptor(authMiddleware.UnaryServerInterceptor()),

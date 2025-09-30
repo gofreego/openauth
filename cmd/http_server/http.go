@@ -51,6 +51,15 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 
 	// Create authentication middleware
 	authMiddleware := jwtutils.NewAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.HTTP.AuthenticationEnabled, true)
+	authMiddleware.SetSkipPaths([]string{
+		"/v1/ping",
+		"/v1/users/signup",
+		"/v1/auth/signin",
+		"/v1/auth/refresh",
+		"/v1/auth/validate",
+		"/openauth/v1/swagger",
+		"/openauth/admin",
+	})
 
 	mux := runtime.NewServeMux()
 
