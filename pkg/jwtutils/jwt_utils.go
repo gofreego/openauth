@@ -29,6 +29,42 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
+func (c *JWTClaims) HasProfileId(profileId int64) bool {
+	for _, profile := range c.Profiles {
+		if profile.Id == profileId {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *JWTClaims) HasProfileUUID(profileUUID string) bool {
+	for _, profile := range c.Profiles {
+		if profile.UUID == profileUUID {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *JWTClaims) GetProfileByUUID(profileUUID string) *Profile {
+	for _, profile := range c.Profiles {
+		if profile.UUID == profileUUID {
+			return &profile
+		}
+	}
+	return nil
+}
+
+func (c *JWTClaims) GetProfileByID(profileID int64) *Profile {
+	for _, profile := range c.Profiles {
+		if profile.Id == profileID {
+			return &profile
+		}
+	}
+	return nil
+}
+
 func (c *JWTClaims) HasPermission(permission string) bool {
 	for _, userPerm := range c.Permissions {
 		if userPerm == permission || userPerm == "system.admin" {
