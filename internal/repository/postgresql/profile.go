@@ -103,10 +103,22 @@ func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserP
 		FROM user_profiles p 
 		JOIN users u ON p.user_id = u.id 
 		WHERE u.uuid = $1 
-		ORDER BY p.created_at DESC 
-		LIMIT $2 OFFSET $3`
+		ORDER BY p.created_at DESC`
 
-	rows, err := r.connManager.Primary().QueryContext(ctx, query, filters.UserUUID, filters.Limit, filters.Offset)
+	params := []interface{}{}
+	counter := 2 // Start from 2 since $1 is already used for user UUID
+	if filters.Offset > 0 {
+		query += ` OFFSET $` + fmt.Sprintf("%d", counter)
+		counter++
+		params = append(params, filters.Offset)
+	}
+	if filters.Limit > 0 {
+		query += ` LIMIT $` + fmt.Sprintf("%d", counter)
+		counter++
+		params = append(params, filters.Limit)
+	}
+	params = append([]interface{}{filters.UserUUID}, params...)
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, params...)
 	if err != nil {
 		return nil, err
 	}
