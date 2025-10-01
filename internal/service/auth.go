@@ -480,6 +480,30 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 		claims.Permissions = permissions
 	}
 
+	// Include user profiles
+	profiles, err := s.repo.ListUserProfiles(ctx, &filter.UserProfilesFilter{
+		UserUUID: user.UUID.String(),
+	})
+	if err != nil {
+		logger.Error(ctx, "Failed to get user profiles: %v", err)
+		return "", fmt.Errorf("failed to get user profiles: %w", err)
+	}
+
+	// Convert DAO profiles to JWT profiles
+	jwtProfiles := make([]jwtutils.Profile, len(profiles))
+	for i, profile := range profiles {
+		var profileName string
+		if profile.ProfileName != nil {
+			profileName = *profile.ProfileName
+		}
+		jwtProfiles[i] = jwtutils.Profile{
+			Id:          profile.ID,
+			UUID:        profile.UUID.String(),
+			ProfileName: profileName,
+		}
+	}
+	claims.Profiles = jwtProfiles
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(s.cfg.JWT.GetSecretKey())
 }

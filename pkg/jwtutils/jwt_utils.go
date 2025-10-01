@@ -12,13 +12,20 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type Profile struct {
+	Id          int64  `json:"id"`
+	UUID        string `json:"uuid"`
+	ProfileName string `json:"profile_name"`
+}
+
 // Token claims structure
 type JWTClaims struct {
-	UserID      int64    `json:"userId"`
-	UserUUID    string   `json:"userUUID"`
-	SessionUUID string   `json:"sessionUUID"`
-	DeviceID    string   `json:"deviceId,omitempty"`
-	Permissions []string `json:"permissions,omitempty"`
+	UserID      int64     `json:"userId"`
+	UserUUID    string    `json:"userUUID"`
+	Profiles    []Profile `json:"profiles,omitempty"`
+	SessionUUID string    `json:"sessionUUID"`
+	DeviceID    string    `json:"deviceId,omitempty"`
+	Permissions []string  `json:"permissions,omitempty"`
 	jwt.RegisteredClaims
 }
 
