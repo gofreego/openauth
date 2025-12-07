@@ -154,8 +154,11 @@ func (c *OpenauthConfigFetcher) refreshAccessToken(ctx context.Context) error {
 		return fmt.Errorf("no refresh token available")
 	}
 
+	var includePerms = true
+
 	req := &openauth_v1.RefreshTokenRequest{
-		RefreshToken: refreshToken,
+		RefreshToken:       refreshToken,
+		IncludePermissions: &includePerms,
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
