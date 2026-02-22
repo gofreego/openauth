@@ -57,6 +57,7 @@ const (
 	OpenAuth_ListUserProfiles_FullMethodName            = "/v1.OpenAuth/ListUserProfiles"
 	OpenAuth_UpdateProfile_FullMethodName               = "/v1.OpenAuth/UpdateProfile"
 	OpenAuth_DeleteProfile_FullMethodName               = "/v1.OpenAuth/DeleteProfile"
+	OpenAuth_GetProfileUploadURL_FullMethodName         = "/v1.OpenAuth/GetProfileUploadURL"
 	OpenAuth_SignIn_FullMethodName                      = "/v1.OpenAuth/SignIn"
 	OpenAuth_RefreshToken_FullMethodName                = "/v1.OpenAuth/RefreshToken"
 	OpenAuth_Logout_FullMethodName                      = "/v1.OpenAuth/Logout"
@@ -82,7 +83,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OpenAuthClient interface {
 	// Ping is a simple health check endpoint to verify service availability
-	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	Ping(ctx context.Context, in *OOPingRequest, opts ...grpc.CallOption) (*OOPingResponse, error)
 	// Stats provides system statistics including user counts, permission counts, etc.
 	Stats(ctx context.Context, in *StatsRequest, opts ...grpc.CallOption) (*StatsResponse, error)
 	// CreatePermission creates a new permission in the system.
@@ -305,6 +306,11 @@ type OpenAuthClient interface {
 	// Users must have at least one profile, so deletion of the last
 	// profile may be restricted based on business rules.
 	DeleteProfile(ctx context.Context, in *DeleteProfileRequest, opts ...grpc.CallOption) (*DeleteProfileResponse, error)
+	// GetProfileUploadURL generates a presigned URL for uploading a profile image.
+	//
+	// This URL can be used by the client to upload an image directly to the storage
+	// service. The returned URL is temporary and will expire after a short period.
+	GetProfileUploadURL(ctx context.Context, in *GetProfileUploadURLRequest, opts ...grpc.CallOption) (*GetProfileUploadURLResponse, error)
 	// SignIn authenticates a user and creates a new session.
 	//
 	// Supports multiple login methods:
@@ -377,9 +383,9 @@ func NewOpenAuthClient(cc grpc.ClientConnInterface) OpenAuthClient {
 	return &openAuthClient{cc}
 }
 
-func (c *openAuthClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+func (c *openAuthClient) Ping(ctx context.Context, in *OOPingRequest, opts ...grpc.CallOption) (*OOPingResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PingResponse)
+	out := new(OOPingResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_Ping_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -757,6 +763,16 @@ func (c *openAuthClient) DeleteProfile(ctx context.Context, in *DeleteProfileReq
 	return out, nil
 }
 
+func (c *openAuthClient) GetProfileUploadURL(ctx context.Context, in *GetProfileUploadURLRequest, opts ...grpc.CallOption) (*GetProfileUploadURLResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProfileUploadURLResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_GetProfileUploadURL_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *openAuthClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SignInResponse)
@@ -942,7 +958,7 @@ func (c *openAuthClient) ListConfigs(ctx context.Context, in *ListConfigsRequest
 // for forward compatibility.
 type OpenAuthServer interface {
 	// Ping is a simple health check endpoint to verify service availability
-	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	Ping(context.Context, *OOPingRequest) (*OOPingResponse, error)
 	// Stats provides system statistics including user counts, permission counts, etc.
 	Stats(context.Context, *StatsRequest) (*StatsResponse, error)
 	// CreatePermission creates a new permission in the system.
@@ -1165,6 +1181,11 @@ type OpenAuthServer interface {
 	// Users must have at least one profile, so deletion of the last
 	// profile may be restricted based on business rules.
 	DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error)
+	// GetProfileUploadURL generates a presigned URL for uploading a profile image.
+	//
+	// This URL can be used by the client to upload an image directly to the storage
+	// service. The returned URL is temporary and will expire after a short period.
+	GetProfileUploadURL(context.Context, *GetProfileUploadURLRequest) (*GetProfileUploadURLResponse, error)
 	// SignIn authenticates a user and creates a new session.
 	//
 	// Supports multiple login methods:
@@ -1237,7 +1258,7 @@ type OpenAuthServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOpenAuthServer struct{}
 
-func (UnimplementedOpenAuthServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
+func (UnimplementedOpenAuthServer) Ping(context.Context, *OOPingRequest) (*OOPingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 func (UnimplementedOpenAuthServer) Stats(context.Context, *StatsRequest) (*StatsResponse, error) {
@@ -1351,6 +1372,9 @@ func (UnimplementedOpenAuthServer) UpdateProfile(context.Context, *UpdateProfile
 func (UnimplementedOpenAuthServer) DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProfile not implemented")
 }
+func (UnimplementedOpenAuthServer) GetProfileUploadURL(context.Context, *GetProfileUploadURLRequest) (*GetProfileUploadURLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfileUploadURL not implemented")
+}
 func (UnimplementedOpenAuthServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
 }
@@ -1427,7 +1451,7 @@ func RegisterOpenAuthServer(s grpc.ServiceRegistrar, srv OpenAuthServer) {
 }
 
 func _OpenAuth_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PingRequest)
+	in := new(OOPingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1439,7 +1463,7 @@ func _OpenAuth_Ping_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: OpenAuth_Ping_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpenAuthServer).Ping(ctx, req.(*PingRequest))
+		return srv.(OpenAuthServer).Ping(ctx, req.(*OOPingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2110,6 +2134,24 @@ func _OpenAuth_DeleteProfile_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_GetProfileUploadURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProfileUploadURLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).GetProfileUploadURL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_GetProfileUploadURL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).GetProfileUploadURL(ctx, req.(*GetProfileUploadURLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OpenAuth_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SignInRequest)
 	if err := dec(in); err != nil {
@@ -2592,6 +2634,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProfile",
 			Handler:    _OpenAuth_DeleteProfile_Handler,
+		},
+		{
+			MethodName: "GetProfileUploadURL",
+			Handler:    _OpenAuth_GetProfileUploadURL_Handler,
 		},
 		{
 			MethodName: "SignIn",

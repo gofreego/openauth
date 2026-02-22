@@ -88,7 +88,7 @@ type PermissionMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m PermissionMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -225,7 +225,7 @@ type CreatePermissionRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CreatePermissionRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -338,7 +338,7 @@ type GetPermissionRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m GetPermissionRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -476,7 +476,7 @@ type ListPermissionsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListPermissionsRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -612,7 +612,7 @@ type ListPermissionsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListPermissionsResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -770,7 +770,7 @@ type UpdatePermissionRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UpdatePermissionRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -883,7 +883,7 @@ type DeletePermissionRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DeletePermissionRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -989,7 +989,7 @@ type DeletePermissionResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DeletePermissionResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}

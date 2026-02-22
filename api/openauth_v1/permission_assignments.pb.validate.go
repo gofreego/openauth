@@ -109,7 +109,7 @@ type AssignPermissionsToGroupRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m AssignPermissionsToGroupRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -216,7 +216,7 @@ type AssignPermissionsToGroupResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m AssignPermissionsToGroupResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -359,7 +359,7 @@ type RemovePermissionsFromGroupRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RemovePermissionsFromGroupRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -468,7 +468,7 @@ type RemovePermissionsFromGroupResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RemovePermissionsFromGroupResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -582,7 +582,7 @@ type ListGroupPermissionsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListGroupPermissionsRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -719,7 +719,7 @@ type ListGroupPermissionsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListGroupPermissionsResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -875,7 +875,7 @@ type AssignPermissionsToUserRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m AssignPermissionsToUserRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -980,7 +980,7 @@ type AssignPermissionsToUserResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m AssignPermissionsToUserResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1123,7 +1123,7 @@ type RemovePermissionsFromUserRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RemovePermissionsFromUserRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1232,7 +1232,7 @@ type RemovePermissionsFromUserResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RemovePermissionsFromUserResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1346,7 +1346,7 @@ type ListUserPermissionsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListUserPermissionsRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1482,7 +1482,7 @@ type ListUserPermissionsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListUserPermissionsResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1598,7 +1598,7 @@ type GetUserEffectivePermissionsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m GetUserEffectivePermissionsRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1733,7 +1733,7 @@ type EffectivePermissionMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m EffectivePermissionMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1871,7 +1871,7 @@ type GetUserEffectivePermissionsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m GetUserEffectivePermissionsResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}

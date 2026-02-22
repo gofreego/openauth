@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gofreego/goutils/logger"
+	"github.com/gofreego/mediabase/api/mediabase_v1"
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/constants"
 	"github.com/gofreego/openauth/internal/models/dao"
@@ -297,5 +298,63 @@ func (s *Service) DeleteProfile(ctx context.Context, req *openauth_v1.DeleteProf
 	return &openauth_v1.DeleteProfileResponse{
 		Success: true,
 		Message: "Profile deleted successfully",
+	}, nil
+}
+
+// GetProfileUploadURL generates a presigned URL for uploading a profile image
+func (s *Service) GetProfileUploadURL(ctx context.Context, req *openauth_v1.GetProfileUploadURLRequest) (*openauth_v1.GetProfileUploadURLResponse, error) {
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Get profile upload URL failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+
+	// Get existing profile to verify ownership
+	profile, err := s.repo.GetProfileByUUID(ctx, req.ProfileUuid)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "profile not found")
+	}
+
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesUpdate) && claims.UserID != profile.UserID {
+		logger.Warn(ctx, "userID=%d does not have permission to update profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to get upload URL")
+	}
+
+	// Prepare mediabase request
+	// We'll store profile images in a path like profiles
+	path := "profiles"
+	fileName := fmt.Sprintf("%s.webp", req.ProfileUuid)
+
+	mediabaseReq := &mediabase_v1.PresignUploadRequest{
+		BucketName:  s.cfg.Mediabase.BucketName,
+		Path:        path,
+		FileName:    fileName,
+		ContentType: "image/webp",
+	}
+
+	// Call mediabase service
+	if s.mediabaseClient == nil {
+		return nil, status.Error(codes.Internal, "mediabase service client not initialized")
+	}
+
+	resp, err := s.mediabaseClient.PresignUpload(ctx, mediabaseReq)
+	if err != nil {
+		logger.Error(ctx, "Failed to get presigned URL from mediabase: %v", err)
+		return nil, status.Error(codes.Internal, "failed to generate upload URL")
+	}
+
+	return &openauth_v1.GetProfileUploadURLResponse{
+		UploadUrl: resp.GetPresignedUrl(),
+		ObjectKey: resp.GetObjectKey(),
+		FormData:  resp.GetFormData(),
+		ExpiresIn: resp.GetExpiresIn(),
 	}, nil
 }

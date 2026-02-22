@@ -5,7 +5,7 @@ option go_package = "./openauth_v1";
 
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
-import "proto/common/ping.proto";
+import "proto/openauth_common/ping.proto";
 import "proto/openauth/v1/permissions.proto";
 import "proto/openauth/v1/users.proto";
 import "proto/openauth/v1/groups.proto";
@@ -94,7 +94,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service OpenAuth {
     
     // Ping is a simple health check endpoint to verify service availability
-    rpc Ping (PingRequest) returns (PingResponse) {
+    rpc Ping (OOPingRequest) returns (OOPingResponse) {
         option (google.api.http) = {
             get: "/openauth/v1/ping"
         };
@@ -729,6 +729,22 @@ service OpenAuth {
             tags: "Profile Management"
             summary: "Delete a profile"
             description: "Remove a specific profile."
+        };
+    }
+
+    // GetProfileUploadURL generates a presigned URL for uploading a profile image.
+    // 
+    // This URL can be used by the client to upload an image directly to the storage
+    // service. The returned URL is temporary and will expire after a short period.
+    rpc GetProfileUploadURL (GetProfileUploadURLRequest) returns (GetProfileUploadURLResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/profiles/upload-url"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Profile Management"
+            summary: "Get profile image upload URL"
+            description: "Generate a presigned URL for uploading a profile image."
         };
     }
 

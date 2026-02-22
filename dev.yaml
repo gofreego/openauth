@@ -17,7 +17,7 @@ Repository:
   Name: Postgres
   Postgres:
     primary:
-      Host: "localhost"
+      Host: 192.168.1.100
       Port: 5432
       Username: "admin"
       Password: OSwfiTlc1r5W7Z
@@ -39,6 +39,9 @@ Service:
     BcryptCost: 12         # Password hashing cost (higher = more secure but slower)
     MaxLoginAttempts: 5    # Maximum failed login attempts before account lockout
     LockoutDuration: "30m" # Account lockout duration after max failed attempts
+  Mediabase:
+    ServiceEndpoint: 192.168.1.100:8096
+    BucketName: openauth
 Debug:
   Enabled: true
   EnablePprof: true

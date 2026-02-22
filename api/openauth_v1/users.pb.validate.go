@@ -113,7 +113,7 @@ type UserMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UserMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -284,7 +284,7 @@ type UserProfileMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UserProfileMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -513,7 +513,7 @@ type SignUpRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m SignUpRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -652,7 +652,7 @@ type SignUpResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m SignUpResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -847,7 +847,7 @@ type VerifyEmailRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VerifyEmailRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -995,7 +995,7 @@ type VerifyPhoneRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VerifyPhoneRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1105,7 +1105,7 @@ type VerificationResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VerificationResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1218,7 +1218,7 @@ type SendVerificationCodeRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m SendVerificationCodeRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1331,7 +1331,7 @@ type SendVerificationCodeResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m SendVerificationCodeResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1456,7 +1456,7 @@ type CheckUsernameRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CheckUsernameRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1564,7 +1564,7 @@ type CheckUsernameResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CheckUsernameResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1739,7 +1739,7 @@ type CheckEmailRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CheckEmailRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1845,7 +1845,7 @@ type CheckEmailResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CheckEmailResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2236,7 +2236,7 @@ type CreateProfileRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CreateProfileRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2371,7 +2371,7 @@ type CreateProfileResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CreateProfileResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2488,7 +2488,7 @@ type ListUserProfilesRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListUserProfilesRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2624,7 +2624,7 @@ type ListUserProfilesResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListUserProfilesResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3015,7 +3015,7 @@ type UpdateProfileRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UpdateProfileRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3150,7 +3150,7 @@ type UpdateProfileResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UpdateProfileResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3263,7 +3263,7 @@ type DeleteProfileRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DeleteProfileRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3369,7 +3369,7 @@ type DeleteProfileResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DeleteProfileResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3434,6 +3434,230 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteProfileResponseValidationError{}
+
+// Validate checks the field values on GetProfileUploadURLRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetProfileUploadURLRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetProfileUploadURLRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetProfileUploadURLRequestMultiError, or nil if none found.
+func (m *GetProfileUploadURLRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetProfileUploadURLRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := utf8.RuneCountInString(m.GetProfileUuid()); l < 1 || l > 36 {
+		err := GetProfileUploadURLRequestValidationError{
+			field:  "ProfileUuid",
+			reason: "value length must be between 1 and 36 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetProfileUploadURLRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetProfileUploadURLRequestMultiError is an error wrapping multiple
+// validation errors returned by GetProfileUploadURLRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetProfileUploadURLRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetProfileUploadURLRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetProfileUploadURLRequestMultiError) AllErrors() []error { return m }
+
+// GetProfileUploadURLRequestValidationError is the validation error returned
+// by GetProfileUploadURLRequest.Validate if the designated constraints aren't met.
+type GetProfileUploadURLRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetProfileUploadURLRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetProfileUploadURLRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetProfileUploadURLRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetProfileUploadURLRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetProfileUploadURLRequestValidationError) ErrorName() string {
+	return "GetProfileUploadURLRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetProfileUploadURLRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetProfileUploadURLRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetProfileUploadURLRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetProfileUploadURLRequestValidationError{}
+
+// Validate checks the field values on GetProfileUploadURLResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetProfileUploadURLResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetProfileUploadURLResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetProfileUploadURLResponseMultiError, or nil if none found.
+func (m *GetProfileUploadURLResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetProfileUploadURLResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UploadUrl
+
+	// no validation rules for ObjectKey
+
+	// no validation rules for FormData
+
+	// no validation rules for ExpiresIn
+
+	if len(errors) > 0 {
+		return GetProfileUploadURLResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetProfileUploadURLResponseMultiError is an error wrapping multiple
+// validation errors returned by GetProfileUploadURLResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetProfileUploadURLResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetProfileUploadURLResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetProfileUploadURLResponseMultiError) AllErrors() []error { return m }
+
+// GetProfileUploadURLResponseValidationError is the validation error returned
+// by GetProfileUploadURLResponse.Validate if the designated constraints
+// aren't met.
+type GetProfileUploadURLResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetProfileUploadURLResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetProfileUploadURLResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetProfileUploadURLResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetProfileUploadURLResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetProfileUploadURLResponseValidationError) ErrorName() string {
+	return "GetProfileUploadURLResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetProfileUploadURLResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetProfileUploadURLResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetProfileUploadURLResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetProfileUploadURLResponseValidationError{}
 
 // Validate checks the field values on GetUserRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -3524,7 +3748,7 @@ type GetUserRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m GetUserRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3687,7 +3911,7 @@ type GetUserResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m GetUserResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3960,7 +4184,7 @@ type UpdateUserRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UpdateUserRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -4095,7 +4319,7 @@ type UpdateUserResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UpdateUserResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -4230,7 +4454,7 @@ type ChangePasswordRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ChangePasswordRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -4336,7 +4560,7 @@ type ChangePasswordResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ChangePasswordResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -4457,7 +4681,7 @@ type ListUsersRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListUsersRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -4591,7 +4815,7 @@ type ListUsersResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListUsersResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -4706,7 +4930,7 @@ type DeleteUserRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DeleteUserRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -4812,7 +5036,7 @@ type DeleteUserResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DeleteUserResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}

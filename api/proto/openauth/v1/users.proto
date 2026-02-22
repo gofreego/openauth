@@ -1,7 +1,7 @@
 syntax = "proto3";
 package v1;
 
-import "proto/common/sort.proto";
+import "proto/openauth_common/sort.proto";
 import "validate/validate.proto";
 
 option go_package = "./openauth_v1";
@@ -259,6 +259,26 @@ message DeleteProfileRequest {
 message DeleteProfileResponse {
     bool success = 1;
     string message = 2;
+}
+
+// GetProfileUploadURLRequest to get a presigned URL for profile image upload
+message GetProfileUploadURLRequest {
+    string profile_uuid = 1 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 36
+    }];
+}
+
+
+
+
+
+// GetProfileUploadURLResponse
+message GetProfileUploadURLResponse {
+    string upload_url = 1;
+    string object_key = 2;
+    map<string, string> form_data = 3;
+    int32 expires_in = 4;
 }
 
 // GetUserRequest to get user by ID

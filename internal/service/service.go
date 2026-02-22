@@ -10,6 +10,7 @@ import (
 	"github.com/gofreego/openauth/internal/models/dao"
 	"github.com/gofreego/openauth/internal/models/filter"
 	communicationservice "github.com/gofreego/openauth/pkg/clients/communication-service"
+	mediabaseservice "github.com/gofreego/openauth/pkg/clients/mediabase-service"
 	"github.com/google/uuid"
 )
 
@@ -17,12 +18,28 @@ type Config struct {
 	JWT           JWTConfig           `yaml:"JWT"`
 	Security      SecurityConfig      `yaml:"Security"`
 	Communication CommunicationConfig `yaml:"Communication"`
+	Mediabase     MediabaseConfig     `yaml:"Mediabase"`
 }
 
 func (c *Config) Default() {
 	c.JWT.Default()
 	c.Security.Default()
 	c.Communication.Default()
+	c.Mediabase.Default()
+}
+
+type MediabaseConfig struct {
+	ServiceEndpoint string `yaml:"ServiceEndpoint"`
+	BucketName      string `yaml:"BucketName"`
+}
+
+func (c *MediabaseConfig) Default() {
+	if c.ServiceEndpoint == "" {
+		c.ServiceEndpoint = "localhost:8087"
+	}
+	if c.BucketName == "" {
+		c.BucketName = "profiles"
+	}
 }
 
 type CommunicationConfig struct {
@@ -116,6 +133,7 @@ type Repository interface {
 	ListUserProfileUUIDs(ctx context.Context, userID int64) ([]uuid.UUID, error)
 	GetProfileByUUID(ctx context.Context, uuid string) (*dao.Profile, error)
 	UpdateProfileByUUID(ctx context.Context, uuid string, updates map[string]interface{}) (*dao.Profile, error)
+
 	CountUserProfiles(ctx context.Context, userUUID string) (int32, error)
 	DeleteProfileByUUID(ctx context.Context, uuid string) error
 
@@ -203,15 +221,25 @@ type Service struct {
 	cfg  *Config
 	openauth_v1.UnimplementedOpenAuthServer
 	communicationClient communicationservice.Client
+	mediabaseClient     mediabaseservice.Client
 }
 
 func NewService(ctx context.Context, cfg *Config, repo Repository) *Service {
 	cfg.Communication.Default()
+	cfg.Mediabase.Default()
+
+	mediabaseClient, err := mediabaseservice.NewClient(cfg.Mediabase.ServiceEndpoint)
+	if err != nil {
+		logger.Error(ctx, "Failed to initialize mediabase client: %v", err)
+		// We might want to handle this differently, but for now we'll just log it
+	}
+
 	logger.Info(ctx, "Initializing OpenAuth Service with config: JWT TTL=%v, Security BcryptCost=%d",
 		cfg.JWT.AccessTokenTTL, cfg.Security.BcryptCost)
 	return &Service{
 		repo:                repo,
 		cfg:                 cfg,
 		communicationClient: communicationservice.NewClient(cfg.Communication.ServiceEndpoint),
+		mediabaseClient:     mediabaseClient,
 	}
 }

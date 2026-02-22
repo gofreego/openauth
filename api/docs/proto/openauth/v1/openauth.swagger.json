@@ -1320,7 +1320,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1PingResponse"
+              "$ref": "#/definitions/v1OOPingResponse"
             }
           },
           "default": {
@@ -1340,6 +1340,40 @@
         ],
         "tags": [
           "Ping"
+        ]
+      }
+    },
+    "/openauth/v1/profiles/upload-url": {
+      "post": {
+        "summary": "Get profile image upload URL",
+        "description": "Generate a presigned URL for uploading a profile image.",
+        "operationId": "OpenAuth_GetProfileUploadURL",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetProfileUploadURLResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetProfileUploadURLRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Profile Management"
         ]
       }
     },
@@ -3078,6 +3112,37 @@
       },
       "title": "GetGroupResponse"
     },
+    "v1GetProfileUploadURLRequest": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string"
+        }
+      },
+      "title": "GetProfileUploadURLRequest to get a presigned URL for profile image upload"
+    },
+    "v1GetProfileUploadURLResponse": {
+      "type": "object",
+      "properties": {
+        "uploadUrl": {
+          "type": "string"
+        },
+        "objectKey": {
+          "type": "string"
+        },
+        "formData": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "GetProfileUploadURLResponse"
+    },
     "v1GetUserEffectivePermissionsResponse": {
       "type": "object",
       "properties": {
@@ -3376,6 +3441,15 @@
       },
       "title": "LogoutResponse"
     },
+    "v1OOPingResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "description": "PingResponse is the response message for the Ping RPC method."
+    },
     "v1Permission": {
       "type": "object",
       "properties": {
@@ -3417,15 +3491,6 @@
         }
       },
       "description": "Permission represents a specific authorization rule in the system.\nIt follows a Resource-Based Access Control (RBAC) pattern where permissions\nare defined by combining a resource (what) with an action (how).\n\nExample: A permission with resource=\"users\" and action=\"create\" allows\ncreating new user accounts."
-    },
-    "v1PingResponse": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      },
-      "description": "PingResponse is the response message for the Ping RPC method."
     },
     "v1RefreshTokenRequest": {
       "type": "object",

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package v1;
 
-import "proto/common/sort.proto";
+import "proto/openauth_common/sort.proto";
 import "validate/validate.proto";
 
 option go_package = "./openauth_v1";
