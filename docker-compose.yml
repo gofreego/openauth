@@ -1,7 +1,9 @@
 version: '3.8'
 services:
   openauth:
-    image: openauth:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: openauth
     restart: always
     ports:
