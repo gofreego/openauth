@@ -27,6 +27,11 @@ import (
 func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
 	logger.Info(ctx, "Sign-in attempt initiated for identifier: %s", req.Username)
 
+	// Login-token flow: bypass username/password and authenticate via a delegated login token
+	if req.LoginToken != nil && *req.LoginToken != "" {
+		return s.signInWithLoginToken(ctx, req)
+	}
+
 	// Validate request using generated validation
 	if err := req.Validate(); err != nil {
 		logger.Warn(ctx, "Sign-in failed validation: %v", err)
@@ -429,6 +434,128 @@ func (s *Service) TerminateSession(ctx context.Context, req *openauth_v1.Termina
 	return &openauth_v1.TerminateSessionResponse{
 		Success: true,
 		Message: "Session terminated successfully",
+	}, nil
+}
+
+// GenerateLoginToken issues a short-lived single-use login token for the caller's session.
+// Requires a valid JWT access token (enforced by auth middleware).
+func (s *Service) GenerateLoginToken(ctx context.Context, req *openauth_v1.GenerateLoginTokenRequest) (*openauth_v1.GenerateLoginTokenResponse, error) {
+	logger.Info(ctx, "GenerateLoginToken request initiated")
+
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "GenerateLoginToken: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "authentication required")
+	}
+
+	// Determine TTL (default 60s, max 300s)
+	ttl := int32(60)
+	if req.TtlSeconds != nil {
+		ttl = *req.TtlSeconds
+		if ttl <= 0 || ttl > 300 {
+			return nil, status.Error(codes.InvalidArgument, "ttl_seconds must be between 1 and 300")
+		}
+	}
+
+	loginToken := uuid.New()
+	expiresAt := time.Now().Add(time.Duration(ttl) * time.Second).UnixMilli()
+
+	_, err = s.repo.UpdateSession(ctx, claims.SessionUUID, map[string]interface{}{
+		"login_token":            loginToken.String(),
+		"login_token_expires_at": expiresAt,
+	})
+	if err != nil {
+		logger.Error(ctx, "GenerateLoginToken: failed to update session %s: %v", claims.SessionUUID, err)
+		return nil, status.Error(codes.Internal, "failed to generate login token")
+	}
+
+	logger.Info(ctx, "GenerateLoginToken: issued token for sessionID=%s, userID=%d, expiresAt=%d",
+		claims.SessionUUID, claims.UserID, expiresAt)
+
+	return &openauth_v1.GenerateLoginTokenResponse{
+		LoginToken: loginToken.String(),
+		ExpiresAt:  expiresAt,
+	}, nil
+}
+
+// signInWithLoginToken handles the login-token authentication path.
+// It validates the single-use token, clears it, and returns a fresh JWT for the existing session.
+func (s *Service) signInWithLoginToken(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
+	loginToken := *req.LoginToken
+	logger.Info(ctx, "Sign-in via login token")
+
+	session, err := s.repo.GetSessionByLoginToken(ctx, loginToken)
+	if err != nil {
+		logger.Warn(ctx, "signInWithLoginToken: login token not found: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
+	}
+
+	// Single-use: clear immediately regardless of subsequent errors
+	s.repo.UpdateSession(ctx, session.UUID.String(), map[string]interface{}{
+		"login_token":            nil,
+		"login_token_expires_at": nil,
+	})
+
+	// Check expiry
+	if session.LoginTokenExpiresAt == nil || time.Now().UnixMilli() > *session.LoginTokenExpiresAt {
+		logger.Warn(ctx, "signInWithLoginToken: login token expired for sessionID=%s", session.UUID.String())
+		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
+	}
+
+	// Verify the originating session is still active and not expired
+	if !session.IsActive {
+		logger.Warn(ctx, "signInWithLoginToken: originating session is inactive: sessionID=%s", session.UUID.String())
+		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
+	}
+	if time.Now().UnixMilli() > session.ExpiresAt {
+		logger.Warn(ctx, "signInWithLoginToken: originating session expired: sessionID=%s", session.UUID.String())
+		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
+	}
+
+	user, err := s.repo.GetUserByID(ctx, session.UserID)
+	if err != nil {
+		logger.Error(ctx, "signInWithLoginToken: user not found for userID=%d: %v", session.UserID, err)
+		return nil, status.Error(codes.Internal, "failed to authenticate")
+	}
+
+	if !user.IsActive {
+		return nil, status.Error(codes.PermissionDenied, "account is disabled")
+	}
+	if user.IsLocked {
+		return nil, status.Error(codes.PermissionDenied, "account is locked")
+	}
+
+	// Update last activity on the existing session
+	s.repo.UpdateLastActivity(ctx, session.UUID.String())
+
+	// Generate a fresh JWT for the remaining lifetime of the existing session
+	remainingDuration := time.Until(time.UnixMilli(session.ExpiresAt))
+	if remainingDuration <= 0 {
+		remainingDuration = time.Second // safety floor; expiry check above should catch this
+	}
+
+	includePermissions := req.IncludePermissions != nil && *req.IncludePermissions
+	accessToken, err := s.generateAccessToken(ctx, user, session, remainingDuration, includePermissions)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to generate access token")
+	}
+
+	var refreshExpiresAt int64
+	if session.RefreshExpiresAt != nil {
+		refreshExpiresAt = *session.RefreshExpiresAt
+	}
+
+	logger.Info(ctx, "signInWithLoginToken: sign-in successful for userID=%d, sessionID=%s",
+		user.ID, session.UUID.String())
+
+	return &openauth_v1.SignInResponse{
+		AccessToken:      accessToken,
+		RefreshToken:     *session.RefreshToken,
+		ExpiresAt:        session.ExpiresAt,
+		RefreshExpiresAt: refreshExpiresAt,
+		User:             user.ToProtoUser(),
+		SessionId:        session.UUID.String(),
+		Message:          "Sign in successful",
 	}, nil
 }
 

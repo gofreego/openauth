@@ -8,27 +8,29 @@ import (
 )
 
 type Session struct {
-	ID               int64     `db:"id" json:"id"`
-	UUID             uuid.UUID `db:"uuid" json:"uuid"`
-	UserID           int64     `db:"user_id" json:"userId"`
-	UserUUID         uuid.UUID `db:"user_uuid" json:"userUuid"` // For easier lookups
-	SessionToken     string    `db:"session_token" json:"sessionToken"`
-	RefreshToken     *string   `db:"refresh_token" json:"refreshToken,omitempty"`
-	DeviceID         *string   `db:"device_id" json:"deviceId,omitempty"`
-	DeviceName       *string   `db:"device_name" json:"deviceName,omitempty"`
-	DeviceType       *string   `db:"device_type" json:"deviceType,omitempty"` // web, mobile, desktop
-	UserAgent        *string   `db:"user_agent" json:"userAgent,omitempty"`
-	IPAddress        *string   `db:"ip_address" json:"ipAddress,omitempty"` // stored as INET
-	Location         *string   `db:"location" json:"location,omitempty"`
-	Lat              *float64  `db:"lat" json:"lat,omitempty"`
-	Lon              *float64  `db:"lon" json:"lon,omitempty"`
-	IsActive         bool      `db:"is_active" json:"isActive"`
-	Status           string    `db:"status" json:"status"` // active, expired, revoked, logged_out
-	ExpiresAt        int64     `db:"expires_at" json:"expiresAt"`
-	RefreshExpiresAt *int64    `db:"refresh_expires_at" json:"refreshExpiresAt,omitempty"`
-	LastActivityAt   int64     `db:"last_activity_at" json:"lastActivityAt"`
-	RevokedAt        *int64    `db:"revoked_at" json:"revokedAt,omitempty"`
-	CreatedAt        int64     `db:"created_at" json:"createdAt"`
+	ID                  int64      `db:"id" json:"id"`
+	UUID                uuid.UUID  `db:"uuid" json:"uuid"`
+	UserID              int64      `db:"user_id" json:"userId"`
+	UserUUID            uuid.UUID  `db:"user_uuid" json:"userUuid"` // For easier lookups
+	SessionToken        string     `db:"session_token" json:"sessionToken"`
+	RefreshToken        *string    `db:"refresh_token" json:"refreshToken,omitempty"`
+	DeviceID            *string    `db:"device_id" json:"deviceId,omitempty"`
+	DeviceName          *string    `db:"device_name" json:"deviceName,omitempty"`
+	DeviceType          *string    `db:"device_type" json:"deviceType,omitempty"` // web, mobile, desktop
+	UserAgent           *string    `db:"user_agent" json:"userAgent,omitempty"`
+	IPAddress           *string    `db:"ip_address" json:"ipAddress,omitempty"` // stored as INET
+	Location            *string    `db:"location" json:"location,omitempty"`
+	Lat                 *float64   `db:"lat" json:"lat,omitempty"`
+	Lon                 *float64   `db:"lon" json:"lon,omitempty"`
+	IsActive            bool       `db:"is_active" json:"isActive"`
+	Status              string     `db:"status" json:"status"` // active, expired, revoked, logged_out
+	ExpiresAt           int64      `db:"expires_at" json:"expiresAt"`
+	RefreshExpiresAt    *int64     `db:"refresh_expires_at" json:"refreshExpiresAt,omitempty"`
+	LastActivityAt      int64      `db:"last_activity_at" json:"lastActivityAt"`
+	RevokedAt           *int64     `db:"revoked_at" json:"revokedAt,omitempty"`
+	CreatedAt           int64      `db:"created_at" json:"createdAt"`
+	LoginToken          *uuid.UUID `db:"login_token" json:"loginToken,omitempty"`
+	LoginTokenExpiresAt *int64     `db:"login_token_expires_at" json:"loginTokenExpiresAt,omitempty"`
 }
 
 // FromSignInRequest initializes a Session DAO from SignInRequest data

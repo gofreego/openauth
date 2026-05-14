@@ -148,6 +148,7 @@ type Repository interface {
 	GetSessionByToken(ctx context.Context, sessionToken string) (*dao.Session, error)
 	GetSessionByUUID(ctx context.Context, sessionUUID string) (*dao.Session, error)
 	GetSessionByRefreshToken(ctx context.Context, refreshToken string) (*dao.Session, error)
+	GetSessionByLoginToken(ctx context.Context, loginToken string) (*dao.Session, error)
 	UpdateSession(ctx context.Context, sessionUUID string, updates map[string]interface{}) (*dao.Session, error)
 	DeleteSession(ctx context.Context, sessionUUID string) error
 	DeleteUserSessions(ctx context.Context, userUUID string) error

@@ -46,9 +46,10 @@ func (r *Repository) CreateSession(ctx context.Context, session *dao.Session) (*
 // GetSessionByToken retrieves a session by its session token
 func (r *Repository) GetSessionByToken(ctx context.Context, sessionToken string) (*dao.Session, error) {
 	query := `
-		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
-			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
+		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token,
+			device_id, device_name, device_type, user_agent, ip_address, location,
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at,
+			login_token, login_token_expires_at
 		FROM user_sessions 
 		WHERE session_token = $1`
 
@@ -59,9 +60,10 @@ func (r *Repository) GetSessionByToken(ctx context.Context, sessionToken string)
 // GetSessionByUUID retrieves a session by its UUID
 func (r *Repository) GetSessionByUUID(ctx context.Context, sessionUUID string) (*dao.Session, error) {
 	query := `
-		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
-			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
+		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token,
+			device_id, device_name, device_type, user_agent, ip_address, location,
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at,
+			login_token, login_token_expires_at
 		FROM user_sessions 
 		WHERE uuid = $1`
 
@@ -72,9 +74,10 @@ func (r *Repository) GetSessionByUUID(ctx context.Context, sessionUUID string) (
 // GetSessionByRefreshToken retrieves a session by its refresh token
 func (r *Repository) GetSessionByRefreshToken(ctx context.Context, refreshToken string) (*dao.Session, error) {
 	query := `
-		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
-			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
+		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token,
+			device_id, device_name, device_type, user_agent, ip_address, location,
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at,
+			login_token, login_token_expires_at
 		FROM user_sessions 
 		WHERE refresh_token = $1`
 
@@ -105,9 +108,10 @@ func (r *Repository) UpdateSession(ctx context.Context, sessionUUID string, upda
 		UPDATE user_sessions 
 		SET %s 
 		WHERE uuid = $%d
-		RETURNING id, uuid, user_id, user_uuid, session_token, refresh_token, 
-			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at`,
+		RETURNING id, uuid, user_id, user_uuid, session_token, refresh_token,
+			device_id, device_name, device_type, user_agent, ip_address, location,
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at,
+			login_token, login_token_expires_at`,
 		strings.Join(setParts, ", "), argIndex)
 
 	row := r.connManager.Primary().QueryRowContext(ctx, query, args...)
@@ -145,9 +149,10 @@ func (r *Repository) DeleteUserSessions(ctx context.Context, userUUID string) er
 func (r *Repository) ListUserSessions(ctx context.Context, filters *filter.UserSessionsFilter) ([]*dao.Session, error) {
 	// Build the base query
 	listQuery := `
-		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token, 
-			device_id, device_name, device_type, user_agent, ip_address, location, 
-			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at
+		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token,
+			device_id, device_name, device_type, user_agent, ip_address, location,
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at,
+			login_token, login_token_expires_at
 		FROM user_sessions 
 		WHERE user_uuid = $1`
 
@@ -195,6 +200,20 @@ func (r *Repository) UpdateLastActivity(ctx context.Context, sessionUUID string)
 	return err
 }
 
+// GetSessionByLoginToken retrieves a session by its login token
+func (r *Repository) GetSessionByLoginToken(ctx context.Context, loginToken string) (*dao.Session, error) {
+	query := `
+		SELECT id, uuid, user_id, user_uuid, session_token, refresh_token,
+			device_id, device_name, device_type, user_agent, ip_address, location,
+			is_active, status, expires_at, refresh_expires_at, last_activity_at, created_at,
+			login_token, login_token_expires_at
+		FROM user_sessions
+		WHERE login_token = $1`
+
+	row := r.connManager.Primary().QueryRowContext(ctx, query, loginToken)
+	return r.scanSession(row)
+}
+
 // Helper function to scan a session from a single row
 func (r *Repository) scanSession(row *sql.Row) (*dao.Session, error) {
 	var session dao.Session
@@ -204,7 +223,8 @@ func (r *Repository) scanSession(row *sql.Row) (*dao.Session, error) {
 		&session.DeviceName, &session.DeviceType, &session.UserAgent,
 		&session.IPAddress, &session.Location, &session.IsActive,
 		&session.Status, &session.ExpiresAt, &session.RefreshExpiresAt,
-		&session.LastActivityAt, &session.CreatedAt)
+		&session.LastActivityAt, &session.CreatedAt,
+		&session.LoginToken, &session.LoginTokenExpiresAt)
 
 	if err != nil {
 		return nil, err
@@ -222,7 +242,8 @@ func (r *Repository) scanSessionFromRows(rows *sql.Rows) (*dao.Session, error) {
 		&session.DeviceName, &session.DeviceType, &session.UserAgent,
 		&session.IPAddress, &session.Location, &session.IsActive,
 		&session.Status, &session.ExpiresAt, &session.RefreshExpiresAt,
-		&session.LastActivityAt, &session.CreatedAt)
+		&session.LastActivityAt, &session.CreatedAt,
+		&session.LoginToken, &session.LoginTokenExpiresAt)
 
 	if err != nil {
 		return nil, err
