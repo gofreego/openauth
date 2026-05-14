@@ -289,6 +289,10 @@ func (m *SignInRequest) validate(all bool) error {
 
 	}
 
+	if m.LoginToken != nil {
+		// no validation rules for LoginToken
+	}
+
 	if len(errors) > 0 {
 		return SignInRequestMultiError(errors)
 	}
@@ -1227,6 +1231,218 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ValidateTokenResponseValidationError{}
+
+// Validate checks the field values on GenerateLoginTokenRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GenerateLoginTokenRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GenerateLoginTokenRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GenerateLoginTokenRequestMultiError, or nil if none found.
+func (m *GenerateLoginTokenRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GenerateLoginTokenRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.TtlSeconds != nil {
+		// no validation rules for TtlSeconds
+	}
+
+	if len(errors) > 0 {
+		return GenerateLoginTokenRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GenerateLoginTokenRequestMultiError is an error wrapping multiple validation
+// errors returned by GenerateLoginTokenRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GenerateLoginTokenRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GenerateLoginTokenRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GenerateLoginTokenRequestMultiError) AllErrors() []error { return m }
+
+// GenerateLoginTokenRequestValidationError is the validation error returned by
+// GenerateLoginTokenRequest.Validate if the designated constraints aren't met.
+type GenerateLoginTokenRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GenerateLoginTokenRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GenerateLoginTokenRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GenerateLoginTokenRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GenerateLoginTokenRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GenerateLoginTokenRequestValidationError) ErrorName() string {
+	return "GenerateLoginTokenRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GenerateLoginTokenRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGenerateLoginTokenRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GenerateLoginTokenRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GenerateLoginTokenRequestValidationError{}
+
+// Validate checks the field values on GenerateLoginTokenResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GenerateLoginTokenResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GenerateLoginTokenResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GenerateLoginTokenResponseMultiError, or nil if none found.
+func (m *GenerateLoginTokenResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GenerateLoginTokenResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for LoginToken
+
+	// no validation rules for ExpiresAt
+
+	if len(errors) > 0 {
+		return GenerateLoginTokenResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GenerateLoginTokenResponseMultiError is an error wrapping multiple
+// validation errors returned by GenerateLoginTokenResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GenerateLoginTokenResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GenerateLoginTokenResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GenerateLoginTokenResponseMultiError) AllErrors() []error { return m }
+
+// GenerateLoginTokenResponseValidationError is the validation error returned
+// by GenerateLoginTokenResponse.Validate if the designated constraints aren't met.
+type GenerateLoginTokenResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GenerateLoginTokenResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GenerateLoginTokenResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GenerateLoginTokenResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GenerateLoginTokenResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GenerateLoginTokenResponseValidationError) ErrorName() string {
+	return "GenerateLoginTokenResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GenerateLoginTokenResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGenerateLoginTokenResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GenerateLoginTokenResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GenerateLoginTokenResponseValidationError{}
 
 // Validate checks the field values on Session with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

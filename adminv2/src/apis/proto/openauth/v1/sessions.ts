@@ -35,6 +35,7 @@ export interface SignInRequest {
   profiles?: boolean | undefined;
   includePermissions?: boolean | undefined;
   verificationId?: string | undefined;
+  loginToken?: string | undefined;
 }
 
 /** SignInResponse with authentication tokens and user data */
@@ -104,6 +105,20 @@ export interface ValidateTokenResponse {
     | undefined;
   /** Token expiration */
   expiresAt?: string | undefined;
+}
+
+/** GenerateLoginTokenRequest - user is identified from Authorization header */
+export interface GenerateLoginTokenRequest {
+  /** Token TTL in seconds (default: 60, max: 300) */
+  ttlSeconds?: number | undefined;
+}
+
+/** GenerateLoginTokenResponse - short-lived single-use token */
+export interface GenerateLoginTokenResponse {
+  /** Opaque single-use token (prefix: ltk_) */
+  loginToken: string;
+  /** Unix timestamp (seconds), TTL ~1 min */
+  expiresAt: string;
 }
 
 /** Session information */
@@ -309,6 +324,7 @@ function createBaseSignInRequest(): SignInRequest {
     profiles: undefined,
     includePermissions: undefined,
     verificationId: undefined,
+    loginToken: undefined,
   };
 }
 
@@ -337,6 +353,9 @@ export const SignInRequest: MessageFns<SignInRequest> = {
     }
     if (message.verificationId !== undefined) {
       writer.uint32(64).int64(message.verificationId);
+    }
+    if (message.loginToken !== undefined) {
+      writer.uint32(74).string(message.loginToken);
     }
     return writer;
   },
@@ -412,6 +431,14 @@ export const SignInRequest: MessageFns<SignInRequest> = {
           message.verificationId = reader.int64().toString();
           continue;
         }
+        case 9: {
+          if (tag !== 74) {
+            break;
+          }
+
+          message.loginToken = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -443,6 +470,11 @@ export const SignInRequest: MessageFns<SignInRequest> = {
         : isSet(object.verification_id)
         ? globalThis.String(object.verification_id)
         : undefined,
+      loginToken: isSet(object.loginToken)
+        ? globalThis.String(object.loginToken)
+        : isSet(object.login_token)
+        ? globalThis.String(object.login_token)
+        : undefined,
     };
   },
 
@@ -472,6 +504,9 @@ export const SignInRequest: MessageFns<SignInRequest> = {
     if (message.verificationId !== undefined) {
       obj.verificationId = message.verificationId;
     }
+    if (message.loginToken !== undefined) {
+      obj.loginToken = message.loginToken;
+    }
     return obj;
   },
 
@@ -490,6 +525,7 @@ export const SignInRequest: MessageFns<SignInRequest> = {
     message.profiles = object.profiles ?? undefined;
     message.includePermissions = object.includePermissions ?? undefined;
     message.verificationId = object.verificationId ?? undefined;
+    message.loginToken = object.loginToken ?? undefined;
     return message;
   },
 };
@@ -1290,6 +1326,154 @@ export const ValidateTokenResponse: MessageFns<ValidateTokenResponse> = {
     message.message = object.message ?? "";
     message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
     message.expiresAt = object.expiresAt ?? undefined;
+    return message;
+  },
+};
+
+function createBaseGenerateLoginTokenRequest(): GenerateLoginTokenRequest {
+  return { ttlSeconds: undefined };
+}
+
+export const GenerateLoginTokenRequest: MessageFns<GenerateLoginTokenRequest> = {
+  encode(message: GenerateLoginTokenRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.ttlSeconds !== undefined) {
+      writer.uint32(8).int32(message.ttlSeconds);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GenerateLoginTokenRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateLoginTokenRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ttlSeconds = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenerateLoginTokenRequest {
+    return {
+      ttlSeconds: isSet(object.ttlSeconds)
+        ? globalThis.Number(object.ttlSeconds)
+        : isSet(object.ttl_seconds)
+        ? globalThis.Number(object.ttl_seconds)
+        : undefined,
+    };
+  },
+
+  toJSON(message: GenerateLoginTokenRequest): unknown {
+    const obj: any = {};
+    if (message.ttlSeconds !== undefined) {
+      obj.ttlSeconds = Math.round(message.ttlSeconds);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GenerateLoginTokenRequest>, I>>(base?: I): GenerateLoginTokenRequest {
+    return GenerateLoginTokenRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GenerateLoginTokenRequest>, I>>(object: I): GenerateLoginTokenRequest {
+    const message = createBaseGenerateLoginTokenRequest();
+    message.ttlSeconds = object.ttlSeconds ?? undefined;
+    return message;
+  },
+};
+
+function createBaseGenerateLoginTokenResponse(): GenerateLoginTokenResponse {
+  return { loginToken: "", expiresAt: "0" };
+}
+
+export const GenerateLoginTokenResponse: MessageFns<GenerateLoginTokenResponse> = {
+  encode(message: GenerateLoginTokenResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.loginToken !== "") {
+      writer.uint32(10).string(message.loginToken);
+    }
+    if (message.expiresAt !== "0") {
+      writer.uint32(16).int64(message.expiresAt);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GenerateLoginTokenResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateLoginTokenResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.loginToken = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.expiresAt = reader.int64().toString();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenerateLoginTokenResponse {
+    return {
+      loginToken: isSet(object.loginToken)
+        ? globalThis.String(object.loginToken)
+        : isSet(object.login_token)
+        ? globalThis.String(object.login_token)
+        : "",
+      expiresAt: isSet(object.expiresAt)
+        ? globalThis.String(object.expiresAt)
+        : isSet(object.expires_at)
+        ? globalThis.String(object.expires_at)
+        : "0",
+    };
+  },
+
+  toJSON(message: GenerateLoginTokenResponse): unknown {
+    const obj: any = {};
+    if (message.loginToken !== "") {
+      obj.loginToken = message.loginToken;
+    }
+    if (message.expiresAt !== "0") {
+      obj.expiresAt = message.expiresAt;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GenerateLoginTokenResponse>, I>>(base?: I): GenerateLoginTokenResponse {
+    return GenerateLoginTokenResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GenerateLoginTokenResponse>, I>>(object: I): GenerateLoginTokenResponse {
+    const message = createBaseGenerateLoginTokenResponse();
+    message.loginToken = object.loginToken ?? "";
+    message.expiresAt = object.expiresAt ?? "0";
     return message;
   },
 };

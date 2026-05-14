@@ -97,6 +97,40 @@
         ]
       }
     },
+    "/openauth/v1/auth/login-token": {
+      "put": {
+        "summary": "Generate a short-lived login token",
+        "description": "Issues a single-use 1-minute token for delegated login. Pass the token as the Authorization header on SignIn to get a session without credentials.",
+        "operationId": "OpenAuth_GenerateLoginToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GenerateLoginTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GenerateLoginTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
     "/openauth/v1/auth/logout": {
       "post": {
         "summary": "Logout user",
@@ -3090,6 +3124,32 @@
       },
       "title": "EffectivePermission represents a permission that a user has either directly or through group membership"
     },
+    "v1GenerateLoginTokenRequest": {
+      "type": "object",
+      "properties": {
+        "ttlSeconds": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Token TTL in seconds (default: 60, max: 300)"
+        }
+      },
+      "title": "GenerateLoginTokenRequest - user is identified from Authorization header"
+    },
+    "v1GenerateLoginTokenResponse": {
+      "type": "object",
+      "properties": {
+        "loginToken": {
+          "type": "string",
+          "title": "Opaque single-use token (prefix: ltk_)"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp (seconds), TTL ~1 min"
+        }
+      },
+      "title": "GenerateLoginTokenResponse - short-lived single-use token"
+    },
     "v1GetConfigsByKeysResponse": {
       "type": "object",
       "properties": {
@@ -3705,6 +3765,9 @@
         "verificationId": {
           "type": "string",
           "format": "int64"
+        },
+        "loginToken": {
+          "type": "string"
         }
       },
       "title": "SignInRequest for user authentication"

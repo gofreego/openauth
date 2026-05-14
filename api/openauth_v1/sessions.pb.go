@@ -109,6 +109,7 @@ type SignInRequest struct {
 	Profiles           *bool                  `protobuf:"varint,6,opt,name=profiles,proto3,oneof" json:"profiles,omitempty"`
 	IncludePermissions *bool                  `protobuf:"varint,7,opt,name=include_permissions,json=includePermissions,proto3,oneof" json:"include_permissions,omitempty"`
 	VerificationId     *int64                 `protobuf:"varint,8,opt,name=verification_id,json=verificationId,proto3,oneof" json:"verification_id,omitempty"`
+	LoginToken         *string                `protobuf:"bytes,9,opt,name=login_token,json=loginToken,proto3,oneof" json:"login_token,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -197,6 +198,13 @@ func (x *SignInRequest) GetVerificationId() int64 {
 		return *x.VerificationId
 	}
 	return 0
+}
+
+func (x *SignInRequest) GetLoginToken() string {
+	if x != nil && x.LoginToken != nil {
+		return *x.LoginToken
+	}
+	return ""
 }
 
 // SignInResponse with authentication tokens and user data
@@ -666,6 +674,104 @@ func (x *ValidateTokenResponse) GetExpiresAt() int64 {
 	return 0
 }
 
+// GenerateLoginTokenRequest - user is identified from Authorization header
+type GenerateLoginTokenRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TtlSeconds    *int32                 `protobuf:"varint,1,opt,name=ttl_seconds,json=ttlSeconds,proto3,oneof" json:"ttl_seconds,omitempty"` // Token TTL in seconds (default: 60, max: 300)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateLoginTokenRequest) Reset() {
+	*x = GenerateLoginTokenRequest{}
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateLoginTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateLoginTokenRequest) ProtoMessage() {}
+
+func (x *GenerateLoginTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateLoginTokenRequest.ProtoReflect.Descriptor instead.
+func (*GenerateLoginTokenRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GenerateLoginTokenRequest) GetTtlSeconds() int32 {
+	if x != nil && x.TtlSeconds != nil {
+		return *x.TtlSeconds
+	}
+	return 0
+}
+
+// GenerateLoginTokenResponse - short-lived single-use token
+type GenerateLoginTokenResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LoginToken    string                 `protobuf:"bytes,1,opt,name=login_token,json=loginToken,proto3" json:"login_token,omitempty"` // Opaque single-use token (prefix: ltk_)
+	ExpiresAt     int64                  `protobuf:"varint,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`   // Unix timestamp (seconds), TTL ~1 min
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateLoginTokenResponse) Reset() {
+	*x = GenerateLoginTokenResponse{}
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateLoginTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateLoginTokenResponse) ProtoMessage() {}
+
+func (x *GenerateLoginTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateLoginTokenResponse.ProtoReflect.Descriptor instead.
+func (*GenerateLoginTokenResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GenerateLoginTokenResponse) GetLoginToken() string {
+	if x != nil {
+		return x.LoginToken
+	}
+	return ""
+}
+
+func (x *GenerateLoginTokenResponse) GetExpiresAt() int64 {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return 0
+}
+
 // Session information
 type Session struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -687,7 +793,7 @@ type Session struct {
 
 func (x *Session) Reset() {
 	*x = Session{}
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[9]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -699,7 +805,7 @@ func (x *Session) String() string {
 func (*Session) ProtoMessage() {}
 
 func (x *Session) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[9]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -712,7 +818,7 @@ func (x *Session) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Session.ProtoReflect.Descriptor instead.
 func (*Session) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{9}
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Session) GetId() string {
@@ -812,7 +918,7 @@ type ListUserSessionsRequest struct {
 
 func (x *ListUserSessionsRequest) Reset() {
 	*x = ListUserSessionsRequest{}
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[10]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -824,7 +930,7 @@ func (x *ListUserSessionsRequest) String() string {
 func (*ListUserSessionsRequest) ProtoMessage() {}
 
 func (x *ListUserSessionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[10]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -837,7 +943,7 @@ func (x *ListUserSessionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserSessionsRequest.ProtoReflect.Descriptor instead.
 func (*ListUserSessionsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{10}
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListUserSessionsRequest) GetUserUuid() string {
@@ -878,7 +984,7 @@ type ListUserSessionsResponse struct {
 
 func (x *ListUserSessionsResponse) Reset() {
 	*x = ListUserSessionsResponse{}
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[11]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -890,7 +996,7 @@ func (x *ListUserSessionsResponse) String() string {
 func (*ListUserSessionsResponse) ProtoMessage() {}
 
 func (x *ListUserSessionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[11]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -903,7 +1009,7 @@ func (x *ListUserSessionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserSessionsResponse.ProtoReflect.Descriptor instead.
 func (*ListUserSessionsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{11}
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListUserSessionsResponse) GetSessions() []*Session {
@@ -926,7 +1032,7 @@ type TerminateSessionRequest struct {
 
 func (x *TerminateSessionRequest) Reset() {
 	*x = TerminateSessionRequest{}
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[12]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -938,7 +1044,7 @@ func (x *TerminateSessionRequest) String() string {
 func (*TerminateSessionRequest) ProtoMessage() {}
 
 func (x *TerminateSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[12]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -951,7 +1057,7 @@ func (x *TerminateSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TerminateSessionRequest.ProtoReflect.Descriptor instead.
 func (*TerminateSessionRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{12}
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *TerminateSessionRequest) GetSessionId() string {
@@ -979,7 +1085,7 @@ type TerminateSessionResponse struct {
 
 func (x *TerminateSessionResponse) Reset() {
 	*x = TerminateSessionResponse{}
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[13]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -991,7 +1097,7 @@ func (x *TerminateSessionResponse) String() string {
 func (*TerminateSessionResponse) ProtoMessage() {}
 
 func (x *TerminateSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[13]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1004,7 +1110,7 @@ func (x *TerminateSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TerminateSessionResponse.ProtoReflect.Descriptor instead.
 func (*TerminateSessionResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{13}
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *TerminateSessionResponse) GetSuccess() bool {
@@ -1030,7 +1136,7 @@ type IsAuthenticatedRequest struct {
 
 func (x *IsAuthenticatedRequest) Reset() {
 	*x = IsAuthenticatedRequest{}
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[14]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1042,7 +1148,7 @@ func (x *IsAuthenticatedRequest) String() string {
 func (*IsAuthenticatedRequest) ProtoMessage() {}
 
 func (x *IsAuthenticatedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[14]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1055,7 +1161,7 @@ func (x *IsAuthenticatedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsAuthenticatedRequest.ProtoReflect.Descriptor instead.
 func (*IsAuthenticatedRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{14}
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *IsAuthenticatedRequest) GetAccessToken() string {
@@ -1075,7 +1181,7 @@ type IsAuthenticatedResponse struct {
 
 func (x *IsAuthenticatedResponse) Reset() {
 	*x = IsAuthenticatedResponse{}
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[15]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1087,7 +1193,7 @@ func (x *IsAuthenticatedResponse) String() string {
 func (*IsAuthenticatedResponse) ProtoMessage() {}
 
 func (x *IsAuthenticatedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[15]
+	mi := &file_proto_openauth_v1_sessions_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1100,7 +1206,7 @@ func (x *IsAuthenticatedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsAuthenticatedResponse.ProtoReflect.Descriptor instead.
 func (*IsAuthenticatedResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{15}
+	return file_proto_openauth_v1_sessions_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *IsAuthenticatedResponse) GetAuthenticated() bool {
@@ -1135,7 +1241,7 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"\f_device_nameB\x0e\n" +
 	"\f_device_typeB\x06\n" +
 	"\x04_latB\a\n" +
-	"\x05_long\"\xe3\x03\n" +
+	"\x05_long\"\x99\x04\n" +
 	"\rSignInRequest\x12%\n" +
 	"\busername\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\busername\x12+\n" +
 	"\bpassword\x18\x02 \x01(\tB\n" +
@@ -1146,14 +1252,17 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"\bmetadata\x18\x05 \x01(\v2\x12.v1.SignInMetadataH\x03R\bmetadata\x88\x01\x01\x12\x1f\n" +
 	"\bprofiles\x18\x06 \x01(\bH\x04R\bprofiles\x88\x01\x01\x124\n" +
 	"\x13include_permissions\x18\a \x01(\bH\x05R\x12includePermissions\x88\x01\x01\x125\n" +
-	"\x0fverification_id\x18\b \x01(\x03B\a\xfaB\x04\"\x02 \x00H\x06R\x0everificationId\x88\x01\x01B\v\n" +
+	"\x0fverification_id\x18\b \x01(\x03B\a\xfaB\x04\"\x02 \x00H\x06R\x0everificationId\x88\x01\x01\x12$\n" +
+	"\vlogin_token\x18\t \x01(\tH\aR\n" +
+	"loginToken\x88\x01\x01B\v\n" +
 	"\t_passwordB\x06\n" +
 	"\x04_otpB\x0e\n" +
 	"\f_remember_meB\v\n" +
 	"\t_metadataB\v\n" +
 	"\t_profilesB\x16\n" +
 	"\x14_include_permissionsB\x12\n" +
-	"\x10_verification_id\"\xfc\x01\n" +
+	"\x10_verification_idB\x0e\n" +
+	"\f_login_token\"\xfc\x01\n" +
 	"\x0eSignInResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1d\n" +
@@ -1201,7 +1310,16 @@ const file_proto_openauth_v1_sessions_proto_rawDesc = "" +
 	"\n" +
 	"expires_at\x18\x04 \x01(\x03H\x01R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_userB\r\n" +
-	"\v_expires_at\"\xf0\x02\n" +
+	"\v_expires_at\"Q\n" +
+	"\x19GenerateLoginTokenRequest\x12$\n" +
+	"\vttl_seconds\x18\x01 \x01(\x05H\x00R\n" +
+	"ttlSeconds\x88\x01\x01B\x0e\n" +
+	"\f_ttl_seconds\"\\\n" +
+	"\x1aGenerateLoginTokenResponse\x12\x1f\n" +
+	"\vlogin_token\x18\x01 \x01(\tR\n" +
+	"loginToken\x12\x1d\n" +
+	"\n" +
+	"expires_at\x18\x02 \x01(\x03R\texpiresAt\"\xf0\x02\n" +
 	"\aSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1b\n" +
@@ -1259,31 +1377,33 @@ func file_proto_openauth_v1_sessions_proto_rawDescGZIP() []byte {
 	return file_proto_openauth_v1_sessions_proto_rawDescData
 }
 
-var file_proto_openauth_v1_sessions_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_proto_openauth_v1_sessions_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_proto_openauth_v1_sessions_proto_goTypes = []any{
-	(*SignInMetadata)(nil),           // 0: v1.SignInMetadata
-	(*SignInRequest)(nil),            // 1: v1.SignInRequest
-	(*SignInResponse)(nil),           // 2: v1.SignInResponse
-	(*RefreshTokenRequest)(nil),      // 3: v1.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil),     // 4: v1.RefreshTokenResponse
-	(*LogoutRequest)(nil),            // 5: v1.LogoutRequest
-	(*LogoutResponse)(nil),           // 6: v1.LogoutResponse
-	(*ValidateTokenRequest)(nil),     // 7: v1.ValidateTokenRequest
-	(*ValidateTokenResponse)(nil),    // 8: v1.ValidateTokenResponse
-	(*Session)(nil),                  // 9: v1.Session
-	(*ListUserSessionsRequest)(nil),  // 10: v1.ListUserSessionsRequest
-	(*ListUserSessionsResponse)(nil), // 11: v1.ListUserSessionsResponse
-	(*TerminateSessionRequest)(nil),  // 12: v1.TerminateSessionRequest
-	(*TerminateSessionResponse)(nil), // 13: v1.TerminateSessionResponse
-	(*IsAuthenticatedRequest)(nil),   // 14: v1.IsAuthenticatedRequest
-	(*IsAuthenticatedResponse)(nil),  // 15: v1.IsAuthenticatedResponse
-	(*User)(nil),                     // 16: v1.User
+	(*SignInMetadata)(nil),             // 0: v1.SignInMetadata
+	(*SignInRequest)(nil),              // 1: v1.SignInRequest
+	(*SignInResponse)(nil),             // 2: v1.SignInResponse
+	(*RefreshTokenRequest)(nil),        // 3: v1.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),       // 4: v1.RefreshTokenResponse
+	(*LogoutRequest)(nil),              // 5: v1.LogoutRequest
+	(*LogoutResponse)(nil),             // 6: v1.LogoutResponse
+	(*ValidateTokenRequest)(nil),       // 7: v1.ValidateTokenRequest
+	(*ValidateTokenResponse)(nil),      // 8: v1.ValidateTokenResponse
+	(*GenerateLoginTokenRequest)(nil),  // 9: v1.GenerateLoginTokenRequest
+	(*GenerateLoginTokenResponse)(nil), // 10: v1.GenerateLoginTokenResponse
+	(*Session)(nil),                    // 11: v1.Session
+	(*ListUserSessionsRequest)(nil),    // 12: v1.ListUserSessionsRequest
+	(*ListUserSessionsResponse)(nil),   // 13: v1.ListUserSessionsResponse
+	(*TerminateSessionRequest)(nil),    // 14: v1.TerminateSessionRequest
+	(*TerminateSessionResponse)(nil),   // 15: v1.TerminateSessionResponse
+	(*IsAuthenticatedRequest)(nil),     // 16: v1.IsAuthenticatedRequest
+	(*IsAuthenticatedResponse)(nil),    // 17: v1.IsAuthenticatedResponse
+	(*User)(nil),                       // 18: v1.User
 }
 var file_proto_openauth_v1_sessions_proto_depIdxs = []int32{
 	0,  // 0: v1.SignInRequest.metadata:type_name -> v1.SignInMetadata
-	16, // 1: v1.SignInResponse.user:type_name -> v1.User
-	16, // 2: v1.ValidateTokenResponse.user:type_name -> v1.User
-	9,  // 3: v1.ListUserSessionsResponse.sessions:type_name -> v1.Session
+	18, // 1: v1.SignInResponse.user:type_name -> v1.User
+	18, // 2: v1.ValidateTokenResponse.user:type_name -> v1.User
+	11, // 3: v1.ListUserSessionsResponse.sessions:type_name -> v1.Session
 	4,  // [4:4] is the sub-list for method output_type
 	4,  // [4:4] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
@@ -1302,15 +1422,16 @@ func file_proto_openauth_v1_sessions_proto_init() {
 	file_proto_openauth_v1_sessions_proto_msgTypes[3].OneofWrappers = []any{}
 	file_proto_openauth_v1_sessions_proto_msgTypes[5].OneofWrappers = []any{}
 	file_proto_openauth_v1_sessions_proto_msgTypes[8].OneofWrappers = []any{}
-	file_proto_openauth_v1_sessions_proto_msgTypes[10].OneofWrappers = []any{}
+	file_proto_openauth_v1_sessions_proto_msgTypes[9].OneofWrappers = []any{}
 	file_proto_openauth_v1_sessions_proto_msgTypes[12].OneofWrappers = []any{}
+	file_proto_openauth_v1_sessions_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_openauth_v1_sessions_proto_rawDesc), len(file_proto_openauth_v1_sessions_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

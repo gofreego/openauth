@@ -85,6 +85,8 @@ import {
   UpdatePermissionRequest,
 } from "./permissions";
 import {
+  GenerateLoginTokenRequest,
+  GenerateLoginTokenResponse,
   IsAuthenticatedRequest,
   IsAuthenticatedResponse,
   ListUserSessionsRequest,
@@ -812,6 +814,7 @@ export const OpenAuthService = {
    * - Username + password
    * - Email + password
    * - Phone + password
+   * - Login token (single-use, short-lived token from GenerateLoginToken)
    *
    * Returns access token, refresh token, and user information.
    * Tracks device information and manages session security.
@@ -824,6 +827,24 @@ export const OpenAuthService = {
     requestDeserialize: (value: Buffer): SignInRequest => SignInRequest.decode(value),
     responseSerialize: (value: SignInResponse): Buffer => Buffer.from(SignInResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer): SignInResponse => SignInResponse.decode(value),
+  },
+  /**
+   * GenerateLoginToken issues a short-lived (1 min), single-use opaque token.
+   *
+   * Requires a valid Bearer access token in the Authorization header.
+   * The returned login_token can be used as the Authorization header on
+   * the SignIn endpoint to obtain a full session without credentials.
+   */
+  generateLoginToken: {
+    path: "/v1.OpenAuth/GenerateLoginToken" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: GenerateLoginTokenRequest): Buffer =>
+      Buffer.from(GenerateLoginTokenRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GenerateLoginTokenRequest => GenerateLoginTokenRequest.decode(value),
+    responseSerialize: (value: GenerateLoginTokenResponse): Buffer =>
+      Buffer.from(GenerateLoginTokenResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): GenerateLoginTokenResponse => GenerateLoginTokenResponse.decode(value),
   },
   /**
    * RefreshToken generates new access token using refresh token.
@@ -1354,11 +1375,20 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    * - Username + password
    * - Email + password
    * - Phone + password
+   * - Login token (single-use, short-lived token from GenerateLoginToken)
    *
    * Returns access token, refresh token, and user information.
    * Tracks device information and manages session security.
    */
   signIn: handleUnaryCall<SignInRequest, SignInResponse>;
+  /**
+   * GenerateLoginToken issues a short-lived (1 min), single-use opaque token.
+   *
+   * Requires a valid Bearer access token in the Authorization header.
+   * The returned login_token can be used as the Authorization header on
+   * the SignIn endpoint to obtain a full session without credentials.
+   */
+  generateLoginToken: handleUnaryCall<GenerateLoginTokenRequest, GenerateLoginTokenResponse>;
   /**
    * RefreshToken generates new access token using refresh token.
    *
@@ -2282,6 +2312,7 @@ export interface OpenAuthClient extends Client {
    * - Username + password
    * - Email + password
    * - Phone + password
+   * - Login token (single-use, short-lived token from GenerateLoginToken)
    *
    * Returns access token, refresh token, and user information.
    * Tracks device information and manages session security.
@@ -2300,6 +2331,28 @@ export interface OpenAuthClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: SignInResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * GenerateLoginToken issues a short-lived (1 min), single-use opaque token.
+   *
+   * Requires a valid Bearer access token in the Authorization header.
+   * The returned login_token can be used as the Authorization header on
+   * the SignIn endpoint to obtain a full session without credentials.
+   */
+  generateLoginToken(
+    request: GenerateLoginTokenRequest,
+    callback: (error: ServiceError | null, response: GenerateLoginTokenResponse) => void,
+  ): ClientUnaryCall;
+  generateLoginToken(
+    request: GenerateLoginTokenRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GenerateLoginTokenResponse) => void,
+  ): ClientUnaryCall;
+  generateLoginToken(
+    request: GenerateLoginTokenRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GenerateLoginTokenResponse) => void,
   ): ClientUnaryCall;
   /**
    * RefreshToken generates new access token using refresh token.
