@@ -32,6 +32,7 @@ message SignInRequest {
     optional bool profiles = 6;
     optional bool include_permissions = 7;
     optional int64 verification_id = 8 [(validate.rules).int64.gt = 0];
+    optional string login_token = 9;
 }
 
 // SignInResponse with authentication tokens and user data
@@ -92,6 +93,17 @@ message ValidateTokenResponse {
     string message = 2;
     optional User user = 3;            // User info if token is valid
     optional int64 expires_at = 4;     // Token expiration
+}
+
+// GenerateLoginTokenRequest - user is identified from Authorization header
+message GenerateLoginTokenRequest {
+    optional int32 ttl_seconds = 1;    // Token TTL in seconds (default: 60, max: 300)
+}
+
+// GenerateLoginTokenResponse - short-lived single-use token
+message GenerateLoginTokenResponse {
+    string login_token = 1;            // Opaque single-use token (prefix: ltk_)
+    int64 expires_at = 2;              // Unix timestamp (seconds), TTL ~1 min
 }
 
 // Session information

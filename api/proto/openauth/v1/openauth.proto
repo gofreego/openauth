@@ -756,6 +756,7 @@ service OpenAuth {
     // - Username + password
     // - Email + password  
     // - Phone + password
+    // - Login token (single-use, short-lived token from GenerateLoginToken)
     //
     // Returns access token, refresh token, and user information.
     // Tracks device information and manages session security.
@@ -768,6 +769,23 @@ service OpenAuth {
             tags: "Authentication"
             summary: "Sign in user"
             description: "Authenticate a user and create a new session."
+        };
+    }
+
+    // GenerateLoginToken issues a short-lived (1 min), single-use opaque token.
+    //
+    // Requires a valid Bearer access token in the Authorization header.
+    // The returned login_token can be used as the Authorization header on
+    // the SignIn endpoint to obtain a full session without credentials.
+    rpc GenerateLoginToken (GenerateLoginTokenRequest) returns (GenerateLoginTokenResponse) {
+        option (google.api.http) = {
+            put: "/openauth/v1/auth/login-token"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Generate a short-lived login token"
+            description: "Issues a single-use 1-minute token for delegated login. Pass the token as the Authorization header on SignIn to get a session without credentials."
         };
     }
 
