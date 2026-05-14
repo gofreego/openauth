@@ -1,6 +1,6 @@
-build: clean
+build: clean build-ui
 	go build -o bin/application .
-build-linux: clean
+build-linux: clean build-ui
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/application .
 run:
 	go run main.go
@@ -8,6 +8,18 @@ test:
 	go test -v ./...
 clean:
 	rm -f bin/application
+
+# UI build commands
+build-ui: build-adminv2
+
+build-adminv2:
+	cd adminv2 && npm install && npm run build
+
+dev-adminv2:
+	cd adminv2 && npm run dev
+
+clean-ui:
+	rm -rf adminv2/dist
 
 docker: build-linux
 	docker build -t openauth .

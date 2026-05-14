@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"embed"
 	"flag"
+	"io/fs"
+	"net/http"
 
 	"github.com/gofreego/openauth/cmd/grpc_server"
 	"github.com/gofreego/openauth/cmd/http_server"
@@ -18,6 +21,21 @@ var (
 	env  string
 	path string
 )
+
+//go:embed all:adminv2/dist
+var adminV2Dist embed.FS
+
+func getAdminV2UIHandler() http.Handler {
+	fsys, err := fs.Sub(adminV2Dist, "adminv2/dist")
+	if err != nil {
+		panic(err)
+	}
+	indexHTML, err := fs.ReadFile(adminV2Dist, "adminv2/dist/index.html")
+	if err != nil {
+		panic(err)
+	}
+	return http_server.GetUIHandler(http.FS(fsys), indexHTML, "/openauth/admin/v2/")
+}
 
 func main() {
 	flag.StringVar(&env, "env", "dev", "-env=dev")
@@ -40,7 +58,7 @@ func main() {
 	for _, appName := range conf.AppNames {
 		switch appName {
 		case constants.HTTP_SERVER:
-			apps = append(apps, http_server.NewHTTPServer(conf))
+			apps = append(apps, http_server.NewHTTPServer(conf, getAdminV2UIHandler()))
 		case constants.GRPC_SERVER:
 			apps = append(apps, grpc_server.NewGRPCServer(conf))
 		default:

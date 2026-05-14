@@ -21,8 +21,9 @@ import (
 )
 
 type HTTPServer struct {
-	cfg    *configs.Configuration
-	server *http.Server
+	cfg       *configs.Configuration
+	server    *http.Server
+	adminV2UI http.Handler
 }
 
 func (a *HTTPServer) Name() string {
@@ -35,10 +36,32 @@ func (a *HTTPServer) Shutdown(ctx context.Context) {
 	}
 }
 
-func NewHTTPServer(cfg *configs.Configuration) *HTTPServer {
+func NewHTTPServer(cfg *configs.Configuration, adminV2UI http.Handler) *HTTPServer {
 	return &HTTPServer{
-		cfg: cfg,
+		cfg:       cfg,
+		adminV2UI: adminV2UI,
 	}
+}
+
+// GetUIHandler returns an SPA-friendly file server under the given prefix.
+func GetUIHandler(uifs http.FileSystem, indexHTML []byte, prefix string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" || r.URL.Path == strings.TrimSuffix(prefix, "/") {
+			http.Redirect(w, r, prefix, http.StatusFound)
+			return
+		}
+		if strings.HasPrefix(r.URL.Path, prefix) {
+			f, err := uifs.Open(r.URL.Path[len(prefix):])
+			if err == nil {
+				f.Close()
+				http.StripPrefix(prefix, http.FileServer(uifs)).ServeHTTP(w, r)
+				return
+			}
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		w.Write(indexHTML)
+	})
 }
 
 func (a *HTTPServer) Run(ctx context.Context) error {
@@ -59,6 +82,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 		"/v1/auth/validate",
 		"/openauth/v1/swagger",
 		"/openauth/admin",
+		"/openauth/admin/v2",
 	})
 
 	mux := runtime.NewServeMux()
@@ -76,6 +100,12 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 
 	// Create a custom handler that serves static files for /openauth/admin and falls back to grpc-gateway
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Serve adminv2 (embedded) at /openauth/admin/v2/
+		if strings.HasPrefix(r.URL.Path, "/openauth/admin/v2") {
+			a.adminV2UI.ServeHTTP(w, r)
+			return
+		}
+
 		if strings.HasPrefix(r.URL.Path, "/openauth/admin") {
 			// Serve static files from admin/builds/web
 			staticDir := "./admin/builds/web"
@@ -110,6 +140,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 	logger.Info(ctx, "Starting HTTP server on port %d", a.cfg.Server.HTTP.Port)
 	logger.Info(ctx, "Swagger UI is available at `http://localhost:%d/openauth/v1/swagger`", a.cfg.Server.HTTP.Port)
 	logger.Info(ctx, "Admin UI is available at `http://localhost:%d/openauth/admin`", a.cfg.Server.HTTP.Port)
+	logger.Info(ctx, "Admin V2 UI is available at `http://localhost:%d/openauth/admin/v2/`", a.cfg.Server.HTTP.Port)
 
 	if a.cfg.Debug.Enabled {
 		logger.Info(ctx, "Debug dashboard available at `http://localhost:%d/openauth/v1/debug`", a.cfg.Server.HTTP.Port)

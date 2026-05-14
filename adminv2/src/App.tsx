@@ -9,20 +9,16 @@ function ProtectedRoute({ children }: { children: ReactElement }) {
   return authService.isAuthenticated() ? children : <Navigate to="/auth/login" replace />
 }
 
-function PublicRoute({ children }: { children: ReactElement }) {
-  return authService.isAuthenticated() ? <Navigate to="/home" replace /> : children
-}
-
 function App() {
   authService.initializeAuth()
 
   return (
     <ThemeProvider>
       <NotificationProvider>
-        <BrowserRouter>
+        <BrowserRouter >
           <Routes>
-            <Route path="/auth/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-            <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+            <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/home" element={<ProtectedRoute><HomePage/></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
         </BrowserRouter>
