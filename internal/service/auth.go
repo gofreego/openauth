@@ -27,11 +27,6 @@ import (
 func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
 	logger.Info(ctx, "Sign-in attempt initiated for identifier: %s", req.Username)
 
-	// Login-token flow: bypass username/password and authenticate via a delegated login token
-	if req.LoginToken != nil && *req.LoginToken != "" {
-		return s.signInWithLoginToken(ctx, req)
-	}
-
 	// Validate request using generated validation
 	if err := req.Validate(); err != nil {
 		logger.Warn(ctx, "Sign-in failed validation: %v", err)
@@ -478,15 +473,18 @@ func (s *Service) GenerateLoginToken(ctx context.Context, req *openauth_v1.Gener
 	}, nil
 }
 
-// signInWithLoginToken handles the login-token authentication path.
-// It validates the single-use token, clears it, and returns a fresh JWT for the existing session.
-func (s *Service) signInWithLoginToken(ctx context.Context, req *openauth_v1.SignInRequest) (*openauth_v1.SignInResponse, error) {
-	loginToken := *req.LoginToken
+// SignInWithLoginToken authenticates using a short-lived single-use login token.
+// It validates the token, clears it (single-use), and returns a fresh JWT for the existing session.
+func (s *Service) SignInWithLoginToken(ctx context.Context, req *openauth_v1.SignInWithLoginTokenRequest) (*openauth_v1.SignInResponse, error) {
 	logger.Info(ctx, "Sign-in via login token")
 
-	session, err := s.repo.GetSessionByLoginToken(ctx, loginToken)
+	if err := req.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
+	session, err := s.repo.GetSessionByLoginToken(ctx, req.LoginToken)
 	if err != nil {
-		logger.Warn(ctx, "signInWithLoginToken: login token not found: %v", err)
+		logger.Warn(ctx, "SignInWithLoginToken: login token not found: %v", err)
 		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
 	}
 
@@ -496,25 +494,25 @@ func (s *Service) signInWithLoginToken(ctx context.Context, req *openauth_v1.Sig
 		"login_token_expires_at": nil,
 	})
 
-	// Check expiry
+	// Check token expiry
 	if session.LoginTokenExpiresAt == nil || time.Now().UnixMilli() > *session.LoginTokenExpiresAt {
-		logger.Warn(ctx, "signInWithLoginToken: login token expired for sessionID=%s", session.UUID.String())
+		logger.Warn(ctx, "SignInWithLoginToken: login token expired for sessionID=%s", session.UUID.String())
 		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
 	}
 
 	// Verify the originating session is still active and not expired
 	if !session.IsActive {
-		logger.Warn(ctx, "signInWithLoginToken: originating session is inactive: sessionID=%s", session.UUID.String())
+		logger.Warn(ctx, "SignInWithLoginToken: originating session is inactive: sessionID=%s", session.UUID.String())
 		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
 	}
 	if time.Now().UnixMilli() > session.ExpiresAt {
-		logger.Warn(ctx, "signInWithLoginToken: originating session expired: sessionID=%s", session.UUID.String())
+		logger.Warn(ctx, "SignInWithLoginToken: originating session expired: sessionID=%s", session.UUID.String())
 		return nil, status.Error(codes.Unauthenticated, "invalid or expired login token")
 	}
 
 	user, err := s.repo.GetUserByID(ctx, session.UserID)
 	if err != nil {
-		logger.Error(ctx, "signInWithLoginToken: user not found for userID=%d: %v", session.UserID, err)
+		logger.Error(ctx, "SignInWithLoginToken: user not found for userID=%d: %v", session.UserID, err)
 		return nil, status.Error(codes.Internal, "failed to authenticate")
 	}
 
@@ -531,7 +529,7 @@ func (s *Service) signInWithLoginToken(ctx context.Context, req *openauth_v1.Sig
 	// Generate a fresh JWT for the remaining lifetime of the existing session
 	remainingDuration := time.Until(time.UnixMilli(session.ExpiresAt))
 	if remainingDuration <= 0 {
-		remainingDuration = time.Second // safety floor; expiry check above should catch this
+		remainingDuration = time.Second
 	}
 
 	includePermissions := req.IncludePermissions != nil && *req.IncludePermissions
@@ -545,7 +543,7 @@ func (s *Service) signInWithLoginToken(ctx context.Context, req *openauth_v1.Sig
 		refreshExpiresAt = *session.RefreshExpiresAt
 	}
 
-	logger.Info(ctx, "signInWithLoginToken: sign-in successful for userID=%d, sessionID=%s",
+	logger.Info(ctx, "SignInWithLoginToken: sign-in successful for userID=%d, sessionID=%s",
 		user.ID, session.UUID.String())
 
 	return &openauth_v1.SignInResponse{

@@ -97,6 +97,7 @@ import {
   RefreshTokenResponse,
   SignInRequest,
   SignInResponse,
+  SignInWithLoginTokenRequest,
   TerminateSessionRequest,
   TerminateSessionResponse,
   ValidateTokenRequest,
@@ -814,7 +815,6 @@ export const OpenAuthService = {
    * - Username + password
    * - Email + password
    * - Phone + password
-   * - Login token (single-use, short-lived token from GenerateLoginToken)
    *
    * Returns access token, refresh token, and user information.
    * Tracks device information and manages session security.
@@ -825,6 +825,20 @@ export const OpenAuthService = {
     responseStream: false as const,
     requestSerialize: (value: SignInRequest): Buffer => Buffer.from(SignInRequest.encode(value).finish()),
     requestDeserialize: (value: Buffer): SignInRequest => SignInRequest.decode(value),
+    responseSerialize: (value: SignInResponse): Buffer => Buffer.from(SignInResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SignInResponse => SignInResponse.decode(value),
+  },
+  /**
+   * SignInWithLoginToken authenticates using a short-lived single-use login token
+   * issued by GenerateLoginToken. Returns the same existing session — no new session is created.
+   */
+  signInWithLoginToken: {
+    path: "/v1.OpenAuth/SignInWithLoginToken" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: SignInWithLoginTokenRequest): Buffer =>
+      Buffer.from(SignInWithLoginTokenRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): SignInWithLoginTokenRequest => SignInWithLoginTokenRequest.decode(value),
     responseSerialize: (value: SignInResponse): Buffer => Buffer.from(SignInResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer): SignInResponse => SignInResponse.decode(value),
   },
@@ -1375,12 +1389,16 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    * - Username + password
    * - Email + password
    * - Phone + password
-   * - Login token (single-use, short-lived token from GenerateLoginToken)
    *
    * Returns access token, refresh token, and user information.
    * Tracks device information and manages session security.
    */
   signIn: handleUnaryCall<SignInRequest, SignInResponse>;
+  /**
+   * SignInWithLoginToken authenticates using a short-lived single-use login token
+   * issued by GenerateLoginToken. Returns the same existing session — no new session is created.
+   */
+  signInWithLoginToken: handleUnaryCall<SignInWithLoginTokenRequest, SignInResponse>;
   /**
    * GenerateLoginToken issues a short-lived (1 min), single-use opaque token.
    *
@@ -2312,7 +2330,6 @@ export interface OpenAuthClient extends Client {
    * - Username + password
    * - Email + password
    * - Phone + password
-   * - Login token (single-use, short-lived token from GenerateLoginToken)
    *
    * Returns access token, refresh token, and user information.
    * Tracks device information and manages session security.
@@ -2328,6 +2345,25 @@ export interface OpenAuthClient extends Client {
   ): ClientUnaryCall;
   signIn(
     request: SignInRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SignInResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * SignInWithLoginToken authenticates using a short-lived single-use login token
+   * issued by GenerateLoginToken. Returns the same existing session — no new session is created.
+   */
+  signInWithLoginToken(
+    request: SignInWithLoginTokenRequest,
+    callback: (error: ServiceError | null, response: SignInResponse) => void,
+  ): ClientUnaryCall;
+  signInWithLoginToken(
+    request: SignInWithLoginTokenRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SignInResponse) => void,
+  ): ClientUnaryCall;
+  signInWithLoginToken(
+    request: SignInWithLoginTokenRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: SignInResponse) => void,

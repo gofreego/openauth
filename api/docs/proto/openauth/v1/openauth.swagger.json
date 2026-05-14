@@ -233,6 +233,40 @@
         ]
       }
     },
+    "/openauth/v1/auth/signin-with-token": {
+      "post": {
+        "summary": "Sign in with login token",
+        "description": "Authenticate using a single-use login token. Returns the existing session without creating a new one.",
+        "operationId": "OpenAuth_SignInWithLoginToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SignInResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SignInWithLoginTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
     "/openauth/v1/auth/validate": {
       "post": {
         "summary": "Validate access token",
@@ -3765,9 +3799,6 @@
         "verificationId": {
           "type": "string",
           "format": "int64"
-        },
-        "loginToken": {
-          "type": "string"
         }
       },
       "title": "SignInRequest for user authentication"
@@ -3803,6 +3834,24 @@
         }
       },
       "title": "SignInResponse with authentication tokens and user data"
+    },
+    "v1SignInWithLoginTokenRequest": {
+      "type": "object",
+      "properties": {
+        "loginToken": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/v1SignInMetadata"
+        },
+        "profiles": {
+          "type": "boolean"
+        },
+        "includePermissions": {
+          "type": "boolean"
+        }
+      },
+      "title": "SignInWithLoginTokenRequest - sign in using a single-use login token"
     },
     "v1SignUpRequest": {
       "type": "object",

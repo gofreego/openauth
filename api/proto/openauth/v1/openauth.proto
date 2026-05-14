@@ -756,7 +756,6 @@ service OpenAuth {
     // - Username + password
     // - Email + password  
     // - Phone + password
-    // - Login token (single-use, short-lived token from GenerateLoginToken)
     //
     // Returns access token, refresh token, and user information.
     // Tracks device information and manages session security.
@@ -769,6 +768,20 @@ service OpenAuth {
             tags: "Authentication"
             summary: "Sign in user"
             description: "Authenticate a user and create a new session."
+        };
+    }
+
+    // SignInWithLoginToken authenticates using a short-lived single-use login token
+    // issued by GenerateLoginToken. Returns the same existing session — no new session is created.
+    rpc SignInWithLoginToken (SignInWithLoginTokenRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/auth/signin-with-token"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Sign in with login token"
+            description: "Authenticate using a single-use login token. Returns the existing session without creating a new one."
         };
     }
 

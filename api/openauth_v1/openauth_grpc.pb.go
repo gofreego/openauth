@@ -59,6 +59,7 @@ const (
 	OpenAuth_DeleteProfile_FullMethodName               = "/v1.OpenAuth/DeleteProfile"
 	OpenAuth_GetProfileUploadURL_FullMethodName         = "/v1.OpenAuth/GetProfileUploadURL"
 	OpenAuth_SignIn_FullMethodName                      = "/v1.OpenAuth/SignIn"
+	OpenAuth_SignInWithLoginToken_FullMethodName        = "/v1.OpenAuth/SignInWithLoginToken"
 	OpenAuth_GenerateLoginToken_FullMethodName          = "/v1.OpenAuth/GenerateLoginToken"
 	OpenAuth_RefreshToken_FullMethodName                = "/v1.OpenAuth/RefreshToken"
 	OpenAuth_Logout_FullMethodName                      = "/v1.OpenAuth/Logout"
@@ -318,11 +319,13 @@ type OpenAuthClient interface {
 	// - Username + password
 	// - Email + password
 	// - Phone + password
-	// - Login token (single-use, short-lived token from GenerateLoginToken)
 	//
 	// Returns access token, refresh token, and user information.
 	// Tracks device information and manages session security.
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	// SignInWithLoginToken authenticates using a short-lived single-use login token
+	// issued by GenerateLoginToken. Returns the same existing session — no new session is created.
+	SignInWithLoginToken(ctx context.Context, in *SignInWithLoginTokenRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	// GenerateLoginToken issues a short-lived (1 min), single-use opaque token.
 	//
 	// Requires a valid Bearer access token in the Authorization header.
@@ -791,6 +794,16 @@ func (c *openAuthClient) SignIn(ctx context.Context, in *SignInRequest, opts ...
 	return out, nil
 }
 
+func (c *openAuthClient) SignInWithLoginToken(ctx context.Context, in *SignInWithLoginTokenRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_SignInWithLoginToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *openAuthClient) GenerateLoginToken(ctx context.Context, in *GenerateLoginTokenRequest, opts ...grpc.CallOption) (*GenerateLoginTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GenerateLoginTokenResponse)
@@ -1210,11 +1223,13 @@ type OpenAuthServer interface {
 	// - Username + password
 	// - Email + password
 	// - Phone + password
-	// - Login token (single-use, short-lived token from GenerateLoginToken)
 	//
 	// Returns access token, refresh token, and user information.
 	// Tracks device information and manages session security.
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
+	// SignInWithLoginToken authenticates using a short-lived single-use login token
+	// issued by GenerateLoginToken. Returns the same existing session — no new session is created.
+	SignInWithLoginToken(context.Context, *SignInWithLoginTokenRequest) (*SignInResponse, error)
 	// GenerateLoginToken issues a short-lived (1 min), single-use opaque token.
 	//
 	// Requires a valid Bearer access token in the Authorization header.
@@ -1402,6 +1417,9 @@ func (UnimplementedOpenAuthServer) GetProfileUploadURL(context.Context, *GetProf
 }
 func (UnimplementedOpenAuthServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
+}
+func (UnimplementedOpenAuthServer) SignInWithLoginToken(context.Context, *SignInWithLoginTokenRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignInWithLoginToken not implemented")
 }
 func (UnimplementedOpenAuthServer) GenerateLoginToken(context.Context, *GenerateLoginTokenRequest) (*GenerateLoginTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateLoginToken not implemented")
@@ -2198,6 +2216,24 @@ func _OpenAuth_SignIn_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_SignInWithLoginToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignInWithLoginTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).SignInWithLoginToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_SignInWithLoginToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).SignInWithLoginToken(ctx, req.(*SignInWithLoginTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OpenAuth_GenerateLoginToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GenerateLoginTokenRequest)
 	if err := dec(in); err != nil {
@@ -2688,6 +2724,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignIn",
 			Handler:    _OpenAuth_SignIn_Handler,
+		},
+		{
+			MethodName: "SignInWithLoginToken",
+			Handler:    _OpenAuth_SignInWithLoginToken_Handler,
 		},
 		{
 			MethodName: "GenerateLoginToken",

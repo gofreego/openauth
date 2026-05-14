@@ -32,7 +32,6 @@ message SignInRequest {
     optional bool profiles = 6;
     optional bool include_permissions = 7;
     optional int64 verification_id = 8 [(validate.rules).int64.gt = 0];
-    optional string login_token = 9;
 }
 
 // SignInResponse with authentication tokens and user data
@@ -98,6 +97,14 @@ message ValidateTokenResponse {
 // GenerateLoginTokenRequest - user is identified from Authorization header
 message GenerateLoginTokenRequest {
     optional int32 ttl_seconds = 1;    // Token TTL in seconds (default: 60, max: 300)
+}
+
+// SignInWithLoginTokenRequest - sign in using a single-use login token
+message SignInWithLoginTokenRequest {
+    string login_token = 1 [(validate.rules).string.min_len = 1];
+    optional SignInMetadata metadata = 2;
+    optional bool profiles = 3;
+    optional bool include_permissions = 4;
 }
 
 // GenerateLoginTokenResponse - short-lived single-use token

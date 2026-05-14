@@ -35,7 +35,6 @@ export interface SignInRequest {
   profiles?: boolean | undefined;
   includePermissions?: boolean | undefined;
   verificationId?: string | undefined;
-  loginToken?: string | undefined;
 }
 
 /** SignInResponse with authentication tokens and user data */
@@ -111,6 +110,14 @@ export interface ValidateTokenResponse {
 export interface GenerateLoginTokenRequest {
   /** Token TTL in seconds (default: 60, max: 300) */
   ttlSeconds?: number | undefined;
+}
+
+/** SignInWithLoginTokenRequest - sign in using a single-use login token */
+export interface SignInWithLoginTokenRequest {
+  loginToken: string;
+  metadata?: SignInMetadata | undefined;
+  profiles?: boolean | undefined;
+  includePermissions?: boolean | undefined;
 }
 
 /** GenerateLoginTokenResponse - short-lived single-use token */
@@ -324,7 +331,6 @@ function createBaseSignInRequest(): SignInRequest {
     profiles: undefined,
     includePermissions: undefined,
     verificationId: undefined,
-    loginToken: undefined,
   };
 }
 
@@ -353,9 +359,6 @@ export const SignInRequest: MessageFns<SignInRequest> = {
     }
     if (message.verificationId !== undefined) {
       writer.uint32(64).int64(message.verificationId);
-    }
-    if (message.loginToken !== undefined) {
-      writer.uint32(74).string(message.loginToken);
     }
     return writer;
   },
@@ -431,14 +434,6 @@ export const SignInRequest: MessageFns<SignInRequest> = {
           message.verificationId = reader.int64().toString();
           continue;
         }
-        case 9: {
-          if (tag !== 74) {
-            break;
-          }
-
-          message.loginToken = reader.string();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -470,11 +465,6 @@ export const SignInRequest: MessageFns<SignInRequest> = {
         : isSet(object.verification_id)
         ? globalThis.String(object.verification_id)
         : undefined,
-      loginToken: isSet(object.loginToken)
-        ? globalThis.String(object.loginToken)
-        : isSet(object.login_token)
-        ? globalThis.String(object.login_token)
-        : undefined,
     };
   },
 
@@ -504,9 +494,6 @@ export const SignInRequest: MessageFns<SignInRequest> = {
     if (message.verificationId !== undefined) {
       obj.verificationId = message.verificationId;
     }
-    if (message.loginToken !== undefined) {
-      obj.loginToken = message.loginToken;
-    }
     return obj;
   },
 
@@ -525,7 +512,6 @@ export const SignInRequest: MessageFns<SignInRequest> = {
     message.profiles = object.profiles ?? undefined;
     message.includePermissions = object.includePermissions ?? undefined;
     message.verificationId = object.verificationId ?? undefined;
-    message.loginToken = object.loginToken ?? undefined;
     return message;
   },
 };
@@ -1390,6 +1376,124 @@ export const GenerateLoginTokenRequest: MessageFns<GenerateLoginTokenRequest> = 
   fromPartial<I extends Exact<DeepPartial<GenerateLoginTokenRequest>, I>>(object: I): GenerateLoginTokenRequest {
     const message = createBaseGenerateLoginTokenRequest();
     message.ttlSeconds = object.ttlSeconds ?? undefined;
+    return message;
+  },
+};
+
+function createBaseSignInWithLoginTokenRequest(): SignInWithLoginTokenRequest {
+  return { loginToken: "", metadata: undefined, profiles: undefined, includePermissions: undefined };
+}
+
+export const SignInWithLoginTokenRequest: MessageFns<SignInWithLoginTokenRequest> = {
+  encode(message: SignInWithLoginTokenRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.loginToken !== "") {
+      writer.uint32(10).string(message.loginToken);
+    }
+    if (message.metadata !== undefined) {
+      SignInMetadata.encode(message.metadata, writer.uint32(18).fork()).join();
+    }
+    if (message.profiles !== undefined) {
+      writer.uint32(24).bool(message.profiles);
+    }
+    if (message.includePermissions !== undefined) {
+      writer.uint32(32).bool(message.includePermissions);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SignInWithLoginTokenRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSignInWithLoginTokenRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.loginToken = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.metadata = SignInMetadata.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.profiles = reader.bool();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.includePermissions = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SignInWithLoginTokenRequest {
+    return {
+      loginToken: isSet(object.loginToken)
+        ? globalThis.String(object.loginToken)
+        : isSet(object.login_token)
+        ? globalThis.String(object.login_token)
+        : "",
+      metadata: isSet(object.metadata) ? SignInMetadata.fromJSON(object.metadata) : undefined,
+      profiles: isSet(object.profiles) ? globalThis.Boolean(object.profiles) : undefined,
+      includePermissions: isSet(object.includePermissions)
+        ? globalThis.Boolean(object.includePermissions)
+        : isSet(object.include_permissions)
+        ? globalThis.Boolean(object.include_permissions)
+        : undefined,
+    };
+  },
+
+  toJSON(message: SignInWithLoginTokenRequest): unknown {
+    const obj: any = {};
+    if (message.loginToken !== "") {
+      obj.loginToken = message.loginToken;
+    }
+    if (message.metadata !== undefined) {
+      obj.metadata = SignInMetadata.toJSON(message.metadata);
+    }
+    if (message.profiles !== undefined) {
+      obj.profiles = message.profiles;
+    }
+    if (message.includePermissions !== undefined) {
+      obj.includePermissions = message.includePermissions;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SignInWithLoginTokenRequest>, I>>(base?: I): SignInWithLoginTokenRequest {
+    return SignInWithLoginTokenRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SignInWithLoginTokenRequest>, I>>(object: I): SignInWithLoginTokenRequest {
+    const message = createBaseSignInWithLoginTokenRequest();
+    message.loginToken = object.loginToken ?? "";
+    message.metadata = (object.metadata !== undefined && object.metadata !== null)
+      ? SignInMetadata.fromPartial(object.metadata)
+      : undefined;
+    message.profiles = object.profiles ?? undefined;
+    message.includePermissions = object.includePermissions ?? undefined;
     return message;
   },
 };
