@@ -3,7 +3,7 @@ import { Box, Button, Typography, Paper, CircularProgress } from '@mui/material'
 import { Logout, AdminPanelSettings } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useNotification, extractErrorMessage } from '@gofreego/tsutils'
-import { authService } from '../../services/authService'
+import { authService } from '../../services'
 
 export function HomePage() {
   const navigate = useNavigate()

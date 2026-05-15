@@ -14,7 +14,7 @@ import {
 import { Visibility, VisibilityOff, Lock, Person } from '@mui/icons-material'
 import { useNotification, extractErrorMessage } from '@gofreego/tsutils'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { authService } from '../../services/authService'
+import { authService } from '../../services'
 
 export function LoginPage() {
   const [username, setUsername] = useState('')
@@ -40,7 +40,15 @@ export function LoginPage() {
       showNotification(response.message || 'Login successful!', 'success')
       const redirectTo = searchParams.get('redirect')
       if (redirectTo) {
-        window.location.href = redirectTo
+        try {
+          const { loginToken } = await authService.generateLoginToken()
+          const url = new URL(redirectTo)
+          url.searchParams.set('login_token', loginToken)
+          window.location.href = url.toString()
+        } catch {
+          // If token generation fails, redirect without token
+          window.location.href = redirectTo
+        }
       } else {
         navigate('/home', { replace: true })
       }

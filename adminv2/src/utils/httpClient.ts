@@ -11,13 +11,4 @@ export const httpClient = new HttpClient({
   timeout: 30000,
 })
 
-export const setAuthToken = (token: string) => {
-  httpClient.setDefaultHeader('Authorization', `Bearer ${token}`)
-}
-
-export const clearAuthToken = () => {
-  httpClient.removeDefaultHeader('Authorization')
-}
-
 export default httpClient
-
