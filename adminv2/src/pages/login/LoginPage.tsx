@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Card,
@@ -12,7 +12,7 @@ import {
   Alert,
 } from '@mui/material'
 import { Visibility, VisibilityOff, Lock, Person } from '@mui/icons-material'
-import { useNotification, extractErrorMessage } from '@gofreego/tsutils'
+import { useNotification, extractErrorMessage, useTheme } from '@gofreego/tsutils'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { authService } from '../../services'
 
@@ -21,10 +21,47 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [checking, setChecking] = useState(true)
   const [error, setError] = useState('')
   const { showNotification } = useNotification()
+  const { theme } = useTheme()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+
+  const redirectUser = async () => {
+    const redirectTo = searchParams.get('redirect')
+    if (redirectTo) {
+      try {
+        const { loginToken } = await authService.generateLoginToken()
+        const url = new URL(redirectTo)
+        url.searchParams.set('login_token', loginToken)
+        window.location.href = url.toString()
+      } catch {
+        // If token generation fails, redirect without token
+        window.location.href = redirectTo
+      }
+    } else {
+      navigate('/home', { replace: true })
+    }
+  }
+
+  // If already authenticated, redirect immediately without showing the form
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      authService.initializeAuth()
+      redirectUser().finally(() => setChecking(false))
+    } else {
+      setChecking(false)
+    }
+  }, [])
+
+  if (checking) {
+    return (
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `linear-gradient(135deg, ${theme.colors.primary} 0%, ${theme.colors.primaryActive} 100%)` }}>
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    )
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,26 +73,13 @@ export function LoginPage() {
         username,
         password,
       })
-      
+      await redirectUser()
       showNotification(response.message || 'Login successful!', 'success')
-      const redirectTo = searchParams.get('redirect')
-      if (redirectTo) {
-        try {
-          const { loginToken } = await authService.generateLoginToken()
-          const url = new URL(redirectTo)
-          url.searchParams.set('login_token', loginToken)
-          window.location.href = url.toString()
-        } catch {
-          // If token generation fails, redirect without token
-          window.location.href = redirectTo
-        }
-      } else {
-        navigate('/home', { replace: true })
-      }
+
     } catch (err: unknown) {
 
-        const message = extractErrorMessage(err)
-      
+      const message = extractErrorMessage(err)
+
       setError(message)
       showNotification(message, 'error')
     } finally {
@@ -70,7 +94,7 @@ export function LoginPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: `linear-gradient(135deg, ${theme.colors.primary} 0%, ${theme.colors.primaryActive} 100%)`,
         padding: 2,
       }}
     >
@@ -102,7 +126,7 @@ export function LoginPage() {
           <form onSubmit={handleLogin}>
             <TextField
               fullWidth
-              label="Username"
+              label="Username / Email / Mobile"
               variant="outlined"
               value={username}
               onChange={(e) => setUsername(e.target.value)}

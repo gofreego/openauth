@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { Box, Button, Typography, Paper, CircularProgress } from '@mui/material'
 import { Logout, AdminPanelSettings } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-import { useNotification, extractErrorMessage } from '@gofreego/tsutils'
+import { useNotification, extractErrorMessage, useTheme } from '@gofreego/tsutils'
 import { authService } from '../../services'
 
 export function HomePage() {
   const navigate = useNavigate()
   const { showNotification } = useNotification()
+  const { theme } = useTheme()
   const [loggingOut, setLoggingOut] = useState(false)
 
   const handleLogout = async () => {
@@ -32,7 +33,7 @@ export function HomePage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        backgroundColor: theme.colors.backgroundSecondary,
         padding: 2,
       }}
     >

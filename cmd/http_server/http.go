@@ -80,6 +80,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 		"/v1/auth/signin",
 		"/v1/auth/refresh",
 		"/v1/auth/validate",
+		"/openauth/v1/auth/signin-with-token",
 		"/openauth/v1/swagger",
 		"/openauth/admin",
 		"/openauth/admin/v2",
