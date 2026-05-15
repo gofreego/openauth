@@ -47,3 +47,14 @@ setup:
 
 migrate:
 	sql-migrator resources/configs/migrator.yaml
+
+
+redeploy:
+	@echo "Pulling latest code from git"
+	git pull
+	@echo "Rebuilding the docker image with the latest code"
+	docker-compose build
+	@echo "Rebuilding and redeploying the service"
+	docker-compose down
+	docker-compose up -d
+	@echo "Service redeployed successfully"
