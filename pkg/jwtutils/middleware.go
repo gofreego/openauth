@@ -2,6 +2,7 @@ package jwtutils
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -157,13 +158,13 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			logger.Warn(r.Context(), "Missing authorization header for HTTP request: %s %s", r.Method, r.URL.Path)
-			http.Error(w, "missing authorization header", http.StatusUnauthorized)
+			writeJSONError(w, "missing authorization header", http.StatusUnauthorized)
 			return
 		}
 
 		if !strings.HasPrefix(authHeader, "Bearer ") {
 			logger.Warn(r.Context(), "Invalid authorization header format for HTTP request: %s %s", r.Method, r.URL.Path)
-			http.Error(w, "invalid authorization header format", http.StatusUnauthorized)
+			writeJSONError(w, "invalid authorization header format", http.StatusUnauthorized)
 			return
 		}
 
@@ -178,7 +179,7 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 		}
 		if err != nil {
 			logger.Warn(r.Context(), "Invalid token for HTTP request %s %s: %v", r.Method, r.URL.Path, err)
-			http.Error(w, "invalid token", http.StatusUnauthorized)
+			writeJSONError(w, "invalid token", http.StatusUnauthorized)
 			return
 		}
 
@@ -190,6 +191,16 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
+	})
+}
+
+// writeJSONError writes a JSON-formatted error response
+func writeJSONError(w http.ResponseWriter, message string, code int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"code":    code,
+		"message": message,
 	})
 }
 
