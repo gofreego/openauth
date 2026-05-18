@@ -19,7 +19,7 @@ export function LoginCallbackPage({ authService, navigateTo = '/home' }: LoginCa
 
     if (!loginToken) {
         console.error('Login callback failed: Missing login_token in query parameters')
-      navigate('/auth/login', { replace: true })
+      navigate('/login', { replace: true })
       return
     }
     authService
@@ -29,7 +29,7 @@ export function LoginCallbackPage({ authService, navigateTo = '/home' }: LoginCa
       })
       .catch((err: unknown) => {
         console.error('Login callback failed:', extractErrorMessage(err))
-        navigate('/auth/login', { replace: true })
+        navigate('/login', { replace: true })
       })
   }, [])
 
