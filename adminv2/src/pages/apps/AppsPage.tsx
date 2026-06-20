@@ -6,6 +6,7 @@ import { ConfirmDialog } from '@gofreego/tsutils'
 import { useApps } from './hooks/useApps'
 import { AppTable } from './components/AppTable'
 import { AppFormDialog } from './components/AppFormDialog'
+import { ManageAppUsersDialog } from './components/ManageAppUsersDialog'
 import type { App, CreateAppRequest, UpdateAppRequest } from '../../apis/proto/openauth/v1/apps'
 import { PageHeader } from '../../components'
 
@@ -26,6 +27,8 @@ export const AppsPage = () => {
 
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [openUsersDialog, setOpenUsersDialog] = useState(false)
+  const [selectedAppForUsers, setSelectedAppForUsers] = useState<App | null>(null)
   const [deleteId, setDeleteId] = useState<string>('')
   const [editData, setEditData] = useState<UpdateAppRequest | undefined>(undefined)
   const [searchInput, setSearchInput] = useState<string>(searchParams.get('search') || '')
@@ -84,6 +87,16 @@ export const AppsPage = () => {
   const handleDeleteClick = (app: App) => {
     setDeleteId(app.id)
     setOpenConfirmDialog(true)
+  }
+
+  const handleManageUsers = (app: App) => {
+    setSelectedAppForUsers(app)
+    setOpenUsersDialog(true)
+  }
+
+  const handleCloseUsersDialog = () => {
+    setOpenUsersDialog(false)
+    setTimeout(() => setSelectedAppForUsers(null), 200) // Delay to avoid UI jump
   }
 
   const handleConfirmDelete = async () => {
@@ -169,6 +182,7 @@ export const AppsPage = () => {
           loadingMore={loadingMore}
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
+          onManageUsers={handleManageUsers}
         />
 
         {hasMore && (
@@ -209,6 +223,12 @@ export const AppsPage = () => {
           confirmColor="error"
           onConfirm={handleConfirmDelete}
           onCancel={() => setOpenConfirmDialog(false)}
+        />
+
+        <ManageAppUsersDialog
+          open={openUsersDialog}
+          onClose={handleCloseUsersDialog}
+          app={selectedAppForUsers}
         />
       </Box>
     </Container>

@@ -17,6 +17,7 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Language as LanguageIcon,
+  Group as GroupIcon,
 } from '@mui/icons-material'
 import type { App } from '../../../apis/proto/openauth/v1/apps'
 
@@ -26,6 +27,7 @@ export interface AppTableProps {
   loadingMore: boolean
   onEdit: (app: App) => void
   onDelete: (app: App) => void
+  onManageUsers?: (app: App) => void
   onRowClick?: (app: App) => void
 }
 
@@ -44,6 +46,7 @@ export const AppTable = ({
   loadingMore,
   onEdit,
   onDelete,
+  onManageUsers,
   onRowClick,
 }: AppTableProps) => {
   if (loading) {
@@ -115,6 +118,19 @@ export const AppTable = ({
                 </TableCell>
                 <TableCell>{formatDate(app.updatedAt)}</TableCell>
                 <TableCell align="right">
+                  {onManageUsers && (
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onManageUsers(app)
+                      }}
+                      color="info"
+                      title="Manage Users"
+                    >
+                      <GroupIcon fontSize="small" />
+                    </IconButton>
+                  )}
                   <IconButton
                     size="small"
                     onClick={(e) => {
