@@ -1,6 +1,5 @@
 import { httpClient } from '../utils/httpClient'
 import type {
-  User,
   ListUsersRequest,
   ListUsersResponse,
 } from '../apis/proto/openauth/v1/users'
