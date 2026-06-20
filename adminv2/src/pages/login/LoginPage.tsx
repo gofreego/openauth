@@ -14,7 +14,7 @@ import {
 import { Visibility, VisibilityOff, Lock, Person } from '@mui/icons-material'
 import { useNotification, extractErrorMessage, useTheme } from '@gofreego/tsutils'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { authService, sessionManager } from '../../services'
+import { authService } from '../../services'
 
 export function LoginPage() {
   const [username, setUsername] = useState('')
