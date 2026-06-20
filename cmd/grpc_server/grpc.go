@@ -53,6 +53,7 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 		"/v1.OpenAuth/SignIn",
 		"/v1.OpenAuth/RefreshToken",
 		"/v1.OpenAuth/ValidateToken",
+		"/v1.OpenAuth/Logout",
 	})
 	// Create a new gRPC server with interceptors
 	a.server = grpc.NewServer(
