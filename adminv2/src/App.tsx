@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ThemeProvider, NotificationProvider, SidebarLayout } from '@gofreego/tsutils'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { LoginPage } from './pages/login/LoginPage'
@@ -36,9 +36,19 @@ function AdminLayout() {
 }
 
 function App() {
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
-    authService.initializeAuth()
+    authService.initializeAuth();
+    setIsInitialized(true);
   }, [])
+
+  if (!isInitialized) {
+    // return loading spinner or placeholder
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div>Loading...</div>
+    </div>
+  }
 
   return (
     <ThemeProvider>
