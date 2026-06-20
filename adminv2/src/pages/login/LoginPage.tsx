@@ -37,7 +37,7 @@ export function LoginPage() {
         url.searchParams.set('login_token', loginToken)
         window.location.href = url.toString()
       } catch {
-        sessionManager.getRefreshToken();
+        await authService.logout({});
         // reload the page
         window.location.reload();
       }
