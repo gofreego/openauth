@@ -1,0 +1,72 @@
+syntax = "proto3";
+package v1;
+
+import "validate/validate.proto";
+
+option go_package = "./openauth_v1";
+
+message App {
+    int64 id = 1;
+    string name = 2;
+    optional string description = 3;
+    string url = 4;
+    optional string logo_url = 5;
+    int64 created_at = 6;
+    int64 updated_at = 7;
+}
+
+message CreateAppRequest {
+    string name = 1 [(validate.rules).string = {min_len: 2, max_len: 100}];
+    optional string description = 2 [(validate.rules).string.max_len = 500];
+    string url = 3 [(validate.rules).string = {min_len: 3, max_len: 2048, uri: true}];
+    optional string logo_url = 4 [(validate.rules).string = {max_len: 2048}];
+}
+
+message UpdateAppRequest {
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+    optional string name = 2 [(validate.rules).string = {min_len: 2, max_len: 100}];
+    optional string description = 3 [(validate.rules).string.max_len = 500];
+    optional string url = 4 [(validate.rules).string = {min_len: 3, max_len: 2048, uri: true}];
+    optional string logo_url = 5 [(validate.rules).string = {max_len: 2048}];
+}
+
+message DeleteAppRequest {
+    int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+message DeleteAppResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message AssignAppRequest {
+    int64 user_id = 1 [(validate.rules).int64.gt = 0];
+    repeated int64 app_ids = 2; // IDs of apps to assign
+}
+
+message AssignAppResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message ListAppsRequest {
+    int32 limit = 1 [(validate.rules).int32.gt = 0];
+    int32 offset = 2 [(validate.rules).int32.gte = 0];
+    optional string search = 3;
+}
+
+message ListAppsResponse {
+    repeated App apps = 1;
+    int64 total = 2;
+}
+
+message ListUserAppsRequest {
+    int64 user_id = 1 [(validate.rules).int64.gt = 0];
+    int32 limit = 2 [(validate.rules).int32.gt = 0];
+    int32 offset = 3 [(validate.rules).int32.gte = 0];
+}
+
+message ListUserAppsResponse {
+    repeated App apps = 1;
+    int64 total = 2;
+}

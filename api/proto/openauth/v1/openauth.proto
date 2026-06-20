@@ -13,6 +13,7 @@ import "proto/openauth/v1/sessions.proto";
 import "proto/openauth/v1/permission_assignments.proto";
 import "proto/openauth/v1/stats.proto";
 import "proto/openauth/v1/configs.proto";
+import "proto/openauth/v1/apps.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
@@ -1040,5 +1041,81 @@ service OpenAuth {
         };
     }
 
+    // App Management APIs
+
+    // CreateApp creates a new app definition
+    rpc CreateApp (CreateAppRequest) returns (App) {
+        option (google.api.http) = {
+            post: "/openauth/v1/apps"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "App Management"
+            summary: "Create a new app"
+            description: "Create a new app definition."
+        };
+    }
+
+    // UpdateApp updates an existing app definition
+    rpc UpdateApp (UpdateAppRequest) returns (App) {
+        option (google.api.http) = {
+            put: "/openauth/v1/apps/{id}"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "App Management"
+            summary: "Update an app"
+            description: "Update an existing app definition."
+        };
+    }
+
+    // DeleteApp deletes an app definition
+    rpc DeleteApp (DeleteAppRequest) returns (DeleteAppResponse) {
+        option (google.api.http) = {
+            delete: "/openauth/v1/apps/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "App Management"
+            summary: "Delete an app"
+            description: "Delete an existing app definition."
+        };
+    }
+
+    // AssignApp assigns a list of apps to a user
+    rpc AssignApp (AssignAppRequest) returns (AssignAppResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/{user_id}/apps"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "App Management"
+            summary: "Assign apps to user"
+            description: "Assign a list of apps to a specific user."
+        };
+    }
+
+    // ListApps lists all app definitions in the system with pagination and search
+    rpc ListApps (ListAppsRequest) returns (ListAppsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/apps"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "App Management"
+            summary: "List all apps"
+            description: "Retrieve a paginated list of all app definitions in the system."
+        };
+    }
+
+    // ListUserApps lists all apps assigned to a specific user with pagination
+    rpc ListUserApps (ListUserAppsRequest) returns (ListUserAppsResponse) {
+        option (google.api.http) = {
+            get: "/openauth/v1/users/{user_id}/apps"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "App Management"
+            summary: "List user apps"
+            description: "Retrieve a paginated list of apps assigned to a specific user."
+        };
+    }
 }
 

@@ -65,6 +65,156 @@
     "application/json"
   ],
   "paths": {
+    "/openauth/v1/apps": {
+      "get": {
+        "summary": "List all apps",
+        "description": "Retrieve a paginated list of all app definitions in the system.",
+        "operationId": "OpenAuth_ListApps",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListAppsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "App Management"
+        ]
+      },
+      "post": {
+        "summary": "Create a new app",
+        "description": "Create a new app definition.",
+        "operationId": "OpenAuth_CreateApp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1App"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "App Management"
+        ]
+      }
+    },
+    "/openauth/v1/apps/{id}": {
+      "delete": {
+        "summary": "Delete an app",
+        "description": "Delete an existing app definition.",
+        "operationId": "OpenAuth_DeleteApp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteAppResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "App Management"
+        ]
+      },
+      "put": {
+        "summary": "Update an app",
+        "description": "Update an existing app definition.",
+        "operationId": "OpenAuth_UpdateApp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1App"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUpdateAppBody"
+            }
+          }
+        ],
+        "tags": [
+          "App Management"
+        ]
+      }
+    },
     "/openauth/v1/auth/is-authenticated": {
       "get": {
         "summary": "Check if user is authenticated",
@@ -1820,6 +1970,92 @@
         ]
       }
     },
+    "/openauth/v1/users/{userId}/apps": {
+      "get": {
+        "summary": "List user apps",
+        "description": "Retrieve a paginated list of apps assigned to a specific user.",
+        "operationId": "OpenAuth_ListUserApps",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserAppsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "App Management"
+        ]
+      },
+      "post": {
+        "summary": "Assign apps to user",
+        "description": "Assign a list of apps to a specific user.",
+        "operationId": "OpenAuth_AssignApp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AssignAppResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthAssignAppBody"
+            }
+          }
+        ],
+        "tags": [
+          "App Management"
+        ]
+      }
+    },
     "/openauth/v1/users/{userId}/effective-permissions": {
       "get": {
         "summary": "Get user effective permissions",
@@ -2323,6 +2559,19 @@
     }
   },
   "definitions": {
+    "OpenAuthAssignAppBody": {
+      "type": "object",
+      "properties": {
+        "appIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          },
+          "title": "IDs of apps to assign"
+        }
+      }
+    },
     "OpenAuthAssignPermissionsToGroupBody": {
       "type": "object",
       "properties": {
@@ -2495,6 +2744,23 @@
         }
       },
       "title": "RemoveUsersFromGroupRequest to remove users from a group"
+    },
+    "OpenAuthUpdateAppBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "logoUrl": {
+          "type": "string"
+        }
+      }
     },
     "OpenAuthUpdateConfigBody": {
       "type": "object",
@@ -2705,6 +2971,46 @@
         }
       }
     },
+    "v1App": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "logoUrl": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1AssignAppResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "v1AssignPermissionsToGroupResponse": {
       "type": "object",
       "properties": {
@@ -2906,6 +3212,23 @@
       },
       "title": "ConfigEntity represents a configuration entity that groups related configs"
     },
+    "v1CreateAppRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "logoUrl": {
+          "type": "string"
+        }
+      }
+    },
     "v1CreateConfigEntityRequest": {
       "type": "object",
       "properties": {
@@ -3043,6 +3366,17 @@
         }
       },
       "title": "CreateProfileResponse"
+    },
+    "v1DeleteAppResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
     },
     "v1DeleteGroupResponse": {
       "type": "object",
@@ -3356,6 +3690,22 @@
         }
       }
     },
+    "v1ListAppsResponse": {
+      "type": "object",
+      "properties": {
+        "apps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1App"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "v1ListConfigEntitiesResponse": {
       "type": "object",
       "properties": {
@@ -3437,6 +3787,22 @@
         }
       },
       "title": "Response containing a list of permissions with pagination metadata"
+    },
+    "v1ListUserAppsResponse": {
+      "type": "object",
+      "properties": {
+        "apps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1App"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "v1ListUserGroupsResponse": {
       "type": "object",

@@ -215,6 +215,18 @@ type Repository interface {
 	DeleteConfig(ctx context.Context, id int64) error
 	GetConfigsByEntityAndKeys(ctx context.Context, entityID int64, keys []string) (map[string]*dao.Config, error)
 	GetConfigsByEntityNameAndKeys(ctx context.Context, entityName string, keys []string) (map[string]*dao.Config, error)
+
+	// App methods
+	CreateApp(ctx context.Context, app *dao.App) (*dao.App, error)
+	GetAppByID(ctx context.Context, id int64) (*dao.App, error)
+	GetAppByName(ctx context.Context, name string) (*dao.App, error)
+	UpdateApp(ctx context.Context, id int64, updates map[string]interface{}) (*dao.App, error)
+	DeleteApp(ctx context.Context, id int64) error
+	ListApps(ctx context.Context, search *string, limit, offset int32) ([]*dao.App, int64, error)
+	
+	// User App assignment methods
+	AssignAppsToUser(ctx context.Context, userID int64, appIDs []int64, assignedBy int64) error
+	ListUserApps(ctx context.Context, userID int64, limit, offset int32) ([]*dao.App, int64, error)
 }
 
 type Service struct {

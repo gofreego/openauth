@@ -52,4 +52,12 @@ const (
 	// Config management permissions
 	PermissionConfigEntitiesCreate = "config.entity.create"
 	PermissionConfigEntitiesRead   = "config.entity.read"
+
+	// App management permissions
+	PermissionAppsCreate = "apps.create"
+	PermissionAppsRead   = "apps.read"
+	PermissionAppsUpdate = "apps.update"
+	PermissionAppsDelete = "apps.delete"
+	PermissionAppsAssign = "apps.assign"
+	PermissionAppsList   = "apps.list"
 )

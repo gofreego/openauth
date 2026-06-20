@@ -2,7 +2,7 @@ Repository:
   Name: Postgres
   Postgres:
     primary:
-      Host: "localhost"
+      Host: "192.168.1.100"
       Port: 5432
       Username: "admin"
       Password: OSwfiTlc1r5W7Z
@@ -15,4 +15,4 @@ Repository:
 Migrator:
   Path: "./resources/migrations/postgresql" # Path to the SQL migration files
   Action: up # Migration action (up/down/force/version)
-  ForceVersion: 0 # Force version (optional)
+  ForceVersion: 10 # Force version (optional)

@@ -19,6 +19,19 @@ import {
 } from "@grpc/grpc-js";
 import { OOPingRequest, OOPingResponse } from "../../openauth_common/ping";
 import {
+  App,
+  AssignAppRequest,
+  AssignAppResponse,
+  CreateAppRequest,
+  DeleteAppRequest,
+  DeleteAppResponse,
+  ListAppsRequest,
+  ListAppsResponse,
+  ListUserAppsRequest,
+  ListUserAppsResponse,
+  UpdateAppRequest,
+} from "./apps";
+import {
   Config,
   ConfigEntity,
   CreateConfigEntityRequest,
@@ -1076,6 +1089,67 @@ export const OpenAuthService = {
     responseSerialize: (value: ListConfigsResponse): Buffer => Buffer.from(ListConfigsResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer): ListConfigsResponse => ListConfigsResponse.decode(value),
   },
+  /** CreateApp creates a new app definition */
+  createApp: {
+    path: "/v1.OpenAuth/CreateApp" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: CreateAppRequest): Buffer => Buffer.from(CreateAppRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): CreateAppRequest => CreateAppRequest.decode(value),
+    responseSerialize: (value: App): Buffer => Buffer.from(App.encode(value).finish()),
+    responseDeserialize: (value: Buffer): App => App.decode(value),
+  },
+  /** UpdateApp updates an existing app definition */
+  updateApp: {
+    path: "/v1.OpenAuth/UpdateApp" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: UpdateAppRequest): Buffer => Buffer.from(UpdateAppRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): UpdateAppRequest => UpdateAppRequest.decode(value),
+    responseSerialize: (value: App): Buffer => Buffer.from(App.encode(value).finish()),
+    responseDeserialize: (value: Buffer): App => App.decode(value),
+  },
+  /** DeleteApp deletes an app definition */
+  deleteApp: {
+    path: "/v1.OpenAuth/DeleteApp" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: DeleteAppRequest): Buffer => Buffer.from(DeleteAppRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAppRequest => DeleteAppRequest.decode(value),
+    responseSerialize: (value: DeleteAppResponse): Buffer => Buffer.from(DeleteAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): DeleteAppResponse => DeleteAppResponse.decode(value),
+  },
+  /** AssignApp assigns a list of apps to a user */
+  assignApp: {
+    path: "/v1.OpenAuth/AssignApp" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: AssignAppRequest): Buffer => Buffer.from(AssignAppRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): AssignAppRequest => AssignAppRequest.decode(value),
+    responseSerialize: (value: AssignAppResponse): Buffer => Buffer.from(AssignAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): AssignAppResponse => AssignAppResponse.decode(value),
+  },
+  /** ListApps lists all app definitions in the system with pagination and search */
+  listApps: {
+    path: "/v1.OpenAuth/ListApps" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: ListAppsRequest): Buffer => Buffer.from(ListAppsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAppsRequest => ListAppsRequest.decode(value),
+    responseSerialize: (value: ListAppsResponse): Buffer => Buffer.from(ListAppsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): ListAppsResponse => ListAppsResponse.decode(value),
+  },
+  /** ListUserApps lists all apps assigned to a specific user with pagination */
+  listUserApps: {
+    path: "/v1.OpenAuth/ListUserApps" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: ListUserAppsRequest): Buffer => Buffer.from(ListUserAppsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListUserAppsRequest => ListUserAppsRequest.decode(value),
+    responseSerialize: (value: ListUserAppsResponse): Buffer =>
+      Buffer.from(ListUserAppsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): ListUserAppsResponse => ListUserAppsResponse.decode(value),
+  },
 } as const;
 
 export interface OpenAuthServer extends UntypedServiceImplementation {
@@ -1471,6 +1545,18 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
   getConfigsByKeys: handleUnaryCall<GetConfigsByKeysRequest, GetConfigsByKeysResponse>;
   /** ListConfigs lists configs with optional filtering and pagination */
   listConfigs: handleUnaryCall<ListConfigsRequest, ListConfigsResponse>;
+  /** CreateApp creates a new app definition */
+  createApp: handleUnaryCall<CreateAppRequest, App>;
+  /** UpdateApp updates an existing app definition */
+  updateApp: handleUnaryCall<UpdateAppRequest, App>;
+  /** DeleteApp deletes an app definition */
+  deleteApp: handleUnaryCall<DeleteAppRequest, DeleteAppResponse>;
+  /** AssignApp assigns a list of apps to a user */
+  assignApp: handleUnaryCall<AssignAppRequest, AssignAppResponse>;
+  /** ListApps lists all app definitions in the system with pagination and search */
+  listApps: handleUnaryCall<ListAppsRequest, ListAppsResponse>;
+  /** ListUserApps lists all apps assigned to a specific user with pagination */
+  listUserApps: handleUnaryCall<ListUserAppsRequest, ListUserAppsResponse>;
 }
 
 export interface OpenAuthClient extends Client {
@@ -2691,6 +2777,96 @@ export interface OpenAuthClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: ListConfigsResponse) => void,
+  ): ClientUnaryCall;
+  /** CreateApp creates a new app definition */
+  createApp(request: CreateAppRequest, callback: (error: ServiceError | null, response: App) => void): ClientUnaryCall;
+  createApp(
+    request: CreateAppRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: App) => void,
+  ): ClientUnaryCall;
+  createApp(
+    request: CreateAppRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: App) => void,
+  ): ClientUnaryCall;
+  /** UpdateApp updates an existing app definition */
+  updateApp(request: UpdateAppRequest, callback: (error: ServiceError | null, response: App) => void): ClientUnaryCall;
+  updateApp(
+    request: UpdateAppRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: App) => void,
+  ): ClientUnaryCall;
+  updateApp(
+    request: UpdateAppRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: App) => void,
+  ): ClientUnaryCall;
+  /** DeleteApp deletes an app definition */
+  deleteApp(
+    request: DeleteAppRequest,
+    callback: (error: ServiceError | null, response: DeleteAppResponse) => void,
+  ): ClientUnaryCall;
+  deleteApp(
+    request: DeleteAppRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: DeleteAppResponse) => void,
+  ): ClientUnaryCall;
+  deleteApp(
+    request: DeleteAppRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: DeleteAppResponse) => void,
+  ): ClientUnaryCall;
+  /** AssignApp assigns a list of apps to a user */
+  assignApp(
+    request: AssignAppRequest,
+    callback: (error: ServiceError | null, response: AssignAppResponse) => void,
+  ): ClientUnaryCall;
+  assignApp(
+    request: AssignAppRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: AssignAppResponse) => void,
+  ): ClientUnaryCall;
+  assignApp(
+    request: AssignAppRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: AssignAppResponse) => void,
+  ): ClientUnaryCall;
+  /** ListApps lists all app definitions in the system with pagination and search */
+  listApps(
+    request: ListAppsRequest,
+    callback: (error: ServiceError | null, response: ListAppsResponse) => void,
+  ): ClientUnaryCall;
+  listApps(
+    request: ListAppsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: ListAppsResponse) => void,
+  ): ClientUnaryCall;
+  listApps(
+    request: ListAppsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: ListAppsResponse) => void,
+  ): ClientUnaryCall;
+  /** ListUserApps lists all apps assigned to a specific user with pagination */
+  listUserApps(
+    request: ListUserAppsRequest,
+    callback: (error: ServiceError | null, response: ListUserAppsResponse) => void,
+  ): ClientUnaryCall;
+  listUserApps(
+    request: ListUserAppsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: ListUserAppsResponse) => void,
+  ): ClientUnaryCall;
+  listUserApps(
+    request: ListUserAppsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: ListUserAppsResponse) => void,
   ): ClientUnaryCall;
 }
 
