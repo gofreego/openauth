@@ -14,7 +14,7 @@ import {
 import { Visibility, VisibilityOff, Lock, Person } from '@mui/icons-material'
 import { useNotification, extractErrorMessage, useTheme } from '@gofreego/tsutils'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { authService } from '../../services'
+import { authService, sessionManager } from '../../services'
 
 export function LoginPage() {
   const [username, setUsername] = useState('')
@@ -37,8 +37,9 @@ export function LoginPage() {
         url.searchParams.set('login_token', loginToken)
         window.location.href = url.toString()
       } catch {
-        // If token generation fails, redirect without token
-        window.location.href = redirectTo
+        sessionManager.getRefreshToken();
+        // reload the page
+        window.location.reload();
       }
     } else {
       navigate('/home', { replace: true })
