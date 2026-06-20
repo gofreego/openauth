@@ -72,6 +72,7 @@ export function LoginPage() {
       const response = await authService.signIn({
         username,
         password,
+        includePermissions: true,
       })
       await redirectUser()
       showNotification(response.message || 'Login successful!', 'success')

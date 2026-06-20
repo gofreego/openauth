@@ -3,11 +3,13 @@ package jwtutils
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/gofreego/goutils/logger"
@@ -59,29 +61,67 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 		logger.Debug(ctx, "Processing gRPC authentication for method: %s", info.FullMethod)
 
-		// Extract and validate token
-		token, err := ExtractTokenFromMetadata(ctx)
-		if err != nil {
-			logger.Warn(ctx, "Failed to extract token from metadata for method %s: %v", info.FullMethod, err)
-			return nil, err
-		}
 		var claims *JWTClaims
-		if a.validation {
-			claims, err = ParseAndValidateToken(token, a.jwtSecret)
-			if err != nil {
-				logger.Warn(ctx, "Invalid token for method %s: %v", info.FullMethod, err)
-				return nil, status.Error(codes.Unauthenticated, "invalid token")
+
+		// Try to read from metadata headers first
+		md, ok := metadata.FromIncomingContext(ctx)
+		if ok {
+			var userID int64
+			userIDHeaders := md.Get("x-user-id")
+			if len(userIDHeaders) == 0 {
+				userIDHeaders = md.Get("grpcgateway-x-user-id")
 			}
-		} else {
-			claims, err = parseWithoutValidation(token)
-			if err != nil {
-				logger.Warn(ctx, "Failed to parse token without validation for method %s: %v", info.FullMethod, err)
-				return nil, status.Error(codes.Unauthenticated, "invalid token")
+			if len(userIDHeaders) > 0 {
+				fmt.Sscanf(userIDHeaders[0], "%d", &userID)
+			}
+
+			if userID > 0 {
+				permsHeaders := md.Get("x-user-perms")
+				if len(permsHeaders) == 0 {
+					permsHeaders = md.Get("grpcgateway-x-user-perms")
+				}
+				var perms []string
+				if len(permsHeaders) > 0 && permsHeaders[0] != "" {
+					rawPerms := strings.Split(permsHeaders[0], ",")
+					for _, p := range rawPerms {
+						p = strings.TrimSpace(p)
+						if p != "" {
+							perms = append(perms, p)
+						}
+					}
+				}
+				claims = &JWTClaims{
+					UserID:      userID,
+					Permissions: perms,
+				}
 			}
 		}
 
-		logger.Debug(ctx, "Token validated for user %s (userID=%d) accessing method: %s",
-			claims.UserUUID, claims.UserID, info.FullMethod)
+		// Fallback to JWT
+		if claims == nil {
+			token, err := ExtractTokenFromMetadata(ctx)
+			if err != nil {
+				logger.Warn(ctx, "Failed to extract token from metadata for method %s: %v", info.FullMethod, err)
+				return nil, err
+			}
+			if a.validation {
+				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret)
+				if err != nil {
+					logger.Warn(ctx, "Invalid token for method %s: %v", info.FullMethod, err)
+					return nil, status.Error(codes.Unauthenticated, "invalid token")
+				}
+				claims = validatedClaims
+			} else {
+				parsedClaims, err := parseWithoutValidation(token)
+				if err != nil {
+					logger.Warn(ctx, "Failed to parse token without validation for method %s: %v", info.FullMethod, err)
+					return nil, status.Error(codes.Unauthenticated, "invalid token")
+				}
+				claims = parsedClaims
+			}
+		}
+
+		logger.Debug(ctx, "Request authenticated: userID=%d accessing method: %s", claims.UserID, info.FullMethod)
 
 		// Add claims to context
 		ctx = setUserInContext(ctx, claims)
@@ -106,24 +146,67 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 
 		logger.Debug(ss.Context(), "Processing gRPC stream authentication for method: %s", info.FullMethod)
 
-		// Extract and validate token
-		token, err := ExtractTokenFromMetadata(ss.Context())
-		if err != nil {
-			logger.Warn(ss.Context(), "Failed to extract token from stream metadata for method %s: %v", info.FullMethod, err)
-			return err
-		}
 		var claims *JWTClaims
-		if a.validation {
-			claims, err = ParseAndValidateToken(token, a.jwtSecret)
-		} else {
-			claims, err = parseWithoutValidation(token)
+
+		// Try to read from metadata headers first
+		md, ok := metadata.FromIncomingContext(ss.Context())
+		if ok {
+			var userID int64
+			userIDHeaders := md.Get("x-user-id")
+			if len(userIDHeaders) == 0 {
+				userIDHeaders = md.Get("grpcgateway-x-user-id")
+			}
+			if len(userIDHeaders) > 0 {
+				fmt.Sscanf(userIDHeaders[0], "%d", &userID)
+			}
+
+			if userID > 0 {
+				permsHeaders := md.Get("x-user-perms")
+				if len(permsHeaders) == 0 {
+					permsHeaders = md.Get("grpcgateway-x-user-perms")
+				}
+				var perms []string
+				if len(permsHeaders) > 0 && permsHeaders[0] != "" {
+					rawPerms := strings.Split(permsHeaders[0], ",")
+					for _, p := range rawPerms {
+						p = strings.TrimSpace(p)
+						if p != "" {
+							perms = append(perms, p)
+						}
+					}
+				}
+				claims = &JWTClaims{
+					UserID:      userID,
+					Permissions: perms,
+				}
+			}
 		}
-		if err != nil {
-			logger.Warn(ss.Context(), "Invalid token for stream method %s: %v", info.FullMethod, err)
-			return status.Error(codes.Unauthenticated, "invalid token")
+
+		// Fallback to JWT
+		if claims == nil {
+			token, err := ExtractTokenFromMetadata(ss.Context())
+			if err != nil {
+				logger.Warn(ss.Context(), "Failed to extract token from stream metadata for method %s: %v", info.FullMethod, err)
+				return err
+			}
+			if a.validation {
+				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret)
+				if err != nil {
+					logger.Warn(ss.Context(), "Invalid token for stream method %s: %v", info.FullMethod, err)
+					return status.Error(codes.Unauthenticated, "invalid token")
+				}
+				claims = validatedClaims
+			} else {
+				parsedClaims, err := parseWithoutValidation(token)
+				if err != nil {
+					logger.Warn(ss.Context(), "Failed to parse token without validation for stream method %s: %v", info.FullMethod, err)
+					return status.Error(codes.Unauthenticated, "invalid token")
+				}
+				claims = parsedClaims
+			}
 		}
-		logger.Debug(ss.Context(), "Stream token validated for user %s (userID=%d) accessing method: %s",
-			claims.UserUUID, claims.UserID, info.FullMethod)
+
+		logger.Debug(ss.Context(), "Stream token validated: userID=%d accessing method: %s", claims.UserID, info.FullMethod)
 
 		// Add claims to context
 		ctx := setUserInContext(ss.Context(), claims)
@@ -154,37 +237,70 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 
 		logger.Debug(r.Context(), "Processing HTTP authentication for: %s %s", r.Method, r.URL.Path)
 
-		// Extract token from Authorization header
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			logger.Warn(r.Context(), "Missing authorization header for HTTP request: %s %s", r.Method, r.URL.Path)
-			writeJSONError(w, "missing authorization header", http.StatusUnauthorized)
-			return
-		}
-
-		if !strings.HasPrefix(authHeader, "Bearer ") {
-			logger.Warn(r.Context(), "Invalid authorization header format for HTTP request: %s %s", r.Method, r.URL.Path)
-			writeJSONError(w, "invalid authorization header format", http.StatusUnauthorized)
-			return
-		}
-
-		token := strings.TrimPrefix(authHeader, "Bearer ")
-
 		var claims *JWTClaims
-		var err error
-		if a.validation {
-			claims, err = ParseAndValidateToken(token, a.jwtSecret)
-		} else {
-			claims, err = parseWithoutValidation(token)
-		}
-		if err != nil {
-			logger.Warn(r.Context(), "Invalid token for HTTP request %s %s: %v", r.Method, r.URL.Path, err)
-			writeJSONError(w, "invalid token", http.StatusUnauthorized)
-			return
+
+		// Try to read from HTTP headers first
+		userIDHeader := r.Header.Get("x-user-id")
+		if userIDHeader != "" {
+			var userID int64
+			fmt.Sscanf(userIDHeader, "%d", &userID)
+			if userID > 0 {
+				var perms []string
+				permsHeader := r.Header.Get("x-user-perms")
+				if permsHeader != "" {
+					rawPerms := strings.Split(permsHeader, ",")
+					for _, p := range rawPerms {
+						p = strings.TrimSpace(p)
+						if p != "" {
+							perms = append(perms, p)
+						}
+					}
+				}
+				claims = &JWTClaims{
+					UserID:      userID,
+					Permissions: perms,
+				}
+			}
 		}
 
-		logger.Debug(r.Context(), "HTTP token validated for user %s (userID=%d) accessing: %s %s",
-			claims.UserUUID, claims.UserID, r.Method, r.URL.Path)
+		// Fallback to JWT
+		if claims == nil {
+			authHeader := r.Header.Get("Authorization")
+			if authHeader == "" {
+				logger.Warn(r.Context(), "Missing authorization header for HTTP request: %s %s", r.Method, r.URL.Path)
+				writeJSONError(w, "missing authorization header", http.StatusUnauthorized)
+				return
+			}
+
+			if !strings.HasPrefix(authHeader, "Bearer ") {
+				logger.Warn(r.Context(), "Invalid authorization header format for HTTP request: %s %s", r.Method, r.URL.Path)
+				writeJSONError(w, "invalid authorization header format", http.StatusUnauthorized)
+				return
+			}
+
+			token := strings.TrimPrefix(authHeader, "Bearer ")
+
+			if a.validation {
+				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret)
+				if err != nil {
+					logger.Warn(r.Context(), "Invalid token for HTTP request %s %s: %v", r.Method, r.URL.Path, err)
+					writeJSONError(w, "invalid token", http.StatusUnauthorized)
+					return
+				}
+				claims = validatedClaims
+			} else {
+				parsedClaims, err := parseWithoutValidation(token)
+				if err != nil {
+					logger.Warn(r.Context(), "Failed to parse token without validation for HTTP request %s %s: %v", r.Method, r.URL.Path, err)
+					writeJSONError(w, "invalid token", http.StatusUnauthorized)
+					return
+				}
+				claims = parsedClaims
+			}
+		}
+
+		logger.Debug(r.Context(), "HTTP request authenticated: userID=%d accessing: %s %s",
+			claims.UserID, r.Method, r.URL.Path)
 
 		// Add claims to request context
 		ctx := setUserInContext(r.Context(), claims)
@@ -211,7 +327,6 @@ func (a *AuthMiddleware) skipAuth(method string) bool {
 
 // skipHTTPAuth checks if the HTTP path should skip authentication
 func (a *AuthMiddleware) skipHTTPAuth(path string) bool {
-
 	for _, skipPath := range a.skipPaths {
 		if strings.HasSuffix(path, skipPath) || strings.HasPrefix(path, skipPath) {
 			return true
