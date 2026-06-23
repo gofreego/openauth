@@ -134,10 +134,13 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 		// Fall back to grpc-gateway mux for other routes
 		mux.ServeHTTP(w, r)
 	})
-
+	handler2 := authMiddleware.HTTPMiddleware(handler)
+	if a.cfg.Server.CORS.Enabled {
+		handler2 = api.CORSMiddleware(handler2)
+	}
 	a.server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", a.cfg.Server.HTTP.Port),
-		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(authMiddleware.HTTPMiddleware(handler))),
+		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(handler2)),
 	}
 
 	logger.Info(ctx, "Starting HTTP server on port %d", a.cfg.Server.HTTP.Port)

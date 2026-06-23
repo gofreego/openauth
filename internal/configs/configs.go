@@ -30,6 +30,9 @@ type ServerConfig struct {
 type Server struct {
 	GRPC ServerConfig `yaml:"GRPC"`
 	HTTP ServerConfig `yaml:"HTTP"`
+	CORS struct {
+		Enabled bool `yaml:"Enabled"`
+	} `yaml:"CORS"`
 }
 
 func LoadConfig(ctx context.Context, path string, env string) *Configuration {
