@@ -164,7 +164,7 @@ func GetUserFromContext(ctx context.Context) (*JWTClaims, error) {
 		logger.Warn(ctx, "User claims not found in context")
 		return nil, fmt.Errorf("user claims not found in context")
 	}
-	logger.Debug(ctx, "User claims retrieved from context: userID=%d, sessionUUID=%s", claims.UserID, claims.SessionUUID)
+	logger.Debug(ctx, "User claims retrieved from context: %v", claims)
 	return claims, nil
 }
 
