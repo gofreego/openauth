@@ -187,9 +187,20 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 						}
 					}
 				}
+				userUUIDHeader := md.Get("x-user-uuid")
+				if len(userUUIDHeader) == 0 {
+					userUUIDHeader = md.Get("grpcgateway-x-user-uuid")
+				}
+
+				var userUUID string
+				if len(userUUIDHeader) > 0 {
+					userUUID = userUUIDHeader[0]
+				}
+
 				claims = &JWTClaims{
 					UserID:      userID,
 					Permissions: perms,
+					UserUUID:    userUUID,
 				}
 			}
 		}
@@ -268,9 +279,11 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 						}
 					}
 				}
+
 				claims = &JWTClaims{
 					UserID:      userID,
 					Permissions: perms,
+					UserUUID:    r.Header.Get("x-user-uuid"),
 				}
 			}
 		}
