@@ -2201,10 +2201,10 @@ func (m *IsAuthenticatedRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetAccessToken()); l < 1 || l > 1024 {
+	if utf8.RuneCountInString(m.GetAccessToken()) < 1 {
 		err := IsAuthenticatedRequestValidationError{
 			field:  "AccessToken",
-			reason: "value length must be between 1 and 1024 runes, inclusive",
+			reason: "value length must be at least 1 runes",
 		}
 		if !all {
 			return err

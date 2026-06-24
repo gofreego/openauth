@@ -159,7 +159,6 @@ message TerminateSessionResponse {
 message IsAuthenticatedRequest {
     string access_token = 1 [(validate.rules).string = {
         min_len: 1,
-        max_len: 1024
     }];
 }
 

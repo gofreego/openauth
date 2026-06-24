@@ -64,7 +64,7 @@ export function LoginPage() {
     )
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.SubmitEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
