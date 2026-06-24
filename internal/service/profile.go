@@ -33,8 +33,8 @@ func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProf
 	}
 	// check for permissions
 	if !claims.HasPermission(constants.PermissionProfilesCreate) && claims.UserID != req.UserId {
-		logger.Warn(ctx, "userID=%d does not have permission to read groups", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read groups")
+		logger.Warn(ctx, "userID=%d does not have permission to create profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to create profiles")
 	}
 
 	// Verify user exists

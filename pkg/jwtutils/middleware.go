@@ -90,8 +90,20 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 						}
 					}
 				}
+
+				// take user uuid
+				userUuidHeader := md.Get("x-user-uuid")
+				if len(userUuidHeader) == 0 {
+					userUuidHeader = md.Get("grpcgateway-x-user-uuid")
+				}
+				var userUUID string
+				if len(userUuidHeader) > 0 {
+					userUUID = userUuidHeader[0]
+				}
+
 				claims = &JWTClaims{
 					UserID:      userID,
+					UserUUID:    userUUID,
 					Permissions: perms,
 				}
 			}
