@@ -1561,6 +1561,40 @@
         ]
       }
     },
+    "/openauth/v1/profiles/mark-url-updated": {
+      "post": {
+        "summary": "Mark profile image URL as updated",
+        "description": "Mark a profile's image URL as updated after uploading a new image.",
+        "operationId": "OpenAuth_MarkProfileURLUpdated",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GenericResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1MarkProfileURLUpdatedRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Profile Management"
+        ]
+      }
+    },
     "/openauth/v1/profiles/upload-url": {
       "post": {
         "summary": "Get profile image upload URL",
@@ -3518,6 +3552,15 @@
       },
       "title": "GenerateLoginTokenResponse - short-lived single-use token"
     },
+    "v1GenericResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "User represents a user account in the system"
+    },
     "v1GetConfigsByKeysResponse": {
       "type": "object",
       "properties": {
@@ -3900,6 +3943,15 @@
         }
       },
       "title": "LogoutResponse"
+    },
+    "v1MarkProfileURLUpdatedRequest": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string"
+        }
+      },
+      "title": "Mark profile url updated"
     },
     "v1OOPingResponse": {
       "type": "object",

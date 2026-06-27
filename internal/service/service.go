@@ -223,10 +223,13 @@ type Repository interface {
 	UpdateApp(ctx context.Context, id int64, updates map[string]interface{}) (*dao.App, error)
 	DeleteApp(ctx context.Context, id int64) error
 	ListApps(ctx context.Context, search *string, limit, offset int32) ([]*dao.App, int64, error)
-	
+
 	// User App assignment methods
 	AssignAppsToUser(ctx context.Context, userID int64, appIDs []int64, assignedBy int64) error
 	ListUserApps(ctx context.Context, userID int64, limit, offset int32) ([]*dao.App, int64, error)
+
+	// Profile Picture methods
+	UpdateProfileURLKey(ctx context.Context, profileUUID string) error
 }
 
 type Service struct {

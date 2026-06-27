@@ -245,6 +245,11 @@ export interface GetProfileUploadURLResponse_FormDataEntry {
   value: string;
 }
 
+/** Mark profile url updated */
+export interface MarkProfileURLUpdatedRequest {
+  profileUuid: string;
+}
+
 /** GetUserRequest to get user by ID */
 export interface GetUserRequest {
   id?: string | undefined;
@@ -3574,6 +3579,70 @@ export const GetProfileUploadURLResponse_FormDataEntry: MessageFns<GetProfileUpl
     const message = createBaseGetProfileUploadURLResponse_FormDataEntry();
     message.key = object.key ?? "";
     message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBaseMarkProfileURLUpdatedRequest(): MarkProfileURLUpdatedRequest {
+  return { profileUuid: "" };
+}
+
+export const MarkProfileURLUpdatedRequest: MessageFns<MarkProfileURLUpdatedRequest> = {
+  encode(message: MarkProfileURLUpdatedRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.profileUuid !== "") {
+      writer.uint32(10).string(message.profileUuid);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): MarkProfileURLUpdatedRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMarkProfileURLUpdatedRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.profileUuid = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MarkProfileURLUpdatedRequest {
+    return {
+      profileUuid: isSet(object.profileUuid)
+        ? globalThis.String(object.profileUuid)
+        : isSet(object.profile_uuid)
+        ? globalThis.String(object.profile_uuid)
+        : "",
+    };
+  },
+
+  toJSON(message: MarkProfileURLUpdatedRequest): unknown {
+    const obj: any = {};
+    if (message.profileUuid !== "") {
+      obj.profileUuid = message.profileUuid;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MarkProfileURLUpdatedRequest>, I>>(base?: I): MarkProfileURLUpdatedRequest {
+    return MarkProfileURLUpdatedRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MarkProfileURLUpdatedRequest>, I>>(object: I): MarkProfileURLUpdatedRequest {
+    const message = createBaseMarkProfileURLUpdatedRequest();
+    message.profileUuid = object.profileUuid ?? "";
     return message;
   },
 };

@@ -31,6 +31,7 @@ import {
   ListUserAppsResponse,
   UpdateAppRequest,
 } from "./apps";
+import { GenericResponse } from "./common";
 import {
   Config,
   ConfigEntity,
@@ -138,6 +139,7 @@ import {
   ListUserProfilesResponse,
   ListUsersRequest,
   ListUsersResponse,
+  MarkProfileURLUpdatedRequest,
   SendVerificationCodeRequest,
   SendVerificationCodeResponse,
   SignUpRequest,
@@ -822,6 +824,23 @@ export const OpenAuthService = {
     responseDeserialize: (value: Buffer): GetProfileUploadURLResponse => GetProfileUploadURLResponse.decode(value),
   },
   /**
+   * MarkProfileURLUpdated marks a profile's image URL as updated.
+   *
+   * After uploading an image using the presigned URL, this endpoint should be called
+   * to update the profile's image URL in the system. This ensures that the new image
+   * is reflected in the user's profile and any associated metadata.
+   */
+  markProfileUrlUpdated: {
+    path: "/v1.OpenAuth/MarkProfileURLUpdated" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: MarkProfileURLUpdatedRequest): Buffer =>
+      Buffer.from(MarkProfileURLUpdatedRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): MarkProfileURLUpdatedRequest => MarkProfileURLUpdatedRequest.decode(value),
+    responseSerialize: (value: GenericResponse): Buffer => Buffer.from(GenericResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): GenericResponse => GenericResponse.decode(value),
+  },
+  /**
    * SignIn authenticates a user and creates a new session.
    *
    * Supports multiple login methods:
@@ -1456,6 +1475,14 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    * service. The returned URL is temporary and will expire after a short period.
    */
   getProfileUploadUrl: handleUnaryCall<GetProfileUploadURLRequest, GetProfileUploadURLResponse>;
+  /**
+   * MarkProfileURLUpdated marks a profile's image URL as updated.
+   *
+   * After uploading an image using the presigned URL, this endpoint should be called
+   * to update the profile's image URL in the system. This ensures that the new image
+   * is reflected in the user's profile and any associated metadata.
+   */
+  markProfileUrlUpdated: handleUnaryCall<MarkProfileURLUpdatedRequest, GenericResponse>;
   /**
    * SignIn authenticates a user and creates a new session.
    *
@@ -2408,6 +2435,28 @@ export interface OpenAuthClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: GetProfileUploadURLResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * MarkProfileURLUpdated marks a profile's image URL as updated.
+   *
+   * After uploading an image using the presigned URL, this endpoint should be called
+   * to update the profile's image URL in the system. This ensures that the new image
+   * is reflected in the user's profile and any associated metadata.
+   */
+  markProfileUrlUpdated(
+    request: MarkProfileURLUpdatedRequest,
+    callback: (error: ServiceError | null, response: GenericResponse) => void,
+  ): ClientUnaryCall;
+  markProfileUrlUpdated(
+    request: MarkProfileURLUpdatedRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GenericResponse) => void,
+  ): ClientUnaryCall;
+  markProfileUrlUpdated(
+    request: MarkProfileURLUpdatedRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GenericResponse) => void,
   ): ClientUnaryCall;
   /**
    * SignIn authenticates a user and creates a new session.

@@ -58,6 +58,7 @@ const (
 	OpenAuth_UpdateProfile_FullMethodName               = "/v1.OpenAuth/UpdateProfile"
 	OpenAuth_DeleteProfile_FullMethodName               = "/v1.OpenAuth/DeleteProfile"
 	OpenAuth_GetProfileUploadURL_FullMethodName         = "/v1.OpenAuth/GetProfileUploadURL"
+	OpenAuth_MarkProfileURLUpdated_FullMethodName       = "/v1.OpenAuth/MarkProfileURLUpdated"
 	OpenAuth_SignIn_FullMethodName                      = "/v1.OpenAuth/SignIn"
 	OpenAuth_SignInWithLoginToken_FullMethodName        = "/v1.OpenAuth/SignInWithLoginToken"
 	OpenAuth_GenerateLoginToken_FullMethodName          = "/v1.OpenAuth/GenerateLoginToken"
@@ -319,6 +320,12 @@ type OpenAuthClient interface {
 	// This URL can be used by the client to upload an image directly to the storage
 	// service. The returned URL is temporary and will expire after a short period.
 	GetProfileUploadURL(ctx context.Context, in *GetProfileUploadURLRequest, opts ...grpc.CallOption) (*GetProfileUploadURLResponse, error)
+	// MarkProfileURLUpdated marks a profile's image URL as updated.
+	//
+	// After uploading an image using the presigned URL, this endpoint should be called
+	// to update the profile's image URL in the system. This ensures that the new image
+	// is reflected in the user's profile and any associated metadata.
+	MarkProfileURLUpdated(ctx context.Context, in *MarkProfileURLUpdatedRequest, opts ...grpc.CallOption) (*GenericResponse, error)
 	// SignIn authenticates a user and creates a new session.
 	//
 	// Supports multiple login methods:
@@ -796,6 +803,16 @@ func (c *openAuthClient) GetProfileUploadURL(ctx context.Context, in *GetProfile
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProfileUploadURLResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_GetProfileUploadURL_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) MarkProfileURLUpdated(ctx context.Context, in *MarkProfileURLUpdatedRequest, opts ...grpc.CallOption) (*GenericResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GenericResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_MarkProfileURLUpdated_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1295,6 +1312,12 @@ type OpenAuthServer interface {
 	// This URL can be used by the client to upload an image directly to the storage
 	// service. The returned URL is temporary and will expire after a short period.
 	GetProfileUploadURL(context.Context, *GetProfileUploadURLRequest) (*GetProfileUploadURLResponse, error)
+	// MarkProfileURLUpdated marks a profile's image URL as updated.
+	//
+	// After uploading an image using the presigned URL, this endpoint should be called
+	// to update the profile's image URL in the system. This ensures that the new image
+	// is reflected in the user's profile and any associated metadata.
+	MarkProfileURLUpdated(context.Context, *MarkProfileURLUpdatedRequest) (*GenericResponse, error)
 	// SignIn authenticates a user and creates a new session.
 	//
 	// Supports multiple login methods:
@@ -1504,6 +1527,9 @@ func (UnimplementedOpenAuthServer) DeleteProfile(context.Context, *DeleteProfile
 }
 func (UnimplementedOpenAuthServer) GetProfileUploadURL(context.Context, *GetProfileUploadURLRequest) (*GetProfileUploadURLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfileUploadURL not implemented")
+}
+func (UnimplementedOpenAuthServer) MarkProfileURLUpdated(context.Context, *MarkProfileURLUpdatedRequest) (*GenericResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkProfileURLUpdated not implemented")
 }
 func (UnimplementedOpenAuthServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
@@ -2306,6 +2332,24 @@ func _OpenAuth_GetProfileUploadURL_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_MarkProfileURLUpdated_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkProfileURLUpdatedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).MarkProfileURLUpdated(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_MarkProfileURLUpdated_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).MarkProfileURLUpdated(ctx, req.(*MarkProfileURLUpdatedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OpenAuth_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SignInRequest)
 	if err := dec(in); err != nil {
@@ -2936,6 +2980,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProfileUploadURL",
 			Handler:    _OpenAuth_GetProfileUploadURL_Handler,
+		},
+		{
+			MethodName: "MarkProfileURLUpdated",
+			Handler:    _OpenAuth_MarkProfileURLUpdated_Handler,
 		},
 		{
 			MethodName: "SignIn",

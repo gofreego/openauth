@@ -14,6 +14,7 @@ import "proto/openauth/v1/permission_assignments.proto";
 import "proto/openauth/v1/stats.proto";
 import "proto/openauth/v1/configs.proto";
 import "proto/openauth/v1/apps.proto";
+import "proto/openauth/v1/common.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
@@ -746,6 +747,23 @@ service OpenAuth {
             tags: "Profile Management"
             summary: "Get profile image upload URL"
             description: "Generate a presigned URL for uploading a profile image."
+        };
+    }
+
+    // MarkProfileURLUpdated marks a profile's image URL as updated.
+    //
+    // After uploading an image using the presigned URL, this endpoint should be called
+    // to update the profile's image URL in the system. This ensures that the new image
+    // is reflected in the user's profile and any associated metadata.
+    rpc MarkProfileURLUpdated (MarkProfileURLUpdatedRequest) returns (GenericResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/profiles/mark-url-updated"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Profile Management"
+            summary: "Mark profile image URL as updated"
+            description: "Mark a profile's image URL as updated after uploading a new image."
         };
     }
 

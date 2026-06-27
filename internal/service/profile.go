@@ -358,3 +358,41 @@ func (s *Service) GetProfileUploadURL(ctx context.Context, req *openauth_v1.GetP
 		ExpiresIn: resp.GetExpiresIn(),
 	}, nil
 }
+
+func (s *Service) MarkProfileURLUpdated(ctx context.Context, req *openauth_v1.MarkProfileURLUpdatedRequest) (*openauth_v1.GenericResponse, error) {
+	// Validate request using generated validation
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "Mark profile URL updated failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
+	// Get current user ID from context
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+
+	// Get existing profile to verify ownership
+	profile, err := s.repo.GetProfileByUUID(ctx, req.ProfileUuid)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "profile not found")
+	}
+
+	// check for permissions
+	if !claims.HasPermission(constants.PermissionProfilesUpdate) && claims.UserID != profile.UserID {
+		logger.Warn(ctx, "userID=%d does not have permission to update profiles", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to mark profile URL updated")
+	}
+
+	// Update the profile's avatar_url_updated_at field
+	err = s.repo.UpdateProfileURLKey(ctx, req.ProfileUuid)
+	if err != nil {
+		logger.Error(ctx, "Failed to mark profile URL updated for profile UUID %s: %v", req.ProfileUuid, err)
+		return nil, status.Error(codes.Internal, "failed to mark profile URL updated")
+	}
+
+	return &openauth_v1.GenericResponse{
+		Message: "Profile URL marked as updated successfully",
+	}, nil
+}
