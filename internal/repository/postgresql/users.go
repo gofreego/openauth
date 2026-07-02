@@ -328,6 +328,14 @@ func (r *Repository) CheckEmailExists(ctx context.Context, email string) (bool, 
 	return exists, err
 }
 
+// CheckPhoneExists checks if a phone number already exists
+func (r *Repository) CheckPhoneExists(ctx context.Context, phone string) (bool, error) {
+	query := "SELECT EXISTS(SELECT 1 FROM users WHERE phone = $1)"
+	var exists bool
+	err := r.connManager.Primary().QueryRowContext(ctx, query, phone).Scan(&exists)
+	return exists, err
+}
+
 // Verification methods
 
 // CreateOTPVerification creates a new OTP verification record

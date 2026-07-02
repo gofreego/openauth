@@ -400,10 +400,12 @@ func (x *UserProfile) GetUpdatedAt() int64 {
 	return 0
 }
 
-// SignUpRequest for user registration - only authentication credentials
+// SignUpRequest for user registration - only authentication credentials.
+// At least one of username, email, or phone must be provided; if username
+// is omitted, one is generated automatically from the email or phone.
 type SignUpRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Username      *string                `protobuf:"bytes,1,opt,name=username,proto3,oneof" json:"username,omitempty"`
 	Email         *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	Phone         *string                `protobuf:"bytes,3,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
 	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
@@ -443,8 +445,8 @@ func (*SignUpRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *SignUpRequest) GetUsername() string {
-	if x != nil {
-		return x.Username
+	if x != nil && x.Username != nil {
+		return *x.Username
 	}
 	return ""
 }
@@ -2533,14 +2535,15 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\n" +
 	"\b_addressB\x0e\n" +
 	"\f_postal_codeB\x0e\n" +
-	"\f_website_url\"\x8a\x02\n" +
-	"\rSignUpRequest\x128\n" +
-	"\busername\x18\x01 \x01(\tB\x1c\xfaB\x19r\x17\x10\x03\x1822\x11^[a-zA-Z0-9_.-]+$R\busername\x12\"\n" +
-	"\x05email\x18\x02 \x01(\tB\a\xfaB\x04r\x02`\x01H\x00R\x05email\x88\x01\x01\x124\n" +
-	"\x05phone\x18\x03 \x01(\tB\x19\xfaB\x16r\x142\x12^\\+?[1-9]\\d{1,22}$H\x01R\x05phone\x88\x01\x01\x12&\n" +
+	"\f_website_url\"\x9c\x02\n" +
+	"\rSignUpRequest\x12=\n" +
+	"\busername\x18\x01 \x01(\tB\x1c\xfaB\x19r\x17\x10\x03\x1822\x11^[a-zA-Z0-9_.-]+$H\x00R\busername\x88\x01\x01\x12\"\n" +
+	"\x05email\x18\x02 \x01(\tB\a\xfaB\x04r\x02`\x01H\x01R\x05email\x88\x01\x01\x124\n" +
+	"\x05phone\x18\x03 \x01(\tB\x19\xfaB\x16r\x142\x12^\\+?[1-9]\\d{1,22}$H\x02R\x05phone\x88\x01\x01\x12&\n" +
 	"\bpassword\x18\x04 \x01(\tB\n" +
 	"\xfaB\ar\x05\x10\b\x18\x80\x01R\bpassword\x12 \n" +
-	"\x04name\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18dH\x02R\x04name\x88\x01\x01B\b\n" +
+	"\x04name\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18dH\x03R\x04name\x88\x01\x01B\v\n" +
+	"\t_usernameB\b\n" +
 	"\x06_emailB\b\n" +
 	"\x06_phoneB\a\n" +
 	"\x05_name\"\xc8\x01\n" +

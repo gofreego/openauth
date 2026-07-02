@@ -1924,6 +1924,7 @@
         "parameters": [
           {
             "name": "body",
+            "description": "SignUpRequest for user registration - only authentication credentials.\nAt least one of username, email, or phone must be provided; if username\nis omitted, one is generated automatically from the email or phone.",
             "in": "body",
             "required": true,
             "schema": {
@@ -4290,7 +4291,7 @@
           "type": "string"
         }
       },
-      "title": "SignUpRequest for user registration - only authentication credentials"
+      "description": "SignUpRequest for user registration - only authentication credentials.\nAt least one of username, email, or phone must be provided; if username\nis omitted, one is generated automatically from the email or phone."
     },
     "v1SignUpResponse": {
       "type": "object",

@@ -68,9 +68,13 @@ export interface UserProfile {
   updatedAt: string;
 }
 
-/** SignUpRequest for user registration - only authentication credentials */
+/**
+ * SignUpRequest for user registration - only authentication credentials.
+ * At least one of username, email, or phone must be provided; if username
+ * is omitted, one is generated automatically from the email or phone.
+ */
 export interface SignUpRequest {
-  username: string;
+  username?: string | undefined;
   email?: string | undefined;
   phone?: string | undefined;
   password: string;
@@ -1141,12 +1145,12 @@ export const UserProfile: MessageFns<UserProfile> = {
 };
 
 function createBaseSignUpRequest(): SignUpRequest {
-  return { username: "", email: undefined, phone: undefined, password: "", name: undefined };
+  return { username: undefined, email: undefined, phone: undefined, password: "", name: undefined };
 }
 
 export const SignUpRequest: MessageFns<SignUpRequest> = {
   encode(message: SignUpRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.username !== "") {
+    if (message.username !== undefined) {
       writer.uint32(10).string(message.username);
     }
     if (message.email !== undefined) {
@@ -1222,7 +1226,7 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
 
   fromJSON(object: any): SignUpRequest {
     return {
-      username: isSet(object.username) ? globalThis.String(object.username) : "",
+      username: isSet(object.username) ? globalThis.String(object.username) : undefined,
       email: isSet(object.email) ? globalThis.String(object.email) : undefined,
       phone: isSet(object.phone) ? globalThis.String(object.phone) : undefined,
       password: isSet(object.password) ? globalThis.String(object.password) : "",
@@ -1232,7 +1236,7 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
 
   toJSON(message: SignUpRequest): unknown {
     const obj: any = {};
-    if (message.username !== "") {
+    if (message.username !== undefined) {
       obj.username = message.username;
     }
     if (message.email !== undefined) {
@@ -1255,7 +1259,7 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
   },
   fromPartial<I extends Exact<DeepPartial<SignUpRequest>, I>>(object: I): SignUpRequest {
     const message = createBaseSignUpRequest();
-    message.username = object.username ?? "";
+    message.username = object.username ?? undefined;
     message.email = object.email ?? undefined;
     message.phone = object.phone ?? undefined;
     message.password = object.password ?? "";

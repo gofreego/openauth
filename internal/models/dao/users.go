@@ -61,10 +61,10 @@ func (u *User) ToProtoGroupUser(assignedAt int64) *openauth_v1.GroupUser {
 	}
 }
 
-func (u *User) FromSignUpRequest(req *openauth_v1.SignUpRequest, hashedPassword string) *User {
+func (u *User) FromSignUpRequest(req *openauth_v1.SignUpRequest, username string, hashedPassword string) *User {
 	now := time.Now().UnixMilli()
 	u.UUID = uuid.New()
-	u.Username = req.Username
+	u.Username = username
 	u.Email = req.Email
 	u.Phone = req.Phone
 	u.Name = req.Name

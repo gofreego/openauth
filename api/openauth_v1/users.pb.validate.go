@@ -370,28 +370,6 @@ func (m *SignUpRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 50 {
-		err := SignUpRequestValidationError{
-			field:  "Username",
-			reason: "value length must be between 3 and 50 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if !_SignUpRequest_Username_Pattern.MatchString(m.GetUsername()) {
-		err := SignUpRequestValidationError{
-			field:  "Username",
-			reason: "value does not match regex pattern \"^[a-zA-Z0-9_.-]+$\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if l := utf8.RuneCountInString(m.GetPassword()); l < 8 || l > 128 {
 		err := SignUpRequestValidationError{
 			field:  "Password",
@@ -401,6 +379,32 @@ func (m *SignUpRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.Username != nil {
+
+		if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 50 {
+			err := SignUpRequestValidationError{
+				field:  "Username",
+				reason: "value length must be between 3 and 50 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_SignUpRequest_Username_Pattern.MatchString(m.GetUsername()) {
+			err := SignUpRequestValidationError{
+				field:  "Username",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_.-]+$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Email != nil {

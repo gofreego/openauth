@@ -127,6 +127,7 @@ type Repository interface {
 	ListUsers(ctx context.Context, filters *filter.UserFilter) ([]*dao.User, error)
 	CheckUsernameExists(ctx context.Context, username string) (bool, error)
 	CheckEmailExists(ctx context.Context, email string) (bool, error)
+	CheckPhoneExists(ctx context.Context, phone string) (bool, error)
 
 	// Profile management methods
 	ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, error)

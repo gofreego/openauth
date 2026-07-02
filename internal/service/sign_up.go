@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/gofreego/goutils/logger"
@@ -18,9 +20,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// SignUp creates a new user account in the system
+// SignUp creates a new user account in the system. At least one of
+// username, email, or phone must be provided; if username is omitted, one
+// is generated automatically from the email or phone so the signup form
+// can ask for as little as a single identifier plus a password.
 func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*openauth_v1.SignUpResponse, error) {
-	logger.Info(ctx, "Sign-up request initiated for username: %s", req.Username)
+	logger.Info(ctx, "Sign-up request initiated for username: %s", req.GetUsername())
 
 	// Validate request using generated validation
 	if err := req.Validate(); err != nil {
@@ -28,19 +33,42 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
 	}
 
-	// Check if username already exists
-	usernameExists, err := s.repo.CheckUsernameExists(ctx, req.Username)
-	if err != nil {
-		logger.Error(ctx, "Failed to check username availability for %s: %v", req.Username, err)
-		return nil, status.Error(codes.Internal, "failed to check username availability")
+	hasUsername := req.Username != nil && strings.TrimSpace(*req.Username) != ""
+	hasEmail := req.Email != nil && strings.TrimSpace(*req.Email) != ""
+	hasPhone := req.Phone != nil && strings.TrimSpace(*req.Phone) != ""
+
+	if !hasUsername && !hasEmail && !hasPhone {
+		logger.Warn(ctx, "Sign-up failed: none of username, email, or phone were provided")
+		return nil, status.Error(codes.InvalidArgument, "at least one of username, email, or phone is required")
 	}
-	if usernameExists {
-		logger.Warn(ctx, "Sign-up failed: username already exists: %s", req.Username)
-		return nil, status.Error(codes.AlreadyExists, "username already exists")
+
+	// Resolve the username to store: the one supplied, or one generated
+	// from the email/phone when the caller only gave one of those.
+	var username string
+	if hasUsername {
+		username = strings.TrimSpace(*req.Username)
+
+		usernameExists, err := s.repo.CheckUsernameExists(ctx, username)
+		if err != nil {
+			logger.Error(ctx, "Failed to check username availability for %s: %v", username, err)
+			return nil, status.Error(codes.Internal, "failed to check username availability")
+		}
+		if usernameExists {
+			logger.Warn(ctx, "Sign-up failed: username already exists: %s", username)
+			return nil, status.Error(codes.AlreadyExists, "username already exists")
+		}
+	} else {
+		generated, err := s.generateUniqueUsername(ctx, req)
+		if err != nil {
+			logger.Error(ctx, "Failed to generate a username: %v", err)
+			return nil, status.Error(codes.Internal, "failed to generate a username")
+		}
+		username = generated
+		logger.Debug(ctx, "Generated username %s for sign-up without an explicit username", username)
 	}
 
 	// Check if email already exists (if provided)
-	if req.Email != nil && *req.Email != "" {
+	if hasEmail {
 		emailExists, err := s.repo.CheckEmailExists(ctx, *req.Email)
 		if err != nil {
 			logger.Error(ctx, "Failed to check email availability for %s: %v", *req.Email, err)
@@ -52,23 +80,36 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 		}
 	}
 
+	// Check if phone already exists (if provided)
+	if hasPhone {
+		phoneExists, err := s.repo.CheckPhoneExists(ctx, *req.Phone)
+		if err != nil {
+			logger.Error(ctx, "Failed to check phone availability for %s: %v", *req.Phone, err)
+			return nil, status.Error(codes.Internal, "failed to check phone availability")
+		}
+		if phoneExists {
+			logger.Warn(ctx, "Sign-up failed: phone already exists: %s", *req.Phone)
+			return nil, status.Error(codes.AlreadyExists, "phone already exists")
+		}
+	}
+
 	// Hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.cfg.Security.BcryptCost)
 	if err != nil {
-		logger.Error(ctx, "Failed to hash password for username %s: %v", req.Username, err)
+		logger.Error(ctx, "Failed to hash password for username %s: %v", username, err)
 		return nil, status.Error(codes.Internal, "failed to hash password")
 	}
 
 	userUUID := uuid.New()
 
-	logger.Debug(ctx, "Creating user record for username: %s, userUUID: %s", req.Username, userUUID.String())
+	logger.Debug(ctx, "Creating user record for username: %s, userUUID: %s", username, userUUID.String())
 
-	user := new(dao.User).FromSignUpRequest(req, string(hashedPassword))
+	user := new(dao.User).FromSignUpRequest(req, username, string(hashedPassword))
 
 	// Create user in database
 	createdUser, err := s.repo.CreateUser(ctx, user)
 	if err != nil {
-		logger.Error(ctx, "Failed to create user in database for username %s: %v", req.Username, err)
+		logger.Error(ctx, "Failed to create user in database for username %s: %v", username, err)
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
 
@@ -262,13 +303,26 @@ func (s *Service) SendVerificationCode(ctx context.Context, req *openauth_v1.Sen
 	}, nil
 }
 
-// CheckUsername checks if a username is available for registration
+// CheckUsername checks if a username, email, or phone number is available for
+// registration. The identifier's type is auto-detected since the "username"
+// field on the signup form doubles as an email/phone/username login field.
 func (s *Service) CheckUsername(ctx context.Context, req *openauth_v1.CheckUsernameRequest) (*openauth_v1.CheckUsernameResponse, error) {
 	if req.Username == "" {
 		return nil, status.Error(codes.InvalidArgument, "username is required")
 	}
 
-	exists, err := s.repo.CheckUsernameExists(ctx, req.Username)
+	identifierType := utils.DetectIdentifierType(req.Username)
+
+	var exists bool
+	var err error
+	switch identifierType {
+	case utils.IdentifierTypeEmail:
+		exists, err = s.repo.CheckEmailExists(ctx, req.Username)
+	case utils.IdentifierTypePhone:
+		exists, err = s.repo.CheckPhoneExists(ctx, req.Username)
+	default:
+		exists, err = s.repo.CheckUsernameExists(ctx, req.Username)
+	}
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to check username availability")
 	}
@@ -278,10 +332,24 @@ func (s *Service) CheckUsername(ctx context.Context, req *openauth_v1.CheckUsern
 	}
 
 	if exists {
-		response.Message = "Username is already taken"
-		response.Suggestions = s.generateUsernameSuggestions(req.Username)
+		switch identifierType {
+		case utils.IdentifierTypeEmail:
+			response.Message = "Email is already registered"
+		case utils.IdentifierTypePhone:
+			response.Message = "Phone number is already registered"
+		default:
+			response.Message = "Username is already taken"
+			response.Suggestions = s.generateUsernameSuggestions(req.Username)
+		}
 	} else {
-		response.Message = "Username is available"
+		switch identifierType {
+		case utils.IdentifierTypeEmail:
+			response.Message = "Email is available"
+		case utils.IdentifierTypePhone:
+			response.Message = "Phone number is available"
+		default:
+			response.Message = "Username is available"
+		}
 	}
 
 	return response, nil
@@ -446,6 +514,81 @@ func (s *Service) generateVerificationCode() (string, error) {
 		return "", err
 	}
 	return fmt.Sprintf("%06d", n.Add(n, min).Int64()), nil
+}
+
+var usernameDisallowedCharsRegex = regexp.MustCompile(`[^a-zA-Z0-9_.-]`)
+
+const (
+	maxUsernameLen           = 50
+	generatedUsernameSuffix  = 4 // digits appended to disambiguate a generated username
+	maxUsernameBaseLen       = maxUsernameLen - generatedUsernameSuffix
+	maxUsernameGenAttempts   = 10
+	minUsernameLen           = 3
+	fallbackUsernameBaseWord = "user"
+)
+
+// generateUniqueUsername derives a username from the signup request's email
+// or phone (since no explicit username was provided) and appends random
+// digits until it finds one that isn't already taken.
+func (s *Service) generateUniqueUsername(ctx context.Context, req *openauth_v1.SignUpRequest) (string, error) {
+	var base string
+	switch {
+	case req.Email != nil && strings.TrimSpace(*req.Email) != "":
+		base = strings.SplitN(strings.TrimSpace(*req.Email), "@", 2)[0]
+	case req.Phone != nil && strings.TrimSpace(*req.Phone) != "":
+		base = strings.TrimPrefix(strings.TrimSpace(*req.Phone), "+")
+	default:
+		base = fallbackUsernameBaseWord
+	}
+
+	base = sanitizeUsernameBase(base)
+
+	for attempt := 0; attempt < maxUsernameGenAttempts; attempt++ {
+		candidate := base
+		if attempt > 0 {
+			suffix, err := generateDigitString(generatedUsernameSuffix)
+			if err != nil {
+				return "", err
+			}
+			candidate = base + suffix
+		}
+
+		exists, err := s.repo.CheckUsernameExists(ctx, candidate)
+		if err != nil {
+			return "", err
+		}
+		if !exists {
+			return candidate, nil
+		}
+	}
+
+	return "", fmt.Errorf("could not find an available username after %d attempts", maxUsernameGenAttempts)
+}
+
+// sanitizeUsernameBase strips characters the username pattern disallows and
+// clamps the length so a random suffix can still fit under the max length.
+func sanitizeUsernameBase(base string) string {
+	cleaned := usernameDisallowedCharsRegex.ReplaceAllString(base, "")
+	if len(cleaned) > maxUsernameBaseLen {
+		cleaned = cleaned[:maxUsernameBaseLen]
+	}
+	if len(cleaned) < minUsernameLen {
+		cleaned = fallbackUsernameBaseWord + cleaned
+	}
+	return cleaned
+}
+
+// generateDigitString returns a random string of n decimal digits.
+func generateDigitString(n int) (string, error) {
+	digits := make([]byte, n)
+	for i := range digits {
+		d, err := rand.Int(rand.Reader, big.NewInt(10))
+		if err != nil {
+			return "", err
+		}
+		digits[i] = byte('0' + d.Int64())
+	}
+	return string(digits), nil
 }
 
 func (s *Service) generateUsernameSuggestions(username string) []string {
