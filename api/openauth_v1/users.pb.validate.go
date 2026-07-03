@@ -4525,17 +4525,6 @@ func (m *ChangePasswordRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetUuid()); l < 1 || l > 36 {
-		err := ChangePasswordRequestValidationError{
-			field:  "Uuid",
-			reason: "value length must be between 1 and 36 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if l := utf8.RuneCountInString(m.GetCurrentPassword()); l < 1 || l > 128 {
 		err := ChangePasswordRequestValidationError{
 			field:  "CurrentPassword",

@@ -26,7 +26,7 @@ var File_proto_openauth_v1_openauth_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\n" +
-	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a proto/openauth_common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto\x1a\x1fproto/openauth/v1/configs.proto\x1a\x1cproto/openauth/v1/apps.proto\x1a\x1eproto/openauth/v1/common.proto2\xefj\n" +
+	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a proto/openauth_common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto\x1a\x1fproto/openauth/v1/configs.proto\x1a\x1cproto/openauth/v1/apps.proto\x1a\x1eproto/openauth/v1/common.proto2\xe7j\n" +
 	"\bOpenAuth\x12\x81\x01\n" +
 	"\x04Ping\x12\x11.v1.OOPingRequest\x1a\x12.v1.OOPingResponse\"R\x92A6\n" +
 	"\x04Ping\x12\x0fPing the server\x1a\x1dCheck if the server is alive.\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/ping\x12\xd7\x01\n" +
@@ -93,9 +93,9 @@ const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\x0fUser Management\x12\x0eGet user by ID\x1a:Retrieve user information by ID, UUID, username, or email.\x82\xd3\xe4\x93\x02\x1b\x12\x19/openauth/v1/users/{uuid}\x12\xbc\x01\n" +
 	"\n" +
 	"UpdateUser\x12\x15.v1.UpdateUserRequest\x1a\x16.v1.UpdateUserResponse\"\x7f\x92AX\n" +
-	"\x0fUser Management\x12\x17Update user information\x1a,Modify user account and profile information.\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/openauth/v1/users/{uuid}\x12\xcf\x01\n" +
-	"\x0eChangePassword\x12\x19.v1.ChangePasswordRequest\x1a\x1a.v1.ChangePasswordResponse\"\x85\x01\x92AN\n" +
-	"\x0fUser Management\x12\x14Change user password\x1a%Allow users to change their password.\x82\xd3\xe4\x93\x02.:\x01*\")/openauth/v1/users/{uuid}/change-password\x12\xad\x01\n" +
+	"\x0fUser Management\x12\x17Update user information\x1a,Modify user account and profile information.\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/openauth/v1/users/{uuid}\x12\xc7\x01\n" +
+	"\x0eChangePassword\x12\x19.v1.ChangePasswordRequest\x1a\x1a.v1.ChangePasswordResponse\"~\x92AN\n" +
+	"\x0fUser Management\x12\x14Change user password\x1a%Allow users to change their password.\x82\xd3\xe4\x93\x02':\x01*\"\"/openauth/v1/users/change-password\x12\xad\x01\n" +
 	"\tListUsers\x12\x14.v1.ListUsersRequest\x1a\x15.v1.ListUsersResponse\"s\x92AV\n" +
 	"\x0fUser Management\x12\n" +
 	"List users\x1a7Retrieve users with filtering, sorting, and pagination.\x82\xd3\xe4\x93\x02\x14\x12\x12/openauth/v1/users\x12\xad\x01\n" +

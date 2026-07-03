@@ -2130,10 +2130,10 @@ func (x *UpdateUserResponse) GetUser() *User {
 	return nil
 }
 
-// ChangePasswordRequest to change user password
+// ChangePasswordRequest to change user password.
+// The target user is derived from the authenticated caller's JWT, not from the request.
 type ChangePasswordRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Uuid            string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
 	CurrentPassword string                 `protobuf:"bytes,2,opt,name=current_password,json=currentPassword,proto3" json:"current_password,omitempty"`
 	NewPassword     string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -2168,13 +2168,6 @@ func (x *ChangePasswordRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ChangePasswordRequest.ProtoReflect.Descriptor instead.
 func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
 	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{28}
-}
-
-func (x *ChangePasswordRequest) GetUuid() string {
-	if x != nil {
-		return x.Uuid
-	}
-	return ""
 }
 
 func (x *ChangePasswordRequest) GetCurrentPassword() string {
@@ -2726,13 +2719,12 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x05_nameB\r\n" +
 	"\v_avatar_url\"2\n" +
 	"\x12UpdateUserResponse\x12\x1c\n" +
-	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\"\x9c\x01\n" +
-	"\x15ChangePasswordRequest\x12\x1d\n" +
-	"\x04uuid\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18$R\x04uuid\x125\n" +
+	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\"\x89\x01\n" +
+	"\x15ChangePasswordRequest\x125\n" +
 	"\x10current_password\x18\x02 \x01(\tB\n" +
 	"\xfaB\ar\x05\x10\x01\x18\x80\x01R\x0fcurrentPassword\x12-\n" +
 	"\fnew_password\x18\x03 \x01(\tB\n" +
-	"\xfaB\ar\x05\x10\b\x18\x80\x01R\vnewPassword\"L\n" +
+	"\xfaB\ar\x05\x10\b\x18\x80\x01R\vnewPasswordJ\x04\b\x01\x10\x02R\x04uuid\"L\n" +
 	"\x16ChangePasswordResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"r\n" +

@@ -13,6 +13,7 @@ import (
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/gofreego/openauth/internal/models/dao"
 	communicationservice "github.com/gofreego/openauth/pkg/clients/communication-service"
+	"github.com/gofreego/openauth/pkg/jwtutils"
 	"github.com/gofreego/openauth/pkg/utils"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -379,10 +380,13 @@ func (s *Service) CheckEmail(ctx context.Context, req *openauth_v1.CheckEmailReq
 	return response, nil
 }
 
-// ChangePassword allows users to change their password
+// ChangePassword allows the authenticated caller to change their own password.
+// The target user is derived from the JWT in context, never from the request.
 func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePasswordRequest) (*openauth_v1.ChangePasswordResponse, error) {
-	if req.Uuid == "" {
-		return nil, status.Error(codes.InvalidArgument, "uuid is required")
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "ChangePassword failed: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
 	}
 	if req.CurrentPassword == "" {
 		return nil, status.Error(codes.InvalidArgument, "current password is required")
@@ -392,7 +396,7 @@ func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePas
 	}
 
 	// Get user
-	user, err := s.repo.GetUserByUUID(ctx, req.Uuid)
+	user, err := s.repo.GetUserByUUID(ctx, claims.UserUUID)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "user not found")
 	}

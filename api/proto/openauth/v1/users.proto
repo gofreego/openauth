@@ -333,12 +333,12 @@ message UpdateUserResponse {
     User user = 1;
 }
 
-// ChangePasswordRequest to change user password
+// ChangePasswordRequest to change user password.
+// The target user is derived from the authenticated caller's JWT, not from the request.
 message ChangePasswordRequest {
-    string uuid = 1 [(validate.rules).string = {
-        min_len: 1,
-        max_len: 36
-    }];
+    reserved 1;
+    reserved "uuid";
+
     string current_password = 2 [(validate.rules).string = {
         min_len: 1,
         max_len: 128

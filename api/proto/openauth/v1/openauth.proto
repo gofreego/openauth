@@ -615,13 +615,14 @@ service OpenAuth {
         };
     }
 
-    // ChangePassword allows users to change their password.
-    // 
+    // ChangePassword allows the authenticated caller to change their own password.
+    //
     // Requires the current password for verification and the new password.
+    // The target user is derived from the caller's JWT, not from the request.
     // Triggers password change tracking and may invalidate existing sessions.
     rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
         option (google.api.http) = {
-            post: "/openauth/v1/users/{uuid}/change-password"
+            post: "/openauth/v1/users/change-password"
             body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

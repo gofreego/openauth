@@ -1252,21 +1252,12 @@ func request_OpenAuth_ChangePassword_0(ctx context.Context, marshaler runtime.Ma
 	var (
 		protoReq ChangePasswordRequest
 		metadata runtime.ServerMetadata
-		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
-	}
-	val, ok := pathParams["uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
-	}
-	protoReq.Uuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
 	}
 	msg, err := client.ChangePassword(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -1276,18 +1267,9 @@ func local_request_OpenAuth_ChangePassword_0(ctx context.Context, marshaler runt
 	var (
 		protoReq ChangePasswordRequest
 		metadata runtime.ServerMetadata
-		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	val, ok := pathParams["uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
-	}
-	protoReq.Uuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
 	}
 	msg, err := server.ChangePassword(ctx, &protoReq)
 	return msg, metadata, err
@@ -3185,7 +3167,7 @@ func RegisterOpenAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/ChangePassword", runtime.WithHTTPPathPattern("/openauth/v1/users/{uuid}/change-password"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/v1.OpenAuth/ChangePassword", runtime.WithHTTPPathPattern("/openauth/v1/users/change-password"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4450,7 +4432,7 @@ func RegisterOpenAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/ChangePassword", runtime.WithHTTPPathPattern("/openauth/v1/users/{uuid}/change-password"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/v1.OpenAuth/ChangePassword", runtime.WithHTTPPathPattern("/openauth/v1/users/change-password"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5076,7 +5058,7 @@ var (
 	pattern_OpenAuth_CheckEmail_0                  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"openauth", "v1", "users", "check-email", "email"}, ""))
 	pattern_OpenAuth_GetUser_0                     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "users", "uuid"}, ""))
 	pattern_OpenAuth_UpdateUser_0                  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "users", "uuid"}, ""))
-	pattern_OpenAuth_ChangePassword_0              = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "uuid", "change-password"}, ""))
+	pattern_OpenAuth_ChangePassword_0              = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"openauth", "v1", "users", "change-password"}, ""))
 	pattern_OpenAuth_ListUsers_0                   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"openauth", "v1", "users"}, ""))
 	pattern_OpenAuth_DeleteUser_0                  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"openauth", "v1", "users", "uuid"}, ""))
 	pattern_OpenAuth_CreateProfile_0               = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"openauth", "v1", "users", "user_id", "profiles"}, ""))

@@ -688,9 +688,10 @@ export const OpenAuthService = {
     responseDeserialize: (value: Buffer): UpdateUserResponse => UpdateUserResponse.decode(value),
   },
   /**
-   * ChangePassword allows users to change their password.
+   * ChangePassword allows the authenticated caller to change their own password.
    *
    * Requires the current password for verification and the new password.
+   * The target user is derived from the caller's JWT, not from the request.
    * Triggers password change tracking and may invalidate existing sessions.
    */
   changePassword: {
@@ -1413,9 +1414,10 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    */
   updateUser: handleUnaryCall<UpdateUserRequest, UpdateUserResponse>;
   /**
-   * ChangePassword allows users to change their password.
+   * ChangePassword allows the authenticated caller to change their own password.
    *
    * Requires the current password for verification and the new password.
+   * The target user is derived from the caller's JWT, not from the request.
    * Triggers password change tracking and may invalidate existing sessions.
    */
   changePassword: handleUnaryCall<ChangePasswordRequest, ChangePasswordResponse>;
@@ -2262,9 +2264,10 @@ export interface OpenAuthClient extends Client {
     callback: (error: ServiceError | null, response: UpdateUserResponse) => void,
   ): ClientUnaryCall;
   /**
-   * ChangePassword allows users to change their password.
+   * ChangePassword allows the authenticated caller to change their own password.
    *
    * Requires the current password for verification and the new password.
+   * The target user is derived from the caller's JWT, not from the request.
    * Triggers password change tracking and may invalidate existing sessions.
    */
   changePassword(

@@ -273,9 +273,10 @@ type OpenAuthClient interface {
 	// Sensitive operations like email/phone changes may require
 	// additional verification steps.
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	// ChangePassword allows users to change their password.
+	// ChangePassword allows the authenticated caller to change their own password.
 	//
 	// Requires the current password for verification and the new password.
+	// The target user is derived from the caller's JWT, not from the request.
 	// Triggers password change tracking and may invalidate existing sessions.
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	// ListUsers retrieves users with filtering, sorting, and pagination.
@@ -1265,9 +1266,10 @@ type OpenAuthServer interface {
 	// Sensitive operations like email/phone changes may require
 	// additional verification steps.
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	// ChangePassword allows users to change their password.
+	// ChangePassword allows the authenticated caller to change their own password.
 	//
 	// Requires the current password for verification and the new password.
+	// The target user is derived from the caller's JWT, not from the request.
 	// Triggers password change tracking and may invalidate existing sessions.
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	// ListUsers retrieves users with filtering, sorting, and pagination.

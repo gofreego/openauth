@@ -286,9 +286,11 @@ export interface UpdateUserResponse {
   user: User | undefined;
 }
 
-/** ChangePasswordRequest to change user password */
+/**
+ * ChangePasswordRequest to change user password.
+ * The target user is derived from the authenticated caller's JWT, not from the request.
+ */
 export interface ChangePasswordRequest {
-  uuid: string;
   currentPassword: string;
   newPassword: string;
 }
@@ -4056,14 +4058,11 @@ export const UpdateUserResponse: MessageFns<UpdateUserResponse> = {
 };
 
 function createBaseChangePasswordRequest(): ChangePasswordRequest {
-  return { uuid: "", currentPassword: "", newPassword: "" };
+  return { currentPassword: "", newPassword: "" };
 }
 
 export const ChangePasswordRequest: MessageFns<ChangePasswordRequest> = {
   encode(message: ChangePasswordRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.uuid !== "") {
-      writer.uint32(10).string(message.uuid);
-    }
     if (message.currentPassword !== "") {
       writer.uint32(18).string(message.currentPassword);
     }
@@ -4080,14 +4079,6 @@ export const ChangePasswordRequest: MessageFns<ChangePasswordRequest> = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.uuid = reader.string();
-          continue;
-        }
         case 2: {
           if (tag !== 18) {
             break;
@@ -4115,7 +4106,6 @@ export const ChangePasswordRequest: MessageFns<ChangePasswordRequest> = {
 
   fromJSON(object: any): ChangePasswordRequest {
     return {
-      uuid: isSet(object.uuid) ? globalThis.String(object.uuid) : "",
       currentPassword: isSet(object.currentPassword)
         ? globalThis.String(object.currentPassword)
         : isSet(object.current_password)
@@ -4131,9 +4121,6 @@ export const ChangePasswordRequest: MessageFns<ChangePasswordRequest> = {
 
   toJSON(message: ChangePasswordRequest): unknown {
     const obj: any = {};
-    if (message.uuid !== "") {
-      obj.uuid = message.uuid;
-    }
     if (message.currentPassword !== "") {
       obj.currentPassword = message.currentPassword;
     }
@@ -4148,7 +4135,6 @@ export const ChangePasswordRequest: MessageFns<ChangePasswordRequest> = {
   },
   fromPartial<I extends Exact<DeepPartial<ChangePasswordRequest>, I>>(object: I): ChangePasswordRequest {
     const message = createBaseChangePasswordRequest();
-    message.uuid = object.uuid ?? "";
     message.currentPassword = object.currentPassword ?? "";
     message.newPassword = object.newPassword ?? "";
     return message;

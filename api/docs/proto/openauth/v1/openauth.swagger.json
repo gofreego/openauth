@@ -1804,6 +1804,41 @@
         ]
       }
     },
+    "/openauth/v1/users/change-password": {
+      "post": {
+        "summary": "Change user password",
+        "description": "Allow users to change their password.",
+        "operationId": "OpenAuth_ChangePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "ChangePasswordRequest to change user password.\nThe target user is derived from the authenticated caller's JWT, not from the request.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ChangePasswordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "User Management"
+        ]
+      }
+    },
     "/openauth/v1/users/check-email/{email}": {
       "get": {
         "summary": "Check email availability",
@@ -2551,46 +2586,6 @@
           "User Management"
         ]
       }
-    },
-    "/openauth/v1/users/{uuid}/change-password": {
-      "post": {
-        "summary": "Change user password",
-        "description": "Allow users to change their password.",
-        "operationId": "OpenAuth_ChangePassword",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ChangePasswordResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/OpenAuthChangePasswordBody"
-            }
-          }
-        ],
-        "tags": [
-          "User Management"
-        ]
-      }
     }
   },
   "definitions": {
@@ -2657,18 +2652,6 @@
         }
       },
       "title": "AssignUsersToGroupRequest to add users to a group"
-    },
-    "OpenAuthChangePasswordBody": {
-      "type": "object",
-      "properties": {
-        "currentPassword": {
-          "type": "string"
-        },
-        "newPassword": {
-          "type": "string"
-        }
-      },
-      "title": "ChangePasswordRequest to change user password"
     },
     "OpenAuthCreateProfileBody": {
       "type": "object",
@@ -3075,6 +3058,18 @@
         }
       },
       "title": "AssignUsersToGroupResponse"
+    },
+    "v1ChangePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "currentPassword": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      },
+      "description": "ChangePasswordRequest to change user password.\nThe target user is derived from the authenticated caller's JWT, not from the request."
     },
     "v1ChangePasswordResponse": {
       "type": "object",
