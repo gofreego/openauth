@@ -22,19 +22,19 @@ var (
 	path string
 )
 
-//go:embed all:adminv2/dist
-var adminV2Dist embed.FS
+//go:embed all:admin/dist
+var adminDist embed.FS
 
-func getAdminV2UIHandler() http.Handler {
-	fsys, err := fs.Sub(adminV2Dist, "adminv2/dist")
+func getAdminUIHandler() http.Handler {
+	fsys, err := fs.Sub(adminDist, "admin/dist")
 	if err != nil {
 		panic(err)
 	}
-	indexHTML, err := fs.ReadFile(adminV2Dist, "adminv2/dist/index.html")
+	indexHTML, err := fs.ReadFile(adminDist, "admin/dist/index.html")
 	if err != nil {
 		panic(err)
 	}
-	return http_server.GetUIHandler(http.FS(fsys), indexHTML, "/openauth/admin/v2/")
+	return http_server.GetUIHandler(http.FS(fsys), indexHTML, "/openauth/admin/")
 }
 
 func main() {
@@ -58,7 +58,7 @@ func main() {
 	for _, appName := range conf.AppNames {
 		switch appName {
 		case constants.HTTP_SERVER:
-			apps = append(apps, http_server.NewHTTPServer(conf, getAdminV2UIHandler()))
+			apps = append(apps, http_server.NewHTTPServer(conf, getAdminUIHandler()))
 		case constants.GRPC_SERVER:
 			apps = append(apps, grpc_server.NewGRPCServer(conf))
 		default:

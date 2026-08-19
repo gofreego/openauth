@@ -1,10 +1,10 @@
-# Build adminv2 UI
+# Build admin UI
 FROM node:22-alpine AS ui-builder
 WORKDIR /app
-COPY adminv2/package*.json adminv2/
-RUN cd adminv2 && npm install
-COPY adminv2/ adminv2/
-RUN cd adminv2 && npm run build
+COPY admin/package*.json admin/
+RUN cd admin && npm install
+COPY admin/ admin/
+RUN cd admin && npm run build
 
 # Build stage
 FROM golang:1.24-alpine AS builder
@@ -22,7 +22,7 @@ RUN go mod download
 
 # Copy the rest of the source code
 COPY . .
-COPY --from=ui-builder /app/adminv2/dist ./adminv2/dist
+COPY --from=ui-builder /app/admin/dist ./admin/dist
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o application .
@@ -40,7 +40,6 @@ COPY --from=builder /app/application .
 # Copy other necessary files
 COPY dev.yaml .
 COPY api/docs /app/api/docs
-COPY admin/builds/web/ /app/admin/builds/web/
 
 RUN chmod +x application
 

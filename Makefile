@@ -10,16 +10,16 @@ clean:
 	rm -f bin/application
 
 # UI build commands
-build-ui: build-adminv2
+build-ui: build-admin
 
-build-adminv2:
-	cd adminv2 && npm install && npm run build
+build-admin:
+	cd admin && npm install && npm run build
 
-dev-adminv2:
-	cd adminv2 && npm run dev
+dev-admin:
+	cd admin && npm run dev
 
 clean-ui:
-	rm -rf adminv2/dist
+	rm -rf admin/dist
 
 docker: build-linux
 	docker build -t openauth .
