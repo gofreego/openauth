@@ -329,8 +329,22 @@ func (s *Service) GetProfileUploadURL(ctx context.Context, req *openauth_v1.GetP
 	}
 
 	// Prepare mediabase request
-	// We'll store profile images in a path like profiles
-	path := "profiles"
+	// Store images in subdirectories by type; default to avatar for backward compatibility
+	imageType := req.ImageType
+	if imageType == openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_UNSPECIFIED {
+		imageType = openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR
+	}
+
+	var path string
+	switch imageType {
+	case openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_BANNER:
+		path = "profiles/banners"
+	case openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR:
+		fallthrough
+	default:
+		path = "profiles"
+	}
+
 	fileName := fmt.Sprintf("%s.webp", req.ProfileUuid)
 
 	mediabaseReq := &mediabase_v1.PresignUploadRequest{
@@ -385,7 +399,7 @@ func (s *Service) MarkProfileURLUpdated(ctx context.Context, req *openauth_v1.Ma
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to mark profile URL updated")
 	}
 
-	// Update the profile's avatar_url_updated_at field
+	// Update the profile's cache-busting timestamp (same field for all image types)
 	err = s.repo.UpdateProfileURLKey(ctx, req.ProfileUuid)
 	if err != nil {
 		logger.Error(ctx, "Failed to mark profile URL updated for profile UUID %s: %v", req.ProfileUuid, err)

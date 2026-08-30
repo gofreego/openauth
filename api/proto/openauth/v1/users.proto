@@ -263,12 +263,20 @@ message DeleteProfileResponse {
     string message = 2;
 }
 
+// ProfileImageType identifies which profile image is being uploaded
+enum ProfileImageType {
+    PROFILE_IMAGE_TYPE_UNSPECIFIED = 0; // defaults to avatar for backward compatibility
+    PROFILE_IMAGE_TYPE_AVATAR = 1;
+    PROFILE_IMAGE_TYPE_BANNER = 2;
+}
+
 // GetProfileUploadURLRequest to get a presigned URL for profile image upload
 message GetProfileUploadURLRequest {
     string profile_uuid = 1 [(validate.rules).string = {
         min_len: 1,
         max_len: 36
     }];
+    ProfileImageType image_type = 2;
 }
 
 // GetProfileUploadURLResponse

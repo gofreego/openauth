@@ -22,6 +22,56 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ProfileImageType identifies which profile image is being uploaded
+type ProfileImageType int32
+
+const (
+	ProfileImageType_PROFILE_IMAGE_TYPE_UNSPECIFIED ProfileImageType = 0 // defaults to avatar for backward compatibility
+	ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR      ProfileImageType = 1
+	ProfileImageType_PROFILE_IMAGE_TYPE_BANNER      ProfileImageType = 2
+)
+
+// Enum value maps for ProfileImageType.
+var (
+	ProfileImageType_name = map[int32]string{
+		0: "PROFILE_IMAGE_TYPE_UNSPECIFIED",
+		1: "PROFILE_IMAGE_TYPE_AVATAR",
+		2: "PROFILE_IMAGE_TYPE_BANNER",
+	}
+	ProfileImageType_value = map[string]int32{
+		"PROFILE_IMAGE_TYPE_UNSPECIFIED": 0,
+		"PROFILE_IMAGE_TYPE_AVATAR":      1,
+		"PROFILE_IMAGE_TYPE_BANNER":      2,
+	}
+)
+
+func (x ProfileImageType) Enum() *ProfileImageType {
+	p := new(ProfileImageType)
+	*p = x
+	return p
+}
+
+func (x ProfileImageType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ProfileImageType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_openauth_v1_users_proto_enumTypes[0].Descriptor()
+}
+
+func (ProfileImageType) Type() protoreflect.EnumType {
+	return &file_proto_openauth_v1_users_proto_enumTypes[0]
+}
+
+func (x ProfileImageType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ProfileImageType.Descriptor instead.
+func (ProfileImageType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{0}
+}
+
 // User represents a user account in the system
 type User struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
@@ -1693,6 +1743,7 @@ func (x *DeleteProfileResponse) GetMessage() string {
 type GetProfileUploadURLRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProfileUuid   string                 `protobuf:"bytes,1,opt,name=profile_uuid,json=profileUuid,proto3" json:"profile_uuid,omitempty"`
+	ImageType     ProfileImageType       `protobuf:"varint,2,opt,name=image_type,json=imageType,proto3,enum=v1.ProfileImageType" json:"image_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1732,6 +1783,13 @@ func (x *GetProfileUploadURLRequest) GetProfileUuid() string {
 		return x.ProfileUuid
 	}
 	return ""
+}
+
+func (x *GetProfileUploadURLRequest) GetImageType() ProfileImageType {
+	if x != nil {
+		return x.ImageType
+	}
+	return ProfileImageType_PROFILE_IMAGE_TYPE_UNSPECIFIED
 }
 
 // GetProfileUploadURLResponse
@@ -2677,9 +2735,11 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\fprofile_uuid\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18$R\vprofileUuid\"K\n" +
 	"\x15DeleteProfileResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"J\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x7f\n" +
 	"\x1aGetProfileUploadURLRequest\x12,\n" +
-	"\fprofile_uuid\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18$R\vprofileUuid\"\x83\x02\n" +
+	"\fprofile_uuid\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18$R\vprofileUuid\x123\n" +
+	"\n" +
+	"image_type\x18\x02 \x01(\x0e2\x14.v1.ProfileImageTypeR\timageType\"\x83\x02\n" +
 	"\x1bGetProfileUploadURLResponse\x12\x1d\n" +
 	"\n" +
 	"upload_url\x18\x01 \x01(\tR\tuploadUrl\x12\x1d\n" +
@@ -2741,7 +2801,11 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"softDelete\"H\n" +
 	"\x12DeleteUserResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessageB\x0fZ\r./openauth_v1b\x06proto3"
+	"\amessage\x18\x02 \x01(\tR\amessage*t\n" +
+	"\x10ProfileImageType\x12\"\n" +
+	"\x1ePROFILE_IMAGE_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
+	"\x19PROFILE_IMAGE_TYPE_AVATAR\x10\x01\x12\x1d\n" +
+	"\x19PROFILE_IMAGE_TYPE_BANNER\x10\x02B\x0fZ\r./openauth_v1b\x06proto3"
 
 var (
 	file_proto_openauth_v1_users_proto_rawDescOnce sync.Once
@@ -2755,59 +2819,62 @@ func file_proto_openauth_v1_users_proto_rawDescGZIP() []byte {
 	return file_proto_openauth_v1_users_proto_rawDescData
 }
 
+var file_proto_openauth_v1_users_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
 var file_proto_openauth_v1_users_proto_goTypes = []any{
-	(*User)(nil),                         // 0: v1.User
-	(*UserProfile)(nil),                  // 1: v1.UserProfile
-	(*SignUpRequest)(nil),                // 2: v1.SignUpRequest
-	(*SignUpResponse)(nil),               // 3: v1.SignUpResponse
-	(*VerifyEmailRequest)(nil),           // 4: v1.VerifyEmailRequest
-	(*VerifyPhoneRequest)(nil),           // 5: v1.VerifyPhoneRequest
-	(*VerificationResponse)(nil),         // 6: v1.VerificationResponse
-	(*SendVerificationCodeRequest)(nil),  // 7: v1.SendVerificationCodeRequest
-	(*SendVerificationCodeResponse)(nil), // 8: v1.SendVerificationCodeResponse
-	(*CheckUsernameRequest)(nil),         // 9: v1.CheckUsernameRequest
-	(*CheckUsernameResponse)(nil),        // 10: v1.CheckUsernameResponse
-	(*CheckEmailRequest)(nil),            // 11: v1.CheckEmailRequest
-	(*CheckEmailResponse)(nil),           // 12: v1.CheckEmailResponse
-	(*CreateProfileRequest)(nil),         // 13: v1.CreateProfileRequest
-	(*CreateProfileResponse)(nil),        // 14: v1.CreateProfileResponse
-	(*ListUserProfilesRequest)(nil),      // 15: v1.ListUserProfilesRequest
-	(*ListUserProfilesResponse)(nil),     // 16: v1.ListUserProfilesResponse
-	(*UpdateProfileRequest)(nil),         // 17: v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil),        // 18: v1.UpdateProfileResponse
-	(*DeleteProfileRequest)(nil),         // 19: v1.DeleteProfileRequest
-	(*DeleteProfileResponse)(nil),        // 20: v1.DeleteProfileResponse
-	(*GetProfileUploadURLRequest)(nil),   // 21: v1.GetProfileUploadURLRequest
-	(*GetProfileUploadURLResponse)(nil),  // 22: v1.GetProfileUploadURLResponse
-	(*MarkProfileURLUpdatedRequest)(nil), // 23: v1.MarkProfileURLUpdatedRequest
-	(*GetUserRequest)(nil),               // 24: v1.GetUserRequest
-	(*GetUserResponse)(nil),              // 25: v1.GetUserResponse
-	(*UpdateUserRequest)(nil),            // 26: v1.UpdateUserRequest
-	(*UpdateUserResponse)(nil),           // 27: v1.UpdateUserResponse
-	(*ChangePasswordRequest)(nil),        // 28: v1.ChangePasswordRequest
-	(*ChangePasswordResponse)(nil),       // 29: v1.ChangePasswordResponse
-	(*ListUsersRequest)(nil),             // 30: v1.ListUsersRequest
-	(*ListUsersResponse)(nil),            // 31: v1.ListUsersResponse
-	(*DeleteUserRequest)(nil),            // 32: v1.DeleteUserRequest
-	(*DeleteUserResponse)(nil),           // 33: v1.DeleteUserResponse
-	nil,                                  // 34: v1.GetProfileUploadURLResponse.FormDataEntry
+	(ProfileImageType)(0),                // 0: v1.ProfileImageType
+	(*User)(nil),                         // 1: v1.User
+	(*UserProfile)(nil),                  // 2: v1.UserProfile
+	(*SignUpRequest)(nil),                // 3: v1.SignUpRequest
+	(*SignUpResponse)(nil),               // 4: v1.SignUpResponse
+	(*VerifyEmailRequest)(nil),           // 5: v1.VerifyEmailRequest
+	(*VerifyPhoneRequest)(nil),           // 6: v1.VerifyPhoneRequest
+	(*VerificationResponse)(nil),         // 7: v1.VerificationResponse
+	(*SendVerificationCodeRequest)(nil),  // 8: v1.SendVerificationCodeRequest
+	(*SendVerificationCodeResponse)(nil), // 9: v1.SendVerificationCodeResponse
+	(*CheckUsernameRequest)(nil),         // 10: v1.CheckUsernameRequest
+	(*CheckUsernameResponse)(nil),        // 11: v1.CheckUsernameResponse
+	(*CheckEmailRequest)(nil),            // 12: v1.CheckEmailRequest
+	(*CheckEmailResponse)(nil),           // 13: v1.CheckEmailResponse
+	(*CreateProfileRequest)(nil),         // 14: v1.CreateProfileRequest
+	(*CreateProfileResponse)(nil),        // 15: v1.CreateProfileResponse
+	(*ListUserProfilesRequest)(nil),      // 16: v1.ListUserProfilesRequest
+	(*ListUserProfilesResponse)(nil),     // 17: v1.ListUserProfilesResponse
+	(*UpdateProfileRequest)(nil),         // 18: v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),        // 19: v1.UpdateProfileResponse
+	(*DeleteProfileRequest)(nil),         // 20: v1.DeleteProfileRequest
+	(*DeleteProfileResponse)(nil),        // 21: v1.DeleteProfileResponse
+	(*GetProfileUploadURLRequest)(nil),   // 22: v1.GetProfileUploadURLRequest
+	(*GetProfileUploadURLResponse)(nil),  // 23: v1.GetProfileUploadURLResponse
+	(*MarkProfileURLUpdatedRequest)(nil), // 24: v1.MarkProfileURLUpdatedRequest
+	(*GetUserRequest)(nil),               // 25: v1.GetUserRequest
+	(*GetUserResponse)(nil),              // 26: v1.GetUserResponse
+	(*UpdateUserRequest)(nil),            // 27: v1.UpdateUserRequest
+	(*UpdateUserResponse)(nil),           // 28: v1.UpdateUserResponse
+	(*ChangePasswordRequest)(nil),        // 29: v1.ChangePasswordRequest
+	(*ChangePasswordResponse)(nil),       // 30: v1.ChangePasswordResponse
+	(*ListUsersRequest)(nil),             // 31: v1.ListUsersRequest
+	(*ListUsersResponse)(nil),            // 32: v1.ListUsersResponse
+	(*DeleteUserRequest)(nil),            // 33: v1.DeleteUserRequest
+	(*DeleteUserResponse)(nil),           // 34: v1.DeleteUserResponse
+	nil,                                  // 35: v1.GetProfileUploadURLResponse.FormDataEntry
 }
 var file_proto_openauth_v1_users_proto_depIdxs = []int32{
-	0,  // 0: v1.SignUpResponse.user:type_name -> v1.User
-	1,  // 1: v1.CreateProfileResponse.profile:type_name -> v1.UserProfile
-	1,  // 2: v1.ListUserProfilesResponse.profiles:type_name -> v1.UserProfile
-	1,  // 3: v1.UpdateProfileResponse.profile:type_name -> v1.UserProfile
-	34, // 4: v1.GetProfileUploadURLResponse.form_data:type_name -> v1.GetProfileUploadURLResponse.FormDataEntry
-	0,  // 5: v1.GetUserResponse.user:type_name -> v1.User
-	1,  // 6: v1.GetUserResponse.profiles:type_name -> v1.UserProfile
-	0,  // 7: v1.UpdateUserResponse.user:type_name -> v1.User
-	0,  // 8: v1.ListUsersResponse.users:type_name -> v1.User
-	9,  // [9:9] is the sub-list for method output_type
-	9,  // [9:9] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	1,  // 0: v1.SignUpResponse.user:type_name -> v1.User
+	2,  // 1: v1.CreateProfileResponse.profile:type_name -> v1.UserProfile
+	2,  // 2: v1.ListUserProfilesResponse.profiles:type_name -> v1.UserProfile
+	2,  // 3: v1.UpdateProfileResponse.profile:type_name -> v1.UserProfile
+	0,  // 4: v1.GetProfileUploadURLRequest.image_type:type_name -> v1.ProfileImageType
+	35, // 5: v1.GetProfileUploadURLResponse.form_data:type_name -> v1.GetProfileUploadURLResponse.FormDataEntry
+	1,  // 6: v1.GetUserResponse.user:type_name -> v1.User
+	2,  // 7: v1.GetUserResponse.profiles:type_name -> v1.UserProfile
+	1,  // 8: v1.UpdateUserResponse.user:type_name -> v1.User
+	1,  // 9: v1.ListUsersResponse.users:type_name -> v1.User
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_users_proto_init() }
@@ -2832,13 +2899,14 @@ func file_proto_openauth_v1_users_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_openauth_v1_users_proto_rawDesc), len(file_proto_openauth_v1_users_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   35,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_proto_openauth_v1_users_proto_goTypes,
 		DependencyIndexes: file_proto_openauth_v1_users_proto_depIdxs,
+		EnumInfos:         file_proto_openauth_v1_users_proto_enumTypes,
 		MessageInfos:      file_proto_openauth_v1_users_proto_msgTypes,
 	}.Build()
 	File_proto_openauth_v1_users_proto = out.File

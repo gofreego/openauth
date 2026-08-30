@@ -288,10 +288,10 @@ func (r *Repository) scanProfile(row *sql.Row) (*dao.Profile, error) {
 	return &profile, nil
 }
 
-// update profileAvatar_url to currenttimestamp seconds str
+// UpdateProfileURLKey updates the cache-busting timestamp for profile images
 func (r *Repository) UpdateProfileURLKey(ctx context.Context, profileUUID string) error {
 	query := `
-		UPDATE user_profiles 
+		UPDATE user_profiles
 		SET avatar_url = $1
 		WHERE uuid = $2`
 

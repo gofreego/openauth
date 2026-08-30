@@ -3584,6 +3584,9 @@
       "properties": {
         "profileUuid": {
           "type": "string"
+        },
+        "imageType": {
+          "$ref": "#/definitions/v1ProfileImageType"
         }
       },
       "title": "GetProfileUploadURLRequest to get a presigned URL for profile image upload"
@@ -3999,6 +4002,17 @@
         }
       },
       "description": "Permission represents a specific authorization rule in the system.\nIt follows a Resource-Based Access Control (RBAC) pattern where permissions\nare defined by combining a resource (what) with an action (how).\n\nExample: A permission with resource=\"users\" and action=\"create\" allows\ncreating new user accounts."
+    },
+    "v1ProfileImageType": {
+      "type": "string",
+      "enum": [
+        "PROFILE_IMAGE_TYPE_UNSPECIFIED",
+        "PROFILE_IMAGE_TYPE_AVATAR",
+        "PROFILE_IMAGE_TYPE_BANNER"
+      ],
+      "default": "PROFILE_IMAGE_TYPE_UNSPECIFIED",
+      "description": "- PROFILE_IMAGE_TYPE_UNSPECIFIED: defaults to avatar for backward compatibility",
+      "title": "ProfileImageType identifies which profile image is being uploaded"
     },
     "v1RefreshTokenRequest": {
       "type": "object",

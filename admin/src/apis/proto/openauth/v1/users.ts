@@ -9,6 +9,47 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export const protobufPackage = "v1";
 
+/** ProfileImageType identifies which profile image is being uploaded */
+export enum ProfileImageType {
+  /** PROFILE_IMAGE_TYPE_UNSPECIFIED - defaults to avatar for backward compatibility */
+  PROFILE_IMAGE_TYPE_UNSPECIFIED = 0,
+  PROFILE_IMAGE_TYPE_AVATAR = 1,
+  PROFILE_IMAGE_TYPE_BANNER = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function profileImageTypeFromJSON(object: any): ProfileImageType {
+  switch (object) {
+    case 0:
+    case "PROFILE_IMAGE_TYPE_UNSPECIFIED":
+      return ProfileImageType.PROFILE_IMAGE_TYPE_UNSPECIFIED;
+    case 1:
+    case "PROFILE_IMAGE_TYPE_AVATAR":
+      return ProfileImageType.PROFILE_IMAGE_TYPE_AVATAR;
+    case 2:
+    case "PROFILE_IMAGE_TYPE_BANNER":
+      return ProfileImageType.PROFILE_IMAGE_TYPE_BANNER;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return ProfileImageType.UNRECOGNIZED;
+  }
+}
+
+export function profileImageTypeToJSON(object: ProfileImageType): string {
+  switch (object) {
+    case ProfileImageType.PROFILE_IMAGE_TYPE_UNSPECIFIED:
+      return "PROFILE_IMAGE_TYPE_UNSPECIFIED";
+    case ProfileImageType.PROFILE_IMAGE_TYPE_AVATAR:
+      return "PROFILE_IMAGE_TYPE_AVATAR";
+    case ProfileImageType.PROFILE_IMAGE_TYPE_BANNER:
+      return "PROFILE_IMAGE_TYPE_BANNER";
+    case ProfileImageType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 /** User represents a user account in the system */
 export interface User {
   id: string;
@@ -234,6 +275,7 @@ export interface DeleteProfileResponse {
 /** GetProfileUploadURLRequest to get a presigned URL for profile image upload */
 export interface GetProfileUploadURLRequest {
   profileUuid: string;
+  imageType: ProfileImageType;
 }
 
 /** GetProfileUploadURLResponse */
@@ -3293,13 +3335,16 @@ export const DeleteProfileResponse: MessageFns<DeleteProfileResponse> = {
 };
 
 function createBaseGetProfileUploadURLRequest(): GetProfileUploadURLRequest {
-  return { profileUuid: "" };
+  return { profileUuid: "", imageType: 0 };
 }
 
 export const GetProfileUploadURLRequest: MessageFns<GetProfileUploadURLRequest> = {
   encode(message: GetProfileUploadURLRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.profileUuid !== "") {
       writer.uint32(10).string(message.profileUuid);
+    }
+    if (message.imageType !== 0) {
+      writer.uint32(16).int32(message.imageType);
     }
     return writer;
   },
@@ -3319,6 +3364,14 @@ export const GetProfileUploadURLRequest: MessageFns<GetProfileUploadURLRequest> 
           message.profileUuid = reader.string();
           continue;
         }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.imageType = reader.int32() as any;
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -3335,6 +3388,11 @@ export const GetProfileUploadURLRequest: MessageFns<GetProfileUploadURLRequest> 
         : isSet(object.profile_uuid)
         ? globalThis.String(object.profile_uuid)
         : "",
+      imageType: isSet(object.imageType)
+        ? profileImageTypeFromJSON(object.imageType)
+        : isSet(object.image_type)
+        ? profileImageTypeFromJSON(object.image_type)
+        : 0,
     };
   },
 
@@ -3342,6 +3400,9 @@ export const GetProfileUploadURLRequest: MessageFns<GetProfileUploadURLRequest> 
     const obj: any = {};
     if (message.profileUuid !== "") {
       obj.profileUuid = message.profileUuid;
+    }
+    if (message.imageType !== 0) {
+      obj.imageType = profileImageTypeToJSON(message.imageType);
     }
     return obj;
   },
@@ -3352,6 +3413,7 @@ export const GetProfileUploadURLRequest: MessageFns<GetProfileUploadURLRequest> 
   fromPartial<I extends Exact<DeepPartial<GetProfileUploadURLRequest>, I>>(object: I): GetProfileUploadURLRequest {
     const message = createBaseGetProfileUploadURLRequest();
     message.profileUuid = object.profileUuid ?? "";
+    message.imageType = object.imageType ?? 0;
     return message;
   },
 };
