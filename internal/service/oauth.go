@@ -70,7 +70,7 @@ func (s *Service) GoogleSignIn(ctx context.Context, req *openauth_v1.GoogleSignI
 	}
 	if user.IsLocked {
 		logger.Warn(ctx, "Google sign-in denied for locked account: userID=%d", user.ID)
-		return nil, status.Error(codes.PermissionDenied, "account is locked")
+		return nil, status.Error(codes.PermissionDenied, "your account is locked, please contact customer support")
 	}
 
 	updates := map[string]interface{}{

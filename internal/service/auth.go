@@ -71,7 +71,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	if user.IsLocked {
 		logger.Warn(ctx, "Sign-in denied for locked account: userID=%d, username=%s, failed_attempts=%d",
 			user.ID, user.Username, user.FailedLoginCount)
-		return nil, status.Error(codes.PermissionDenied, "account is locked")
+		return nil, status.Error(codes.PermissionDenied, "your account is locked, please contact customer support")
 	}
 
 	// Verify password
@@ -520,7 +520,7 @@ func (s *Service) SignInWithLoginToken(ctx context.Context, req *openauth_v1.Sig
 		return nil, status.Error(codes.PermissionDenied, "account is disabled")
 	}
 	if user.IsLocked {
-		return nil, status.Error(codes.PermissionDenied, "account is locked")
+		return nil, status.Error(codes.PermissionDenied, "your account is locked, please contact customer support")
 	}
 
 	// Update last activity on the existing session
