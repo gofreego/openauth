@@ -22,6 +22,7 @@ import {
   Groups as GroupsIcon,
   Devices as DevicesIcon,
   AccountBox as ProfileIcon,
+  LockOpen as LockOpenIcon,
 } from '@mui/icons-material'
 import type { User } from '../../../apis/proto/openauth/v1/users'
 
@@ -31,6 +32,7 @@ export interface UserTableProps {
   loadingMore: boolean
   onEdit: (user: User) => void
   onDelete: (user: User) => void
+  onUnlock?: (user: User) => void
   onManagePermissions?: (user: User) => void
   onManageGroups?: (user: User) => void
   onViewSessions?: (user: User) => void
@@ -43,6 +45,7 @@ export const UserTable = ({
   loadingMore,
   onEdit,
   onDelete,
+  onUnlock,
   onManagePermissions,
   onManageGroups,
   onViewSessions,
@@ -128,6 +131,11 @@ export const UserTable = ({
                   {onManagePermissions && (
                     <IconButton size="small" onClick={() => onManagePermissions(user)} color="info" title="Permissions">
                       <VpnKeyIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                  {onUnlock && user.isLocked && (
+                    <IconButton size="small" onClick={() => onUnlock(user)} color="warning" title="Unlock User">
+                      <LockOpenIcon fontSize="small" />
                     </IconButton>
                   )}
                   <IconButton size="small" onClick={() => onEdit(user)} color="primary" title="Edit User">

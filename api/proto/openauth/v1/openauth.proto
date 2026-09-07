@@ -667,6 +667,20 @@ service OpenAuth {
         };
     }
 
+    // UnlockUser unlocks a user account that was locked due to repeated
+    // failed login attempts, and resets the failed login attempt counter.
+    rpc UnlockUser (UnlockUserRequest) returns (UnlockUserResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/{uuid}/unlock"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Management"
+            summary: "Unlock user account"
+            description: "Unlock a user account locked due to failed login attempts and reset the failed attempt counter."
+        };
+    }
+
     // Profile Management APIs
     // These endpoints handle user profile creation and management.
     // Users can have multiple profiles for different contexts (personal, work, etc.).

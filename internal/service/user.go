@@ -261,3 +261,56 @@ func (s *Service) DeleteUser(ctx context.Context, req *openauth_v1.DeleteUserReq
 		Message: message,
 	}, nil
 }
+
+// UnlockUser unlocks a user account that was locked due to repeated failed
+// login attempts, and resets the failed login attempt counter.
+func (s *Service) UnlockUser(ctx context.Context, req *openauth_v1.UnlockUserRequest) (*openauth_v1.UnlockUserResponse, error) {
+	if err := req.Validate(); err != nil {
+		logger.Warn(ctx, "UnlockUser failed validation: %v", err)
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "UnlockUser failed: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	// check for permissions - only admins may unlock accounts, a locked user cannot unlock themselves
+	if !claims.HasPermission(constants.PermissionUsersUpdate) {
+		logger.Warn(ctx, "UnlockUser failed: userID=%d does not have permission to unlock users", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to unlock users")
+	}
+
+	user, err := s.repo.GetUserByUUID(ctx, req.Uuid)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+
+	if !user.IsLocked {
+		return &openauth_v1.UnlockUserResponse{
+			User:    user.ToProtoUser(),
+			Message: "user is not locked",
+		}, nil
+	}
+
+	// resetting failed_login_attempts avoids the user being instantly re-locked
+	// on their next login attempt
+	updates := map[string]interface{}{
+		"is_locked":              false,
+		"failed_login_attempts": 0,
+		"updated_at":             time.Now().UnixMilli(),
+	}
+	updatedUser, err := s.repo.UpdateUser(ctx, user.ID, updates)
+	if err != nil {
+		logger.Error(ctx, "Failed to unlock userID=%d: %v", user.ID, err)
+		return nil, status.Error(codes.Internal, "failed to unlock user")
+	}
+
+	logger.Info(ctx, "User unlocked successfully: userID=%d, username=%s by adminUserID=%d",
+		updatedUser.ID, updatedUser.Username, claims.UserID)
+
+	return &openauth_v1.UnlockUserResponse{
+		User:    updatedUser.ToProtoUser(),
+		Message: "user unlocked successfully",
+	}, nil
+}

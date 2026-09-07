@@ -8,6 +8,7 @@ import type {
   UpdateUserRequest,
   UpdateUserResponse,
   DeleteUserResponse,
+  UnlockUserResponse,
 } from '../apis/proto/openauth/v1/users'
 
 const BASE_URL = '/openauth/v1/users'
@@ -51,6 +52,11 @@ export const userService = {
     const response = await httpClient.delete<DeleteUserResponse>(
       `${BASE_URL}/${uuid}?${queryParams.toString()}`
     )
+    return response.data
+  },
+
+  async unlock(uuid: string): Promise<UnlockUserResponse> {
+    const response = await httpClient.post<UnlockUserResponse>(`${BASE_URL}/${uuid}/unlock`, {})
     return response.data
   },
 }

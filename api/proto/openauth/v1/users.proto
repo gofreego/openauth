@@ -389,3 +389,17 @@ message DeleteUserResponse {
     bool success = 1;
     string message = 2;
 }
+
+// UnlockUserRequest to unlock a user account locked due to failed login attempts
+message UnlockUserRequest {
+    string uuid = 1 [(validate.rules).string = {
+        min_len: 1,
+        max_len: 36
+    }];
+}
+
+// UnlockUserResponse
+message UnlockUserResponse {
+    User user = 1;
+    string message = 2;
+}

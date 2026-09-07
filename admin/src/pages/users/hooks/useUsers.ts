@@ -16,6 +16,7 @@ export interface UseUsersReturn {
   createUser: (data: SignUpRequest) => Promise<void>
   updateUser: (data: UpdateUserRequest) => Promise<void>
   deleteUser: (uuid: string, softDelete?: boolean) => Promise<void>
+  unlockUser: (uuid: string) => Promise<void>
 }
 
 export const useUsers = (): UseUsersReturn => {
@@ -89,6 +90,17 @@ export const useUsers = (): UseUsersReturn => {
     }
   }, [showNotification])
 
+  const unlockUser = useCallback(async (uuid: string) => {
+    try {
+      const data = await userService.unlock(uuid)
+      showNotification(data.message || 'User unlocked successfully', 'success')
+    } catch (error) {
+      showNotification('Failed to unlock user', 'error')
+      console.error(error)
+      throw error
+    }
+  }, [showNotification])
+
   return {
     users,
     loading,
@@ -98,5 +110,6 @@ export const useUsers = (): UseUsersReturn => {
     createUser,
     updateUser,
     deleteUser,
+    unlockUser,
   }
 }

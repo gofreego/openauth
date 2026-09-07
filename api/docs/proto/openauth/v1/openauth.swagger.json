@@ -2620,6 +2620,46 @@
           "User Management"
         ]
       }
+    },
+    "/openauth/v1/users/{uuid}/unlock": {
+      "post": {
+        "summary": "Unlock user account",
+        "description": "Unlock a user account locked due to failed login attempts and reset the failed attempt counter.",
+        "operationId": "OpenAuth_UnlockUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UnlockUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OpenAuthUnlockUserBody"
+            }
+          }
+        ],
+        "tags": [
+          "User Management"
+        ]
+      }
     }
   },
   "definitions": {
@@ -2796,6 +2836,10 @@
         }
       },
       "title": "RemoveUsersFromGroupRequest to remove users from a group"
+    },
+    "OpenAuthUnlockUserBody": {
+      "type": "object",
+      "title": "UnlockUserRequest to unlock a user account locked due to failed login attempts"
     },
     "OpenAuthUpdateAppBody": {
       "type": "object",
@@ -4422,6 +4466,18 @@
         }
       },
       "title": "TerminateSessionResponse"
+    },
+    "v1UnlockUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "UnlockUserResponse"
     },
     "v1UpdateGroupResponse": {
       "type": "object",

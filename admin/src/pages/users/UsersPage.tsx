@@ -15,12 +15,14 @@ import { PageHeader } from '../../components'
 
 export const UsersPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { users, loading, loadingMore, hasMore, loadUsers, createUser, updateUser, deleteUser } = useUsers()
+  const { users, loading, loadingMore, hasMore, loadUsers, createUser, updateUser, deleteUser, unlockUser } = useUsers()
 
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [openUnlockDialog, setOpenUnlockDialog] = useState(false)
   const [editData, setEditData] = useState<User | undefined>(undefined)
   const [deleteUuid, setDeleteUuid] = useState<string>('')
+  const [unlockUuid, setUnlockUuid] = useState<string>('')
   const [searchInput, setSearchInput] = useState<string>(searchParams.get('search') || '')
   const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('search') || '')
 
@@ -75,6 +77,20 @@ export const UsersPage = () => {
     }
   }
 
+  const handleUnlockClick = (user: User) => {
+    setUnlockUuid(user.uuid)
+    setOpenUnlockDialog(true)
+  }
+
+  const handleConfirmUnlock = async () => {
+    if (unlockUuid) {
+      await unlockUser(unlockUuid)
+      setOpenUnlockDialog(false)
+      setUnlockUuid('')
+      reload()
+    }
+  }
+
   const handleSave = async (data: SignUpRequest | UpdateUserRequest) => {
     if ('uuid' in data && data.uuid) {
       await updateUser(data as UpdateUserRequest)
@@ -118,6 +134,7 @@ export const UsersPage = () => {
           loadingMore={loadingMore}
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
+          onUnlock={handleUnlockClick}
           onViewSessions={setSessionsUser}
           onViewProfiles={setProfilesUser}
           onManageGroups={setGroupsUser}
@@ -148,6 +165,17 @@ export const UsersPage = () => {
           confirmColor="error"
           onConfirm={handleConfirmDelete}
           onCancel={() => setOpenConfirmDialog(false)}
+        />
+
+        <ConfirmDialog
+          open={openUnlockDialog}
+          title="Unlock User"
+          message="Are you sure you want to unlock this user? This will reset their failed login attempts and allow them to log in again."
+          confirmText="Unlock"
+          cancelText="Cancel"
+          confirmColor="warning"
+          onConfirm={handleConfirmUnlock}
+          onCancel={() => setOpenUnlockDialog(false)}
         />
 
         <UserSessionsDialog open={!!sessionsUser} user={sessionsUser} onClose={() => setSessionsUser(null)} />

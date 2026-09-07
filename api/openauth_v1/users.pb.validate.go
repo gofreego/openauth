@@ -5210,3 +5210,249 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteUserResponseValidationError{}
+
+// Validate checks the field values on UnlockUserRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UnlockUserRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnlockUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnlockUserRequestMultiError, or nil if none found.
+func (m *UnlockUserRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnlockUserRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := utf8.RuneCountInString(m.GetUuid()); l < 1 || l > 36 {
+		err := UnlockUserRequestValidationError{
+			field:  "Uuid",
+			reason: "value length must be between 1 and 36 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UnlockUserRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnlockUserRequestMultiError is an error wrapping multiple validation errors
+// returned by UnlockUserRequest.ValidateAll() if the designated constraints
+// aren't met.
+type UnlockUserRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnlockUserRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnlockUserRequestMultiError) AllErrors() []error { return m }
+
+// UnlockUserRequestValidationError is the validation error returned by
+// UnlockUserRequest.Validate if the designated constraints aren't met.
+type UnlockUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnlockUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnlockUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnlockUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnlockUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnlockUserRequestValidationError) ErrorName() string {
+	return "UnlockUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UnlockUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnlockUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnlockUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnlockUserRequestValidationError{}
+
+// Validate checks the field values on UnlockUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UnlockUserResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnlockUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnlockUserResponseMultiError, or nil if none found.
+func (m *UnlockUserResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnlockUserResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UnlockUserResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UnlockUserResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UnlockUserResponseValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Message
+
+	if len(errors) > 0 {
+		return UnlockUserResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnlockUserResponseMultiError is an error wrapping multiple validation errors
+// returned by UnlockUserResponse.ValidateAll() if the designated constraints
+// aren't met.
+type UnlockUserResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnlockUserResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnlockUserResponseMultiError) AllErrors() []error { return m }
+
+// UnlockUserResponseValidationError is the validation error returned by
+// UnlockUserResponse.Validate if the designated constraints aren't met.
+type UnlockUserResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnlockUserResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnlockUserResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnlockUserResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnlockUserResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnlockUserResponseValidationError) ErrorName() string {
+	return "UnlockUserResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UnlockUserResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnlockUserResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnlockUserResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnlockUserResponseValidationError{}

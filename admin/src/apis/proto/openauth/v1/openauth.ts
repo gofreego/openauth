@@ -145,6 +145,8 @@ import {
   SendVerificationCodeResponse,
   SignUpRequest,
   SignUpResponse,
+  UnlockUserRequest,
+  UnlockUserResponse,
   UpdateProfileRequest,
   UpdateProfileResponse,
   UpdateUserRequest,
@@ -740,6 +742,19 @@ export const OpenAuthService = {
     requestDeserialize: (value: Buffer): DeleteUserRequest => DeleteUserRequest.decode(value),
     responseSerialize: (value: DeleteUserResponse): Buffer => Buffer.from(DeleteUserResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer): DeleteUserResponse => DeleteUserResponse.decode(value),
+  },
+  /**
+   * UnlockUser unlocks a user account that was locked due to repeated
+   * failed login attempts, and resets the failed login attempt counter.
+   */
+  unlockUser: {
+    path: "/v1.OpenAuth/UnlockUser" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: UnlockUserRequest): Buffer => Buffer.from(UnlockUserRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): UnlockUserRequest => UnlockUserRequest.decode(value),
+    responseSerialize: (value: UnlockUserResponse): Buffer => Buffer.from(UnlockUserResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): UnlockUserResponse => UnlockUserResponse.decode(value),
   },
   /**
    * CreateProfile creates a new profile for a user.
@@ -1455,6 +1470,11 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    * Hard delete permanently removes the user and all associated data.
    */
   deleteUser: handleUnaryCall<DeleteUserRequest, DeleteUserResponse>;
+  /**
+   * UnlockUser unlocks a user account that was locked due to repeated
+   * failed login attempts, and resets the failed login attempt counter.
+   */
+  unlockUser: handleUnaryCall<UnlockUserRequest, UnlockUserResponse>;
   /**
    * CreateProfile creates a new profile for a user.
    *
@@ -2352,6 +2372,25 @@ export interface OpenAuthClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: DeleteUserResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * UnlockUser unlocks a user account that was locked due to repeated
+   * failed login attempts, and resets the failed login attempt counter.
+   */
+  unlockUser(
+    request: UnlockUserRequest,
+    callback: (error: ServiceError | null, response: UnlockUserResponse) => void,
+  ): ClientUnaryCall;
+  unlockUser(
+    request: UnlockUserRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: UnlockUserResponse) => void,
+  ): ClientUnaryCall;
+  unlockUser(
+    request: UnlockUserRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: UnlockUserResponse) => void,
   ): ClientUnaryCall;
   /**
    * CreateProfile creates a new profile for a user.

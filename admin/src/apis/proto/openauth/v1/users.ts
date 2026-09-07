@@ -368,6 +368,17 @@ export interface DeleteUserResponse {
   message: string;
 }
 
+/** UnlockUserRequest to unlock a user account locked due to failed login attempts */
+export interface UnlockUserRequest {
+  uuid: string;
+}
+
+/** UnlockUserResponse */
+export interface UnlockUserResponse {
+  user: User | undefined;
+  message: string;
+}
+
 function createBaseUser(): User {
   return {
     id: "0",
@@ -4580,6 +4591,140 @@ export const DeleteUserResponse: MessageFns<DeleteUserResponse> = {
   fromPartial<I extends Exact<DeepPartial<DeleteUserResponse>, I>>(object: I): DeleteUserResponse {
     const message = createBaseDeleteUserResponse();
     message.success = object.success ?? false;
+    message.message = object.message ?? "";
+    return message;
+  },
+};
+
+function createBaseUnlockUserRequest(): UnlockUserRequest {
+  return { uuid: "" };
+}
+
+export const UnlockUserRequest: MessageFns<UnlockUserRequest> = {
+  encode(message: UnlockUserRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.uuid !== "") {
+      writer.uint32(10).string(message.uuid);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UnlockUserRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUnlockUserRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.uuid = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UnlockUserRequest {
+    return { uuid: isSet(object.uuid) ? globalThis.String(object.uuid) : "" };
+  },
+
+  toJSON(message: UnlockUserRequest): unknown {
+    const obj: any = {};
+    if (message.uuid !== "") {
+      obj.uuid = message.uuid;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UnlockUserRequest>, I>>(base?: I): UnlockUserRequest {
+    return UnlockUserRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UnlockUserRequest>, I>>(object: I): UnlockUserRequest {
+    const message = createBaseUnlockUserRequest();
+    message.uuid = object.uuid ?? "";
+    return message;
+  },
+};
+
+function createBaseUnlockUserResponse(): UnlockUserResponse {
+  return { user: undefined, message: "" };
+}
+
+export const UnlockUserResponse: MessageFns<UnlockUserResponse> = {
+  encode(message: UnlockUserResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.user !== undefined) {
+      User.encode(message.user, writer.uint32(10).fork()).join();
+    }
+    if (message.message !== "") {
+      writer.uint32(18).string(message.message);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UnlockUserResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUnlockUserResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.user = User.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UnlockUserResponse {
+    return {
+      user: isSet(object.user) ? User.fromJSON(object.user) : undefined,
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+    };
+  },
+
+  toJSON(message: UnlockUserResponse): unknown {
+    const obj: any = {};
+    if (message.user !== undefined) {
+      obj.user = User.toJSON(message.user);
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UnlockUserResponse>, I>>(base?: I): UnlockUserResponse {
+    return UnlockUserResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UnlockUserResponse>, I>>(object: I): UnlockUserResponse {
+    const message = createBaseUnlockUserResponse();
+    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
     message.message = object.message ?? "";
     return message;
   },

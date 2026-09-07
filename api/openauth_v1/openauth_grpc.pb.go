@@ -53,6 +53,7 @@ const (
 	OpenAuth_ChangePassword_FullMethodName              = "/v1.OpenAuth/ChangePassword"
 	OpenAuth_ListUsers_FullMethodName                   = "/v1.OpenAuth/ListUsers"
 	OpenAuth_DeleteUser_FullMethodName                  = "/v1.OpenAuth/DeleteUser"
+	OpenAuth_UnlockUser_FullMethodName                  = "/v1.OpenAuth/UnlockUser"
 	OpenAuth_CreateProfile_FullMethodName               = "/v1.OpenAuth/CreateProfile"
 	OpenAuth_ListUserProfiles_FullMethodName            = "/v1.OpenAuth/ListUserProfiles"
 	OpenAuth_UpdateProfile_FullMethodName               = "/v1.OpenAuth/UpdateProfile"
@@ -295,6 +296,9 @@ type OpenAuthClient interface {
 	// Soft delete preserves data while preventing access.
 	// Hard delete permanently removes the user and all associated data.
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
+	// UnlockUser unlocks a user account that was locked due to repeated
+	// failed login attempts, and resets the failed login attempt counter.
+	UnlockUser(ctx context.Context, in *UnlockUserRequest, opts ...grpc.CallOption) (*UnlockUserResponse, error)
 	// CreateProfile creates a new profile for a user.
 	//
 	// Allows users to create multiple profiles for different contexts.
@@ -759,6 +763,16 @@ func (c *openAuthClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteUserResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_DeleteUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) UnlockUser(ctx context.Context, in *UnlockUserRequest, opts ...grpc.CallOption) (*UnlockUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UnlockUserResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_UnlockUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1302,6 +1316,9 @@ type OpenAuthServer interface {
 	// Soft delete preserves data while preventing access.
 	// Hard delete permanently removes the user and all associated data.
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
+	// UnlockUser unlocks a user account that was locked due to repeated
+	// failed login attempts, and resets the failed login attempt counter.
+	UnlockUser(context.Context, *UnlockUserRequest) (*UnlockUserResponse, error)
 	// CreateProfile creates a new profile for a user.
 	//
 	// Allows users to create multiple profiles for different contexts.
@@ -1533,6 +1550,9 @@ func (UnimplementedOpenAuthServer) ListUsers(context.Context, *ListUsersRequest)
 }
 func (UnimplementedOpenAuthServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedOpenAuthServer) UnlockUser(context.Context, *UnlockUserRequest) (*UnlockUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlockUser not implemented")
 }
 func (UnimplementedOpenAuthServer) CreateProfile(context.Context, *CreateProfileRequest) (*CreateProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProfile not implemented")
@@ -2262,6 +2282,24 @@ func _OpenAuth_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OpenAuthServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_UnlockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).UnlockUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_UnlockUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).UnlockUser(ctx, req.(*UnlockUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3002,6 +3040,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _OpenAuth_DeleteUser_Handler,
+		},
+		{
+			MethodName: "UnlockUser",
+			Handler:    _OpenAuth_UnlockUser_Handler,
 		},
 		{
 			MethodName: "CreateProfile",

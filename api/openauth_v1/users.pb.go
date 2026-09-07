@@ -2507,6 +2507,104 @@ func (x *DeleteUserResponse) GetMessage() string {
 	return ""
 }
 
+// UnlockUserRequest to unlock a user account locked due to failed login attempts
+type UnlockUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlockUserRequest) Reset() {
+	*x = UnlockUserRequest{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlockUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlockUserRequest) ProtoMessage() {}
+
+func (x *UnlockUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlockUserRequest.ProtoReflect.Descriptor instead.
+func (*UnlockUserRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *UnlockUserRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+// UnlockUserResponse
+type UnlockUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlockUserResponse) Reset() {
+	*x = UnlockUserResponse{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlockUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlockUserResponse) ProtoMessage() {}
+
+func (x *UnlockUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlockUserResponse.ProtoReflect.Descriptor instead.
+func (*UnlockUserResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *UnlockUserResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *UnlockUserResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_proto_openauth_v1_users_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_users_proto_rawDesc = "" +
@@ -2801,6 +2899,11 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"softDelete\"H\n" +
 	"\x12DeleteUserResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"2\n" +
+	"\x11UnlockUserRequest\x12\x1d\n" +
+	"\x04uuid\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18$R\x04uuid\"L\n" +
+	"\x12UnlockUserResponse\x12\x1c\n" +
+	"\x04user\x18\x01 \x01(\v2\b.v1.UserR\x04user\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage*t\n" +
 	"\x10ProfileImageType\x12\"\n" +
 	"\x1ePROFILE_IMAGE_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
@@ -2820,7 +2923,7 @@ func file_proto_openauth_v1_users_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_openauth_v1_users_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
+var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_proto_openauth_v1_users_proto_goTypes = []any{
 	(ProfileImageType)(0),                // 0: v1.ProfileImageType
 	(*User)(nil),                         // 1: v1.User
@@ -2857,7 +2960,9 @@ var file_proto_openauth_v1_users_proto_goTypes = []any{
 	(*ListUsersResponse)(nil),            // 32: v1.ListUsersResponse
 	(*DeleteUserRequest)(nil),            // 33: v1.DeleteUserRequest
 	(*DeleteUserResponse)(nil),           // 34: v1.DeleteUserResponse
-	nil,                                  // 35: v1.GetProfileUploadURLResponse.FormDataEntry
+	(*UnlockUserRequest)(nil),            // 35: v1.UnlockUserRequest
+	(*UnlockUserResponse)(nil),           // 36: v1.UnlockUserResponse
+	nil,                                  // 37: v1.GetProfileUploadURLResponse.FormDataEntry
 }
 var file_proto_openauth_v1_users_proto_depIdxs = []int32{
 	1,  // 0: v1.SignUpResponse.user:type_name -> v1.User
@@ -2865,16 +2970,17 @@ var file_proto_openauth_v1_users_proto_depIdxs = []int32{
 	2,  // 2: v1.ListUserProfilesResponse.profiles:type_name -> v1.UserProfile
 	2,  // 3: v1.UpdateProfileResponse.profile:type_name -> v1.UserProfile
 	0,  // 4: v1.GetProfileUploadURLRequest.image_type:type_name -> v1.ProfileImageType
-	35, // 5: v1.GetProfileUploadURLResponse.form_data:type_name -> v1.GetProfileUploadURLResponse.FormDataEntry
+	37, // 5: v1.GetProfileUploadURLResponse.form_data:type_name -> v1.GetProfileUploadURLResponse.FormDataEntry
 	1,  // 6: v1.GetUserResponse.user:type_name -> v1.User
 	2,  // 7: v1.GetUserResponse.profiles:type_name -> v1.UserProfile
 	1,  // 8: v1.UpdateUserResponse.user:type_name -> v1.User
 	1,  // 9: v1.ListUsersResponse.users:type_name -> v1.User
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	1,  // 10: v1.UnlockUserResponse.user:type_name -> v1.User
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_users_proto_init() }
@@ -2900,7 +3006,7 @@ func file_proto_openauth_v1_users_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_openauth_v1_users_proto_rawDesc), len(file_proto_openauth_v1_users_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   35,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
