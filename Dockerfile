@@ -7,7 +7,7 @@ COPY admin/ admin/
 RUN cd admin && npm run build
 
 # Build stage
-FROM golang:1.24-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 # Add git for downloading dependencies
 RUN apk add --no-cache git
