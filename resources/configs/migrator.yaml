@@ -15,4 +15,4 @@ Repository:
 Migrator:
   Path: "./resources/migrations/postgresql" # Path to the SQL migration files
   Action: up # Migration action (up/down/force/version)
-  ForceVersion: 10 # Force version (optional)
+  ForceVersion: 12 # Force version (optional)
