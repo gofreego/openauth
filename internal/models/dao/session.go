@@ -44,6 +44,21 @@ func (s *Session) FromSignInRequest(
 	refreshExpiresAt int64,
 	req *openauth_v1.SignInRequest,
 ) *Session {
+	return s.FromMetadata(sessionUUID, userID, userUUID, sessionToken, refreshToken, expiresAt, refreshExpiresAt, req.Metadata)
+}
+
+// FromMetadata initializes a Session DAO from raw sign-in metadata, shared by
+// every sign-in path (password, login-token, Google, ...).
+func (s *Session) FromMetadata(
+	sessionUUID uuid.UUID,
+	userID int64,
+	userUUID uuid.UUID,
+	sessionToken string,
+	refreshToken string,
+	expiresAt int64,
+	refreshExpiresAt int64,
+	metadata *openauth_v1.SignInMetadata,
+) *Session {
 	s.UUID = sessionUUID
 	s.UserID = userID
 	s.UserUUID = userUUID
@@ -57,15 +72,15 @@ func (s *Session) FromSignInRequest(
 	s.CreatedAt = time.Now().UnixMilli()
 
 	// Set device information if provided
-	if req.Metadata != nil {
-		if req.Metadata.DeviceId != nil {
-			s.DeviceID = req.Metadata.DeviceId
+	if metadata != nil {
+		if metadata.DeviceId != nil {
+			s.DeviceID = metadata.DeviceId
 		}
-		if req.Metadata.DeviceName != nil {
-			s.DeviceName = req.Metadata.DeviceName
+		if metadata.DeviceName != nil {
+			s.DeviceName = metadata.DeviceName
 		}
-		if req.Metadata.DeviceType != nil {
-			s.DeviceType = req.Metadata.DeviceType
+		if metadata.DeviceType != nil {
+			s.DeviceType = metadata.DeviceType
 		}
 	}
 	return s

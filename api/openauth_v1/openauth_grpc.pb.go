@@ -60,6 +60,7 @@ const (
 	OpenAuth_GetProfileUploadURL_FullMethodName         = "/v1.OpenAuth/GetProfileUploadURL"
 	OpenAuth_MarkProfileURLUpdated_FullMethodName       = "/v1.OpenAuth/MarkProfileURLUpdated"
 	OpenAuth_SignIn_FullMethodName                      = "/v1.OpenAuth/SignIn"
+	OpenAuth_GoogleSignIn_FullMethodName                = "/v1.OpenAuth/GoogleSignIn"
 	OpenAuth_SignInWithLoginToken_FullMethodName        = "/v1.OpenAuth/SignInWithLoginToken"
 	OpenAuth_GenerateLoginToken_FullMethodName          = "/v1.OpenAuth/GenerateLoginToken"
 	OpenAuth_RefreshToken_FullMethodName                = "/v1.OpenAuth/RefreshToken"
@@ -337,6 +338,10 @@ type OpenAuthClient interface {
 	// Returns access token, refresh token, and user information.
 	// Tracks device information and manages session security.
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	// GoogleSignIn authenticates a user via a Google-issued ID token.
+	// Creates a new user (and links a user_external_accounts row) on first
+	// sign-in, or reuses/links the existing account on subsequent sign-ins.
+	GoogleSignIn(ctx context.Context, in *GoogleSignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	// SignInWithLoginToken authenticates using a short-lived single-use login token
 	// issued by GenerateLoginToken. Returns the same existing session — no new session is created.
 	SignInWithLoginToken(ctx context.Context, in *SignInWithLoginTokenRequest, opts ...grpc.CallOption) (*SignInResponse, error)
@@ -824,6 +829,16 @@ func (c *openAuthClient) SignIn(ctx context.Context, in *SignInRequest, opts ...
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SignInResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_SignIn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) GoogleSignIn(ctx context.Context, in *GoogleSignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_GoogleSignIn_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1330,6 +1345,10 @@ type OpenAuthServer interface {
 	// Returns access token, refresh token, and user information.
 	// Tracks device information and manages session security.
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
+	// GoogleSignIn authenticates a user via a Google-issued ID token.
+	// Creates a new user (and links a user_external_accounts row) on first
+	// sign-in, or reuses/links the existing account on subsequent sign-ins.
+	GoogleSignIn(context.Context, *GoogleSignInRequest) (*SignInResponse, error)
 	// SignInWithLoginToken authenticates using a short-lived single-use login token
 	// issued by GenerateLoginToken. Returns the same existing session — no new session is created.
 	SignInWithLoginToken(context.Context, *SignInWithLoginTokenRequest) (*SignInResponse, error)
@@ -1535,6 +1554,9 @@ func (UnimplementedOpenAuthServer) MarkProfileURLUpdated(context.Context, *MarkP
 }
 func (UnimplementedOpenAuthServer) SignIn(context.Context, *SignInRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
+}
+func (UnimplementedOpenAuthServer) GoogleSignIn(context.Context, *GoogleSignInRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GoogleSignIn not implemented")
 }
 func (UnimplementedOpenAuthServer) SignInWithLoginToken(context.Context, *SignInWithLoginTokenRequest) (*SignInResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignInWithLoginToken not implemented")
@@ -2370,6 +2392,24 @@ func _OpenAuth_SignIn_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_GoogleSignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoogleSignInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).GoogleSignIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_GoogleSignIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).GoogleSignIn(ctx, req.(*GoogleSignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OpenAuth_SignInWithLoginToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SignInWithLoginTokenRequest)
 	if err := dec(in); err != nil {
@@ -2990,6 +3030,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignIn",
 			Handler:    _OpenAuth_SignIn_Handler,
+		},
+		{
+			MethodName: "GoogleSignIn",
+			Handler:    _OpenAuth_GoogleSignIn_Handler,
 		},
 		{
 			MethodName: "SignInWithLoginToken",

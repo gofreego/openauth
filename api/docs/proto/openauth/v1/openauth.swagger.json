@@ -215,6 +215,40 @@
         ]
       }
     },
+    "/openauth/v1/auth/google/signin": {
+      "post": {
+        "summary": "Sign in with Google",
+        "description": "Authenticate a user using a Google-issued ID token.",
+        "operationId": "OpenAuth_GoogleSignIn",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SignInResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GoogleSignInRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
     "/openauth/v1/auth/is-authenticated": {
       "get": {
         "summary": "Check if user is authenticated",
@@ -3642,6 +3676,24 @@
         }
       },
       "title": "GetUserResponse"
+    },
+    "v1GoogleSignInRequest": {
+      "type": "object",
+      "properties": {
+        "idToken": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/v1SignInMetadata"
+        },
+        "profiles": {
+          "type": "boolean"
+        },
+        "includePermissions": {
+          "type": "boolean"
+        }
+      },
+      "title": "GoogleSignInRequest authenticates a user via a Google-issued ID token"
     },
     "v1Group": {
       "type": "object",

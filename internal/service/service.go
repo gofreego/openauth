@@ -19,6 +19,7 @@ type Config struct {
 	Security      SecurityConfig      `yaml:"Security"`
 	Communication CommunicationConfig `yaml:"Communication"`
 	Mediabase     MediabaseConfig     `yaml:"Mediabase"`
+	GoogleOAuth   GoogleOAuthConfig   `yaml:"GoogleOAuth"`
 }
 
 func (c *Config) Default() {
@@ -26,6 +27,14 @@ func (c *Config) Default() {
 	c.Security.Default()
 	c.Communication.Default()
 	c.Mediabase.Default()
+}
+
+// GoogleOAuthConfig holds the allowed audiences for Google ID token
+// verification, i.e. the OAuth client ID(s) the client apps are configured
+// with (typically just the "serverClientId"/Web client used by the Flutter
+// app across Android/iOS/web).
+type GoogleOAuthConfig struct {
+	ClientIDs []string `yaml:"ClientIDs"`
 }
 
 type MediabaseConfig struct {
@@ -128,6 +137,11 @@ type Repository interface {
 	CheckUsernameExists(ctx context.Context, username string) (bool, error)
 	CheckEmailExists(ctx context.Context, email string) (bool, error)
 	CheckPhoneExists(ctx context.Context, phone string) (bool, error)
+
+	// Auth provider / external account methods (OAuth, e.g. Google sign-in)
+	GetAuthProviderByName(ctx context.Context, name string) (*dao.AuthProvider, error)
+	GetUserExternalAccount(ctx context.Context, providerID int64, externalUserID string) (*dao.UserExternalAccount, error)
+	CreateUserExternalAccount(ctx context.Context, account *dao.UserExternalAccount) (*dao.UserExternalAccount, error)
 
 	// Profile management methods
 	ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, error)

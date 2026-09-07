@@ -510,6 +510,160 @@ var _ interface {
 	ErrorName() string
 } = SignInResponseValidationError{}
 
+// Validate checks the field values on GoogleSignInRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GoogleSignInRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GoogleSignInRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GoogleSignInRequestMultiError, or nil if none found.
+func (m *GoogleSignInRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GoogleSignInRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetIdToken()) < 1 {
+		err := GoogleSignInRequestValidationError{
+			field:  "IdToken",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.Metadata != nil {
+
+		if all {
+			switch v := interface{}(m.GetMetadata()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GoogleSignInRequestValidationError{
+						field:  "Metadata",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GoogleSignInRequestValidationError{
+						field:  "Metadata",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GoogleSignInRequestValidationError{
+					field:  "Metadata",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Profiles != nil {
+		// no validation rules for Profiles
+	}
+
+	if m.IncludePermissions != nil {
+		// no validation rules for IncludePermissions
+	}
+
+	if len(errors) > 0 {
+		return GoogleSignInRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GoogleSignInRequestMultiError is an error wrapping multiple validation
+// errors returned by GoogleSignInRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GoogleSignInRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GoogleSignInRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GoogleSignInRequestMultiError) AllErrors() []error { return m }
+
+// GoogleSignInRequestValidationError is the validation error returned by
+// GoogleSignInRequest.Validate if the designated constraints aren't met.
+type GoogleSignInRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GoogleSignInRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GoogleSignInRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GoogleSignInRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GoogleSignInRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GoogleSignInRequestValidationError) ErrorName() string {
+	return "GoogleSignInRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GoogleSignInRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGoogleSignInRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GoogleSignInRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GoogleSignInRequestValidationError{}
+
 // Validate checks the field values on RefreshTokenRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

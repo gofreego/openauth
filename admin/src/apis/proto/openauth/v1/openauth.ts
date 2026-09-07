@@ -101,6 +101,7 @@ import {
 import {
   GenerateLoginTokenRequest,
   GenerateLoginTokenResponse,
+  GoogleSignInRequest,
   IsAuthenticatedRequest,
   IsAuthenticatedResponse,
   ListUserSessionsRequest,
@@ -862,6 +863,20 @@ export const OpenAuthService = {
     responseDeserialize: (value: Buffer): SignInResponse => SignInResponse.decode(value),
   },
   /**
+   * GoogleSignIn authenticates a user via a Google-issued ID token.
+   * Creates a new user (and links a user_external_accounts row) on first
+   * sign-in, or reuses/links the existing account on subsequent sign-ins.
+   */
+  googleSignIn: {
+    path: "/v1.OpenAuth/GoogleSignIn" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: GoogleSignInRequest): Buffer => Buffer.from(GoogleSignInRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GoogleSignInRequest => GoogleSignInRequest.decode(value),
+    responseSerialize: (value: SignInResponse): Buffer => Buffer.from(SignInResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SignInResponse => SignInResponse.decode(value),
+  },
+  /**
    * SignInWithLoginToken authenticates using a short-lived single-use login token
    * issued by GenerateLoginToken. Returns the same existing session — no new session is created.
    */
@@ -1497,6 +1512,12 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    * Tracks device information and manages session security.
    */
   signIn: handleUnaryCall<SignInRequest, SignInResponse>;
+  /**
+   * GoogleSignIn authenticates a user via a Google-issued ID token.
+   * Creates a new user (and links a user_external_accounts row) on first
+   * sign-in, or reuses/links the existing account on subsequent sign-ins.
+   */
+  googleSignIn: handleUnaryCall<GoogleSignInRequest, SignInResponse>;
   /**
    * SignInWithLoginToken authenticates using a short-lived single-use login token
    * issued by GenerateLoginToken. Returns the same existing session — no new session is created.
@@ -2483,6 +2504,26 @@ export interface OpenAuthClient extends Client {
   ): ClientUnaryCall;
   signIn(
     request: SignInRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SignInResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * GoogleSignIn authenticates a user via a Google-issued ID token.
+   * Creates a new user (and links a user_external_accounts row) on first
+   * sign-in, or reuses/links the existing account on subsequent sign-ins.
+   */
+  googleSignIn(
+    request: GoogleSignInRequest,
+    callback: (error: ServiceError | null, response: SignInResponse) => void,
+  ): ClientUnaryCall;
+  googleSignIn(
+    request: GoogleSignInRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SignInResponse) => void,
+  ): ClientUnaryCall;
+  googleSignIn(
+    request: GoogleSignInRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: SignInResponse) => void,

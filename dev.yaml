@@ -42,6 +42,13 @@ Service:
   Mediabase:
     ServiceEndpoint: 192.168.1.100:8096
     BucketName: openauth
+  GoogleOAuth:
+    # OAuth client ID(s) accepted as the ID token audience — put the
+    # "serverClientId" the zshala app is configured with here (see
+    # zshala's GOOGLE_SERVER_CLIENT_ID dart-define). Get this from
+    # Google Cloud Console > APIs & Services > Credentials.
+    ClientIDs:
+      - "4903461670-il0prefibm7ujos51c4efc5ft2s2lu6a.apps.googleusercontent.com"
 Debug:
   Enabled: true
   EnablePprof: true

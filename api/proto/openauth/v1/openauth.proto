@@ -791,6 +791,21 @@ service OpenAuth {
         };
     }
 
+    // GoogleSignIn authenticates a user via a Google-issued ID token.
+    // Creates a new user (and links a user_external_accounts row) on first
+    // sign-in, or reuses/links the existing account on subsequent sign-ins.
+    rpc GoogleSignIn (GoogleSignInRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/auth/google/signin"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Authentication"
+            summary: "Sign in with Google"
+            description: "Authenticate a user using a Google-issued ID token."
+        };
+    }
+
     // SignInWithLoginToken authenticates using a short-lived single-use login token
     // issued by GenerateLoginToken. Returns the same existing session — no new session is created.
     rpc SignInWithLoginToken (SignInWithLoginTokenRequest) returns (SignInResponse) {

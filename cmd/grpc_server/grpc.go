@@ -51,6 +51,7 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 		"/v1.OpenAuth/Ping",
 		"/v1.OpenAuth/SignUp",
 		"/v1.OpenAuth/SignIn",
+		"/v1.OpenAuth/GoogleSignIn",
 		"/v1.OpenAuth/RefreshToken",
 		"/v1.OpenAuth/ValidateToken",
 		"/v1.OpenAuth/Logout",

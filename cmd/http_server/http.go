@@ -77,6 +77,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 		"/v1/ping",
 		"/v1/users/signup",
 		"/v1/auth/signin",
+		"/openauth/v1/auth/google/signin",
 		"/v1/auth/refresh",
 		"/v1/auth/validate",
 		"/v1/auth/logout",

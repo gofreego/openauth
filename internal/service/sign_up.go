@@ -545,6 +545,13 @@ func (s *Service) generateUniqueUsername(ctx context.Context, req *openauth_v1.S
 		base = fallbackUsernameBaseWord
 	}
 
+	return s.generateUniqueUsernameFromBase(ctx, base)
+}
+
+// generateUniqueUsernameFromBase sanitizes base and appends a random numeric
+// suffix on collision until a free username is found. Shared by password
+// signup (generateUniqueUsername) and OAuth sign-in flows (e.g. Google).
+func (s *Service) generateUniqueUsernameFromBase(ctx context.Context, base string) (string, error) {
 	base = sanitizeUsernameBase(base)
 
 	for attempt := 0; attempt < maxUsernameGenAttempts; attempt++ {

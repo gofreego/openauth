@@ -53,6 +53,14 @@ export interface SignInResponse {
   message: string;
 }
 
+/** GoogleSignInRequest authenticates a user via a Google-issued ID token */
+export interface GoogleSignInRequest {
+  idToken: string;
+  metadata?: SignInMetadata | undefined;
+  profiles?: boolean | undefined;
+  includePermissions?: boolean | undefined;
+}
+
 /** RefreshTokenRequest to refresh access token */
 export interface RefreshTokenRequest {
   refreshToken: string;
@@ -696,6 +704,124 @@ export const SignInResponse: MessageFns<SignInResponse> = {
     message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
     message.sessionId = object.sessionId ?? "";
     message.message = object.message ?? "";
+    return message;
+  },
+};
+
+function createBaseGoogleSignInRequest(): GoogleSignInRequest {
+  return { idToken: "", metadata: undefined, profiles: undefined, includePermissions: undefined };
+}
+
+export const GoogleSignInRequest: MessageFns<GoogleSignInRequest> = {
+  encode(message: GoogleSignInRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.idToken !== "") {
+      writer.uint32(10).string(message.idToken);
+    }
+    if (message.metadata !== undefined) {
+      SignInMetadata.encode(message.metadata, writer.uint32(18).fork()).join();
+    }
+    if (message.profiles !== undefined) {
+      writer.uint32(24).bool(message.profiles);
+    }
+    if (message.includePermissions !== undefined) {
+      writer.uint32(32).bool(message.includePermissions);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GoogleSignInRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGoogleSignInRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.idToken = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.metadata = SignInMetadata.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.profiles = reader.bool();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.includePermissions = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GoogleSignInRequest {
+    return {
+      idToken: isSet(object.idToken)
+        ? globalThis.String(object.idToken)
+        : isSet(object.id_token)
+        ? globalThis.String(object.id_token)
+        : "",
+      metadata: isSet(object.metadata) ? SignInMetadata.fromJSON(object.metadata) : undefined,
+      profiles: isSet(object.profiles) ? globalThis.Boolean(object.profiles) : undefined,
+      includePermissions: isSet(object.includePermissions)
+        ? globalThis.Boolean(object.includePermissions)
+        : isSet(object.include_permissions)
+        ? globalThis.Boolean(object.include_permissions)
+        : undefined,
+    };
+  },
+
+  toJSON(message: GoogleSignInRequest): unknown {
+    const obj: any = {};
+    if (message.idToken !== "") {
+      obj.idToken = message.idToken;
+    }
+    if (message.metadata !== undefined) {
+      obj.metadata = SignInMetadata.toJSON(message.metadata);
+    }
+    if (message.profiles !== undefined) {
+      obj.profiles = message.profiles;
+    }
+    if (message.includePermissions !== undefined) {
+      obj.includePermissions = message.includePermissions;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GoogleSignInRequest>, I>>(base?: I): GoogleSignInRequest {
+    return GoogleSignInRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GoogleSignInRequest>, I>>(object: I): GoogleSignInRequest {
+    const message = createBaseGoogleSignInRequest();
+    message.idToken = object.idToken ?? "";
+    message.metadata = (object.metadata !== undefined && object.metadata !== null)
+      ? SignInMetadata.fromPartial(object.metadata)
+      : undefined;
+    message.profiles = object.profiles ?? undefined;
+    message.includePermissions = object.includePermissions ?? undefined;
     return message;
   },
 };

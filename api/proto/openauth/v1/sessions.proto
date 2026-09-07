@@ -45,6 +45,14 @@ message SignInResponse {
     string message = 7;
 }
 
+// GoogleSignInRequest authenticates a user via a Google-issued ID token
+message GoogleSignInRequest {
+    string id_token = 1 [(validate.rules).string.min_len = 1];
+    optional SignInMetadata metadata = 2;
+    optional bool profiles = 3;
+    optional bool include_permissions = 4;
+}
+
 // RefreshTokenRequest to refresh access token
 message RefreshTokenRequest {
     string refresh_token = 1 [(validate.rules).string = {

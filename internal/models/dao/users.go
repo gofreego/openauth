@@ -1,10 +1,12 @@
 package dao
 
 import (
+	"crypto/rand"
 	"time"
 
 	"github.com/gofreego/openauth/api/openauth_v1"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -59,6 +61,39 @@ func (u *User) ToProtoGroupUser(assignedAt int64) *openauth_v1.GroupUser {
 		Name:       u.Name,
 		AssignedAt: assignedAt,
 	}
+}
+
+// FromGoogleSignIn builds a User for a first-time Google sign-in. Since the
+// account has no password, PasswordHash is set to a bcrypt hash of a random
+// token that is never handed back to anyone, so password-based SignIn will
+// always fail for this account (the user must keep using Google to sign in,
+// or set a password explicitly via a future "set password" flow).
+func (u *User) FromGoogleSignIn(username string, email string, emailVerified bool, name *string, avatarURL *string) (*User, error) {
+	randomBytes := make([]byte, 32)
+	if _, err := rand.Read(randomBytes); err != nil {
+		return nil, err
+	}
+	unusablePasswordHash, err := bcrypt.GenerateFromPassword(randomBytes, bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now().UnixMilli()
+	u.UUID = uuid.New()
+	u.Username = username
+	u.Email = &email
+	u.Name = name
+	u.AvatarURL = avatarURL
+	u.PasswordHash = string(unusablePasswordHash)
+	u.EmailVerified = emailVerified
+	u.PhoneVerified = false
+	u.IsActive = true
+	u.IsLocked = false
+	u.FailedLoginCount = 0
+	u.PasswordChangedAt = now
+	u.CreatedAt = now
+	u.UpdatedAt = now
+	return u, nil
 }
 
 func (u *User) FromSignUpRequest(req *openauth_v1.SignUpRequest, username string, hashedPassword string) *User {
