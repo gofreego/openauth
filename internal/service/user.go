@@ -131,7 +131,22 @@ func (s *Service) UpdateUser(ctx context.Context, req *openauth_v1.UpdateUserReq
 		userUpdates["email"] = *req.Email
 	}
 
-	if req.Phone != nil {
+	// Check if phone is being updated and validate uniqueness
+	if req.Phone != nil && (user.Phone == nil || *req.Phone != *user.Phone) {
+		logger.Debug(ctx, "Phone change requested for userID=%d: to '%s'", user.ID, *req.Phone)
+
+		// Check if new phone already exists
+		exists, err := s.repo.CheckPhoneExists(ctx, *req.Phone)
+		if err != nil {
+			logger.Error(ctx, "Failed to check phone availability for userID=%d, phone='%s': %v",
+				user.ID, *req.Phone, err)
+			return nil, status.Error(codes.Internal, "failed to validate phone availability")
+		}
+		if exists {
+			logger.Warn(ctx, "Phone update denied for userID=%d: phone '%s' already exists",
+				user.ID, *req.Phone)
+			return nil, status.Error(codes.AlreadyExists, "phone already exists")
+		}
 		userUpdates["phone"] = *req.Phone
 	}
 	if req.IsActive != nil {
