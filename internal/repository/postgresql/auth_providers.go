@@ -63,10 +63,19 @@ func (r *Repository) CreateUserExternalAccount(ctx context.Context, account *dao
 		RETURNING id, uuid, user_id, provider_id, external_user_id, external_username, external_email,
 			access_token, refresh_token, token_expires_at, external_data, created_at, updated_at`
 
+	// A nil []byte doesn't become SQL NULL through the postgres driver for a
+	// jsonb column — it's sent as an empty string, which Postgres rejects
+	// with "invalid input syntax for type json". Pass an untyped nil instead
+	// when there's no data, so it binds as NULL.
+	var externalData any
+	if len(account.ExternalData) > 0 {
+		externalData = account.ExternalData
+	}
+
 	row := r.connManager.Primary().QueryRowContext(ctx, query,
 		account.UserID, account.ProviderID, account.ExternalUserID, account.ExternalUsername,
 		account.ExternalEmail, account.AccessToken, account.RefreshToken, account.TokenExpiresAt,
-		account.ExternalData, account.CreatedAt, account.UpdatedAt)
+		externalData, account.CreatedAt, account.UpdatedAt)
 
 	var created dao.UserExternalAccount
 	err := row.Scan(
