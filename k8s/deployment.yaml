@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openauth
+  labels:
+    app: openauth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openauth
+  template:
+    metadata:
+      labels:
+        app: openauth
+    spec:
+      containers:
+        - name: openauth
+          image: 192.168.1.100:5000/openauth:pilot
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8085
+            - name: grpc
+              containerPort: 8086
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
