@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: openauth
-          image: ghcr.io/gofreego/openauth:pilot-52776e9
+          image: ghcr.io/gofreego/openauth:pilot-e0c7911
           imagePullPolicy: Always
           ports:
             - name: http
