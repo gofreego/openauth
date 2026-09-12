@@ -87,6 +87,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 		"/openauth/v1/swagger",
 		"/openauth/admin",
 		"/openauth/v1/users/check-username",
+		"/openauth/v1/metrics",
 	})
 
 	mux := runtime.NewServeMux()
