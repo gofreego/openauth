@@ -134,7 +134,19 @@ func (s *Service) GoogleSignIn(ctx context.Context, req *openauth_v1.GoogleSignI
 func (s *Service) findOrCreateGoogleUser(ctx context.Context, providerID int64, googleUserID, email string, emailVerified bool, name, picture string) (*dao.User, error) {
 	externalAccount, err := s.repo.GetUserExternalAccount(ctx, providerID, googleUserID)
 	if err == nil {
-		return s.repo.GetUserByID(ctx, externalAccount.UserID)
+		user, getErr := s.repo.GetUserByID(ctx, externalAccount.UserID)
+		if getErr != nil {
+			return nil, getErr
+		}
+		// Self-heal accounts linked before this check existed: Google has
+		// verified this email, so don't leave it stuck unverified forever.
+		if emailVerified && !user.EmailVerified {
+			if err := s.repo.UpdateVerificationStatus(ctx, user.ID, "email_verified", true); err != nil {
+				return nil, err
+			}
+			user.EmailVerified = true
+		}
+		return user, nil
 	}
 	if err != sql.ErrNoRows {
 		return nil, err
