@@ -144,6 +144,15 @@ func (s *Service) findOrCreateGoogleUser(ctx context.Context, providerID int64, 
 	if email != "" && emailVerified {
 		if existing, lookupErr := s.repo.GetUserByEmail(ctx, email); lookupErr == nil {
 			user = existing
+			// Google has already verified this email, but a user who signed
+			// up with a password (and never completed the OTP flow) would
+			// otherwise stay email_verified=false forever after linking.
+			if !user.EmailVerified {
+				if err := s.repo.UpdateVerificationStatus(ctx, user.ID, "email_verified", true); err != nil {
+					return nil, err
+				}
+				user.EmailVerified = true
+			}
 		}
 	}
 
