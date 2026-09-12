@@ -16,6 +16,7 @@ import (
 	"github.com/gofreego/goutils/api"
 	"github.com/gofreego/goutils/api/debug"
 	"github.com/gofreego/goutils/logger"
+	"github.com/gofreego/goutils/metrics"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
@@ -115,7 +116,7 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 
 	a.server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", a.cfg.Server.HTTP.Port),
-		Handler: logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(authMiddleware.HTTPMiddleware(handler))),
+		Handler: metrics.WithHTTPMetrics(logger.WithRequestMiddleware(logger.WithRequestTimeMiddleware(authMiddleware.HTTPMiddleware(handler)))),
 	}
 
 	logger.Info(ctx, "Starting HTTP server on port %d", a.cfg.Server.HTTP.Port)

@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/gofreego/goutils/logger"
+	"github.com/gofreego/goutils/metrics"
 )
 
 type GRPCServer struct {
@@ -56,9 +57,11 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 		"/v1.OpenAuth/ValidateToken",
 		"/v1.OpenAuth/Logout",
 	})
-	// Create a new gRPC server with interceptors
+	// Create a new gRPC server with interceptors. Metrics runs outermost so
+	// it measures full request latency, including any time auth spends
+	// rejecting a call.
 	a.server = grpc.NewServer(
-		grpc.UnaryInterceptor(authMiddleware.UnaryServerInterceptor()),
+		grpc.ChainUnaryInterceptor(metrics.UnaryServerInterceptor(), authMiddleware.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(authMiddleware.StreamServerInterceptor()),
 	)
 
