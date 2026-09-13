@@ -1937,6 +1937,41 @@
         ]
       }
     },
+    "/openauth/v1/users/delete-account": {
+      "post": {
+        "summary": "Delete own account",
+        "description": "Allow the authenticated user to deactivate (soft-delete) their own account.",
+        "operationId": "OpenAuth_DeleteAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteAccountResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "DeleteAccountRequest deletes (soft-deletes) the authenticated caller's own account.\nThe target user is derived from the caller's JWT, not from the request.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "User Management"
+        ]
+      }
+    },
     "/openauth/v1/users/send-verification-code": {
       "post": {
         "summary": "Send verification code",
@@ -3474,6 +3509,22 @@
         }
       },
       "title": "CreateProfileResponse"
+    },
+    "v1DeleteAccountRequest": {
+      "type": "object",
+      "description": "DeleteAccountRequest deletes (soft-deletes) the authenticated caller's own account.\nThe target user is derived from the caller's JWT, not from the request."
+    },
+    "v1DeleteAccountResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "DeleteAccountResponse"
     },
     "v1DeleteAppResponse": {
       "type": "object",

@@ -632,6 +632,24 @@ service OpenAuth {
         };
     }
 
+    // DeleteAccount allows the authenticated caller to delete their own account.
+    //
+    // The target user is derived from the caller's JWT, not from the request.
+    // This always performs a soft delete (deactivation) — data is preserved, but
+    // the account is disabled and all active sessions are revoked. Hard delete
+    // remains available only through the admin-only DeleteUser API.
+    rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/users/delete-account"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "User Management"
+            summary: "Delete own account"
+            description: "Allow the authenticated user to deactivate (soft-delete) their own account."
+        };
+    }
+
     // ListUsers retrieves users with filtering, sorting, and pagination.
     // 
     // Supports filtering by:

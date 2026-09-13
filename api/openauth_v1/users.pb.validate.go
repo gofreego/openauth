@@ -4735,6 +4735,214 @@ var _ interface {
 	ErrorName() string
 } = ChangePasswordResponseValidationError{}
 
+// Validate checks the field values on DeleteAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteAccountRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteAccountRequestMultiError, or nil if none found.
+func (m *DeleteAccountRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteAccountRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteAccountRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteAccountRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteAccountRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteAccountRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteAccountRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteAccountRequestMultiError) AllErrors() []error { return m }
+
+// DeleteAccountRequestValidationError is the validation error returned by
+// DeleteAccountRequest.Validate if the designated constraints aren't met.
+type DeleteAccountRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteAccountRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteAccountRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteAccountRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteAccountRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteAccountRequestValidationError) ErrorName() string {
+	return "DeleteAccountRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteAccountRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteAccountRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteAccountRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteAccountRequestValidationError{}
+
+// Validate checks the field values on DeleteAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteAccountResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteAccountResponseMultiError, or nil if none found.
+func (m *DeleteAccountResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteAccountResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	// no validation rules for Message
+
+	if len(errors) > 0 {
+		return DeleteAccountResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteAccountResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteAccountResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteAccountResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteAccountResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteAccountResponseMultiError) AllErrors() []error { return m }
+
+// DeleteAccountResponseValidationError is the validation error returned by
+// DeleteAccountResponse.Validate if the designated constraints aren't met.
+type DeleteAccountResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteAccountResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteAccountResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteAccountResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteAccountResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteAccountResponseValidationError) ErrorName() string {
+	return "DeleteAccountResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteAccountResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteAccountResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteAccountResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteAccountResponseValidationError{}
+
 // Validate checks the field values on ListUsersRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

@@ -51,6 +51,7 @@ const (
 	OpenAuth_GetUser_FullMethodName                     = "/v1.OpenAuth/GetUser"
 	OpenAuth_UpdateUser_FullMethodName                  = "/v1.OpenAuth/UpdateUser"
 	OpenAuth_ChangePassword_FullMethodName              = "/v1.OpenAuth/ChangePassword"
+	OpenAuth_DeleteAccount_FullMethodName               = "/v1.OpenAuth/DeleteAccount"
 	OpenAuth_ListUsers_FullMethodName                   = "/v1.OpenAuth/ListUsers"
 	OpenAuth_DeleteUser_FullMethodName                  = "/v1.OpenAuth/DeleteUser"
 	OpenAuth_UnlockUser_FullMethodName                  = "/v1.OpenAuth/UnlockUser"
@@ -281,6 +282,13 @@ type OpenAuthClient interface {
 	// The target user is derived from the caller's JWT, not from the request.
 	// Triggers password change tracking and may invalidate existing sessions.
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
+	// DeleteAccount allows the authenticated caller to delete their own account.
+	//
+	// The target user is derived from the caller's JWT, not from the request.
+	// This always performs a soft delete (deactivation) — data is preserved, but
+	// the account is disabled and all active sessions are revoked. Hard delete
+	// remains available only through the admin-only DeleteUser API.
+	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error)
 	// ListUsers retrieves users with filtering, sorting, and pagination.
 	//
 	// Supports filtering by:
@@ -743,6 +751,16 @@ func (c *openAuthClient) ChangePassword(ctx context.Context, in *ChangePasswordR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangePasswordResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_ChangePassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteAccountResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_DeleteAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1301,6 +1319,13 @@ type OpenAuthServer interface {
 	// The target user is derived from the caller's JWT, not from the request.
 	// Triggers password change tracking and may invalidate existing sessions.
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
+	// DeleteAccount allows the authenticated caller to delete their own account.
+	//
+	// The target user is derived from the caller's JWT, not from the request.
+	// This always performs a soft delete (deactivation) — data is preserved, but
+	// the account is disabled and all active sessions are revoked. Hard delete
+	// remains available only through the admin-only DeleteUser API.
+	DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error)
 	// ListUsers retrieves users with filtering, sorting, and pagination.
 	//
 	// Supports filtering by:
@@ -1544,6 +1569,9 @@ func (UnimplementedOpenAuthServer) UpdateUser(context.Context, *UpdateUserReques
 }
 func (UnimplementedOpenAuthServer) ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedOpenAuthServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccount not implemented")
 }
 func (UnimplementedOpenAuthServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
@@ -2246,6 +2274,24 @@ func _OpenAuth_ChangePassword_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OpenAuthServer).ChangePassword(ctx, req.(*ChangePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_DeleteAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).DeleteAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_DeleteAccount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).DeleteAccount(ctx, req.(*DeleteAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3032,6 +3078,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _OpenAuth_ChangePassword_Handler,
+		},
+		{
+			MethodName: "DeleteAccount",
+			Handler:    _OpenAuth_DeleteAccount_Handler,
 		},
 		{
 			MethodName: "ListUsers",

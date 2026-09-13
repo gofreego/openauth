@@ -363,6 +363,17 @@ message ChangePasswordResponse {
     string message = 2;
 }
 
+// DeleteAccountRequest deletes (soft-deletes) the authenticated caller's own account.
+// The target user is derived from the caller's JWT, not from the request.
+message DeleteAccountRequest {
+}
+
+// DeleteAccountResponse
+message DeleteAccountResponse {
+    bool success = 1;
+    string message = 2;
+}
+
 // ListUsersRequest for listing users with pagination and filtering
 message ListUsersRequest {
     int32 limit = 1;

@@ -277,6 +277,40 @@ func (s *Service) DeleteUser(ctx context.Context, req *openauth_v1.DeleteUserReq
 	}, nil
 }
 
+// DeleteAccount lets the authenticated caller deactivate (soft-delete) their own account.
+// Unlike DeleteUser, the target is always the caller and the delete is always soft.
+func (s *Service) DeleteAccount(ctx context.Context, req *openauth_v1.DeleteAccountRequest) (*openauth_v1.DeleteAccountResponse, error) {
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "DeleteAccount failed: failed to get user from context: %v", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+
+	user, err := s.repo.GetUserByUUID(ctx, claims.UserUUID)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+
+	// check if user is admin user
+	if user.Username == "admin" {
+		return nil, status.Error(codes.PermissionDenied, "admin user cannot be deleted")
+	}
+
+	if err := s.repo.DeleteUser(ctx, user.ID, true); err != nil {
+		logger.Error(ctx, "Failed to delete account userID=%d: %v", user.ID, err)
+		return nil, status.Error(codes.Internal, "failed to delete account")
+	}
+
+	if err := s.repo.DeleteUserSessions(ctx, claims.UserUUID); err != nil {
+		logger.Error(ctx, "Failed to revoke sessions for deleted account userUUID=%s: %v", claims.UserUUID, err)
+	}
+
+	return &openauth_v1.DeleteAccountResponse{
+		Success: true,
+		Message: "Account deactivated successfully",
+	}, nil
+}
+
 // UnlockUser unlocks a user account that was locked due to repeated failed
 // login attempts, and resets the failed login attempt counter.
 func (s *Service) UnlockUser(ctx context.Context, req *openauth_v1.UnlockUserRequest) (*openauth_v1.UnlockUserResponse, error) {

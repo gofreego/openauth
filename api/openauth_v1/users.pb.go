@@ -2295,6 +2295,97 @@ func (x *ChangePasswordResponse) GetMessage() string {
 	return ""
 }
 
+// DeleteAccountRequest deletes (soft-deletes) the authenticated caller's own account.
+// The target user is derived from the caller's JWT, not from the request.
+type DeleteAccountRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAccountRequest) Reset() {
+	*x = DeleteAccountRequest{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAccountRequest) ProtoMessage() {}
+
+func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAccountRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{30}
+}
+
+// DeleteAccountResponse
+type DeleteAccountResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAccountResponse) Reset() {
+	*x = DeleteAccountResponse{}
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAccountResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAccountResponse) ProtoMessage() {}
+
+func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAccountResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAccountResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *DeleteAccountResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteAccountResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 // ListUsersRequest for listing users with pagination and filtering
 type ListUsersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2307,7 +2398,7 @@ type ListUsersRequest struct {
 
 func (x *ListUsersRequest) Reset() {
 	*x = ListUsersRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[30]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2319,7 +2410,7 @@ func (x *ListUsersRequest) String() string {
 func (*ListUsersRequest) ProtoMessage() {}
 
 func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[30]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2332,7 +2423,7 @@ func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
 func (*ListUsersRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{30}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListUsersRequest) GetLimit() int32 {
@@ -2366,7 +2457,7 @@ type ListUsersResponse struct {
 
 func (x *ListUsersResponse) Reset() {
 	*x = ListUsersResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[31]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2378,7 +2469,7 @@ func (x *ListUsersResponse) String() string {
 func (*ListUsersResponse) ProtoMessage() {}
 
 func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[31]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2391,7 +2482,7 @@ func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
 func (*ListUsersResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{31}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ListUsersResponse) GetUsers() []*User {
@@ -2412,7 +2503,7 @@ type DeleteUserRequest struct {
 
 func (x *DeleteUserRequest) Reset() {
 	*x = DeleteUserRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[32]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2424,7 +2515,7 @@ func (x *DeleteUserRequest) String() string {
 func (*DeleteUserRequest) ProtoMessage() {}
 
 func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[32]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2437,7 +2528,7 @@ func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{32}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *DeleteUserRequest) GetUuid() string {
@@ -2465,7 +2556,7 @@ type DeleteUserResponse struct {
 
 func (x *DeleteUserResponse) Reset() {
 	*x = DeleteUserResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[33]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2477,7 +2568,7 @@ func (x *DeleteUserResponse) String() string {
 func (*DeleteUserResponse) ProtoMessage() {}
 
 func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[33]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2490,7 +2581,7 @@ func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserResponse.ProtoReflect.Descriptor instead.
 func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{33}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *DeleteUserResponse) GetSuccess() bool {
@@ -2517,7 +2608,7 @@ type UnlockUserRequest struct {
 
 func (x *UnlockUserRequest) Reset() {
 	*x = UnlockUserRequest{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[34]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2529,7 +2620,7 @@ func (x *UnlockUserRequest) String() string {
 func (*UnlockUserRequest) ProtoMessage() {}
 
 func (x *UnlockUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[34]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2542,7 +2633,7 @@ func (x *UnlockUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnlockUserRequest.ProtoReflect.Descriptor instead.
 func (*UnlockUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{34}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *UnlockUserRequest) GetUuid() string {
@@ -2563,7 +2654,7 @@ type UnlockUserResponse struct {
 
 func (x *UnlockUserResponse) Reset() {
 	*x = UnlockUserResponse{}
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[35]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2575,7 +2666,7 @@ func (x *UnlockUserResponse) String() string {
 func (*UnlockUserResponse) ProtoMessage() {}
 
 func (x *UnlockUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_openauth_v1_users_proto_msgTypes[35]
+	mi := &file_proto_openauth_v1_users_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2588,7 +2679,7 @@ func (x *UnlockUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnlockUserResponse.ProtoReflect.Descriptor instead.
 func (*UnlockUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{35}
+	return file_proto_openauth_v1_users_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *UnlockUserResponse) GetUser() *User {
@@ -2885,6 +2976,10 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\xfaB\ar\x05\x10\b\x18\x80\x01R\vnewPasswordJ\x04\b\x01\x10\x02R\x04uuid\"L\n" +
 	"\x16ChangePasswordResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x16\n" +
+	"\x14DeleteAccountRequest\"K\n" +
+	"\x15DeleteAccountResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"r\n" +
 	"\x10ListUsersRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
@@ -2923,7 +3018,7 @@ func file_proto_openauth_v1_users_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_openauth_v1_users_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
+var file_proto_openauth_v1_users_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_proto_openauth_v1_users_proto_goTypes = []any{
 	(ProfileImageType)(0),                // 0: v1.ProfileImageType
 	(*User)(nil),                         // 1: v1.User
@@ -2956,13 +3051,15 @@ var file_proto_openauth_v1_users_proto_goTypes = []any{
 	(*UpdateUserResponse)(nil),           // 28: v1.UpdateUserResponse
 	(*ChangePasswordRequest)(nil),        // 29: v1.ChangePasswordRequest
 	(*ChangePasswordResponse)(nil),       // 30: v1.ChangePasswordResponse
-	(*ListUsersRequest)(nil),             // 31: v1.ListUsersRequest
-	(*ListUsersResponse)(nil),            // 32: v1.ListUsersResponse
-	(*DeleteUserRequest)(nil),            // 33: v1.DeleteUserRequest
-	(*DeleteUserResponse)(nil),           // 34: v1.DeleteUserResponse
-	(*UnlockUserRequest)(nil),            // 35: v1.UnlockUserRequest
-	(*UnlockUserResponse)(nil),           // 36: v1.UnlockUserResponse
-	nil,                                  // 37: v1.GetProfileUploadURLResponse.FormDataEntry
+	(*DeleteAccountRequest)(nil),         // 31: v1.DeleteAccountRequest
+	(*DeleteAccountResponse)(nil),        // 32: v1.DeleteAccountResponse
+	(*ListUsersRequest)(nil),             // 33: v1.ListUsersRequest
+	(*ListUsersResponse)(nil),            // 34: v1.ListUsersResponse
+	(*DeleteUserRequest)(nil),            // 35: v1.DeleteUserRequest
+	(*DeleteUserResponse)(nil),           // 36: v1.DeleteUserResponse
+	(*UnlockUserRequest)(nil),            // 37: v1.UnlockUserRequest
+	(*UnlockUserResponse)(nil),           // 38: v1.UnlockUserResponse
+	nil,                                  // 39: v1.GetProfileUploadURLResponse.FormDataEntry
 }
 var file_proto_openauth_v1_users_proto_depIdxs = []int32{
 	1,  // 0: v1.SignUpResponse.user:type_name -> v1.User
@@ -2970,7 +3067,7 @@ var file_proto_openauth_v1_users_proto_depIdxs = []int32{
 	2,  // 2: v1.ListUserProfilesResponse.profiles:type_name -> v1.UserProfile
 	2,  // 3: v1.UpdateProfileResponse.profile:type_name -> v1.UserProfile
 	0,  // 4: v1.GetProfileUploadURLRequest.image_type:type_name -> v1.ProfileImageType
-	37, // 5: v1.GetProfileUploadURLResponse.form_data:type_name -> v1.GetProfileUploadURLResponse.FormDataEntry
+	39, // 5: v1.GetProfileUploadURLResponse.form_data:type_name -> v1.GetProfileUploadURLResponse.FormDataEntry
 	1,  // 6: v1.GetUserResponse.user:type_name -> v1.User
 	2,  // 7: v1.GetUserResponse.profiles:type_name -> v1.UserProfile
 	1,  // 8: v1.UpdateUserResponse.user:type_name -> v1.User
@@ -2999,14 +3096,14 @@ func file_proto_openauth_v1_users_proto_init() {
 		(*GetUserRequest_Uuid)(nil),
 	}
 	file_proto_openauth_v1_users_proto_msgTypes[26].OneofWrappers = []any{}
-	file_proto_openauth_v1_users_proto_msgTypes[30].OneofWrappers = []any{}
+	file_proto_openauth_v1_users_proto_msgTypes[32].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_openauth_v1_users_proto_rawDesc), len(file_proto_openauth_v1_users_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   37,
+			NumMessages:   39,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
