@@ -49,6 +49,7 @@ Service:
     # Google Cloud Console > APIs & Services > Credentials.
     ClientIDs:
       - "4903461670-il0prefibm7ujos51c4efc5ft2s2lu6a.apps.googleusercontent.com"
+      - "477844400881-7fs5jvhfj2gpbafl4islfji3jfklr0bi.apps.googleusercontent.com"
 Debug:
   Enabled: true
   EnablePprof: true
