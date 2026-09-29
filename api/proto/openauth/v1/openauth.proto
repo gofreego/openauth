@@ -737,19 +737,11 @@ service OpenAuth {
 
     // GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
     //
-    // Meant for trusted services that store profile ids (e.g. group members) and need to
-    // display them. Requires the profiles.read permission.
-    rpc GetProfileSummaries (GetProfileSummariesRequest) returns (GetProfileSummariesResponse) {
-        option (google.api.http) = {
-            post: "/openauth/v1/profiles/summaries"
-            body: "*"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: "Profile Management"
-            summary: "Get profile summaries"
-            description: "Retrieve the public name and avatar of up to 100 profiles by id. Requires profiles.read."
-        };
-    }
+    // Meant for in-cluster services that store profile ids (e.g. learnerservice group
+    // members) and need to display them. gRPC-only and unauthenticated: it deliberately has
+    // no HTTP route, so it's reachable only on the cluster-internal gRPC port, never through
+    // the public gateway (which would let anyone enumerate names by id).
+    rpc GetProfileSummaries (GetProfileSummariesRequest) returns (GetProfileSummariesResponse);
 
     // UpdateProfile modifies an existing profile.
     //

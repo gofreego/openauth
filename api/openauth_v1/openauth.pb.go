@@ -26,7 +26,7 @@ var File_proto_openauth_v1_openauth_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\n" +
-	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a proto/openauth_common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto\x1a\x1fproto/openauth/v1/configs.proto\x1a\x1cproto/openauth/v1/apps.proto\x1a\x1eproto/openauth/v1/common.proto2\xa0r\n" +
+	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a proto/openauth_common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto\x1a\x1fproto/openauth/v1/configs.proto\x1a\x1cproto/openauth/v1/apps.proto\x1a\x1eproto/openauth/v1/common.proto2\xe9p\n" +
 	"\bOpenAuth\x12\x81\x01\n" +
 	"\x04Ping\x12\x11.v1.OOPingRequest\x1a\x12.v1.OOPingResponse\"R\x92A6\n" +
 	"\x04Ping\x12\x0fPing the server\x1a\x1dCheck if the server is alive.\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/ping\x12\xd7\x01\n" +
@@ -110,9 +110,8 @@ const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\rCreateProfile\x12\x18.v1.CreateProfileRequest\x1a\x19.v1.CreateProfileResponse\"\x7f\x92AL\n" +
 	"\x12Profile Management\x12\x14Create a new profile\x1a Create a new profile for a user.\x82\xd3\xe4\x93\x02*:\x01*\"%/openauth/v1/users/{user_id}/profiles\x12\xd6\x01\n" +
 	"\x10ListUserProfiles\x12\x1b.v1.ListUserProfilesRequest\x1a\x1c.v1.ListUserProfilesResponse\"\x86\x01\x92AT\n" +
-	"\x12Profile Management\x12\x12List user profiles\x1a*Retrieve all profiles for a specific user.\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/profiles\x12\x8c\x02\n" +
-	"\x13GetProfileSummaries\x12\x1e.v1.GetProfileSummariesRequest\x1a\x1f.v1.GetProfileSummariesResponse\"\xb3\x01\x92A\x85\x01\n" +
-	"\x12Profile Management\x12\x15Get profile summaries\x1aXRetrieve the public name and avatar of up to 100 profiles by id. Requires profiles.read.\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/openauth/v1/profiles/summaries\x12\xbb\x01\n" +
+	"\x12Profile Management\x12\x12List user profiles\x1a*Retrieve all profiles for a specific user.\x82\xd3\xe4\x93\x02)\x12'/openauth/v1/users/{user_uuid}/profiles\x12V\n" +
+	"\x13GetProfileSummaries\x12\x1e.v1.GetProfileSummariesRequest\x1a\x1f.v1.GetProfileSummariesResponse\x12\xbb\x01\n" +
 	"\rUpdateProfile\x12\x18.v1.UpdateProfileRequest\x1a\x19.v1.UpdateProfileResponse\"u\x92AC\n" +
 	"\x12Profile Management\x12\x10Update a profile\x1a\x1bModify an existing profile.\x82\xd3\xe4\x93\x02):\x01*\x1a$/openauth/v1/profiles/{profile_uuid}\x12\xb7\x01\n" +
 	"\rDeleteProfile\x12\x18.v1.DeleteProfileRequest\x1a\x19.v1.DeleteProfileResponse\"q\x92AB\n" +

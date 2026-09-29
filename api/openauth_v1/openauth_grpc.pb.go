@@ -321,8 +321,10 @@ type OpenAuthClient interface {
 	ListUserProfiles(ctx context.Context, in *ListUserProfilesRequest, opts ...grpc.CallOption) (*ListUserProfilesResponse, error)
 	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
 	//
-	// Meant for trusted services that store profile ids (e.g. group members) and need to
-	// display them. Requires the profiles.read permission.
+	// Meant for in-cluster services that store profile ids (e.g. learnerservice group
+	// members) and need to display them. gRPC-only and unauthenticated: it deliberately has
+	// no HTTP route, so it's reachable only on the cluster-internal gRPC port, never through
+	// the public gateway (which would let anyone enumerate names by id).
 	GetProfileSummaries(ctx context.Context, in *GetProfileSummariesRequest, opts ...grpc.CallOption) (*GetProfileSummariesResponse, error)
 	// UpdateProfile modifies an existing profile.
 	//
@@ -1373,8 +1375,10 @@ type OpenAuthServer interface {
 	ListUserProfiles(context.Context, *ListUserProfilesRequest) (*ListUserProfilesResponse, error)
 	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
 	//
-	// Meant for trusted services that store profile ids (e.g. group members) and need to
-	// display them. Requires the profiles.read permission.
+	// Meant for in-cluster services that store profile ids (e.g. learnerservice group
+	// members) and need to display them. gRPC-only and unauthenticated: it deliberately has
+	// no HTTP route, so it's reachable only on the cluster-internal gRPC port, never through
+	// the public gateway (which would let anyone enumerate names by id).
 	GetProfileSummaries(context.Context, *GetProfileSummariesRequest) (*GetProfileSummariesResponse, error)
 	// UpdateProfile modifies an existing profile.
 	//

@@ -18,21 +18,11 @@ import (
 )
 
 // GetProfileSummaries returns the public details (name, avatar) of the requested profiles.
-// Restricted to callers with profiles.read (trusted services), so ordinary users can't
-// enumerate other users' names by id.
+// It is unauthenticated but gRPC-only: there is no HTTP route, so only in-cluster services
+// can reach it (see the skip list in cmd/grpc_server and the RPC comment in openauth.proto).
 func (s *Service) GetProfileSummaries(ctx context.Context, req *openauth_v1.GetProfileSummariesRequest) (*openauth_v1.GetProfileSummariesResponse, error) {
 	if err := req.Validate(); err != nil {
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
-	}
-
-	claims, err := jwtutils.GetUserFromContext(ctx)
-	if err != nil {
-		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
-		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
-	}
-	if !claims.HasPermission(constants.PermissionProfilesRead) {
-		logger.Warn(ctx, "userID=%d does not have permission to read profile summaries", claims.UserID)
-		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read profiles")
 	}
 
 	profiles, err := s.repo.GetProfilesByIDs(ctx, req.ProfileIds)

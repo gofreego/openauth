@@ -111,6 +111,14 @@ func (a *HTTPServer) Run(ctx context.Context) error {
 			return
 		}
 
+		// GetProfileSummaries is meant to be gRPC-only and unauthenticated (in-cluster
+		// services). generate_unbound_methods still gives it an HTTP route, which would
+		// skip the gRPC-level checks, so refuse it here.
+		if r.URL.Path == "/v1.OpenAuth/GetProfileSummaries" {
+			http.NotFound(w, r)
+			return
+		}
+
 		// Fall back to grpc-gateway mux for other routes
 		mux.ServeHTTP(w, r)
 	})
