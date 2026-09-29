@@ -17,6 +17,67 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// GetProfileSummaries returns the public details (name, avatar) of the requested profiles.
+// Restricted to callers with profiles.read (trusted services), so ordinary users can't
+// enumerate other users' names by id.
+func (s *Service) GetProfileSummaries(ctx context.Context, req *openauth_v1.GetProfileSummariesRequest) (*openauth_v1.GetProfileSummariesResponse, error) {
+	if err := req.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
+	}
+
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	if !claims.HasPermission(constants.PermissionProfilesRead) {
+		logger.Warn(ctx, "userID=%d does not have permission to read profile summaries", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read profiles")
+	}
+
+	profiles, err := s.repo.GetProfilesByIDs(ctx, req.ProfileIds)
+	if err != nil {
+		logger.Error(ctx, "GetProfileSummaries: GetProfilesByIDs error: %v", err)
+		return nil, status.Error(codes.Internal, "failed to get profiles")
+	}
+
+	summaries := make([]*openauth_v1.ProfileSummary, 0, len(profiles))
+	for _, p := range profiles {
+		summaries = append(summaries, &openauth_v1.ProfileSummary{
+			Id:          p.ID,
+			Uuid:        p.UUID.String(),
+			DisplayName: profileDisplayName(p),
+			AvatarUrl:   derefString(p.AvatarURL),
+		})
+	}
+	return &openauth_v1.GetProfileSummariesResponse{Profiles: summaries}, nil
+}
+
+// profileDisplayName picks the best human-readable name a profile has.
+func profileDisplayName(p *dao.Profile) string {
+	if name := derefString(p.DisplayName); name != "" {
+		return name
+	}
+	full := derefString(p.FirstName)
+	if last := derefString(p.LastName); last != "" {
+		if full != "" {
+			full += " "
+		}
+		full += last
+	}
+	if full != "" {
+		return full
+	}
+	return derefString(p.ProfileName)
+}
+
+func derefString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
 // CreateProfile creates a new profile for a user
 func (s *Service) CreateProfile(ctx context.Context, req *openauth_v1.CreateProfileRequest) (*openauth_v1.CreateProfileResponse, error) {
 	// Validate request using generated validation

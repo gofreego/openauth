@@ -211,6 +211,29 @@ message ListUserProfilesResponse {
     repeated UserProfile profiles = 1;
 }
 
+// GetProfileSummariesRequest asks for the public details of several profiles by numeric id,
+// e.g. so another service can show names next to profile ids it stores.
+message GetProfileSummariesRequest {
+    repeated int64 profile_ids = 1 [(validate.rules).repeated = {
+        min_items: 1,
+        max_items: 100,
+        items: {int64: {gt: 0}}
+    }];
+}
+
+// ProfileSummary is the public subset of a profile: safe to show to other users.
+message ProfileSummary {
+    int64 id = 1;
+    string uuid = 2;
+    string display_name = 3;  // display_name, else "first last", else profile_name
+    string avatar_url = 4;
+}
+
+// GetProfileSummariesResponse lists the profiles that were found; unknown ids are omitted.
+message GetProfileSummariesResponse {
+    repeated ProfileSummary profiles = 1;
+}
+
 // UpdateProfileRequest to update a specific profile
 message UpdateProfileRequest {
     string profile_uuid = 1 [(validate.rules).string = {

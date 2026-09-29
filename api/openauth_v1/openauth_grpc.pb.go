@@ -57,6 +57,7 @@ const (
 	OpenAuth_UnlockUser_FullMethodName                  = "/v1.OpenAuth/UnlockUser"
 	OpenAuth_CreateProfile_FullMethodName               = "/v1.OpenAuth/CreateProfile"
 	OpenAuth_ListUserProfiles_FullMethodName            = "/v1.OpenAuth/ListUserProfiles"
+	OpenAuth_GetProfileSummaries_FullMethodName         = "/v1.OpenAuth/GetProfileSummaries"
 	OpenAuth_UpdateProfile_FullMethodName               = "/v1.OpenAuth/UpdateProfile"
 	OpenAuth_DeleteProfile_FullMethodName               = "/v1.OpenAuth/DeleteProfile"
 	OpenAuth_GetProfileUploadURL_FullMethodName         = "/v1.OpenAuth/GetProfileUploadURL"
@@ -318,6 +319,11 @@ type OpenAuthClient interface {
 	// Returns paginated list of profiles belonging to a user.
 	// Useful for profile selection interfaces and management.
 	ListUserProfiles(ctx context.Context, in *ListUserProfilesRequest, opts ...grpc.CallOption) (*ListUserProfilesResponse, error)
+	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
+	//
+	// Meant for trusted services that store profile ids (e.g. group members) and need to
+	// display them. Requires the profiles.read permission.
+	GetProfileSummaries(ctx context.Context, in *GetProfileSummariesRequest, opts ...grpc.CallOption) (*GetProfileSummariesResponse, error)
 	// UpdateProfile modifies an existing profile.
 	//
 	// Supports partial updates - only provided fields are modified.
@@ -811,6 +817,16 @@ func (c *openAuthClient) ListUserProfiles(ctx context.Context, in *ListUserProfi
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUserProfilesResponse)
 	err := c.cc.Invoke(ctx, OpenAuth_ListUserProfiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) GetProfileSummaries(ctx context.Context, in *GetProfileSummariesRequest, opts ...grpc.CallOption) (*GetProfileSummariesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProfileSummariesResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_GetProfileSummaries_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1355,6 +1371,11 @@ type OpenAuthServer interface {
 	// Returns paginated list of profiles belonging to a user.
 	// Useful for profile selection interfaces and management.
 	ListUserProfiles(context.Context, *ListUserProfilesRequest) (*ListUserProfilesResponse, error)
+	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
+	//
+	// Meant for trusted services that store profile ids (e.g. group members) and need to
+	// display them. Requires the profiles.read permission.
+	GetProfileSummaries(context.Context, *GetProfileSummariesRequest) (*GetProfileSummariesResponse, error)
 	// UpdateProfile modifies an existing profile.
 	//
 	// Supports partial updates - only provided fields are modified.
@@ -1587,6 +1608,9 @@ func (UnimplementedOpenAuthServer) CreateProfile(context.Context, *CreateProfile
 }
 func (UnimplementedOpenAuthServer) ListUserProfiles(context.Context, *ListUserProfilesRequest) (*ListUserProfilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserProfiles not implemented")
+}
+func (UnimplementedOpenAuthServer) GetProfileSummaries(context.Context, *GetProfileSummariesRequest) (*GetProfileSummariesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfileSummaries not implemented")
 }
 func (UnimplementedOpenAuthServer) UpdateProfile(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
@@ -2386,6 +2410,24 @@ func _OpenAuth_ListUserProfiles_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenAuth_GetProfileSummaries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProfileSummariesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).GetProfileSummaries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_GetProfileSummaries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).GetProfileSummaries(ctx, req.(*GetProfileSummariesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OpenAuth_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateProfileRequest)
 	if err := dec(in); err != nil {
@@ -3102,6 +3144,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUserProfiles",
 			Handler:    _OpenAuth_ListUserProfiles_Handler,
+		},
+		{
+			MethodName: "GetProfileSummaries",
+			Handler:    _OpenAuth_GetProfileSummaries_Handler,
 		},
 		{
 			MethodName: "UpdateProfile",

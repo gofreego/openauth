@@ -188,9 +188,15 @@ func (c *OpenauthConfigFetcher) executeWithTokenRefresh(ctx context.Context, fn 
 		return err
 	}
 
-	// Attempt to refresh the token
+	// Attempt to refresh the token; if the refresh token itself has expired (long-running
+	// services), fall back to signing in again with the configured credentials.
 	if refreshErr := c.refreshAccessToken(ctx); refreshErr != nil {
-		return fmt.Errorf("token refresh failed: %w, original error: %v", refreshErr, err)
+		if c.config.Username == "" || c.config.Password == "" {
+			return fmt.Errorf("token refresh failed: %w, original error: %v", refreshErr, err)
+		}
+		if loginErr := c.login(ctx); loginErr != nil {
+			return fmt.Errorf("token refresh failed: %v; re-login failed: %w; original error: %v", refreshErr, loginErr, err)
+		}
 	}
 
 	// Retry with the new token
@@ -263,6 +269,21 @@ func (c *OpenauthConfigFetcher) GetConfigsByKeys(ctx context.Context, in *openau
 		return callErr
 	})
 
+	return resp, err
+}
+
+// GetProfileSummaries returns the public name/avatar of the given profiles. The client's
+// credentials must carry the profiles.read permission.
+func (c *OpenauthConfigFetcher) GetProfileSummaries(ctx context.Context, profileIDs []int64) (*openauth_v1.GetProfileSummariesResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
+	defer cancel()
+	req := &openauth_v1.GetProfileSummariesRequest{ProfileIds: profileIDs}
+	var resp *openauth_v1.GetProfileSummariesResponse
+	err := c.executeWithTokenRefresh(ctx, func(authCtx context.Context) error {
+		var callErr error
+		resp, callErr = c.client.GetProfileSummaries(authCtx, req)
+		return callErr
+	})
 	return resp, err
 }
 

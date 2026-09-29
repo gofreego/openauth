@@ -735,8 +735,24 @@ service OpenAuth {
         };
     }
 
+    // GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
+    //
+    // Meant for trusted services that store profile ids (e.g. group members) and need to
+    // display them. Requires the profiles.read permission.
+    rpc GetProfileSummaries (GetProfileSummariesRequest) returns (GetProfileSummariesResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/profiles/summaries"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Profile Management"
+            summary: "Get profile summaries"
+            description: "Retrieve the public name and avatar of up to 100 profiles by id. Requires profiles.read."
+        };
+    }
+
     // UpdateProfile modifies an existing profile.
-    // 
+    //
     // Supports partial updates - only provided fields are modified.
     // Profile updates are independent of user account information.
     rpc UpdateProfile (UpdateProfileRequest) returns (UpdateProfileResponse) {

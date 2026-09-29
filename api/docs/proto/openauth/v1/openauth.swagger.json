@@ -1629,6 +1629,41 @@
         ]
       }
     },
+    "/openauth/v1/profiles/summaries": {
+      "post": {
+        "summary": "Get profile summaries",
+        "description": "Retrieve the public name and avatar of up to 100 profiles by id. Requires profiles.read.",
+        "operationId": "OpenAuth_GetProfileSummaries",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetProfileSummariesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "GetProfileSummariesRequest asks for the public details of several profiles by numeric id,\ne.g. so another service can show names next to profile ids it stores.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetProfileSummariesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Profile Management"
+        ]
+      }
+    },
     "/openauth/v1/profiles/upload-url": {
       "post": {
         "summary": "Get profile image upload URL",
@@ -3708,6 +3743,32 @@
       },
       "title": "GetGroupResponse"
     },
+    "v1GetProfileSummariesRequest": {
+      "type": "object",
+      "properties": {
+        "profileIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        }
+      },
+      "description": "GetProfileSummariesRequest asks for the public details of several profiles by numeric id,\ne.g. so another service can show names next to profile ids it stores."
+    },
+    "v1GetProfileSummariesResponse": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProfileSummary"
+          }
+        }
+      },
+      "description": "GetProfileSummariesResponse lists the profiles that were found; unknown ids are omitted."
+    },
     "v1GetProfileUploadURLRequest": {
       "type": "object",
       "properties": {
@@ -4160,6 +4221,26 @@
       "default": "PROFILE_IMAGE_TYPE_UNSPECIFIED",
       "description": "- PROFILE_IMAGE_TYPE_UNSPECIFIED: defaults to avatar for backward compatibility",
       "title": "ProfileImageType identifies which profile image is being uploaded"
+    },
+    "v1ProfileSummary": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string",
+          "title": "display_name, else \"first last\", else profile_name"
+        },
+        "avatarUrl": {
+          "type": "string"
+        }
+      },
+      "description": "ProfileSummary is the public subset of a profile: safe to show to other users."
     },
     "v1RefreshTokenRequest": {
       "type": "object",

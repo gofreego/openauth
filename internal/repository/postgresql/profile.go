@@ -140,6 +140,41 @@ func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserP
 	return profiles, nil
 }
 
+// GetProfilesByIDs retrieves the profiles with the given numeric ids; missing ids are skipped.
+func (r *Repository) GetProfilesByIDs(ctx context.Context, ids []int64) ([]*dao.Profile, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	placeholders := make([]string, len(ids))
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
+		args[i] = id
+	}
+	query := `
+		SELECT id, uuid, user_id, profile_name, first_name, last_name, display_name, bio, avatar_url,
+			date_of_birth, gender, timezone, locale, country, city, address, postal_code,
+			website_url, metadata, created_at, updated_at
+		FROM user_profiles
+		WHERE id IN (` + strings.Join(placeholders, ", ") + `)`
+
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var profiles []*dao.Profile
+	for rows.Next() {
+		profile, err := r.scanProfileFromRows(rows)
+		if err != nil {
+			return nil, err
+		}
+		profiles = append(profiles, profile)
+	}
+	return profiles, rows.Err()
+}
+
 // GetProfileByUUID retrieves a profile by its UUID
 func (r *Repository) GetProfileByUUID(ctx context.Context, uuid string) (*dao.Profile, error) {
 	query := `
