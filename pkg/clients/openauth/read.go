@@ -144,20 +144,17 @@ func (r *ConfigReader) read(ctx context.Context, cfgs *config_map) error {
 	return nil
 }
 
-func (r *ConfigReader) watch(ctx context.Context, cfgs *config_map, options ...ReadOptions) {
-	var opts ReadOptions
-	if len(options) > 0 {
-		opts = options[0]
-	}
-	if !opts.Watch {
+func (r *ConfigReader) watch(ctx context.Context, cfgs *config_map) {
+	if r.options == nil || !r.options.Watch {
 		return
 	}
-	if opts.DelayDuration <= 0 {
+	delay := r.options.DelayDuration
+	if delay <= 0 {
 		// set default delay duration to 1 minute
-		opts.DelayDuration = time.Minute
+		delay = time.Minute
 	}
 
-	ticker := time.NewTicker(opts.DelayDuration)
+	ticker := time.NewTicker(delay)
 	defer ticker.Stop()
 
 	for {

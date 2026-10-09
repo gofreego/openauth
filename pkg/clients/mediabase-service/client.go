@@ -11,6 +11,8 @@ import (
 
 type Client interface {
 	PresignUpload(ctx context.Context, req *mediabase_v1.PresignUploadRequest) (*mediabase_v1.PresignUploadResponse, error)
+	// Close releases the connection; the client can't be used after.
+	Close() error
 }
 
 type clientImpl struct {
@@ -32,4 +34,8 @@ func NewClient(endpoint string) (Client, error) {
 
 func (c *clientImpl) PresignUpload(ctx context.Context, req *mediabase_v1.PresignUploadRequest) (*mediabase_v1.PresignUploadResponse, error) {
 	return c.client.PresignUpload(ctx, req)
+}
+
+func (c *clientImpl) Close() error {
+	return c.conn.Close()
 }

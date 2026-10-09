@@ -85,7 +85,7 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 		}
 
 		// Lock account if too many failed attempts
-		if user.FailedLoginCount >= s.cfg.Security.MaxLoginAttempts-1 {
+		if user.FailedLoginCount >= s.conf().Security.MaxLoginAttempts-1 {
 			updates["is_locked"] = true
 			logger.Warn(ctx, "Account locked due to too many failed attempts: userID=%d, username=%s, attempts=%d",
 				user.ID, user.Username, user.FailedLoginCount+1)
@@ -124,8 +124,8 @@ func (s *Service) SignIn(ctx context.Context, req *openauth_v1.SignInRequest) (*
 	}
 
 	// Determine session duration
-	accessTokenDuration := s.cfg.JWT.AccessTokenTTL
-	refreshTokenDuration := s.cfg.JWT.RefreshTokenTTL
+	accessTokenDuration := s.conf().JWT.AccessTokenTTL
+	refreshTokenDuration := s.conf().JWT.RefreshTokenTTL
 
 	if req.RememberMe != nil && *req.RememberMe {
 		accessTokenDuration = accessTokenDuration * 4   // 4x longer access token
@@ -231,8 +231,8 @@ func (s *Service) RefreshToken(ctx context.Context, req *openauth_v1.RefreshToke
 		return nil, status.Error(codes.Internal, "failed to generate new refresh token")
 	}
 
-	accessTokenDuration := s.cfg.JWT.AccessTokenTTL
-	refreshTokenDuration := s.cfg.JWT.RefreshTokenTTL
+	accessTokenDuration := s.conf().JWT.AccessTokenTTL
+	refreshTokenDuration := s.conf().JWT.RefreshTokenTTL
 
 	expiresAt := time.Now().Add(accessTokenDuration).UnixMilli()
 	refreshExpiresAt := time.Now().Add(refreshTokenDuration).UnixMilli()
@@ -316,7 +316,7 @@ func (s *Service) ValidateToken(ctx context.Context, req *openauth_v1.ValidateTo
 		req.AccessToken = accessTokenSplits[1]
 	}
 	// Parse and validate JWT token
-	claims, err := jwtutils.ParseAndValidateToken(req.AccessToken, s.cfg.JWT.SecretKey)
+	claims, err := jwtutils.ParseAndValidateToken(req.AccessToken, s.conf().JWT.SecretKey)
 	if err != nil {
 		logger.Warn(ctx, "Token validation failed: invalid JWT token: %v", err)
 		return &openauth_v1.ValidateTokenResponse{
@@ -630,7 +630,7 @@ func (s *Service) generateAccessToken(ctx context.Context, user *dao.User, sessi
 	claims.Profiles = jwtProfiles
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(s.cfg.JWT.GetSecretKey())
+	return token.SignedString(s.conf().JWT.GetSecretKey())
 }
 
 func (s *Service) IsAuthenticated(ctx context.Context, req *openauth_v1.IsAuthenticatedRequest) (*openauth_v1.IsAuthenticatedResponse, error) {
@@ -642,7 +642,7 @@ func (s *Service) IsAuthenticated(ctx context.Context, req *openauth_v1.IsAuthen
 	if len(accessTokenSplits) == 2 && strings.EqualFold(accessTokenSplits[0], "Bearer") {
 		req.AccessToken = accessTokenSplits[1]
 	}
-	_, err = jwtutils.ParseAndValidateToken(req.AccessToken, s.cfg.JWT.SecretKey)
+	_, err = jwtutils.ParseAndValidateToken(req.AccessToken, s.conf().JWT.SecretKey)
 	if err != nil {
 		return nil, status.New(codes.Unauthenticated, "invalid token").Err()
 	}

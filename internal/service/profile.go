@@ -399,18 +399,18 @@ func (s *Service) GetProfileUploadURL(ctx context.Context, req *openauth_v1.GetP
 	fileName := fmt.Sprintf("%s.webp", req.ProfileUuid)
 
 	mediabaseReq := &mediabase_v1.PresignUploadRequest{
-		BucketName:  s.cfg.Mediabase.BucketName,
+		BucketName:  s.conf().Mediabase.BucketName,
 		Path:        path,
 		FileName:    fileName,
 		ContentType: "image/webp",
 	}
 
 	// Call mediabase service
-	if s.mediabaseClient == nil {
+	if s.mediabaseClient() == nil {
 		return nil, status.Error(codes.Internal, "mediabase service client not initialized")
 	}
 
-	resp, err := s.mediabaseClient.PresignUpload(ctx, mediabaseReq)
+	resp, err := s.mediabaseClient().PresignUpload(ctx, mediabaseReq)
 	if err != nil {
 		logger.Error(ctx, "Failed to get presigned URL from mediabase: %v", err)
 		return nil, status.Error(codes.Internal, "failed to generate upload URL")

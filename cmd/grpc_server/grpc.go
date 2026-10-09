@@ -47,7 +47,8 @@ func (a *GRPCServer) Run(ctx context.Context) error {
 	service := service.NewService(ctx, &a.cfg.Service, repository)
 
 	// Create authentication middleware
-	authMiddleware := jwtutils.NewAuthMiddleware(a.cfg.Service.JWT.SecretKey, a.cfg.Server.GRPC.AuthenticationEnabled, true)
+	authMiddleware := jwtutils.NewAuthMiddleware("", a.cfg.Server.GRPC.AuthenticationEnabled, true)
+	authMiddleware.SetSecretProvider(service.JWTSecret)
 	authMiddleware.SetSkipMethods([]string{
 		"/v1.OpenAuth/Ping",
 		"/v1.OpenAuth/SignUp",

@@ -19,8 +19,11 @@ type Configuration struct {
 	AppNames     []string           `yaml:"AppNames"`
 	Server       Server             `yaml:"Server" `
 	Repository   sql.Config         `yaml:"Repository"`
-	Service      service.Config     `yaml:"Service"`
-	Debug        debug.Config       `yaml:"Debug"`
+	// Service only seeds runtime settings missing from the database on
+	// first start (plus SettingsRefreshInterval); after that they're edited
+	// from the admin settings page. See service/settings.go.
+	Service service.Config `yaml:"Service"`
+	Debug   debug.Config   `yaml:"Debug"`
 }
 
 type ServerConfig struct {

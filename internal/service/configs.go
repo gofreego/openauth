@@ -250,6 +250,10 @@ func (s *Service) DeleteConfigEntity(ctx context.Context, req *openauth_v1.Delet
 		return nil, status.Error(codes.NotFound, "config entity not found")
 	}
 
+	if entity.Name == SettingsEntity {
+		return nil, status.Error(codes.FailedPrecondition, "openauth's settings entity can't be deleted")
+	}
+
 	// Check write permission (delete requires write permission)
 	writePerm, _ := s.repo.GetPermissionByID(ctx, entity.WritePerm)
 	if writePerm != nil && !claims.HasPermission(writePerm.Name) {
@@ -311,6 +315,10 @@ func (s *Service) CreateConfig(ctx context.Context, req *openauth_v1.CreateConfi
 
 	logger.Debug(ctx, "Config creation authorized by userID=%d for entity_id=%d, key=%s", claims.UserID, req.EntityId, req.Key)
 
+	if entity.Name == SettingsEntity {
+		return nil, status.Error(codes.FailedPrecondition, "openauth's settings are defined by openauth; edit the existing ones instead")
+	}
+
 	// Check if config with same key already exists in this entity
 	existing, err := s.repo.GetConfigByEntityAndKey(ctx, req.EntityId, req.Key)
 	if err == nil && existing != nil {
@@ -371,7 +379,7 @@ func (s *Service) GetConfig(ctx context.Context, req *openauth_v1.GetConfigReque
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to read this config")
 	}
 
-	return config.ToProtoConfig(), nil
+	return toProtoConfig(entity.Name, config), nil
 }
 
 // GetConfigsByKeys retrieves multiple configs by keys within an entity
@@ -415,7 +423,7 @@ func (s *Service) GetConfigsByKeys(ctx context.Context, req *openauth_v1.GetConf
 	// Convert to protobuf
 	protoConfigs := make(map[string]*openauth_v1.Config)
 	for key, config := range configs {
-		protoConfigs[key] = config.ToProtoConfig()
+		protoConfigs[key] = toProtoConfig(entity.Name, config)
 	}
 
 	return &openauth_v1.GetConfigsByKeysResponse{
@@ -471,7 +479,7 @@ func (s *Service) ListConfigs(ctx context.Context, req *openauth_v1.ListConfigsR
 	var protoConfigs []*openauth_v1.Config
 
 	for _, config := range configs {
-		protoConfigs = append(protoConfigs, config.ToProtoConfig())
+		protoConfigs = append(protoConfigs, toProtoConfig(entity.Name, config))
 	}
 	return &openauth_v1.ListConfigsResponse{
 		Configs: protoConfigs,
@@ -518,8 +526,27 @@ func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfi
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to update this config")
 	}
 
+	isSetting := entity.Name == SettingsEntity
+	// The masked placeholder coming back means "unchanged".
+	if isSensitiveSetting(entity.Name, config.Key) {
+		if v, ok := req.Value.(*openauth_v1.UpdateConfigRequest_StringValue); ok && v.StringValue == maskedValue {
+			req.Value = nil
+		}
+	}
+
 	// Apply updates using the DAO method
 	config.FromUpdateConfigRequest(req, claims.UserID)
+
+	// A setting's value is checked before it's stored, so a bad value is
+	// refused here rather than ignored at the next refresh.
+	if isSetting && req.Value != nil {
+		if def, ok := settingByKey(config.Key); ok && config.Type != def.typ {
+			return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("%s must be of type %s", config.Key, def.typ))
+		}
+		if err := s.settings.checkWrite(config.Key, config.Value); err != nil {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
 
 	// Build updates map for repository
 	updates := make(map[string]interface{})
@@ -548,6 +575,14 @@ func (s *Service) UpdateConfig(ctx context.Context, req *openauth_v1.UpdateConfi
 	}
 
 	logger.Info(ctx, "Config updated successfully with ID=%d", req.Id)
+
+	// Apply it on this instance now; the others pick it up on their next
+	// refresh.
+	if isSetting {
+		if err := s.settings.reload(ctx); err != nil {
+			logger.Error(ctx, "Failed to reload openauth settings after an update: %v", err)
+		}
+	}
 	return &openauth_v1.UpdateResponse{
 		Success: true,
 		Message: stringPtr("config updated successfully"),
@@ -591,6 +626,9 @@ func (s *Service) DeleteConfig(ctx context.Context, req *openauth_v1.DeleteConfi
 		logger.Warn(ctx, "userID=%d does not have write permission for config %d", claims.UserID, req.Id)
 		return nil, status.Error(codes.PermissionDenied, "user does not have permission to delete this config")
 	}
+	if entity.Name == SettingsEntity {
+		return nil, status.Error(codes.FailedPrecondition, "openauth's settings can't be deleted")
+	}
 
 	err = s.repo.DeleteConfig(ctx, req.Id)
 	if err != nil {
@@ -603,4 +641,14 @@ func (s *Service) DeleteConfig(ctx context.Context, req *openauth_v1.DeleteConfi
 		Success: true,
 		Message: stringPtr("config deleted successfully"),
 	}, nil
+}
+
+// toProtoConfig converts a config row for the API, masking sensitive
+// openauth settings.
+func toProtoConfig(entityName string, c *dao.Config) *openauth_v1.Config {
+	proto := c.ToProtoConfig()
+	if isSensitiveSetting(entityName, c.Key) {
+		proto.Value = &openauth_v1.Config_StringValue{StringValue: maskedValue}
+	}
+	return proto
 }

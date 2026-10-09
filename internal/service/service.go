@@ -14,7 +14,14 @@ import (
 	"github.com/google/uuid"
 )
 
+// Config is openauth's runtime settings. They're read from the database
+// (see settings.go); the YAML values here only seed settings missing from
+// it on first start. SettingsRefreshInterval is the one bootstrap value.
 type Config struct {
+	// SettingsRefreshInterval is how often the settings are re-read from
+	// the database (default 1m).
+	SettingsRefreshInterval time.Duration `yaml:"SettingsRefreshInterval"`
+
 	JWT           JWTConfig           `yaml:"JWT"`
 	Security      SecurityConfig      `yaml:"Security"`
 	Communication CommunicationConfig `yaml:"Communication"`
@@ -249,29 +256,31 @@ type Repository interface {
 }
 
 type Service struct {
-	repo Repository
-	cfg  *Config
+	repo     Repository
+	settings *settingsStore
 	openauth_v1.UnimplementedOpenAuthServer
-	communicationClient communicationservice.Client
-	mediabaseClient     mediabaseservice.Client
 }
 
+// NewService loads the runtime settings from the database (seeding any
+// missing ones from cfg) and keeps them fresh; see settings.go.
 func NewService(ctx context.Context, cfg *Config, repo Repository) *Service {
-	cfg.Communication.Default()
-	cfg.Mediabase.Default()
-
-	mediabaseClient, err := mediabaseservice.NewClient(cfg.Mediabase.ServiceEndpoint)
-	if err != nil {
-		logger.Error(ctx, "Failed to initialize mediabase client: %v", err)
-		// We might want to handle this differently, but for now we'll just log it
-	}
-
-	logger.Info(ctx, "Initializing OpenAuth Service with config: JWT TTL=%v, Security BcryptCost=%d",
-		cfg.JWT.AccessTokenTTL, cfg.Security.BcryptCost)
-	return &Service{
-		repo:                repo,
-		cfg:                 cfg,
-		communicationClient: communicationservice.NewClient(cfg.Communication.ServiceEndpoint),
-		mediabaseClient:     mediabaseClient,
-	}
+	s := &Service{repo: repo, settings: getSettingsStore(ctx, cfg, repo)}
+	logger.Info(ctx, "Initializing OpenAuth Service with settings: JWT TTL=%v, Security BcryptCost=%d",
+		s.conf().JWT.AccessTokenTTL, s.conf().Security.BcryptCost)
+	return s
 }
+
+// conf is the current runtime settings. Read it once per use rather than
+// holding on to it, so a refresh is picked up.
+func (s *Service) conf() *Config { return s.settings.get().cfg }
+
+func (s *Service) communicationClient() communicationservice.Client {
+	return s.settings.get().communication
+}
+
+func (s *Service) mediabaseClient() mediabaseservice.Client {
+	return s.settings.get().mediabase
+}
+
+// JWTSecret is the current token-signing key, for the auth middleware.
+func (s *Service) JWTSecret() string { return s.conf().JWT.SecretKey }

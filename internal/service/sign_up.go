@@ -95,7 +95,7 @@ func (s *Service) SignUp(ctx context.Context, req *openauth_v1.SignUpRequest) (*
 	}
 
 	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.cfg.Security.BcryptCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.conf().Security.BcryptCost)
 	if err != nil {
 		logger.Error(ctx, "Failed to hash password for username %s: %v", username, err)
 		return nil, status.Error(codes.Internal, "failed to hash password")
@@ -408,7 +408,7 @@ func (s *Service) ChangePassword(ctx context.Context, req *openauth_v1.ChangePas
 	}
 
 	// Hash new password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), s.cfg.Security.BcryptCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), s.conf().Security.BcryptCost)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to hash new password")
 	}
@@ -456,10 +456,10 @@ func (s *Service) sendEmailVerification(ctx context.Context, userID int64, email
 		return err
 	}
 
-	err = s.communicationClient.SendEmail(ctx, &communicationservice.SendEmailRequest{
+	err = s.communicationClient().SendEmail(ctx, &communicationservice.SendEmailRequest{
 		Email:   email,
-		Subject: s.cfg.Communication.EmailVerificationSubject,
-		Body:    fmt.Sprintf(s.cfg.Communication.EmailVerificationBody, code),
+		Subject: s.conf().Communication.EmailVerificationSubject,
+		Body:    fmt.Sprintf(s.conf().Communication.EmailVerificationBody, code),
 	})
 	if err != nil {
 		return err
@@ -498,9 +498,9 @@ func (s *Service) sendPhoneVerification(ctx context.Context, userID int64, phone
 		return err
 	}
 
-	err = s.communicationClient.SendSMS(ctx, &communicationservice.SendSMSRequest{
+	err = s.communicationClient().SendSMS(ctx, &communicationservice.SendSMSRequest{
 		Mobile:  phone,
-		Message: fmt.Sprintf(s.cfg.Communication.SMSVerificationMessage, code),
+		Message: fmt.Sprintf(s.conf().Communication.SMSVerificationMessage, code),
 	})
 	if err != nil {
 		return err

@@ -41,7 +41,7 @@ func (s *Service) GoogleSignIn(ctx context.Context, req *openauth_v1.GoogleSignI
 		return nil, status.Error(codes.Unauthenticated, "invalid Google id token")
 	}
 
-	if !slices.Contains(s.cfg.GoogleOAuth.ClientIDs, payload.Audience) {
+	if !slices.Contains(s.conf().GoogleOAuth.ClientIDs, payload.Audience) {
 		logger.Warn(ctx, "Google sign-in failed: unrecognized audience: %s", payload.Audience)
 		return nil, status.Error(codes.Unauthenticated, "invalid Google id token")
 	}
@@ -93,8 +93,8 @@ func (s *Service) GoogleSignIn(ctx context.Context, req *openauth_v1.GoogleSignI
 		return nil, status.Error(codes.Internal, "failed to generate refresh token")
 	}
 
-	accessTokenDuration := s.cfg.JWT.AccessTokenTTL
-	refreshTokenDuration := s.cfg.JWT.RefreshTokenTTL
+	accessTokenDuration := s.conf().JWT.AccessTokenTTL
+	refreshTokenDuration := s.conf().JWT.RefreshTokenTTL
 	expiresAt := time.Now().Add(accessTokenDuration).UnixMilli()
 	refreshExpiresAt := time.Now().Add(refreshTokenDuration).UnixMilli()
 

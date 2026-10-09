@@ -53,6 +53,10 @@ const (
 	PermissionConfigEntitiesCreate = "config.entity.create"
 	PermissionConfigEntitiesRead   = "config.entity.read"
 
+	// OpenAuth's own runtime settings (the "openauth" config entity)
+	PermissionOpenAuthConfigRead = "openauth.config.read"
+	PermissionOpenAuthConfigEdit = "openauth.config.edit"
+
 	// App management permissions
 	PermissionAppsCreate = "apps.create"
 	PermissionAppsRead   = "apps.read"

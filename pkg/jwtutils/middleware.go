@@ -17,7 +17,7 @@ import (
 
 // AuthMiddleware provides JWT authentication for gRPC and HTTP requests
 type AuthMiddleware struct {
-	jwtSecret   string
+	jwtSecret   func() string
 	enabled     bool
 	validation  bool // whether to validate token expiration and signature
 	skipMethods map[string]bool
@@ -28,10 +28,16 @@ type AuthMiddleware struct {
 func NewAuthMiddleware(jwtSecret string, enabled bool, validation bool) *AuthMiddleware {
 	logger.Info(context.Background(), "Initializing JWT Auth Middleware: enabled=%t, validation=%t", enabled, validation)
 	return &AuthMiddleware{
-		jwtSecret:  jwtSecret,
+		jwtSecret:  func() string { return jwtSecret },
 		enabled:    enabled,
 		validation: validation,
 	}
+}
+
+// SetSecretProvider makes the middleware read the signing key from secret
+// on every request, so a rotated key takes effect without a restart.
+func (a *AuthMiddleware) SetSecretProvider(secret func() string) {
+	a.jwtSecret = secret
 }
 
 func (a *AuthMiddleware) SetSkipMethods(methods []string) {
@@ -117,7 +123,7 @@ func (a *AuthMiddleware) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 				return nil, err
 			}
 			if a.validation {
-				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret)
+				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret())
 				if err != nil {
 					logger.Warn(ctx, "Invalid token for method %s: %v", info.FullMethod, err)
 					return nil, status.Error(codes.Unauthenticated, "invalid token")
@@ -213,7 +219,7 @@ func (a *AuthMiddleware) StreamServerInterceptor() grpc.StreamServerInterceptor 
 				return err
 			}
 			if a.validation {
-				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret)
+				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret())
 				if err != nil {
 					logger.Warn(ss.Context(), "Invalid token for stream method %s: %v", info.FullMethod, err)
 					return status.Error(codes.Unauthenticated, "invalid token")
@@ -306,7 +312,7 @@ func (a *AuthMiddleware) HTTPMiddleware(next http.Handler) http.Handler {
 			token := strings.TrimPrefix(authHeader, "Bearer ")
 
 			if a.validation {
-				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret)
+				validatedClaims, err := ParseAndValidateToken(token, a.jwtSecret())
 				if err != nil {
 					logger.Warn(r.Context(), "Invalid token for HTTP request %s %s: %v", r.Method, r.URL.Path, err)
 					writeJSONError(w, "invalid token", http.StatusUnauthorized)
