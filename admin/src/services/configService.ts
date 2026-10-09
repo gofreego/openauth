@@ -12,9 +12,16 @@ import type {
   UpdateConfigRequest,
   DeleteResponse,
 } from '../apis/proto/openauth/v1/configs'
+import { valueTypeFromJSON } from '../apis/proto/openauth/v1/configs'
 
 const ENTITY_URL = '/openauth/v1/config-entities'
 const CONFIG_URL = '/openauth/v1/configs'
+
+// The gateway sends enums by name ("VALUE_TYPE_STRING"); the UI compares
+// against the numeric ValueType.
+function normalizeConfig(config: Config): Config {
+  return { ...config, type: valueTypeFromJSON(config.type) }
+}
 
 export const configService = {
   // ===== Config Entities =====
@@ -54,12 +61,12 @@ export const configService = {
       ...(params.search && { search: params.search }),
     })
     const response = await httpClient.get<ListConfigsResponse>(`${CONFIG_URL}?${queryParams.toString()}`)
-    return response.data
+    return { ...response.data, configs: (response.data.configs ?? []).map(normalizeConfig) }
   },
 
   async createConfig(data: CreateConfigRequest): Promise<Config> {
     const response = await httpClient.post<Config>(CONFIG_URL, data)
-    return response.data
+    return normalizeConfig(response.data)
   },
 
   async updateConfig(data: UpdateConfigRequest): Promise<Config> {
