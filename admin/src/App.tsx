@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ThemeProvider, NotificationProvider, SidebarLayout } from '@gofreego/tsutils'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { LoginPage } from './pages/login/LoginPage'
 import { DashboardPage } from './pages/dashboard/DashboardPage'
 import { AppsPage } from './pages/apps/AppsPage'
@@ -40,6 +40,18 @@ function AdminLayout() {
   )
 }
 
+/**
+ * The admin app used to live under /openauth/admin/v2/. Apps still pointing
+ * there (e.g. `.../v2/login?redirect=...`) would otherwise fall into the
+ * logged-in area's catch-all and lose their query string on the way to
+ * /login, so forward them to the same page without /v2, query intact.
+ */
+function LegacyV2Redirect() {
+  const { pathname, search, hash } = useLocation()
+  const target = pathname.replace(/^\/v2(?=\/|$)/, '') || '/'
+  return <Navigate to={`${target}${search}${hash}`} replace />
+}
+
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -61,6 +73,7 @@ function App() {
         <BrowserRouter basename="/openauth/admin">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/v2/*" element={<LegacyV2Redirect />} />
             <Route element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/users" element={<UsersPage />} />
