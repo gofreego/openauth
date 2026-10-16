@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: openauth
-          image: ghcr.io/gofreego/openauth:pilot-376f530
+          image: ghcr.io/gofreego/openauth:pilot-eda86c6
           imagePullPolicy: Always
           command:
             - /app/application
