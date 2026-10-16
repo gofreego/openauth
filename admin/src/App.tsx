@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ThemeProvider, NotificationProvider, SidebarLayout } from '@gofreego/tsutils'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Box, Typography } from '@mui/material'
+import HomeIcon from '@mui/icons-material/Home'
 import { LoginPage } from './pages/login/LoginPage'
 import { DashboardPage } from './pages/dashboard/DashboardPage'
 import { AppsPage } from './pages/apps/AppsPage'
@@ -36,6 +38,7 @@ function AdminLayout() {
       isRouter={true}
       isBrowserRouter={false}
       style={{ height: '100vh' }}
+      header={<SidebarHeader />}
     />
   )
 }
@@ -50,6 +53,35 @@ function LegacyV2Redirect() {
   const { pathname, search, hash } = useLocation()
   const target = pathname.replace(/^\/v2(?=\/|$)/, '') || '/'
   return <Navigate to={`${target}${search}${hash}`} replace />
+}
+
+/**
+ * Same sidebar header as the other admins (catalog, payments): a home icon
+ * that returns to the admin portal, and this console's name.
+ */
+function SidebarHeader() {
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, position: 'relative' }}>
+      <HomeIcon
+        sx={{ cursor: 'pointer' }}
+        onClick={() => window.location.href = '/'}
+      />
+      <Typography
+        variant="h5"
+        sx={{
+          fontWeight: 'bold',
+          color: 'primary.main',
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: '1.8rem',
+        }}
+      >
+        OpenAuth
+      </Typography>
+      <Box sx={{ width: 24 }} />
+    </Box>
+  )
 }
 
 function App() {
