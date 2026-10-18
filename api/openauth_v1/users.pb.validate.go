@@ -2774,8 +2774,6 @@ func (m *GetProfileSummariesRequest) validate(all bool) error {
 
 	}
 
-	// no validation rules for IncludeMediaUrls
-
 	if len(errors) > 0 {
 		return GetProfileSummariesRequestMultiError(errors)
 	}

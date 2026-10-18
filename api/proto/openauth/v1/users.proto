@@ -223,9 +223,7 @@ message GetProfileSummariesRequest {
         max_items: 100,
         items: {string: {uuid: true}}
     }];
-    // Also sign read URLs for each profile's picture and banner. Costs two storage calls per
-    // profile, so it's only allowed for up to 10 profiles (e.g. one public profile page).
-    bool include_media_urls = 3;
+    reserved 3; // was include_media_urls; picture/banner URLs are now always returned
 }
 
 // ProfileSummary is the public subset of a profile: safe to show to other users.
@@ -235,8 +233,8 @@ message ProfileSummary {
     string display_name = 3;  // display_name, else "first last", else profile_name
     string avatar_url = 4;
     string bio = 5;           // shown on the learner's public profile
-    // Short-lived signed URLs, set only when include_media_urls was requested; empty when the
-    // profile has no picture/banner uploaded.
+    // Public URLs of the profile picture and banner, cache-busted with the avatar_url key. They
+    // 404 until the profile uploads one, so clients fall back to initials / a default banner.
     string picture_url = 6;
     string banner_url = 7;
 }

@@ -47,9 +47,15 @@ type GoogleOAuthConfig struct {
 type MediabaseConfig struct {
 	ServiceEndpoint string `yaml:"ServiceEndpoint"`
 	BucketName      string `yaml:"BucketName"`
+	// PublicBaseURL serves the public-read profiles bucket over HTTP: objects live at
+	// <PublicBaseURL>/<BucketName>/<key>.
+	PublicBaseURL string `yaml:"PublicBaseURL"`
 }
 
 func (c *MediabaseConfig) Default() {
+	if c.PublicBaseURL == "" {
+		c.PublicBaseURL = "https://media.zshala.com"
+	}
 	if c.ServiceEndpoint == "" {
 		c.ServiceEndpoint = "localhost:8087"
 	}

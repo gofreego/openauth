@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gofreego/goutils/logger"
@@ -27,9 +28,6 @@ func (s *Service) GetProfileSummaries(ctx context.Context, req *openauth_v1.GetP
 
 	if len(req.ProfileIds) == 0 && len(req.ProfileUuids) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "validation failed: profile_ids or profile_uuids is required")
-	}
-	if req.IncludeMediaUrls && len(req.ProfileIds)+len(req.ProfileUuids) > maxProfilesWithMediaURLs {
-		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: include_media_urls allows at most %d profiles", maxProfilesWithMediaURLs))
 	}
 
 	profiles, err := s.repo.GetProfilesByIDs(ctx, req.ProfileIds)
@@ -61,13 +59,9 @@ func (s *Service) GetProfileSummaries(ctx context.Context, req *openauth_v1.GetP
 			DisplayName: profileDisplayName(p),
 			AvatarUrl:   derefString(p.AvatarURL),
 			Bio:         derefString(p.Bio),
+			PictureUrl:  s.profileImageURL(openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR, p.UUID.String(), derefString(p.AvatarURL)),
+			BannerUrl:   s.profileImageURL(openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_BANNER, p.UUID.String(), derefString(p.AvatarURL)),
 		})
-	}
-	if req.IncludeMediaUrls {
-		for _, summary := range summaries {
-			summary.PictureUrl = s.profileImageReadURL(ctx, profileImagePath(openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR), summary.Uuid)
-			summary.BannerUrl = s.profileImageReadURL(ctx, profileImagePath(openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_BANNER), summary.Uuid)
-		}
 	}
 	return &openauth_v1.GetProfileSummariesResponse{Profiles: summaries}, nil
 }
@@ -482,10 +476,6 @@ func (s *Service) MarkProfileURLUpdated(ctx context.Context, req *openauth_v1.Ma
 	}, nil
 }
 
-// maxProfilesWithMediaURLs caps GetProfileSummaries when include_media_urls is set, since each
-// profile costs two storage calls.
-const maxProfilesWithMediaURLs = 10
-
 // profileImagePath is the storage folder for a profile image type; uploads and reads share it.
 func profileImagePath(imageType openauth_v1.ProfileImageType) string {
 	if imageType == openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_BANNER {
@@ -498,20 +488,15 @@ func profileImageFileName(profileUUID string) string {
 	return fmt.Sprintf("%s.webp", profileUUID)
 }
 
-// profileImageReadURL signs a read URL for a profile image, or returns "" when there is none
-// (the object doesn't exist) or storage is unavailable - an image is never worth failing for.
-func (s *Service) profileImageReadURL(ctx context.Context, path, profileUUID string) string {
-	client := s.mediabaseClient()
-	if client == nil {
-		return ""
+// profileImageURL is the public URL of a profile's picture or banner in the public-read profiles
+// bucket: <PublicBaseURL>/<bucket>/<path>/<uuid>.webp, with version (the profile's avatar_url key,
+// bumped on every upload) appended so caches pick up a new image.
+func (s *Service) profileImageURL(imageType openauth_v1.ProfileImageType, profileUUID, version string) string {
+	media := s.conf().Mediabase
+	url := strings.TrimRight(media.PublicBaseURL, "/") + "/" + media.BucketName + "/" +
+		profileImagePath(imageType) + "/" + profileImageFileName(profileUUID)
+	if version != "" {
+		url += "?v=" + version
 	}
-	resp, err := client.PresignDownload(ctx, &mediabase_v1.PresignDownloadRequest{
-		BucketName: s.conf().Mediabase.BucketName,
-		ObjectKey:  path + "/" + profileImageFileName(profileUUID),
-	})
-	if err != nil {
-		logger.Debug(ctx, "profileImageReadURL: no %s image for %s: %v", path, profileUUID, err)
-		return ""
-	}
-	return resp.GetPresignedUrl()
+	return url
 }
