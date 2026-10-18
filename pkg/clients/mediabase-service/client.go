@@ -11,6 +11,8 @@ import (
 
 type Client interface {
 	PresignUpload(ctx context.Context, req *mediabase_v1.PresignUploadRequest) (*mediabase_v1.PresignUploadResponse, error)
+	// PresignDownload signs a short-lived read URL; it errors when the object doesn't exist.
+	PresignDownload(ctx context.Context, req *mediabase_v1.PresignDownloadRequest) (*mediabase_v1.PresignDownloadResponse, error)
 	// Close releases the connection; the client can't be used after.
 	Close() error
 }
@@ -34,6 +36,10 @@ func NewClient(endpoint string) (Client, error) {
 
 func (c *clientImpl) PresignUpload(ctx context.Context, req *mediabase_v1.PresignUploadRequest) (*mediabase_v1.PresignUploadResponse, error) {
 	return c.client.PresignUpload(ctx, req)
+}
+
+func (c *clientImpl) PresignDownload(ctx context.Context, req *mediabase_v1.PresignDownloadRequest) (*mediabase_v1.PresignDownloadResponse, error) {
+	return c.client.PresignDownload(ctx, req)
 }
 
 func (c *clientImpl) Close() error {

@@ -4190,6 +4190,17 @@
         },
         "avatarUrl": {
           "type": "string"
+        },
+        "bio": {
+          "type": "string",
+          "title": "shown on the learner's public profile"
+        },
+        "pictureUrl": {
+          "type": "string",
+          "description": "Short-lived signed URLs, set only when include_media_urls was requested; empty when the\nprofile has no picture/banner uploaded."
+        },
+        "bannerUrl": {
+          "type": "string"
         }
       },
       "description": "ProfileSummary is the public subset of a profile: safe to show to other users."

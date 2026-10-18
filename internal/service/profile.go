@@ -28,6 +28,9 @@ func (s *Service) GetProfileSummaries(ctx context.Context, req *openauth_v1.GetP
 	if len(req.ProfileIds) == 0 && len(req.ProfileUuids) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "validation failed: profile_ids or profile_uuids is required")
 	}
+	if req.IncludeMediaUrls && len(req.ProfileIds)+len(req.ProfileUuids) > maxProfilesWithMediaURLs {
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: include_media_urls allows at most %d profiles", maxProfilesWithMediaURLs))
+	}
 
 	profiles, err := s.repo.GetProfilesByIDs(ctx, req.ProfileIds)
 	if err != nil {
@@ -57,7 +60,14 @@ func (s *Service) GetProfileSummaries(ctx context.Context, req *openauth_v1.GetP
 			Uuid:        p.UUID.String(),
 			DisplayName: profileDisplayName(p),
 			AvatarUrl:   derefString(p.AvatarURL),
+			Bio:         derefString(p.Bio),
 		})
+	}
+	if req.IncludeMediaUrls {
+		for _, summary := range summaries {
+			summary.PictureUrl = s.profileImageReadURL(ctx, profileImagePath(openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR), summary.Uuid)
+			summary.BannerUrl = s.profileImageReadURL(ctx, profileImagePath(openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_BANNER), summary.Uuid)
+		}
 	}
 	return &openauth_v1.GetProfileSummariesResponse{Profiles: summaries}, nil
 }
@@ -405,17 +415,8 @@ func (s *Service) GetProfileUploadURL(ctx context.Context, req *openauth_v1.GetP
 		imageType = openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR
 	}
 
-	var path string
-	switch imageType {
-	case openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_BANNER:
-		path = "profiles/banners"
-	case openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_AVATAR:
-		fallthrough
-	default:
-		path = "profiles"
-	}
-
-	fileName := fmt.Sprintf("%s.webp", req.ProfileUuid)
+	path := profileImagePath(imageType)
+	fileName := profileImageFileName(req.ProfileUuid)
 
 	mediabaseReq := &mediabase_v1.PresignUploadRequest{
 		BucketName:  s.conf().Mediabase.BucketName,
@@ -479,4 +480,38 @@ func (s *Service) MarkProfileURLUpdated(ctx context.Context, req *openauth_v1.Ma
 	return &openauth_v1.GenericResponse{
 		Message: "Profile URL marked as updated successfully",
 	}, nil
+}
+
+// maxProfilesWithMediaURLs caps GetProfileSummaries when include_media_urls is set, since each
+// profile costs two storage calls.
+const maxProfilesWithMediaURLs = 10
+
+// profileImagePath is the storage folder for a profile image type; uploads and reads share it.
+func profileImagePath(imageType openauth_v1.ProfileImageType) string {
+	if imageType == openauth_v1.ProfileImageType_PROFILE_IMAGE_TYPE_BANNER {
+		return "profiles/banners"
+	}
+	return "profiles"
+}
+
+func profileImageFileName(profileUUID string) string {
+	return fmt.Sprintf("%s.webp", profileUUID)
+}
+
+// profileImageReadURL signs a read URL for a profile image, or returns "" when there is none
+// (the object doesn't exist) or storage is unavailable - an image is never worth failing for.
+func (s *Service) profileImageReadURL(ctx context.Context, path, profileUUID string) string {
+	client := s.mediabaseClient()
+	if client == nil {
+		return ""
+	}
+	resp, err := client.PresignDownload(ctx, &mediabase_v1.PresignDownloadRequest{
+		BucketName: s.conf().Mediabase.BucketName,
+		ObjectKey:  path + "/" + profileImageFileName(profileUUID),
+	})
+	if err != nil {
+		logger.Debug(ctx, "profileImageReadURL: no %s image for %s: %v", path, profileUUID, err)
+		return ""
+	}
+	return resp.GetPresignedUrl()
 }

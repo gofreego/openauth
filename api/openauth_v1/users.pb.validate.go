@@ -2774,6 +2774,8 @@ func (m *GetProfileSummariesRequest) validate(all bool) error {
 
 	}
 
+	// no validation rules for IncludeMediaUrls
+
 	if len(errors) > 0 {
 		return GetProfileSummariesRequestMultiError(errors)
 	}
@@ -2891,6 +2893,12 @@ func (m *ProfileSummary) validate(all bool) error {
 	// no validation rules for DisplayName
 
 	// no validation rules for AvatarUrl
+
+	// no validation rules for Bio
+
+	// no validation rules for PictureUrl
+
+	// no validation rules for BannerUrl
 
 	if len(errors) > 0 {
 		return ProfileSummaryMultiError(errors)

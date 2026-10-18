@@ -1419,11 +1419,14 @@ func (x *ListUserProfilesResponse) GetProfiles() []*UserProfile {
 // and/or by uuid, e.g. so another service can show names next to profile ids it stores, or
 // resolve a uuid from a shared link. At least one id or uuid is required.
 type GetProfileSummariesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfileIds    []int64                `protobuf:"varint,1,rep,packed,name=profile_ids,json=profileIds,proto3" json:"profile_ids,omitempty"`
-	ProfileUuids  []string               `protobuf:"bytes,2,rep,name=profile_uuids,json=profileUuids,proto3" json:"profile_uuids,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	ProfileIds   []int64                `protobuf:"varint,1,rep,packed,name=profile_ids,json=profileIds,proto3" json:"profile_ids,omitempty"`
+	ProfileUuids []string               `protobuf:"bytes,2,rep,name=profile_uuids,json=profileUuids,proto3" json:"profile_uuids,omitempty"`
+	// Also sign read URLs for each profile's picture and banner. Costs two storage calls per
+	// profile, so it's only allowed for up to 10 profiles (e.g. one public profile page).
+	IncludeMediaUrls bool `protobuf:"varint,3,opt,name=include_media_urls,json=includeMediaUrls,proto3" json:"include_media_urls,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *GetProfileSummariesRequest) Reset() {
@@ -1470,13 +1473,25 @@ func (x *GetProfileSummariesRequest) GetProfileUuids() []string {
 	return nil
 }
 
+func (x *GetProfileSummariesRequest) GetIncludeMediaUrls() bool {
+	if x != nil {
+		return x.IncludeMediaUrls
+	}
+	return false
+}
+
 // ProfileSummary is the public subset of a profile: safe to show to other users.
 type ProfileSummary struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Uuid          string                 `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	DisplayName   string                 `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"` // display_name, else "first last", else profile_name
-	AvatarUrl     string                 `protobuf:"bytes,4,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Uuid        string                 `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	DisplayName string                 `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"` // display_name, else "first last", else profile_name
+	AvatarUrl   string                 `protobuf:"bytes,4,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
+	Bio         string                 `protobuf:"bytes,5,opt,name=bio,proto3" json:"bio,omitempty"` // shown on the learner's public profile
+	// Short-lived signed URLs, set only when include_media_urls was requested; empty when the
+	// profile has no picture/banner uploaded.
+	PictureUrl    string `protobuf:"bytes,6,opt,name=picture_url,json=pictureUrl,proto3" json:"picture_url,omitempty"`
+	BannerUrl     string `protobuf:"bytes,7,opt,name=banner_url,json=bannerUrl,proto3" json:"banner_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1535,6 +1550,27 @@ func (x *ProfileSummary) GetDisplayName() string {
 func (x *ProfileSummary) GetAvatarUrl() string {
 	if x != nil {
 		return x.AvatarUrl
+	}
+	return ""
+}
+
+func (x *ProfileSummary) GetBio() string {
+	if x != nil {
+		return x.Bio
+	}
+	return ""
+}
+
+func (x *ProfileSummary) GetPictureUrl() string {
+	if x != nil {
+		return x.PictureUrl
+	}
+	return ""
+}
+
+func (x *ProfileSummary) GetBannerUrl() string {
+	if x != nil {
+		return x.BannerUrl
 	}
 	return ""
 }
@@ -3043,17 +3079,23 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x03 \x01(\x05R\x06offset\"G\n" +
 	"\x18ListUserProfilesResponse\x12+\n" +
-	"\bprofiles\x18\x01 \x03(\v2\x0f.v1.UserProfileR\bprofiles\"\x83\x01\n" +
+	"\bprofiles\x18\x01 \x03(\v2\x0f.v1.UserProfileR\bprofiles\"\xb1\x01\n" +
 	"\x1aGetProfileSummariesRequest\x12/\n" +
 	"\vprofile_ids\x18\x01 \x03(\x03B\x0e\xfaB\v\x92\x01\b\x10d\"\x04\"\x02 \x00R\n" +
 	"profileIds\x124\n" +
-	"\rprofile_uuids\x18\x02 \x03(\tB\x0f\xfaB\f\x92\x01\t\x10d\"\x05r\x03\xb0\x01\x01R\fprofileUuids\"v\n" +
+	"\rprofile_uuids\x18\x02 \x03(\tB\x0f\xfaB\f\x92\x01\t\x10d\"\x05r\x03\xb0\x01\x01R\fprofileUuids\x12,\n" +
+	"\x12include_media_urls\x18\x03 \x01(\bR\x10includeMediaUrls\"\xc8\x01\n" +
 	"\x0eProfileSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12!\n" +
 	"\fdisplay_name\x18\x03 \x01(\tR\vdisplayName\x12\x1d\n" +
 	"\n" +
-	"avatar_url\x18\x04 \x01(\tR\tavatarUrl\"M\n" +
+	"avatar_url\x18\x04 \x01(\tR\tavatarUrl\x12\x10\n" +
+	"\x03bio\x18\x05 \x01(\tR\x03bio\x12\x1f\n" +
+	"\vpicture_url\x18\x06 \x01(\tR\n" +
+	"pictureUrl\x12\x1d\n" +
+	"\n" +
+	"banner_url\x18\a \x01(\tR\tbannerUrl\"M\n" +
 	"\x1bGetProfileSummariesResponse\x12.\n" +
 	"\bprofiles\x18\x01 \x03(\v2\x12.v1.ProfileSummaryR\bprofiles\"\xf3\a\n" +
 	"\x14UpdateProfileRequest\x12,\n" +
