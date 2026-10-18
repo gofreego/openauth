@@ -35,6 +35,9 @@ var (
 	_ = sort.Sort
 )
 
+// define the regex for a UUID once up-front
+var _users_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+
 // Validate checks the field values on User with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
 // encountered is returned, or nil if there are no violations.
@@ -2716,10 +2719,10 @@ func (m *GetProfileSummariesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := len(m.GetProfileIds()); l < 1 || l > 100 {
+	if len(m.GetProfileIds()) > 100 {
 		err := GetProfileSummariesRequestValidationError{
 			field:  "ProfileIds",
-			reason: "value must contain between 1 and 100 items, inclusive",
+			reason: "value must contain no more than 100 item(s)",
 		}
 		if !all {
 			return err
@@ -2743,8 +2746,44 @@ func (m *GetProfileSummariesRequest) validate(all bool) error {
 
 	}
 
+	if len(m.GetProfileUuids()) > 100 {
+		err := GetProfileSummariesRequestValidationError{
+			field:  "ProfileUuids",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetProfileUuids() {
+		_, _ = idx, item
+
+		if err := m._validateUuid(item); err != nil {
+			err = GetProfileSummariesRequestValidationError{
+				field:  fmt.Sprintf("ProfileUuids[%v]", idx),
+				reason: "value must be a valid UUID",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return GetProfileSummariesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *GetProfileSummariesRequest) _validateUuid(uuid string) error {
+	if matched := _users_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil

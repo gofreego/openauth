@@ -319,7 +319,8 @@ type OpenAuthClient interface {
 	// Returns paginated list of profiles belonging to a user.
 	// Useful for profile selection interfaces and management.
 	ListUserProfiles(ctx context.Context, in *ListUserProfilesRequest, opts ...grpc.CallOption) (*ListUserProfilesResponse, error)
-	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
+	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id
+	// and/or uuid.
 	//
 	// Meant for in-cluster services that store profile ids (e.g. learnerservice group
 	// members) and need to display them. gRPC-only and unauthenticated: it deliberately has
@@ -1373,7 +1374,8 @@ type OpenAuthServer interface {
 	// Returns paginated list of profiles belonging to a user.
 	// Useful for profile selection interfaces and management.
 	ListUserProfiles(context.Context, *ListUserProfilesRequest) (*ListUserProfilesResponse, error)
-	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
+	// GetProfileSummaries returns the public details (name, avatar) of several profiles by id
+	// and/or uuid.
 	//
 	// Meant for in-cluster services that store profile ids (e.g. learnerservice group
 	// members) and need to display them. gRPC-only and unauthenticated: it deliberately has

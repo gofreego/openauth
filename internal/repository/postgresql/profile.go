@@ -141,6 +141,41 @@ func (r *Repository) ListUserProfiles(ctx context.Context, filters *filter.UserP
 }
 
 // GetProfilesByIDs retrieves the profiles with the given numeric ids; missing ids are skipped.
+// GetProfilesByUUIDs returns the profiles with the given uuids; unknown uuids are omitted.
+func (r *Repository) GetProfilesByUUIDs(ctx context.Context, uuids []string) ([]*dao.Profile, error) {
+	if len(uuids) == 0 {
+		return nil, nil
+	}
+	placeholders := make([]string, len(uuids))
+	args := make([]interface{}, len(uuids))
+	for i, id := range uuids {
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
+		args[i] = id
+	}
+	query := `
+		SELECT id, uuid, user_id, profile_name, first_name, last_name, display_name, bio, avatar_url,
+			date_of_birth, gender, timezone, locale, country, city, address, postal_code,
+			website_url, metadata, created_at, updated_at
+		FROM user_profiles
+		WHERE uuid IN (` + strings.Join(placeholders, ", ") + `)`
+
+	rows, err := r.connManager.Primary().QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var profiles []*dao.Profile
+	for rows.Next() {
+		profile, err := r.scanProfileFromRows(rows)
+		if err != nil {
+			return nil, err
+		}
+		profiles = append(profiles, profile)
+	}
+	return profiles, rows.Err()
+}
+
 func (r *Repository) GetProfilesByIDs(ctx context.Context, ids []int64) ([]*dao.Profile, error) {
 	if len(ids) == 0 {
 		return nil, nil

@@ -735,7 +735,8 @@ service OpenAuth {
         };
     }
 
-    // GetProfileSummaries returns the public details (name, avatar) of several profiles by id.
+    // GetProfileSummaries returns the public details (name, avatar) of several profiles by id
+    // and/or uuid.
     //
     // Meant for in-cluster services that store profile ids (e.g. learnerservice group
     // members) and need to display them. gRPC-only and unauthenticated: it deliberately has

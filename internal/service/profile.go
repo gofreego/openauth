@@ -25,10 +25,29 @@ func (s *Service) GetProfileSummaries(ctx context.Context, req *openauth_v1.GetP
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("validation failed: %v", err))
 	}
 
+	if len(req.ProfileIds) == 0 && len(req.ProfileUuids) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "validation failed: profile_ids or profile_uuids is required")
+	}
+
 	profiles, err := s.repo.GetProfilesByIDs(ctx, req.ProfileIds)
 	if err != nil {
 		logger.Error(ctx, "GetProfileSummaries: GetProfilesByIDs error: %v", err)
 		return nil, status.Error(codes.Internal, "failed to get profiles")
+	}
+	byUUID, err := s.repo.GetProfilesByUUIDs(ctx, req.ProfileUuids)
+	if err != nil {
+		logger.Error(ctx, "GetProfileSummaries: GetProfilesByUUIDs error: %v", err)
+		return nil, status.Error(codes.Internal, "failed to get profiles")
+	}
+	// A profile asked for both ways is returned once.
+	seen := make(map[int64]bool, len(profiles))
+	for _, p := range profiles {
+		seen[p.ID] = true
+	}
+	for _, p := range byUUID {
+		if !seen[p.ID] {
+			profiles = append(profiles, p)
+		}
 	}
 
 	summaries := make([]*openauth_v1.ProfileSummary, 0, len(profiles))

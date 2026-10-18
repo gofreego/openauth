@@ -1415,11 +1415,13 @@ func (x *ListUserProfilesResponse) GetProfiles() []*UserProfile {
 	return nil
 }
 
-// GetProfileSummariesRequest asks for the public details of several profiles by numeric id,
-// e.g. so another service can show names next to profile ids it stores.
+// GetProfileSummariesRequest asks for the public details of several profiles by numeric id
+// and/or by uuid, e.g. so another service can show names next to profile ids it stores, or
+// resolve a uuid from a shared link. At least one id or uuid is required.
 type GetProfileSummariesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProfileIds    []int64                `protobuf:"varint,1,rep,packed,name=profile_ids,json=profileIds,proto3" json:"profile_ids,omitempty"`
+	ProfileUuids  []string               `protobuf:"bytes,2,rep,name=profile_uuids,json=profileUuids,proto3" json:"profile_uuids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1457,6 +1459,13 @@ func (*GetProfileSummariesRequest) Descriptor() ([]byte, []int) {
 func (x *GetProfileSummariesRequest) GetProfileIds() []int64 {
 	if x != nil {
 		return x.ProfileIds
+	}
+	return nil
+}
+
+func (x *GetProfileSummariesRequest) GetProfileUuids() []string {
+	if x != nil {
+		return x.ProfileUuids
 	}
 	return nil
 }
@@ -3034,11 +3043,11 @@ const file_proto_openauth_v1_users_proto_rawDesc = "" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x03 \x01(\x05R\x06offset\"G\n" +
 	"\x18ListUserProfilesResponse\x12+\n" +
-	"\bprofiles\x18\x01 \x03(\v2\x0f.v1.UserProfileR\bprofiles\"O\n" +
-	"\x1aGetProfileSummariesRequest\x121\n" +
-	"\vprofile_ids\x18\x01 \x03(\x03B\x10\xfaB\r\x92\x01\n" +
-	"\b\x01\x10d\"\x04\"\x02 \x00R\n" +
-	"profileIds\"v\n" +
+	"\bprofiles\x18\x01 \x03(\v2\x0f.v1.UserProfileR\bprofiles\"\x83\x01\n" +
+	"\x1aGetProfileSummariesRequest\x12/\n" +
+	"\vprofile_ids\x18\x01 \x03(\x03B\x0e\xfaB\v\x92\x01\b\x10d\"\x04\"\x02 \x00R\n" +
+	"profileIds\x124\n" +
+	"\rprofile_uuids\x18\x02 \x03(\tB\x0f\xfaB\f\x92\x01\t\x10d\"\x05r\x03\xb0\x01\x01R\fprofileUuids\"v\n" +
 	"\x0eProfileSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12!\n" +

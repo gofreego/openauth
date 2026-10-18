@@ -153,6 +153,7 @@ type Repository interface {
 	// Profile management methods
 	ListUserProfiles(ctx context.Context, filters *filter.UserProfilesFilter) ([]*dao.Profile, error)
 	GetProfilesByIDs(ctx context.Context, ids []int64) ([]*dao.Profile, error)
+	GetProfilesByUUIDs(ctx context.Context, uuids []string) ([]*dao.Profile, error)
 	ListUserProfileUUIDs(ctx context.Context, userID int64) ([]uuid.UUID, error)
 	GetProfileByUUID(ctx context.Context, uuid string) (*dao.Profile, error)
 	UpdateProfileByUUID(ctx context.Context, uuid string, updates map[string]interface{}) (*dao.Profile, error)
