@@ -272,8 +272,6 @@ func (c *OpenauthConfigFetcher) GetConfigsByKeys(ctx context.Context, in *openau
 	return resp, err
 }
 
-// GetProfileSummaries returns the public name/avatar of the given profiles. The client's
-// endpoint is unauthenticated and reachable only on openauth's in-cluster gRPC port.
 // GetProfileSummariesByUUIDs returns the public details of the given profiles by uuid; unknown
 // uuids are omitted. At most 100 per call.
 func (c *OpenauthConfigFetcher) GetProfileSummariesByUUIDs(ctx context.Context, profileUUIDs []string) (*openauth_v1.GetProfileSummariesResponse, error) {
@@ -289,6 +287,8 @@ func (c *OpenauthConfigFetcher) GetProfileSummariesByUUIDs(ctx context.Context, 
 	return resp, err
 }
 
+// GetProfileSummaries returns the public name/avatar of the given profiles. The client's
+// endpoint is unauthenticated and reachable only on openauth's in-cluster gRPC port.
 func (c *OpenauthConfigFetcher) GetProfileSummaries(ctx context.Context, profileIDs []int64) (*openauth_v1.GetProfileSummariesResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, c.config.Timeout)
 	defer cancel()
