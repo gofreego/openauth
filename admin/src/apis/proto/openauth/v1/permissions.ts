@@ -132,6 +132,30 @@ export interface DeletePermissionResponse {
   message: string;
 }
 
+/**
+ * BulkCreatePermissionsRequest creates many permissions at once, e.g. a service's whole set
+ * pasted as JSON in the admin console. Each is checked like CreatePermission.
+ */
+export interface BulkCreatePermissionsRequest {
+  permissions: CreatePermissionRequest[];
+}
+
+/** BulkPermissionFailure is one permission that couldn't be created, and why. */
+export interface BulkPermissionFailure {
+  name: string;
+  error: string;
+}
+
+/**
+ * BulkCreatePermissionsResponse says what happened to each: created, skipped because one
+ * with that name exists already, or failed.
+ */
+export interface BulkCreatePermissionsResponse {
+  created: Permission[];
+  skipped: string[];
+  failed: BulkPermissionFailure[];
+}
+
 function createBasePermission(): Permission {
   return {
     id: "0",
@@ -915,6 +939,240 @@ export const DeletePermissionResponse: MessageFns<DeletePermissionResponse> = {
     const message = createBaseDeletePermissionResponse();
     message.success = object.success ?? false;
     message.message = object.message ?? "";
+    return message;
+  },
+};
+
+function createBaseBulkCreatePermissionsRequest(): BulkCreatePermissionsRequest {
+  return { permissions: [] };
+}
+
+export const BulkCreatePermissionsRequest: MessageFns<BulkCreatePermissionsRequest> = {
+  encode(message: BulkCreatePermissionsRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.permissions) {
+      CreatePermissionRequest.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): BulkCreatePermissionsRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBulkCreatePermissionsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.permissions.push(CreatePermissionRequest.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BulkCreatePermissionsRequest {
+    return {
+      permissions: globalThis.Array.isArray(object?.permissions)
+        ? object.permissions.map((e: any) => CreatePermissionRequest.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: BulkCreatePermissionsRequest): unknown {
+    const obj: any = {};
+    if (message.permissions?.length) {
+      obj.permissions = message.permissions.map((e) => CreatePermissionRequest.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BulkCreatePermissionsRequest>, I>>(base?: I): BulkCreatePermissionsRequest {
+    return BulkCreatePermissionsRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<BulkCreatePermissionsRequest>, I>>(object: I): BulkCreatePermissionsRequest {
+    const message = createBaseBulkCreatePermissionsRequest();
+    message.permissions = object.permissions?.map((e) => CreatePermissionRequest.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseBulkPermissionFailure(): BulkPermissionFailure {
+  return { name: "", error: "" };
+}
+
+export const BulkPermissionFailure: MessageFns<BulkPermissionFailure> = {
+  encode(message: BulkPermissionFailure, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
+    if (message.error !== "") {
+      writer.uint32(18).string(message.error);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): BulkPermissionFailure {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBulkPermissionFailure();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.error = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BulkPermissionFailure {
+    return {
+      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      error: isSet(object.error) ? globalThis.String(object.error) : "",
+    };
+  },
+
+  toJSON(message: BulkPermissionFailure): unknown {
+    const obj: any = {};
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.error !== "") {
+      obj.error = message.error;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BulkPermissionFailure>, I>>(base?: I): BulkPermissionFailure {
+    return BulkPermissionFailure.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<BulkPermissionFailure>, I>>(object: I): BulkPermissionFailure {
+    const message = createBaseBulkPermissionFailure();
+    message.name = object.name ?? "";
+    message.error = object.error ?? "";
+    return message;
+  },
+};
+
+function createBaseBulkCreatePermissionsResponse(): BulkCreatePermissionsResponse {
+  return { created: [], skipped: [], failed: [] };
+}
+
+export const BulkCreatePermissionsResponse: MessageFns<BulkCreatePermissionsResponse> = {
+  encode(message: BulkCreatePermissionsResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.created) {
+      Permission.encode(v!, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.skipped) {
+      writer.uint32(18).string(v!);
+    }
+    for (const v of message.failed) {
+      BulkPermissionFailure.encode(v!, writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): BulkCreatePermissionsResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBulkCreatePermissionsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.created.push(Permission.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.skipped.push(reader.string());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.failed.push(BulkPermissionFailure.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): BulkCreatePermissionsResponse {
+    return {
+      created: globalThis.Array.isArray(object?.created) ? object.created.map((e: any) => Permission.fromJSON(e)) : [],
+      skipped: globalThis.Array.isArray(object?.skipped) ? object.skipped.map((e: any) => globalThis.String(e)) : [],
+      failed: globalThis.Array.isArray(object?.failed)
+        ? object.failed.map((e: any) => BulkPermissionFailure.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: BulkCreatePermissionsResponse): unknown {
+    const obj: any = {};
+    if (message.created?.length) {
+      obj.created = message.created.map((e) => Permission.toJSON(e));
+    }
+    if (message.skipped?.length) {
+      obj.skipped = message.skipped;
+    }
+    if (message.failed?.length) {
+      obj.failed = message.failed.map((e) => BulkPermissionFailure.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BulkCreatePermissionsResponse>, I>>(base?: I): BulkCreatePermissionsResponse {
+    return BulkCreatePermissionsResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<BulkCreatePermissionsResponse>, I>>(
+    object: I,
+  ): BulkCreatePermissionsResponse {
+    const message = createBaseBulkCreatePermissionsResponse();
+    message.created = object.created?.map((e) => Permission.fromPartial(e)) || [];
+    message.skipped = object.skipped?.map((e) => e) || [];
+    message.failed = object.failed?.map((e) => BulkPermissionFailure.fromPartial(e)) || [];
     return message;
   },
 };

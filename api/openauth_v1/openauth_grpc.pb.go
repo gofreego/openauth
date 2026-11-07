@@ -22,6 +22,7 @@ const (
 	OpenAuth_Ping_FullMethodName                        = "/v1.OpenAuth/Ping"
 	OpenAuth_Stats_FullMethodName                       = "/v1.OpenAuth/Stats"
 	OpenAuth_CreatePermission_FullMethodName            = "/v1.OpenAuth/CreatePermission"
+	OpenAuth_BulkCreatePermissions_FullMethodName       = "/v1.OpenAuth/BulkCreatePermissions"
 	OpenAuth_GetPermission_FullMethodName               = "/v1.OpenAuth/GetPermission"
 	OpenAuth_ListPermissions_FullMethodName             = "/v1.OpenAuth/ListPermissions"
 	OpenAuth_UpdatePermission_FullMethodName            = "/v1.OpenAuth/UpdatePermission"
@@ -111,6 +112,9 @@ type OpenAuthClient interface {
 	// - action: "create"
 	// - display_name: "Create Users"
 	CreatePermission(ctx context.Context, in *CreatePermissionRequest, opts ...grpc.CallOption) (*Permission, error)
+	// BulkCreatePermissions creates many permissions at once. Names that exist already are
+	// skipped rather than failing the rest; each other one is created or reported failed.
+	BulkCreatePermissions(ctx context.Context, in *BulkCreatePermissionsRequest, opts ...grpc.CallOption) (*BulkCreatePermissionsResponse, error)
 	// GetPermission retrieves a specific permission by its unique ID.
 	//
 	// Returns the complete permission details including resource, action,
@@ -470,6 +474,16 @@ func (c *openAuthClient) CreatePermission(ctx context.Context, in *CreatePermiss
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Permission)
 	err := c.cc.Invoke(ctx, OpenAuth_CreatePermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openAuthClient) BulkCreatePermissions(ctx context.Context, in *BulkCreatePermissionsRequest, opts ...grpc.CallOption) (*BulkCreatePermissionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BulkCreatePermissionsResponse)
+	err := c.cc.Invoke(ctx, OpenAuth_BulkCreatePermissions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1166,6 +1180,9 @@ type OpenAuthServer interface {
 	// - action: "create"
 	// - display_name: "Create Users"
 	CreatePermission(context.Context, *CreatePermissionRequest) (*Permission, error)
+	// BulkCreatePermissions creates many permissions at once. Names that exist already are
+	// skipped rather than failing the rest; each other one is created or reported failed.
+	BulkCreatePermissions(context.Context, *BulkCreatePermissionsRequest) (*BulkCreatePermissionsResponse, error)
 	// GetPermission retrieves a specific permission by its unique ID.
 	//
 	// Returns the complete permission details including resource, action,
@@ -1510,6 +1527,9 @@ func (UnimplementedOpenAuthServer) Stats(context.Context, *StatsRequest) (*Stats
 func (UnimplementedOpenAuthServer) CreatePermission(context.Context, *CreatePermissionRequest) (*Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePermission not implemented")
 }
+func (UnimplementedOpenAuthServer) BulkCreatePermissions(context.Context, *BulkCreatePermissionsRequest) (*BulkCreatePermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BulkCreatePermissions not implemented")
+}
 func (UnimplementedOpenAuthServer) GetPermission(context.Context, *GetPermissionRequest) (*Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPermission not implemented")
 }
@@ -1782,6 +1802,24 @@ func _OpenAuth_CreatePermission_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OpenAuthServer).CreatePermission(ctx, req.(*CreatePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenAuth_BulkCreatePermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BulkCreatePermissionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenAuthServer).BulkCreatePermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenAuth_BulkCreatePermissions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenAuthServer).BulkCreatePermissions(ctx, req.(*BulkCreatePermissionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3010,6 +3048,10 @@ var OpenAuth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreatePermission",
 			Handler:    _OpenAuth_CreatePermission_Handler,
+		},
+		{
+			MethodName: "BulkCreatePermissions",
+			Handler:    _OpenAuth_BulkCreatePermissions_Handler,
 		},
 		{
 			MethodName: "GetPermission",

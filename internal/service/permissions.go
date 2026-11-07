@@ -62,6 +62,53 @@ func (s *Service) CreatePermission(ctx context.Context, req *openauth_v1.CreateP
 	return createdPermission.ToProtoPermission(), nil
 }
 
+// BulkCreatePermissions creates many permissions at once, each checked like CreatePermission.
+// A name that exists already (or appears twice in the request) is skipped; any other error
+// is reported for that permission and the rest carry on.
+func (s *Service) BulkCreatePermissions(ctx context.Context, req *openauth_v1.BulkCreatePermissionsRequest) (*openauth_v1.BulkCreatePermissionsResponse, error) {
+	// Each permission is validated on its own below, so one bad entry fails alone.
+	if n := len(req.Permissions); n == 0 || n > 500 {
+		return nil, status.Error(codes.InvalidArgument, "send between 1 and 500 permissions")
+	}
+	claims, err := jwtutils.GetUserFromContext(ctx)
+	if err != nil {
+		logger.Warn(ctx, "failed to get user from context ,err: %s", err.Error())
+		return nil, status.Error(codes.Unauthenticated, "failed to get user from context")
+	}
+	if !claims.HasPermission(constants.PermissionPermissionsCreate) {
+		logger.Warn(ctx, "userID=%d does not have permission to create permissions", claims.UserID)
+		return nil, status.Error(codes.PermissionDenied, "user does not have permission to create permissions")
+	}
+
+	resp := &openauth_v1.BulkCreatePermissionsResponse{}
+	seen := map[string]bool{}
+	for _, p := range req.Permissions {
+		if seen[p.Name] {
+			resp.Skipped = append(resp.Skipped, p.Name)
+			continue
+		}
+		seen[p.Name] = true
+		if err := p.Validate(); err != nil {
+			resp.Failed = append(resp.Failed, &openauth_v1.BulkPermissionFailure{Name: p.Name, Error: err.Error()})
+			continue
+		}
+		if existing, err := s.repo.GetPermissionByName(ctx, p.Name); err == nil && existing != nil {
+			resp.Skipped = append(resp.Skipped, p.Name)
+			continue
+		}
+		created, err := s.repo.CreatePermission(ctx, new(dao.Permission).FromCreatePermissionRequest(p, claims.UserID))
+		if err != nil {
+			logger.Error(ctx, "Bulk create permission %s by userID=%d: %v", p.Name, claims.UserID, err)
+			resp.Failed = append(resp.Failed, &openauth_v1.BulkPermissionFailure{Name: p.Name, Error: "could not create it"})
+			continue
+		}
+		resp.Created = append(resp.Created, created.ToProtoPermission())
+	}
+	logger.Info(ctx, "Bulk permissions by userID=%d: %d created, %d skipped, %d failed",
+		claims.UserID, len(resp.Created), len(resp.Skipped), len(resp.Failed))
+	return resp, nil
+}
+
 // GetPermission retrieves a permission by ID
 func (s *Service) GetPermission(ctx context.Context, req *openauth_v1.GetPermissionRequest) (*openauth_v1.Permission, error) {
 

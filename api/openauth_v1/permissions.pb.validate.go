@@ -1054,3 +1054,428 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeletePermissionResponseValidationError{}
+
+// Validate checks the field values on BulkCreatePermissionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BulkCreatePermissionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BulkCreatePermissionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BulkCreatePermissionsRequestMultiError, or nil if none found.
+func (m *BulkCreatePermissionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BulkCreatePermissionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := len(m.GetPermissions()); l < 1 || l > 500 {
+		err := BulkCreatePermissionsRequestValidationError{
+			field:  "Permissions",
+			reason: "value must contain between 1 and 500 items, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetPermissions() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BulkCreatePermissionsRequestValidationError{
+						field:  fmt.Sprintf("Permissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BulkCreatePermissionsRequestValidationError{
+						field:  fmt.Sprintf("Permissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BulkCreatePermissionsRequestValidationError{
+					field:  fmt.Sprintf("Permissions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return BulkCreatePermissionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// BulkCreatePermissionsRequestMultiError is an error wrapping multiple
+// validation errors returned by BulkCreatePermissionsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type BulkCreatePermissionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BulkCreatePermissionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BulkCreatePermissionsRequestMultiError) AllErrors() []error { return m }
+
+// BulkCreatePermissionsRequestValidationError is the validation error returned
+// by BulkCreatePermissionsRequest.Validate if the designated constraints
+// aren't met.
+type BulkCreatePermissionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BulkCreatePermissionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BulkCreatePermissionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BulkCreatePermissionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BulkCreatePermissionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BulkCreatePermissionsRequestValidationError) ErrorName() string {
+	return "BulkCreatePermissionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BulkCreatePermissionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBulkCreatePermissionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BulkCreatePermissionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BulkCreatePermissionsRequestValidationError{}
+
+// Validate checks the field values on BulkPermissionFailure with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BulkPermissionFailure) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BulkPermissionFailure with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BulkPermissionFailureMultiError, or nil if none found.
+func (m *BulkPermissionFailure) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BulkPermissionFailure) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Error
+
+	if len(errors) > 0 {
+		return BulkPermissionFailureMultiError(errors)
+	}
+
+	return nil
+}
+
+// BulkPermissionFailureMultiError is an error wrapping multiple validation
+// errors returned by BulkPermissionFailure.ValidateAll() if the designated
+// constraints aren't met.
+type BulkPermissionFailureMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BulkPermissionFailureMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BulkPermissionFailureMultiError) AllErrors() []error { return m }
+
+// BulkPermissionFailureValidationError is the validation error returned by
+// BulkPermissionFailure.Validate if the designated constraints aren't met.
+type BulkPermissionFailureValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BulkPermissionFailureValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BulkPermissionFailureValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BulkPermissionFailureValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BulkPermissionFailureValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BulkPermissionFailureValidationError) ErrorName() string {
+	return "BulkPermissionFailureValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BulkPermissionFailureValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBulkPermissionFailure.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BulkPermissionFailureValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BulkPermissionFailureValidationError{}
+
+// Validate checks the field values on BulkCreatePermissionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *BulkCreatePermissionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BulkCreatePermissionsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// BulkCreatePermissionsResponseMultiError, or nil if none found.
+func (m *BulkCreatePermissionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BulkCreatePermissionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCreated() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BulkCreatePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Created[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BulkCreatePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Created[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BulkCreatePermissionsResponseValidationError{
+					field:  fmt.Sprintf("Created[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetFailed() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BulkCreatePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Failed[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BulkCreatePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Failed[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BulkCreatePermissionsResponseValidationError{
+					field:  fmt.Sprintf("Failed[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return BulkCreatePermissionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// BulkCreatePermissionsResponseMultiError is an error wrapping multiple
+// validation errors returned by BulkCreatePermissionsResponse.ValidateAll()
+// if the designated constraints aren't met.
+type BulkCreatePermissionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BulkCreatePermissionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BulkCreatePermissionsResponseMultiError) AllErrors() []error { return m }
+
+// BulkCreatePermissionsResponseValidationError is the validation error
+// returned by BulkCreatePermissionsResponse.Validate if the designated
+// constraints aren't met.
+type BulkCreatePermissionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BulkCreatePermissionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BulkCreatePermissionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BulkCreatePermissionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BulkCreatePermissionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BulkCreatePermissionsResponseValidationError) ErrorName() string {
+	return "BulkCreatePermissionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BulkCreatePermissionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBulkCreatePermissionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BulkCreatePermissionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BulkCreatePermissionsResponseValidationError{}

@@ -26,7 +26,7 @@ var File_proto_openauth_v1_openauth_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\n" +
-	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a proto/openauth_common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto\x1a\x1fproto/openauth/v1/configs.proto\x1a\x1cproto/openauth/v1/apps.proto\x1a\x1eproto/openauth/v1/common.proto2\xe9p\n" +
+	" proto/openauth/v1/openauth.proto\x12\x02v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a proto/openauth_common/ping.proto\x1a#proto/openauth/v1/permissions.proto\x1a\x1dproto/openauth/v1/users.proto\x1a\x1eproto/openauth/v1/groups.proto\x1a proto/openauth/v1/sessions.proto\x1a.proto/openauth/v1/permission_assignments.proto\x1a\x1dproto/openauth/v1/stats.proto\x1a\x1fproto/openauth/v1/configs.proto\x1a\x1cproto/openauth/v1/apps.proto\x1a\x1eproto/openauth/v1/common.proto2\xbes\n" +
 	"\bOpenAuth\x12\x81\x01\n" +
 	"\x04Ping\x12\x11.v1.OOPingRequest\x1a\x12.v1.OOPingResponse\"R\x92A6\n" +
 	"\x04Ping\x12\x0fPing the server\x1a\x1dCheck if the server is alive.\x82\xd3\xe4\x93\x02\x13\x12\x11/openauth/v1/ping\x12\xd7\x01\n" +
@@ -34,7 +34,9 @@ const file_proto_openauth_v1_openauth_proto_rawDesc = "" +
 	"\n" +
 	"Statistics\x12\x15Get system statistics\x1aeRetrieve system statistics including user counts, permission counts, group counts, and other metrics.\x82\xd3\xe4\x93\x02\x14\x12\x12/openauth/v1/stats\x12\xdb\x01\n" +
 	"\x10CreatePermission\x12\x1b.v1.CreatePermissionRequest\x1a\x0e.v1.Permission\"\x99\x01\x92As\n" +
-	"\vPermissions\x12\x17Create a new permission\x1aKCreate a new permission in the system with resource and action definitions.\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/permissions\x12\xba\x01\n" +
+	"\vPermissions\x12\x17Create a new permission\x1aKCreate a new permission in the system with resource and action definitions.\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/openauth/v1/permissions\x12\xd2\x02\n" +
+	"\x15BulkCreatePermissions\x12 .v1.BulkCreatePermissionsRequest\x1a!.v1.BulkCreatePermissionsResponse\"\xf3\x01\x92A\xc7\x01\n" +
+	"\vPermissions\x12\x1aCreate permissions in bulk\x1a\x9b\x01Creates up to 500 permissions. Existing names are skipped; the response lists created, skipped and failed ones. Needs the permission to create permissions.\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/openauth/v1/permissions/bulk\x12\xba\x01\n" +
 	"\rGetPermission\x12\x18.v1.GetPermissionRequest\x1a\x0e.v1.Permission\"\x7f\x92AW\n" +
 	"\vPermissions\x12\x16Get a permission by ID\x1a0Retrieve a specific permission by its unique ID.\x82\xd3\xe4\x93\x02\x1f\x12\x1d/openauth/v1/permissions/{id}\x12\xcd\x01\n" +
 	"\x0fListPermissions\x12\x1a.v1.ListPermissionsRequest\x1a\x1b.v1.ListPermissionsResponse\"\x80\x01\x92A]\n" +
@@ -200,277 +202,281 @@ var file_proto_openauth_v1_openauth_proto_goTypes = []any{
 	(*OOPingRequest)(nil),                       // 0: v1.OOPingRequest
 	(*StatsRequest)(nil),                        // 1: v1.StatsRequest
 	(*CreatePermissionRequest)(nil),             // 2: v1.CreatePermissionRequest
-	(*GetPermissionRequest)(nil),                // 3: v1.GetPermissionRequest
-	(*ListPermissionsRequest)(nil),              // 4: v1.ListPermissionsRequest
-	(*UpdatePermissionRequest)(nil),             // 5: v1.UpdatePermissionRequest
-	(*DeletePermissionRequest)(nil),             // 6: v1.DeletePermissionRequest
-	(*CreateGroupRequest)(nil),                  // 7: v1.CreateGroupRequest
-	(*GetGroupRequest)(nil),                     // 8: v1.GetGroupRequest
-	(*ListGroupsRequest)(nil),                   // 9: v1.ListGroupsRequest
-	(*UpdateGroupRequest)(nil),                  // 10: v1.UpdateGroupRequest
-	(*DeleteGroupRequest)(nil),                  // 11: v1.DeleteGroupRequest
-	(*AssignUsersToGroupRequest)(nil),           // 12: v1.AssignUsersToGroupRequest
-	(*RemoveUsersFromGroupRequest)(nil),         // 13: v1.RemoveUsersFromGroupRequest
-	(*ListGroupUsersRequest)(nil),               // 14: v1.ListGroupUsersRequest
-	(*ListUserGroupsRequest)(nil),               // 15: v1.ListUserGroupsRequest
-	(*AssignPermissionsToGroupRequest)(nil),     // 16: v1.AssignPermissionsToGroupRequest
-	(*RemovePermissionsFromGroupRequest)(nil),   // 17: v1.RemovePermissionsFromGroupRequest
-	(*ListGroupPermissionsRequest)(nil),         // 18: v1.ListGroupPermissionsRequest
-	(*AssignPermissionsToUserRequest)(nil),      // 19: v1.AssignPermissionsToUserRequest
-	(*RemovePermissionsFromUserRequest)(nil),    // 20: v1.RemovePermissionsFromUserRequest
-	(*ListUserPermissionsRequest)(nil),          // 21: v1.ListUserPermissionsRequest
-	(*GetUserEffectivePermissionsRequest)(nil),  // 22: v1.GetUserEffectivePermissionsRequest
-	(*SignUpRequest)(nil),                       // 23: v1.SignUpRequest
-	(*VerifyEmailRequest)(nil),                  // 24: v1.VerifyEmailRequest
-	(*VerifyPhoneRequest)(nil),                  // 25: v1.VerifyPhoneRequest
-	(*SendVerificationCodeRequest)(nil),         // 26: v1.SendVerificationCodeRequest
-	(*CheckUsernameRequest)(nil),                // 27: v1.CheckUsernameRequest
-	(*CheckEmailRequest)(nil),                   // 28: v1.CheckEmailRequest
-	(*GetUserRequest)(nil),                      // 29: v1.GetUserRequest
-	(*UpdateUserRequest)(nil),                   // 30: v1.UpdateUserRequest
-	(*ChangePasswordRequest)(nil),               // 31: v1.ChangePasswordRequest
-	(*DeleteAccountRequest)(nil),                // 32: v1.DeleteAccountRequest
-	(*ListUsersRequest)(nil),                    // 33: v1.ListUsersRequest
-	(*DeleteUserRequest)(nil),                   // 34: v1.DeleteUserRequest
-	(*UnlockUserRequest)(nil),                   // 35: v1.UnlockUserRequest
-	(*CreateProfileRequest)(nil),                // 36: v1.CreateProfileRequest
-	(*ListUserProfilesRequest)(nil),             // 37: v1.ListUserProfilesRequest
-	(*GetProfileSummariesRequest)(nil),          // 38: v1.GetProfileSummariesRequest
-	(*UpdateProfileRequest)(nil),                // 39: v1.UpdateProfileRequest
-	(*DeleteProfileRequest)(nil),                // 40: v1.DeleteProfileRequest
-	(*GetProfileUploadURLRequest)(nil),          // 41: v1.GetProfileUploadURLRequest
-	(*MarkProfileURLUpdatedRequest)(nil),        // 42: v1.MarkProfileURLUpdatedRequest
-	(*SignInRequest)(nil),                       // 43: v1.SignInRequest
-	(*GoogleSignInRequest)(nil),                 // 44: v1.GoogleSignInRequest
-	(*SignInWithLoginTokenRequest)(nil),         // 45: v1.SignInWithLoginTokenRequest
-	(*GenerateLoginTokenRequest)(nil),           // 46: v1.GenerateLoginTokenRequest
-	(*RefreshTokenRequest)(nil),                 // 47: v1.RefreshTokenRequest
-	(*LogoutRequest)(nil),                       // 48: v1.LogoutRequest
-	(*ValidateTokenRequest)(nil),                // 49: v1.ValidateTokenRequest
-	(*IsAuthenticatedRequest)(nil),              // 50: v1.IsAuthenticatedRequest
-	(*ListUserSessionsRequest)(nil),             // 51: v1.ListUserSessionsRequest
-	(*TerminateSessionRequest)(nil),             // 52: v1.TerminateSessionRequest
-	(*CreateConfigEntityRequest)(nil),           // 53: v1.CreateConfigEntityRequest
-	(*UpdateConfigEntityRequest)(nil),           // 54: v1.UpdateConfigEntityRequest
-	(*GetConfigEntityRequest)(nil),              // 55: v1.GetConfigEntityRequest
-	(*ListConfigEntitiesRequest)(nil),           // 56: v1.ListConfigEntitiesRequest
-	(*DeleteConfigEntityRequest)(nil),           // 57: v1.DeleteConfigEntityRequest
-	(*CreateConfigRequest)(nil),                 // 58: v1.CreateConfigRequest
-	(*UpdateConfigRequest)(nil),                 // 59: v1.UpdateConfigRequest
-	(*DeleteConfigRequest)(nil),                 // 60: v1.DeleteConfigRequest
-	(*GetConfigRequest)(nil),                    // 61: v1.GetConfigRequest
-	(*GetConfigsByKeysRequest)(nil),             // 62: v1.GetConfigsByKeysRequest
-	(*ListConfigsRequest)(nil),                  // 63: v1.ListConfigsRequest
-	(*CreateAppRequest)(nil),                    // 64: v1.CreateAppRequest
-	(*UpdateAppRequest)(nil),                    // 65: v1.UpdateAppRequest
-	(*DeleteAppRequest)(nil),                    // 66: v1.DeleteAppRequest
-	(*AssignAppRequest)(nil),                    // 67: v1.AssignAppRequest
-	(*ListAppsRequest)(nil),                     // 68: v1.ListAppsRequest
-	(*ListUserAppsRequest)(nil),                 // 69: v1.ListUserAppsRequest
-	(*OOPingResponse)(nil),                      // 70: v1.OOPingResponse
-	(*StatsResponse)(nil),                       // 71: v1.StatsResponse
-	(*Permission)(nil),                          // 72: v1.Permission
-	(*ListPermissionsResponse)(nil),             // 73: v1.ListPermissionsResponse
-	(*DeletePermissionResponse)(nil),            // 74: v1.DeletePermissionResponse
-	(*CreateGroupResponse)(nil),                 // 75: v1.CreateGroupResponse
-	(*GetGroupResponse)(nil),                    // 76: v1.GetGroupResponse
-	(*ListGroupsResponse)(nil),                  // 77: v1.ListGroupsResponse
-	(*UpdateGroupResponse)(nil),                 // 78: v1.UpdateGroupResponse
-	(*DeleteGroupResponse)(nil),                 // 79: v1.DeleteGroupResponse
-	(*AssignUsersToGroupResponse)(nil),          // 80: v1.AssignUsersToGroupResponse
-	(*RemoveUsersFromGroupResponse)(nil),        // 81: v1.RemoveUsersFromGroupResponse
-	(*ListGroupUsersResponse)(nil),              // 82: v1.ListGroupUsersResponse
-	(*ListUserGroupsResponse)(nil),              // 83: v1.ListUserGroupsResponse
-	(*AssignPermissionsToGroupResponse)(nil),    // 84: v1.AssignPermissionsToGroupResponse
-	(*RemovePermissionsFromGroupResponse)(nil),  // 85: v1.RemovePermissionsFromGroupResponse
-	(*ListGroupPermissionsResponse)(nil),        // 86: v1.ListGroupPermissionsResponse
-	(*AssignPermissionsToUserResponse)(nil),     // 87: v1.AssignPermissionsToUserResponse
-	(*RemovePermissionsFromUserResponse)(nil),   // 88: v1.RemovePermissionsFromUserResponse
-	(*ListUserPermissionsResponse)(nil),         // 89: v1.ListUserPermissionsResponse
-	(*GetUserEffectivePermissionsResponse)(nil), // 90: v1.GetUserEffectivePermissionsResponse
-	(*SignUpResponse)(nil),                      // 91: v1.SignUpResponse
-	(*VerificationResponse)(nil),                // 92: v1.VerificationResponse
-	(*SendVerificationCodeResponse)(nil),        // 93: v1.SendVerificationCodeResponse
-	(*CheckUsernameResponse)(nil),               // 94: v1.CheckUsernameResponse
-	(*CheckEmailResponse)(nil),                  // 95: v1.CheckEmailResponse
-	(*GetUserResponse)(nil),                     // 96: v1.GetUserResponse
-	(*UpdateUserResponse)(nil),                  // 97: v1.UpdateUserResponse
-	(*ChangePasswordResponse)(nil),              // 98: v1.ChangePasswordResponse
-	(*DeleteAccountResponse)(nil),               // 99: v1.DeleteAccountResponse
-	(*ListUsersResponse)(nil),                   // 100: v1.ListUsersResponse
-	(*DeleteUserResponse)(nil),                  // 101: v1.DeleteUserResponse
-	(*UnlockUserResponse)(nil),                  // 102: v1.UnlockUserResponse
-	(*CreateProfileResponse)(nil),               // 103: v1.CreateProfileResponse
-	(*ListUserProfilesResponse)(nil),            // 104: v1.ListUserProfilesResponse
-	(*GetProfileSummariesResponse)(nil),         // 105: v1.GetProfileSummariesResponse
-	(*UpdateProfileResponse)(nil),               // 106: v1.UpdateProfileResponse
-	(*DeleteProfileResponse)(nil),               // 107: v1.DeleteProfileResponse
-	(*GetProfileUploadURLResponse)(nil),         // 108: v1.GetProfileUploadURLResponse
-	(*GenericResponse)(nil),                     // 109: v1.GenericResponse
-	(*SignInResponse)(nil),                      // 110: v1.SignInResponse
-	(*GenerateLoginTokenResponse)(nil),          // 111: v1.GenerateLoginTokenResponse
-	(*RefreshTokenResponse)(nil),                // 112: v1.RefreshTokenResponse
-	(*LogoutResponse)(nil),                      // 113: v1.LogoutResponse
-	(*ValidateTokenResponse)(nil),               // 114: v1.ValidateTokenResponse
-	(*IsAuthenticatedResponse)(nil),             // 115: v1.IsAuthenticatedResponse
-	(*ListUserSessionsResponse)(nil),            // 116: v1.ListUserSessionsResponse
-	(*TerminateSessionResponse)(nil),            // 117: v1.TerminateSessionResponse
-	(*ConfigEntity)(nil),                        // 118: v1.ConfigEntity
-	(*UpdateResponse)(nil),                      // 119: v1.UpdateResponse
-	(*ListConfigEntitiesResponse)(nil),          // 120: v1.ListConfigEntitiesResponse
-	(*DeleteResponse)(nil),                      // 121: v1.DeleteResponse
-	(*Config)(nil),                              // 122: v1.Config
-	(*GetConfigsByKeysResponse)(nil),            // 123: v1.GetConfigsByKeysResponse
-	(*ListConfigsResponse)(nil),                 // 124: v1.ListConfigsResponse
-	(*App)(nil),                                 // 125: v1.App
-	(*DeleteAppResponse)(nil),                   // 126: v1.DeleteAppResponse
-	(*AssignAppResponse)(nil),                   // 127: v1.AssignAppResponse
-	(*ListAppsResponse)(nil),                    // 128: v1.ListAppsResponse
-	(*ListUserAppsResponse)(nil),                // 129: v1.ListUserAppsResponse
+	(*BulkCreatePermissionsRequest)(nil),        // 3: v1.BulkCreatePermissionsRequest
+	(*GetPermissionRequest)(nil),                // 4: v1.GetPermissionRequest
+	(*ListPermissionsRequest)(nil),              // 5: v1.ListPermissionsRequest
+	(*UpdatePermissionRequest)(nil),             // 6: v1.UpdatePermissionRequest
+	(*DeletePermissionRequest)(nil),             // 7: v1.DeletePermissionRequest
+	(*CreateGroupRequest)(nil),                  // 8: v1.CreateGroupRequest
+	(*GetGroupRequest)(nil),                     // 9: v1.GetGroupRequest
+	(*ListGroupsRequest)(nil),                   // 10: v1.ListGroupsRequest
+	(*UpdateGroupRequest)(nil),                  // 11: v1.UpdateGroupRequest
+	(*DeleteGroupRequest)(nil),                  // 12: v1.DeleteGroupRequest
+	(*AssignUsersToGroupRequest)(nil),           // 13: v1.AssignUsersToGroupRequest
+	(*RemoveUsersFromGroupRequest)(nil),         // 14: v1.RemoveUsersFromGroupRequest
+	(*ListGroupUsersRequest)(nil),               // 15: v1.ListGroupUsersRequest
+	(*ListUserGroupsRequest)(nil),               // 16: v1.ListUserGroupsRequest
+	(*AssignPermissionsToGroupRequest)(nil),     // 17: v1.AssignPermissionsToGroupRequest
+	(*RemovePermissionsFromGroupRequest)(nil),   // 18: v1.RemovePermissionsFromGroupRequest
+	(*ListGroupPermissionsRequest)(nil),         // 19: v1.ListGroupPermissionsRequest
+	(*AssignPermissionsToUserRequest)(nil),      // 20: v1.AssignPermissionsToUserRequest
+	(*RemovePermissionsFromUserRequest)(nil),    // 21: v1.RemovePermissionsFromUserRequest
+	(*ListUserPermissionsRequest)(nil),          // 22: v1.ListUserPermissionsRequest
+	(*GetUserEffectivePermissionsRequest)(nil),  // 23: v1.GetUserEffectivePermissionsRequest
+	(*SignUpRequest)(nil),                       // 24: v1.SignUpRequest
+	(*VerifyEmailRequest)(nil),                  // 25: v1.VerifyEmailRequest
+	(*VerifyPhoneRequest)(nil),                  // 26: v1.VerifyPhoneRequest
+	(*SendVerificationCodeRequest)(nil),         // 27: v1.SendVerificationCodeRequest
+	(*CheckUsernameRequest)(nil),                // 28: v1.CheckUsernameRequest
+	(*CheckEmailRequest)(nil),                   // 29: v1.CheckEmailRequest
+	(*GetUserRequest)(nil),                      // 30: v1.GetUserRequest
+	(*UpdateUserRequest)(nil),                   // 31: v1.UpdateUserRequest
+	(*ChangePasswordRequest)(nil),               // 32: v1.ChangePasswordRequest
+	(*DeleteAccountRequest)(nil),                // 33: v1.DeleteAccountRequest
+	(*ListUsersRequest)(nil),                    // 34: v1.ListUsersRequest
+	(*DeleteUserRequest)(nil),                   // 35: v1.DeleteUserRequest
+	(*UnlockUserRequest)(nil),                   // 36: v1.UnlockUserRequest
+	(*CreateProfileRequest)(nil),                // 37: v1.CreateProfileRequest
+	(*ListUserProfilesRequest)(nil),             // 38: v1.ListUserProfilesRequest
+	(*GetProfileSummariesRequest)(nil),          // 39: v1.GetProfileSummariesRequest
+	(*UpdateProfileRequest)(nil),                // 40: v1.UpdateProfileRequest
+	(*DeleteProfileRequest)(nil),                // 41: v1.DeleteProfileRequest
+	(*GetProfileUploadURLRequest)(nil),          // 42: v1.GetProfileUploadURLRequest
+	(*MarkProfileURLUpdatedRequest)(nil),        // 43: v1.MarkProfileURLUpdatedRequest
+	(*SignInRequest)(nil),                       // 44: v1.SignInRequest
+	(*GoogleSignInRequest)(nil),                 // 45: v1.GoogleSignInRequest
+	(*SignInWithLoginTokenRequest)(nil),         // 46: v1.SignInWithLoginTokenRequest
+	(*GenerateLoginTokenRequest)(nil),           // 47: v1.GenerateLoginTokenRequest
+	(*RefreshTokenRequest)(nil),                 // 48: v1.RefreshTokenRequest
+	(*LogoutRequest)(nil),                       // 49: v1.LogoutRequest
+	(*ValidateTokenRequest)(nil),                // 50: v1.ValidateTokenRequest
+	(*IsAuthenticatedRequest)(nil),              // 51: v1.IsAuthenticatedRequest
+	(*ListUserSessionsRequest)(nil),             // 52: v1.ListUserSessionsRequest
+	(*TerminateSessionRequest)(nil),             // 53: v1.TerminateSessionRequest
+	(*CreateConfigEntityRequest)(nil),           // 54: v1.CreateConfigEntityRequest
+	(*UpdateConfigEntityRequest)(nil),           // 55: v1.UpdateConfigEntityRequest
+	(*GetConfigEntityRequest)(nil),              // 56: v1.GetConfigEntityRequest
+	(*ListConfigEntitiesRequest)(nil),           // 57: v1.ListConfigEntitiesRequest
+	(*DeleteConfigEntityRequest)(nil),           // 58: v1.DeleteConfigEntityRequest
+	(*CreateConfigRequest)(nil),                 // 59: v1.CreateConfigRequest
+	(*UpdateConfigRequest)(nil),                 // 60: v1.UpdateConfigRequest
+	(*DeleteConfigRequest)(nil),                 // 61: v1.DeleteConfigRequest
+	(*GetConfigRequest)(nil),                    // 62: v1.GetConfigRequest
+	(*GetConfigsByKeysRequest)(nil),             // 63: v1.GetConfigsByKeysRequest
+	(*ListConfigsRequest)(nil),                  // 64: v1.ListConfigsRequest
+	(*CreateAppRequest)(nil),                    // 65: v1.CreateAppRequest
+	(*UpdateAppRequest)(nil),                    // 66: v1.UpdateAppRequest
+	(*DeleteAppRequest)(nil),                    // 67: v1.DeleteAppRequest
+	(*AssignAppRequest)(nil),                    // 68: v1.AssignAppRequest
+	(*ListAppsRequest)(nil),                     // 69: v1.ListAppsRequest
+	(*ListUserAppsRequest)(nil),                 // 70: v1.ListUserAppsRequest
+	(*OOPingResponse)(nil),                      // 71: v1.OOPingResponse
+	(*StatsResponse)(nil),                       // 72: v1.StatsResponse
+	(*Permission)(nil),                          // 73: v1.Permission
+	(*BulkCreatePermissionsResponse)(nil),       // 74: v1.BulkCreatePermissionsResponse
+	(*ListPermissionsResponse)(nil),             // 75: v1.ListPermissionsResponse
+	(*DeletePermissionResponse)(nil),            // 76: v1.DeletePermissionResponse
+	(*CreateGroupResponse)(nil),                 // 77: v1.CreateGroupResponse
+	(*GetGroupResponse)(nil),                    // 78: v1.GetGroupResponse
+	(*ListGroupsResponse)(nil),                  // 79: v1.ListGroupsResponse
+	(*UpdateGroupResponse)(nil),                 // 80: v1.UpdateGroupResponse
+	(*DeleteGroupResponse)(nil),                 // 81: v1.DeleteGroupResponse
+	(*AssignUsersToGroupResponse)(nil),          // 82: v1.AssignUsersToGroupResponse
+	(*RemoveUsersFromGroupResponse)(nil),        // 83: v1.RemoveUsersFromGroupResponse
+	(*ListGroupUsersResponse)(nil),              // 84: v1.ListGroupUsersResponse
+	(*ListUserGroupsResponse)(nil),              // 85: v1.ListUserGroupsResponse
+	(*AssignPermissionsToGroupResponse)(nil),    // 86: v1.AssignPermissionsToGroupResponse
+	(*RemovePermissionsFromGroupResponse)(nil),  // 87: v1.RemovePermissionsFromGroupResponse
+	(*ListGroupPermissionsResponse)(nil),        // 88: v1.ListGroupPermissionsResponse
+	(*AssignPermissionsToUserResponse)(nil),     // 89: v1.AssignPermissionsToUserResponse
+	(*RemovePermissionsFromUserResponse)(nil),   // 90: v1.RemovePermissionsFromUserResponse
+	(*ListUserPermissionsResponse)(nil),         // 91: v1.ListUserPermissionsResponse
+	(*GetUserEffectivePermissionsResponse)(nil), // 92: v1.GetUserEffectivePermissionsResponse
+	(*SignUpResponse)(nil),                      // 93: v1.SignUpResponse
+	(*VerificationResponse)(nil),                // 94: v1.VerificationResponse
+	(*SendVerificationCodeResponse)(nil),        // 95: v1.SendVerificationCodeResponse
+	(*CheckUsernameResponse)(nil),               // 96: v1.CheckUsernameResponse
+	(*CheckEmailResponse)(nil),                  // 97: v1.CheckEmailResponse
+	(*GetUserResponse)(nil),                     // 98: v1.GetUserResponse
+	(*UpdateUserResponse)(nil),                  // 99: v1.UpdateUserResponse
+	(*ChangePasswordResponse)(nil),              // 100: v1.ChangePasswordResponse
+	(*DeleteAccountResponse)(nil),               // 101: v1.DeleteAccountResponse
+	(*ListUsersResponse)(nil),                   // 102: v1.ListUsersResponse
+	(*DeleteUserResponse)(nil),                  // 103: v1.DeleteUserResponse
+	(*UnlockUserResponse)(nil),                  // 104: v1.UnlockUserResponse
+	(*CreateProfileResponse)(nil),               // 105: v1.CreateProfileResponse
+	(*ListUserProfilesResponse)(nil),            // 106: v1.ListUserProfilesResponse
+	(*GetProfileSummariesResponse)(nil),         // 107: v1.GetProfileSummariesResponse
+	(*UpdateProfileResponse)(nil),               // 108: v1.UpdateProfileResponse
+	(*DeleteProfileResponse)(nil),               // 109: v1.DeleteProfileResponse
+	(*GetProfileUploadURLResponse)(nil),         // 110: v1.GetProfileUploadURLResponse
+	(*GenericResponse)(nil),                     // 111: v1.GenericResponse
+	(*SignInResponse)(nil),                      // 112: v1.SignInResponse
+	(*GenerateLoginTokenResponse)(nil),          // 113: v1.GenerateLoginTokenResponse
+	(*RefreshTokenResponse)(nil),                // 114: v1.RefreshTokenResponse
+	(*LogoutResponse)(nil),                      // 115: v1.LogoutResponse
+	(*ValidateTokenResponse)(nil),               // 116: v1.ValidateTokenResponse
+	(*IsAuthenticatedResponse)(nil),             // 117: v1.IsAuthenticatedResponse
+	(*ListUserSessionsResponse)(nil),            // 118: v1.ListUserSessionsResponse
+	(*TerminateSessionResponse)(nil),            // 119: v1.TerminateSessionResponse
+	(*ConfigEntity)(nil),                        // 120: v1.ConfigEntity
+	(*UpdateResponse)(nil),                      // 121: v1.UpdateResponse
+	(*ListConfigEntitiesResponse)(nil),          // 122: v1.ListConfigEntitiesResponse
+	(*DeleteResponse)(nil),                      // 123: v1.DeleteResponse
+	(*Config)(nil),                              // 124: v1.Config
+	(*GetConfigsByKeysResponse)(nil),            // 125: v1.GetConfigsByKeysResponse
+	(*ListConfigsResponse)(nil),                 // 126: v1.ListConfigsResponse
+	(*App)(nil),                                 // 127: v1.App
+	(*DeleteAppResponse)(nil),                   // 128: v1.DeleteAppResponse
+	(*AssignAppResponse)(nil),                   // 129: v1.AssignAppResponse
+	(*ListAppsResponse)(nil),                    // 130: v1.ListAppsResponse
+	(*ListUserAppsResponse)(nil),                // 131: v1.ListUserAppsResponse
 }
 var file_proto_openauth_v1_openauth_proto_depIdxs = []int32{
 	0,   // 0: v1.OpenAuth.Ping:input_type -> v1.OOPingRequest
 	1,   // 1: v1.OpenAuth.Stats:input_type -> v1.StatsRequest
 	2,   // 2: v1.OpenAuth.CreatePermission:input_type -> v1.CreatePermissionRequest
-	3,   // 3: v1.OpenAuth.GetPermission:input_type -> v1.GetPermissionRequest
-	4,   // 4: v1.OpenAuth.ListPermissions:input_type -> v1.ListPermissionsRequest
-	5,   // 5: v1.OpenAuth.UpdatePermission:input_type -> v1.UpdatePermissionRequest
-	6,   // 6: v1.OpenAuth.DeletePermission:input_type -> v1.DeletePermissionRequest
-	7,   // 7: v1.OpenAuth.CreateGroup:input_type -> v1.CreateGroupRequest
-	8,   // 8: v1.OpenAuth.GetGroup:input_type -> v1.GetGroupRequest
-	9,   // 9: v1.OpenAuth.ListGroups:input_type -> v1.ListGroupsRequest
-	10,  // 10: v1.OpenAuth.UpdateGroup:input_type -> v1.UpdateGroupRequest
-	11,  // 11: v1.OpenAuth.DeleteGroup:input_type -> v1.DeleteGroupRequest
-	12,  // 12: v1.OpenAuth.AssignUsersToGroup:input_type -> v1.AssignUsersToGroupRequest
-	13,  // 13: v1.OpenAuth.RemoveUsersFromGroup:input_type -> v1.RemoveUsersFromGroupRequest
-	14,  // 14: v1.OpenAuth.ListGroupUsers:input_type -> v1.ListGroupUsersRequest
-	15,  // 15: v1.OpenAuth.ListUserGroups:input_type -> v1.ListUserGroupsRequest
-	16,  // 16: v1.OpenAuth.AssignPermissionsToGroup:input_type -> v1.AssignPermissionsToGroupRequest
-	17,  // 17: v1.OpenAuth.RemovePermissionsFromGroup:input_type -> v1.RemovePermissionsFromGroupRequest
-	18,  // 18: v1.OpenAuth.ListGroupPermissions:input_type -> v1.ListGroupPermissionsRequest
-	19,  // 19: v1.OpenAuth.AssignPermissionsToUser:input_type -> v1.AssignPermissionsToUserRequest
-	20,  // 20: v1.OpenAuth.RemovePermissionsFromUser:input_type -> v1.RemovePermissionsFromUserRequest
-	21,  // 21: v1.OpenAuth.ListUserPermissions:input_type -> v1.ListUserPermissionsRequest
-	22,  // 22: v1.OpenAuth.GetUserEffectivePermissions:input_type -> v1.GetUserEffectivePermissionsRequest
-	23,  // 23: v1.OpenAuth.SignUp:input_type -> v1.SignUpRequest
-	24,  // 24: v1.OpenAuth.VerifyEmail:input_type -> v1.VerifyEmailRequest
-	25,  // 25: v1.OpenAuth.VerifyPhone:input_type -> v1.VerifyPhoneRequest
-	26,  // 26: v1.OpenAuth.SendVerificationCode:input_type -> v1.SendVerificationCodeRequest
-	27,  // 27: v1.OpenAuth.CheckUsername:input_type -> v1.CheckUsernameRequest
-	28,  // 28: v1.OpenAuth.CheckEmail:input_type -> v1.CheckEmailRequest
-	29,  // 29: v1.OpenAuth.GetUser:input_type -> v1.GetUserRequest
-	30,  // 30: v1.OpenAuth.UpdateUser:input_type -> v1.UpdateUserRequest
-	31,  // 31: v1.OpenAuth.ChangePassword:input_type -> v1.ChangePasswordRequest
-	32,  // 32: v1.OpenAuth.DeleteAccount:input_type -> v1.DeleteAccountRequest
-	33,  // 33: v1.OpenAuth.ListUsers:input_type -> v1.ListUsersRequest
-	34,  // 34: v1.OpenAuth.DeleteUser:input_type -> v1.DeleteUserRequest
-	35,  // 35: v1.OpenAuth.UnlockUser:input_type -> v1.UnlockUserRequest
-	36,  // 36: v1.OpenAuth.CreateProfile:input_type -> v1.CreateProfileRequest
-	37,  // 37: v1.OpenAuth.ListUserProfiles:input_type -> v1.ListUserProfilesRequest
-	38,  // 38: v1.OpenAuth.GetProfileSummaries:input_type -> v1.GetProfileSummariesRequest
-	39,  // 39: v1.OpenAuth.UpdateProfile:input_type -> v1.UpdateProfileRequest
-	40,  // 40: v1.OpenAuth.DeleteProfile:input_type -> v1.DeleteProfileRequest
-	41,  // 41: v1.OpenAuth.GetProfileUploadURL:input_type -> v1.GetProfileUploadURLRequest
-	42,  // 42: v1.OpenAuth.MarkProfileURLUpdated:input_type -> v1.MarkProfileURLUpdatedRequest
-	43,  // 43: v1.OpenAuth.SignIn:input_type -> v1.SignInRequest
-	44,  // 44: v1.OpenAuth.GoogleSignIn:input_type -> v1.GoogleSignInRequest
-	45,  // 45: v1.OpenAuth.SignInWithLoginToken:input_type -> v1.SignInWithLoginTokenRequest
-	46,  // 46: v1.OpenAuth.GenerateLoginToken:input_type -> v1.GenerateLoginTokenRequest
-	47,  // 47: v1.OpenAuth.RefreshToken:input_type -> v1.RefreshTokenRequest
-	48,  // 48: v1.OpenAuth.Logout:input_type -> v1.LogoutRequest
-	49,  // 49: v1.OpenAuth.ValidateToken:input_type -> v1.ValidateTokenRequest
-	50,  // 50: v1.OpenAuth.IsAuthenticated:input_type -> v1.IsAuthenticatedRequest
-	51,  // 51: v1.OpenAuth.ListUserSessions:input_type -> v1.ListUserSessionsRequest
-	52,  // 52: v1.OpenAuth.TerminateSession:input_type -> v1.TerminateSessionRequest
-	53,  // 53: v1.OpenAuth.CreateConfigEntity:input_type -> v1.CreateConfigEntityRequest
-	54,  // 54: v1.OpenAuth.UpdateConfigEntity:input_type -> v1.UpdateConfigEntityRequest
-	55,  // 55: v1.OpenAuth.GetConfigEntity:input_type -> v1.GetConfigEntityRequest
-	56,  // 56: v1.OpenAuth.ListConfigEntities:input_type -> v1.ListConfigEntitiesRequest
-	57,  // 57: v1.OpenAuth.DeleteConfigEntity:input_type -> v1.DeleteConfigEntityRequest
-	58,  // 58: v1.OpenAuth.CreateConfig:input_type -> v1.CreateConfigRequest
-	59,  // 59: v1.OpenAuth.UpdateConfig:input_type -> v1.UpdateConfigRequest
-	60,  // 60: v1.OpenAuth.DeleteConfig:input_type -> v1.DeleteConfigRequest
-	61,  // 61: v1.OpenAuth.GetConfig:input_type -> v1.GetConfigRequest
-	62,  // 62: v1.OpenAuth.GetConfigsByKeys:input_type -> v1.GetConfigsByKeysRequest
-	63,  // 63: v1.OpenAuth.ListConfigs:input_type -> v1.ListConfigsRequest
-	64,  // 64: v1.OpenAuth.CreateApp:input_type -> v1.CreateAppRequest
-	65,  // 65: v1.OpenAuth.UpdateApp:input_type -> v1.UpdateAppRequest
-	66,  // 66: v1.OpenAuth.DeleteApp:input_type -> v1.DeleteAppRequest
-	67,  // 67: v1.OpenAuth.AssignApp:input_type -> v1.AssignAppRequest
-	68,  // 68: v1.OpenAuth.ListApps:input_type -> v1.ListAppsRequest
-	69,  // 69: v1.OpenAuth.ListUserApps:input_type -> v1.ListUserAppsRequest
-	70,  // 70: v1.OpenAuth.Ping:output_type -> v1.OOPingResponse
-	71,  // 71: v1.OpenAuth.Stats:output_type -> v1.StatsResponse
-	72,  // 72: v1.OpenAuth.CreatePermission:output_type -> v1.Permission
-	72,  // 73: v1.OpenAuth.GetPermission:output_type -> v1.Permission
-	73,  // 74: v1.OpenAuth.ListPermissions:output_type -> v1.ListPermissionsResponse
-	72,  // 75: v1.OpenAuth.UpdatePermission:output_type -> v1.Permission
-	74,  // 76: v1.OpenAuth.DeletePermission:output_type -> v1.DeletePermissionResponse
-	75,  // 77: v1.OpenAuth.CreateGroup:output_type -> v1.CreateGroupResponse
-	76,  // 78: v1.OpenAuth.GetGroup:output_type -> v1.GetGroupResponse
-	77,  // 79: v1.OpenAuth.ListGroups:output_type -> v1.ListGroupsResponse
-	78,  // 80: v1.OpenAuth.UpdateGroup:output_type -> v1.UpdateGroupResponse
-	79,  // 81: v1.OpenAuth.DeleteGroup:output_type -> v1.DeleteGroupResponse
-	80,  // 82: v1.OpenAuth.AssignUsersToGroup:output_type -> v1.AssignUsersToGroupResponse
-	81,  // 83: v1.OpenAuth.RemoveUsersFromGroup:output_type -> v1.RemoveUsersFromGroupResponse
-	82,  // 84: v1.OpenAuth.ListGroupUsers:output_type -> v1.ListGroupUsersResponse
-	83,  // 85: v1.OpenAuth.ListUserGroups:output_type -> v1.ListUserGroupsResponse
-	84,  // 86: v1.OpenAuth.AssignPermissionsToGroup:output_type -> v1.AssignPermissionsToGroupResponse
-	85,  // 87: v1.OpenAuth.RemovePermissionsFromGroup:output_type -> v1.RemovePermissionsFromGroupResponse
-	86,  // 88: v1.OpenAuth.ListGroupPermissions:output_type -> v1.ListGroupPermissionsResponse
-	87,  // 89: v1.OpenAuth.AssignPermissionsToUser:output_type -> v1.AssignPermissionsToUserResponse
-	88,  // 90: v1.OpenAuth.RemovePermissionsFromUser:output_type -> v1.RemovePermissionsFromUserResponse
-	89,  // 91: v1.OpenAuth.ListUserPermissions:output_type -> v1.ListUserPermissionsResponse
-	90,  // 92: v1.OpenAuth.GetUserEffectivePermissions:output_type -> v1.GetUserEffectivePermissionsResponse
-	91,  // 93: v1.OpenAuth.SignUp:output_type -> v1.SignUpResponse
-	92,  // 94: v1.OpenAuth.VerifyEmail:output_type -> v1.VerificationResponse
-	92,  // 95: v1.OpenAuth.VerifyPhone:output_type -> v1.VerificationResponse
-	93,  // 96: v1.OpenAuth.SendVerificationCode:output_type -> v1.SendVerificationCodeResponse
-	94,  // 97: v1.OpenAuth.CheckUsername:output_type -> v1.CheckUsernameResponse
-	95,  // 98: v1.OpenAuth.CheckEmail:output_type -> v1.CheckEmailResponse
-	96,  // 99: v1.OpenAuth.GetUser:output_type -> v1.GetUserResponse
-	97,  // 100: v1.OpenAuth.UpdateUser:output_type -> v1.UpdateUserResponse
-	98,  // 101: v1.OpenAuth.ChangePassword:output_type -> v1.ChangePasswordResponse
-	99,  // 102: v1.OpenAuth.DeleteAccount:output_type -> v1.DeleteAccountResponse
-	100, // 103: v1.OpenAuth.ListUsers:output_type -> v1.ListUsersResponse
-	101, // 104: v1.OpenAuth.DeleteUser:output_type -> v1.DeleteUserResponse
-	102, // 105: v1.OpenAuth.UnlockUser:output_type -> v1.UnlockUserResponse
-	103, // 106: v1.OpenAuth.CreateProfile:output_type -> v1.CreateProfileResponse
-	104, // 107: v1.OpenAuth.ListUserProfiles:output_type -> v1.ListUserProfilesResponse
-	105, // 108: v1.OpenAuth.GetProfileSummaries:output_type -> v1.GetProfileSummariesResponse
-	106, // 109: v1.OpenAuth.UpdateProfile:output_type -> v1.UpdateProfileResponse
-	107, // 110: v1.OpenAuth.DeleteProfile:output_type -> v1.DeleteProfileResponse
-	108, // 111: v1.OpenAuth.GetProfileUploadURL:output_type -> v1.GetProfileUploadURLResponse
-	109, // 112: v1.OpenAuth.MarkProfileURLUpdated:output_type -> v1.GenericResponse
-	110, // 113: v1.OpenAuth.SignIn:output_type -> v1.SignInResponse
-	110, // 114: v1.OpenAuth.GoogleSignIn:output_type -> v1.SignInResponse
-	110, // 115: v1.OpenAuth.SignInWithLoginToken:output_type -> v1.SignInResponse
-	111, // 116: v1.OpenAuth.GenerateLoginToken:output_type -> v1.GenerateLoginTokenResponse
-	112, // 117: v1.OpenAuth.RefreshToken:output_type -> v1.RefreshTokenResponse
-	113, // 118: v1.OpenAuth.Logout:output_type -> v1.LogoutResponse
-	114, // 119: v1.OpenAuth.ValidateToken:output_type -> v1.ValidateTokenResponse
-	115, // 120: v1.OpenAuth.IsAuthenticated:output_type -> v1.IsAuthenticatedResponse
-	116, // 121: v1.OpenAuth.ListUserSessions:output_type -> v1.ListUserSessionsResponse
-	117, // 122: v1.OpenAuth.TerminateSession:output_type -> v1.TerminateSessionResponse
-	118, // 123: v1.OpenAuth.CreateConfigEntity:output_type -> v1.ConfigEntity
-	119, // 124: v1.OpenAuth.UpdateConfigEntity:output_type -> v1.UpdateResponse
-	118, // 125: v1.OpenAuth.GetConfigEntity:output_type -> v1.ConfigEntity
-	120, // 126: v1.OpenAuth.ListConfigEntities:output_type -> v1.ListConfigEntitiesResponse
-	121, // 127: v1.OpenAuth.DeleteConfigEntity:output_type -> v1.DeleteResponse
-	122, // 128: v1.OpenAuth.CreateConfig:output_type -> v1.Config
-	119, // 129: v1.OpenAuth.UpdateConfig:output_type -> v1.UpdateResponse
-	121, // 130: v1.OpenAuth.DeleteConfig:output_type -> v1.DeleteResponse
-	122, // 131: v1.OpenAuth.GetConfig:output_type -> v1.Config
-	123, // 132: v1.OpenAuth.GetConfigsByKeys:output_type -> v1.GetConfigsByKeysResponse
-	124, // 133: v1.OpenAuth.ListConfigs:output_type -> v1.ListConfigsResponse
-	125, // 134: v1.OpenAuth.CreateApp:output_type -> v1.App
-	125, // 135: v1.OpenAuth.UpdateApp:output_type -> v1.App
-	126, // 136: v1.OpenAuth.DeleteApp:output_type -> v1.DeleteAppResponse
-	127, // 137: v1.OpenAuth.AssignApp:output_type -> v1.AssignAppResponse
-	128, // 138: v1.OpenAuth.ListApps:output_type -> v1.ListAppsResponse
-	129, // 139: v1.OpenAuth.ListUserApps:output_type -> v1.ListUserAppsResponse
-	70,  // [70:140] is the sub-list for method output_type
-	0,   // [0:70] is the sub-list for method input_type
+	3,   // 3: v1.OpenAuth.BulkCreatePermissions:input_type -> v1.BulkCreatePermissionsRequest
+	4,   // 4: v1.OpenAuth.GetPermission:input_type -> v1.GetPermissionRequest
+	5,   // 5: v1.OpenAuth.ListPermissions:input_type -> v1.ListPermissionsRequest
+	6,   // 6: v1.OpenAuth.UpdatePermission:input_type -> v1.UpdatePermissionRequest
+	7,   // 7: v1.OpenAuth.DeletePermission:input_type -> v1.DeletePermissionRequest
+	8,   // 8: v1.OpenAuth.CreateGroup:input_type -> v1.CreateGroupRequest
+	9,   // 9: v1.OpenAuth.GetGroup:input_type -> v1.GetGroupRequest
+	10,  // 10: v1.OpenAuth.ListGroups:input_type -> v1.ListGroupsRequest
+	11,  // 11: v1.OpenAuth.UpdateGroup:input_type -> v1.UpdateGroupRequest
+	12,  // 12: v1.OpenAuth.DeleteGroup:input_type -> v1.DeleteGroupRequest
+	13,  // 13: v1.OpenAuth.AssignUsersToGroup:input_type -> v1.AssignUsersToGroupRequest
+	14,  // 14: v1.OpenAuth.RemoveUsersFromGroup:input_type -> v1.RemoveUsersFromGroupRequest
+	15,  // 15: v1.OpenAuth.ListGroupUsers:input_type -> v1.ListGroupUsersRequest
+	16,  // 16: v1.OpenAuth.ListUserGroups:input_type -> v1.ListUserGroupsRequest
+	17,  // 17: v1.OpenAuth.AssignPermissionsToGroup:input_type -> v1.AssignPermissionsToGroupRequest
+	18,  // 18: v1.OpenAuth.RemovePermissionsFromGroup:input_type -> v1.RemovePermissionsFromGroupRequest
+	19,  // 19: v1.OpenAuth.ListGroupPermissions:input_type -> v1.ListGroupPermissionsRequest
+	20,  // 20: v1.OpenAuth.AssignPermissionsToUser:input_type -> v1.AssignPermissionsToUserRequest
+	21,  // 21: v1.OpenAuth.RemovePermissionsFromUser:input_type -> v1.RemovePermissionsFromUserRequest
+	22,  // 22: v1.OpenAuth.ListUserPermissions:input_type -> v1.ListUserPermissionsRequest
+	23,  // 23: v1.OpenAuth.GetUserEffectivePermissions:input_type -> v1.GetUserEffectivePermissionsRequest
+	24,  // 24: v1.OpenAuth.SignUp:input_type -> v1.SignUpRequest
+	25,  // 25: v1.OpenAuth.VerifyEmail:input_type -> v1.VerifyEmailRequest
+	26,  // 26: v1.OpenAuth.VerifyPhone:input_type -> v1.VerifyPhoneRequest
+	27,  // 27: v1.OpenAuth.SendVerificationCode:input_type -> v1.SendVerificationCodeRequest
+	28,  // 28: v1.OpenAuth.CheckUsername:input_type -> v1.CheckUsernameRequest
+	29,  // 29: v1.OpenAuth.CheckEmail:input_type -> v1.CheckEmailRequest
+	30,  // 30: v1.OpenAuth.GetUser:input_type -> v1.GetUserRequest
+	31,  // 31: v1.OpenAuth.UpdateUser:input_type -> v1.UpdateUserRequest
+	32,  // 32: v1.OpenAuth.ChangePassword:input_type -> v1.ChangePasswordRequest
+	33,  // 33: v1.OpenAuth.DeleteAccount:input_type -> v1.DeleteAccountRequest
+	34,  // 34: v1.OpenAuth.ListUsers:input_type -> v1.ListUsersRequest
+	35,  // 35: v1.OpenAuth.DeleteUser:input_type -> v1.DeleteUserRequest
+	36,  // 36: v1.OpenAuth.UnlockUser:input_type -> v1.UnlockUserRequest
+	37,  // 37: v1.OpenAuth.CreateProfile:input_type -> v1.CreateProfileRequest
+	38,  // 38: v1.OpenAuth.ListUserProfiles:input_type -> v1.ListUserProfilesRequest
+	39,  // 39: v1.OpenAuth.GetProfileSummaries:input_type -> v1.GetProfileSummariesRequest
+	40,  // 40: v1.OpenAuth.UpdateProfile:input_type -> v1.UpdateProfileRequest
+	41,  // 41: v1.OpenAuth.DeleteProfile:input_type -> v1.DeleteProfileRequest
+	42,  // 42: v1.OpenAuth.GetProfileUploadURL:input_type -> v1.GetProfileUploadURLRequest
+	43,  // 43: v1.OpenAuth.MarkProfileURLUpdated:input_type -> v1.MarkProfileURLUpdatedRequest
+	44,  // 44: v1.OpenAuth.SignIn:input_type -> v1.SignInRequest
+	45,  // 45: v1.OpenAuth.GoogleSignIn:input_type -> v1.GoogleSignInRequest
+	46,  // 46: v1.OpenAuth.SignInWithLoginToken:input_type -> v1.SignInWithLoginTokenRequest
+	47,  // 47: v1.OpenAuth.GenerateLoginToken:input_type -> v1.GenerateLoginTokenRequest
+	48,  // 48: v1.OpenAuth.RefreshToken:input_type -> v1.RefreshTokenRequest
+	49,  // 49: v1.OpenAuth.Logout:input_type -> v1.LogoutRequest
+	50,  // 50: v1.OpenAuth.ValidateToken:input_type -> v1.ValidateTokenRequest
+	51,  // 51: v1.OpenAuth.IsAuthenticated:input_type -> v1.IsAuthenticatedRequest
+	52,  // 52: v1.OpenAuth.ListUserSessions:input_type -> v1.ListUserSessionsRequest
+	53,  // 53: v1.OpenAuth.TerminateSession:input_type -> v1.TerminateSessionRequest
+	54,  // 54: v1.OpenAuth.CreateConfigEntity:input_type -> v1.CreateConfigEntityRequest
+	55,  // 55: v1.OpenAuth.UpdateConfigEntity:input_type -> v1.UpdateConfigEntityRequest
+	56,  // 56: v1.OpenAuth.GetConfigEntity:input_type -> v1.GetConfigEntityRequest
+	57,  // 57: v1.OpenAuth.ListConfigEntities:input_type -> v1.ListConfigEntitiesRequest
+	58,  // 58: v1.OpenAuth.DeleteConfigEntity:input_type -> v1.DeleteConfigEntityRequest
+	59,  // 59: v1.OpenAuth.CreateConfig:input_type -> v1.CreateConfigRequest
+	60,  // 60: v1.OpenAuth.UpdateConfig:input_type -> v1.UpdateConfigRequest
+	61,  // 61: v1.OpenAuth.DeleteConfig:input_type -> v1.DeleteConfigRequest
+	62,  // 62: v1.OpenAuth.GetConfig:input_type -> v1.GetConfigRequest
+	63,  // 63: v1.OpenAuth.GetConfigsByKeys:input_type -> v1.GetConfigsByKeysRequest
+	64,  // 64: v1.OpenAuth.ListConfigs:input_type -> v1.ListConfigsRequest
+	65,  // 65: v1.OpenAuth.CreateApp:input_type -> v1.CreateAppRequest
+	66,  // 66: v1.OpenAuth.UpdateApp:input_type -> v1.UpdateAppRequest
+	67,  // 67: v1.OpenAuth.DeleteApp:input_type -> v1.DeleteAppRequest
+	68,  // 68: v1.OpenAuth.AssignApp:input_type -> v1.AssignAppRequest
+	69,  // 69: v1.OpenAuth.ListApps:input_type -> v1.ListAppsRequest
+	70,  // 70: v1.OpenAuth.ListUserApps:input_type -> v1.ListUserAppsRequest
+	71,  // 71: v1.OpenAuth.Ping:output_type -> v1.OOPingResponse
+	72,  // 72: v1.OpenAuth.Stats:output_type -> v1.StatsResponse
+	73,  // 73: v1.OpenAuth.CreatePermission:output_type -> v1.Permission
+	74,  // 74: v1.OpenAuth.BulkCreatePermissions:output_type -> v1.BulkCreatePermissionsResponse
+	73,  // 75: v1.OpenAuth.GetPermission:output_type -> v1.Permission
+	75,  // 76: v1.OpenAuth.ListPermissions:output_type -> v1.ListPermissionsResponse
+	73,  // 77: v1.OpenAuth.UpdatePermission:output_type -> v1.Permission
+	76,  // 78: v1.OpenAuth.DeletePermission:output_type -> v1.DeletePermissionResponse
+	77,  // 79: v1.OpenAuth.CreateGroup:output_type -> v1.CreateGroupResponse
+	78,  // 80: v1.OpenAuth.GetGroup:output_type -> v1.GetGroupResponse
+	79,  // 81: v1.OpenAuth.ListGroups:output_type -> v1.ListGroupsResponse
+	80,  // 82: v1.OpenAuth.UpdateGroup:output_type -> v1.UpdateGroupResponse
+	81,  // 83: v1.OpenAuth.DeleteGroup:output_type -> v1.DeleteGroupResponse
+	82,  // 84: v1.OpenAuth.AssignUsersToGroup:output_type -> v1.AssignUsersToGroupResponse
+	83,  // 85: v1.OpenAuth.RemoveUsersFromGroup:output_type -> v1.RemoveUsersFromGroupResponse
+	84,  // 86: v1.OpenAuth.ListGroupUsers:output_type -> v1.ListGroupUsersResponse
+	85,  // 87: v1.OpenAuth.ListUserGroups:output_type -> v1.ListUserGroupsResponse
+	86,  // 88: v1.OpenAuth.AssignPermissionsToGroup:output_type -> v1.AssignPermissionsToGroupResponse
+	87,  // 89: v1.OpenAuth.RemovePermissionsFromGroup:output_type -> v1.RemovePermissionsFromGroupResponse
+	88,  // 90: v1.OpenAuth.ListGroupPermissions:output_type -> v1.ListGroupPermissionsResponse
+	89,  // 91: v1.OpenAuth.AssignPermissionsToUser:output_type -> v1.AssignPermissionsToUserResponse
+	90,  // 92: v1.OpenAuth.RemovePermissionsFromUser:output_type -> v1.RemovePermissionsFromUserResponse
+	91,  // 93: v1.OpenAuth.ListUserPermissions:output_type -> v1.ListUserPermissionsResponse
+	92,  // 94: v1.OpenAuth.GetUserEffectivePermissions:output_type -> v1.GetUserEffectivePermissionsResponse
+	93,  // 95: v1.OpenAuth.SignUp:output_type -> v1.SignUpResponse
+	94,  // 96: v1.OpenAuth.VerifyEmail:output_type -> v1.VerificationResponse
+	94,  // 97: v1.OpenAuth.VerifyPhone:output_type -> v1.VerificationResponse
+	95,  // 98: v1.OpenAuth.SendVerificationCode:output_type -> v1.SendVerificationCodeResponse
+	96,  // 99: v1.OpenAuth.CheckUsername:output_type -> v1.CheckUsernameResponse
+	97,  // 100: v1.OpenAuth.CheckEmail:output_type -> v1.CheckEmailResponse
+	98,  // 101: v1.OpenAuth.GetUser:output_type -> v1.GetUserResponse
+	99,  // 102: v1.OpenAuth.UpdateUser:output_type -> v1.UpdateUserResponse
+	100, // 103: v1.OpenAuth.ChangePassword:output_type -> v1.ChangePasswordResponse
+	101, // 104: v1.OpenAuth.DeleteAccount:output_type -> v1.DeleteAccountResponse
+	102, // 105: v1.OpenAuth.ListUsers:output_type -> v1.ListUsersResponse
+	103, // 106: v1.OpenAuth.DeleteUser:output_type -> v1.DeleteUserResponse
+	104, // 107: v1.OpenAuth.UnlockUser:output_type -> v1.UnlockUserResponse
+	105, // 108: v1.OpenAuth.CreateProfile:output_type -> v1.CreateProfileResponse
+	106, // 109: v1.OpenAuth.ListUserProfiles:output_type -> v1.ListUserProfilesResponse
+	107, // 110: v1.OpenAuth.GetProfileSummaries:output_type -> v1.GetProfileSummariesResponse
+	108, // 111: v1.OpenAuth.UpdateProfile:output_type -> v1.UpdateProfileResponse
+	109, // 112: v1.OpenAuth.DeleteProfile:output_type -> v1.DeleteProfileResponse
+	110, // 113: v1.OpenAuth.GetProfileUploadURL:output_type -> v1.GetProfileUploadURLResponse
+	111, // 114: v1.OpenAuth.MarkProfileURLUpdated:output_type -> v1.GenericResponse
+	112, // 115: v1.OpenAuth.SignIn:output_type -> v1.SignInResponse
+	112, // 116: v1.OpenAuth.GoogleSignIn:output_type -> v1.SignInResponse
+	112, // 117: v1.OpenAuth.SignInWithLoginToken:output_type -> v1.SignInResponse
+	113, // 118: v1.OpenAuth.GenerateLoginToken:output_type -> v1.GenerateLoginTokenResponse
+	114, // 119: v1.OpenAuth.RefreshToken:output_type -> v1.RefreshTokenResponse
+	115, // 120: v1.OpenAuth.Logout:output_type -> v1.LogoutResponse
+	116, // 121: v1.OpenAuth.ValidateToken:output_type -> v1.ValidateTokenResponse
+	117, // 122: v1.OpenAuth.IsAuthenticated:output_type -> v1.IsAuthenticatedResponse
+	118, // 123: v1.OpenAuth.ListUserSessions:output_type -> v1.ListUserSessionsResponse
+	119, // 124: v1.OpenAuth.TerminateSession:output_type -> v1.TerminateSessionResponse
+	120, // 125: v1.OpenAuth.CreateConfigEntity:output_type -> v1.ConfigEntity
+	121, // 126: v1.OpenAuth.UpdateConfigEntity:output_type -> v1.UpdateResponse
+	120, // 127: v1.OpenAuth.GetConfigEntity:output_type -> v1.ConfigEntity
+	122, // 128: v1.OpenAuth.ListConfigEntities:output_type -> v1.ListConfigEntitiesResponse
+	123, // 129: v1.OpenAuth.DeleteConfigEntity:output_type -> v1.DeleteResponse
+	124, // 130: v1.OpenAuth.CreateConfig:output_type -> v1.Config
+	121, // 131: v1.OpenAuth.UpdateConfig:output_type -> v1.UpdateResponse
+	123, // 132: v1.OpenAuth.DeleteConfig:output_type -> v1.DeleteResponse
+	124, // 133: v1.OpenAuth.GetConfig:output_type -> v1.Config
+	125, // 134: v1.OpenAuth.GetConfigsByKeys:output_type -> v1.GetConfigsByKeysResponse
+	126, // 135: v1.OpenAuth.ListConfigs:output_type -> v1.ListConfigsResponse
+	127, // 136: v1.OpenAuth.CreateApp:output_type -> v1.App
+	127, // 137: v1.OpenAuth.UpdateApp:output_type -> v1.App
+	128, // 138: v1.OpenAuth.DeleteApp:output_type -> v1.DeleteAppResponse
+	129, // 139: v1.OpenAuth.AssignApp:output_type -> v1.AssignAppResponse
+	130, // 140: v1.OpenAuth.ListApps:output_type -> v1.ListAppsResponse
+	131, // 141: v1.OpenAuth.ListUserApps:output_type -> v1.ListUserAppsResponse
+	71,  // [71:142] is the sub-list for method output_type
+	0,   // [0:71] is the sub-list for method input_type
 	0,   // [0:0] is the sub-list for extension type_name
 	0,   // [0:0] is the sub-list for extension extendee
 	0,   // [0:0] is the sub-list for field type_name

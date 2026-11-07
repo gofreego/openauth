@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Container, Button, TextField, InputAdornment } from '@mui/material'
-import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material'
+import { Add as AddIcon, PlaylistAdd as BulkIcon, Search as SearchIcon } from '@mui/icons-material'
 import { ConfirmDialog } from '@gofreego/tsutils'
 import { usePermissions } from './hooks/usePermissions'
 import { PermissionTable } from './components/PermissionTable'
 import { PermissionFormDialog } from './components/PermissionFormDialog'
+import { BulkPermissionsDialog } from './components/BulkPermissionsDialog'
 import type { Permission, CreatePermissionRequest, UpdatePermissionRequest } from '../../apis/proto/openauth/v1/permissions'
 import { PageHeader } from '../../components'
 
@@ -15,6 +16,7 @@ export const PermissionsPage = () => {
 
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [openBulkDialog, setOpenBulkDialog] = useState(false)
   const [editData, setEditData] = useState<Permission | undefined>(undefined)
   const [deleteId, setDeleteId] = useState<string>('')
   const [searchInput, setSearchInput] = useState<string>(searchParams.get('search') || '')
@@ -75,9 +77,14 @@ export const PermissionsPage = () => {
           title="Permissions"
           subtitle="Define and manage system permissions."
           action={
-            <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setEditData(undefined); setOpenFormDialog(true) }} sx={{ borderRadius: 2 }}>
-              Create Permission
-            </Button>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              <Button variant="outlined" startIcon={<BulkIcon />} onClick={() => setOpenBulkDialog(true)} sx={{ borderRadius: 2 }}>
+                Bulk Create
+              </Button>
+              <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setEditData(undefined); setOpenFormDialog(true) }} sx={{ borderRadius: 2 }}>
+                Create Permission
+              </Button>
+            </Box>
           }
         />
 
@@ -117,6 +124,8 @@ export const PermissionsPage = () => {
           onClose={() => { setOpenFormDialog(false); setEditData(undefined) }}
           onSave={handleSave}
         />
+
+        <BulkPermissionsDialog open={openBulkDialog} onClose={() => setOpenBulkDialog(false)} onCreated={reload} />
 
         <ConfirmDialog
           open={openConfirmDialog}

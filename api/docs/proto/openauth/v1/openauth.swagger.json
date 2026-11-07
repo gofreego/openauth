@@ -1457,6 +1457,41 @@
         ]
       }
     },
+    "/openauth/v1/permissions/bulk": {
+      "post": {
+        "summary": "Create permissions in bulk",
+        "description": "Creates up to 500 permissions. Existing names are skipped; the response lists created, skipped and failed ones. Needs the permission to create permissions.",
+        "operationId": "OpenAuth_BulkCreatePermissions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1BulkCreatePermissionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "BulkCreatePermissionsRequest creates many permissions at once, e.g. a service's whole set\npasted as JSON in the admin console. Each is checked like CreatePermission.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1BulkCreatePermissionsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Permissions"
+        ]
+      }
+    },
     "/openauth/v1/permissions/{id}": {
       "get": {
         "summary": "Get a permission by ID",
@@ -3171,6 +3206,57 @@
         }
       },
       "title": "AssignUsersToGroupResponse"
+    },
+    "v1BulkCreatePermissionsRequest": {
+      "type": "object",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CreatePermissionRequest"
+          }
+        }
+      },
+      "description": "BulkCreatePermissionsRequest creates many permissions at once, e.g. a service's whole set\npasted as JSON in the admin console. Each is checked like CreatePermission."
+    },
+    "v1BulkCreatePermissionsResponse": {
+      "type": "object",
+      "properties": {
+        "created": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Permission"
+          }
+        },
+        "skipped": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1BulkPermissionFailure"
+          }
+        }
+      },
+      "description": "BulkCreatePermissionsResponse says what happened to each: created, skipped because one\nwith that name exists already, or failed."
+    },
+    "v1BulkPermissionFailure": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "description": "BulkPermissionFailure is one permission that couldn't be created, and why."
     },
     "v1ChangePasswordRequest": {
       "type": "object",

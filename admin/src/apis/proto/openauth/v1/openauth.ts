@@ -89,6 +89,8 @@ import {
   RemovePermissionsFromUserResponse,
 } from "./permission_assignments";
 import {
+  BulkCreatePermissionsRequest,
+  BulkCreatePermissionsResponse,
   CreatePermissionRequest,
   DeletePermissionRequest,
   DeletePermissionResponse,
@@ -128,10 +130,14 @@ import {
   CheckUsernameResponse,
   CreateProfileRequest,
   CreateProfileResponse,
+  DeleteAccountRequest,
+  DeleteAccountResponse,
   DeleteProfileRequest,
   DeleteProfileResponse,
   DeleteUserRequest,
   DeleteUserResponse,
+  GetProfileSummariesRequest,
+  GetProfileSummariesResponse,
   GetProfileUploadURLRequest,
   GetProfileUploadURLResponse,
   GetUserRequest,
@@ -202,6 +208,21 @@ export const OpenAuthService = {
     requestDeserialize: (value: Buffer): CreatePermissionRequest => CreatePermissionRequest.decode(value),
     responseSerialize: (value: Permission): Buffer => Buffer.from(Permission.encode(value).finish()),
     responseDeserialize: (value: Buffer): Permission => Permission.decode(value),
+  },
+  /**
+   * BulkCreatePermissions creates many permissions at once. Names that exist already are
+   * skipped rather than failing the rest; each other one is created or reported failed.
+   */
+  bulkCreatePermissions: {
+    path: "/v1.OpenAuth/BulkCreatePermissions" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: BulkCreatePermissionsRequest): Buffer =>
+      Buffer.from(BulkCreatePermissionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): BulkCreatePermissionsRequest => BulkCreatePermissionsRequest.decode(value),
+    responseSerialize: (value: BulkCreatePermissionsResponse): Buffer =>
+      Buffer.from(BulkCreatePermissionsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BulkCreatePermissionsResponse => BulkCreatePermissionsResponse.decode(value),
   },
   /**
    * GetPermission retrieves a specific permission by its unique ID.
@@ -709,6 +730,24 @@ export const OpenAuthService = {
     responseDeserialize: (value: Buffer): ChangePasswordResponse => ChangePasswordResponse.decode(value),
   },
   /**
+   * DeleteAccount allows the authenticated caller to delete their own account.
+   *
+   * The target user is derived from the caller's JWT, not from the request.
+   * This always performs a soft delete (deactivation) — data is preserved, but
+   * the account is disabled and all active sessions are revoked. Hard delete
+   * remains available only through the admin-only DeleteUser API.
+   */
+  deleteAccount: {
+    path: "/v1.OpenAuth/DeleteAccount" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: DeleteAccountRequest): Buffer => Buffer.from(DeleteAccountRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAccountRequest => DeleteAccountRequest.decode(value),
+    responseSerialize: (value: DeleteAccountResponse): Buffer =>
+      Buffer.from(DeleteAccountResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): DeleteAccountResponse => DeleteAccountResponse.decode(value),
+  },
+  /**
    * ListUsers retrieves users with filtering, sorting, and pagination.
    *
    * Supports filtering by:
@@ -789,6 +828,26 @@ export const OpenAuthService = {
     responseSerialize: (value: ListUserProfilesResponse): Buffer =>
       Buffer.from(ListUserProfilesResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer): ListUserProfilesResponse => ListUserProfilesResponse.decode(value),
+  },
+  /**
+   * GetProfileSummaries returns the public details (name, avatar) of several profiles by id
+   * and/or uuid.
+   *
+   * Meant for in-cluster services that store profile ids (e.g. learnerservice group
+   * members) and need to display them. gRPC-only and unauthenticated: it deliberately has
+   * no HTTP route, so it's reachable only on the cluster-internal gRPC port, never through
+   * the public gateway (which would let anyone enumerate names by id).
+   */
+  getProfileSummaries: {
+    path: "/v1.OpenAuth/GetProfileSummaries" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: GetProfileSummariesRequest): Buffer =>
+      Buffer.from(GetProfileSummariesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetProfileSummariesRequest => GetProfileSummariesRequest.decode(value),
+    responseSerialize: (value: GetProfileSummariesResponse): Buffer =>
+      Buffer.from(GetProfileSummariesResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): GetProfileSummariesResponse => GetProfileSummariesResponse.decode(value),
   },
   /**
    * UpdateProfile modifies an existing profile.
@@ -1222,6 +1281,11 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    */
   createPermission: handleUnaryCall<CreatePermissionRequest, Permission>;
   /**
+   * BulkCreatePermissions creates many permissions at once. Names that exist already are
+   * skipped rather than failing the rest; each other one is created or reported failed.
+   */
+  bulkCreatePermissions: handleUnaryCall<BulkCreatePermissionsRequest, BulkCreatePermissionsResponse>;
+  /**
    * GetPermission retrieves a specific permission by its unique ID.
    *
    * Returns the complete permission details including resource, action,
@@ -1452,6 +1516,15 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    */
   changePassword: handleUnaryCall<ChangePasswordRequest, ChangePasswordResponse>;
   /**
+   * DeleteAccount allows the authenticated caller to delete their own account.
+   *
+   * The target user is derived from the caller's JWT, not from the request.
+   * This always performs a soft delete (deactivation) — data is preserved, but
+   * the account is disabled and all active sessions are revoked. Hard delete
+   * remains available only through the admin-only DeleteUser API.
+   */
+  deleteAccount: handleUnaryCall<DeleteAccountRequest, DeleteAccountResponse>;
+  /**
    * ListUsers retrieves users with filtering, sorting, and pagination.
    *
    * Supports filtering by:
@@ -1490,6 +1563,16 @@ export interface OpenAuthServer extends UntypedServiceImplementation {
    * Useful for profile selection interfaces and management.
    */
   listUserProfiles: handleUnaryCall<ListUserProfilesRequest, ListUserProfilesResponse>;
+  /**
+   * GetProfileSummaries returns the public details (name, avatar) of several profiles by id
+   * and/or uuid.
+   *
+   * Meant for in-cluster services that store profile ids (e.g. learnerservice group
+   * members) and need to display them. gRPC-only and unauthenticated: it deliberately has
+   * no HTTP route, so it's reachable only on the cluster-internal gRPC port, never through
+   * the public gateway (which would let anyone enumerate names by id).
+   */
+  getProfileSummaries: handleUnaryCall<GetProfileSummariesRequest, GetProfileSummariesResponse>;
   /**
    * UpdateProfile modifies an existing profile.
    *
@@ -1689,6 +1772,25 @@ export interface OpenAuthClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: Permission) => void,
+  ): ClientUnaryCall;
+  /**
+   * BulkCreatePermissions creates many permissions at once. Names that exist already are
+   * skipped rather than failing the rest; each other one is created or reported failed.
+   */
+  bulkCreatePermissions(
+    request: BulkCreatePermissionsRequest,
+    callback: (error: ServiceError | null, response: BulkCreatePermissionsResponse) => void,
+  ): ClientUnaryCall;
+  bulkCreatePermissions(
+    request: BulkCreatePermissionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BulkCreatePermissionsResponse) => void,
+  ): ClientUnaryCall;
+  bulkCreatePermissions(
+    request: BulkCreatePermissionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BulkCreatePermissionsResponse) => void,
   ): ClientUnaryCall;
   /**
    * GetPermission retrieves a specific permission by its unique ID.
@@ -2327,6 +2429,29 @@ export interface OpenAuthClient extends Client {
     callback: (error: ServiceError | null, response: ChangePasswordResponse) => void,
   ): ClientUnaryCall;
   /**
+   * DeleteAccount allows the authenticated caller to delete their own account.
+   *
+   * The target user is derived from the caller's JWT, not from the request.
+   * This always performs a soft delete (deactivation) — data is preserved, but
+   * the account is disabled and all active sessions are revoked. Hard delete
+   * remains available only through the admin-only DeleteUser API.
+   */
+  deleteAccount(
+    request: DeleteAccountRequest,
+    callback: (error: ServiceError | null, response: DeleteAccountResponse) => void,
+  ): ClientUnaryCall;
+  deleteAccount(
+    request: DeleteAccountRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: DeleteAccountResponse) => void,
+  ): ClientUnaryCall;
+  deleteAccount(
+    request: DeleteAccountRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: DeleteAccountResponse) => void,
+  ): ClientUnaryCall;
+  /**
    * ListUsers retrieves users with filtering, sorting, and pagination.
    *
    * Supports filtering by:
@@ -2434,6 +2559,30 @@ export interface OpenAuthClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: ListUserProfilesResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * GetProfileSummaries returns the public details (name, avatar) of several profiles by id
+   * and/or uuid.
+   *
+   * Meant for in-cluster services that store profile ids (e.g. learnerservice group
+   * members) and need to display them. gRPC-only and unauthenticated: it deliberately has
+   * no HTTP route, so it's reachable only on the cluster-internal gRPC port, never through
+   * the public gateway (which would let anyone enumerate names by id).
+   */
+  getProfileSummaries(
+    request: GetProfileSummariesRequest,
+    callback: (error: ServiceError | null, response: GetProfileSummariesResponse) => void,
+  ): ClientUnaryCall;
+  getProfileSummaries(
+    request: GetProfileSummariesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GetProfileSummariesResponse) => void,
+  ): ClientUnaryCall;
+  getProfileSummaries(
+    request: GetProfileSummariesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GetProfileSummariesResponse) => void,
   ): ClientUnaryCall;
   /**
    * UpdateProfile modifies an existing profile.

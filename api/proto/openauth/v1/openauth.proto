@@ -146,6 +146,20 @@ service OpenAuth {
         };
     }
 
+    // BulkCreatePermissions creates many permissions at once. Names that exist already are
+    // skipped rather than failing the rest; each other one is created or reported failed.
+    rpc BulkCreatePermissions (BulkCreatePermissionsRequest) returns (BulkCreatePermissionsResponse) {
+        option (google.api.http) = {
+            post: "/openauth/v1/permissions/bulk"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            tags: "Permissions"
+            summary: "Create permissions in bulk"
+            description: "Creates up to 500 permissions. Existing names are skipped; the response lists created, skipped and failed ones. Needs the permission to create permissions."
+        };
+    }
+
     // GetPermission retrieves a specific permission by its unique ID.
     // 
     // Returns the complete permission details including resource, action,

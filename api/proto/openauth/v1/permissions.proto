@@ -128,3 +128,24 @@ message DeletePermissionResponse {
     // Human-readable message about the deletion result
     string message = 2;
 }
+
+// BulkCreatePermissionsRequest creates many permissions at once, e.g. a service's whole set
+// pasted as JSON in the admin console. Each is checked like CreatePermission.
+message BulkCreatePermissionsRequest {
+    repeated CreatePermissionRequest permissions = 1 [(validate.rules).repeated = {min_items: 1, max_items: 500}];
+}
+
+// BulkPermissionFailure is one permission that couldn't be created, and why.
+message BulkPermissionFailure {
+    string name = 1;
+    string error = 2;
+}
+
+// BulkCreatePermissionsResponse says what happened to each: created, skipped because one
+// with that name exists already, or failed.
+message BulkCreatePermissionsResponse {
+    repeated Permission created = 1;
+    repeated string skipped = 2;
+    repeated BulkPermissionFailure failed = 3;
+}
+

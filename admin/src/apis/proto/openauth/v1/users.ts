@@ -231,6 +231,38 @@ export interface ListUserProfilesResponse {
   profiles: UserProfile[];
 }
 
+/**
+ * GetProfileSummariesRequest asks for the public details of several profiles by numeric id
+ * and/or by uuid, e.g. so another service can show names next to profile ids it stores, or
+ * resolve a uuid from a shared link. At least one id or uuid is required.
+ */
+export interface GetProfileSummariesRequest {
+  profileIds: string[];
+  profileUuids: string[];
+}
+
+/** ProfileSummary is the public subset of a profile: safe to show to other users. */
+export interface ProfileSummary {
+  id: string;
+  uuid: string;
+  /** display_name, else "first last", else profile_name */
+  displayName: string;
+  avatarUrl: string;
+  /** shown on the learner's public profile */
+  bio: string;
+  /**
+   * Public URLs of the profile picture and banner, cache-busted with the avatar_url key. They
+   * 404 until the profile uploads one, so clients fall back to initials / a default banner.
+   */
+  pictureUrl: string;
+  bannerUrl: string;
+}
+
+/** GetProfileSummariesResponse lists the profiles that were found; unknown ids are omitted. */
+export interface GetProfileSummariesResponse {
+  profiles: ProfileSummary[];
+}
+
 /** UpdateProfileRequest to update a specific profile */
 export interface UpdateProfileRequest {
   profileUuid: string;
@@ -339,6 +371,19 @@ export interface ChangePasswordRequest {
 
 /** ChangePasswordResponse */
 export interface ChangePasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+/**
+ * DeleteAccountRequest deletes (soft-deletes) the authenticated caller's own account.
+ * The target user is derived from the caller's JWT, not from the request.
+ */
+export interface DeleteAccountRequest {
+}
+
+/** DeleteAccountResponse */
+export interface DeleteAccountResponse {
   success: boolean;
   message: string;
 }
@@ -2757,6 +2802,334 @@ export const ListUserProfilesResponse: MessageFns<ListUserProfilesResponse> = {
   },
 };
 
+function createBaseGetProfileSummariesRequest(): GetProfileSummariesRequest {
+  return { profileIds: [], profileUuids: [] };
+}
+
+export const GetProfileSummariesRequest: MessageFns<GetProfileSummariesRequest> = {
+  encode(message: GetProfileSummariesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.profileIds) {
+      writer.uint32(8).int64(v!);
+    }
+    for (const v of message.profileUuids) {
+      writer.uint32(18).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetProfileSummariesRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetProfileSummariesRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag === 8) {
+            message.profileIds.push(reader.int64().toString());
+
+            continue;
+          }
+
+          if (tag === 10) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.profileIds.push(reader.int64().toString());
+            }
+
+            continue;
+          }
+
+          break;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.profileUuids.push(reader.string());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetProfileSummariesRequest {
+    return {
+      profileIds: globalThis.Array.isArray(object?.profileIds)
+        ? object.profileIds.map((e: any) => globalThis.String(e))
+        : globalThis.Array.isArray(object?.profile_ids)
+        ? object.profile_ids.map((e: any) => globalThis.String(e))
+        : [],
+      profileUuids: globalThis.Array.isArray(object?.profileUuids)
+        ? object.profileUuids.map((e: any) => globalThis.String(e))
+        : globalThis.Array.isArray(object?.profile_uuids)
+        ? object.profile_uuids.map((e: any) => globalThis.String(e))
+        : [],
+    };
+  },
+
+  toJSON(message: GetProfileSummariesRequest): unknown {
+    const obj: any = {};
+    if (message.profileIds?.length) {
+      obj.profileIds = message.profileIds;
+    }
+    if (message.profileUuids?.length) {
+      obj.profileUuids = message.profileUuids;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetProfileSummariesRequest>, I>>(base?: I): GetProfileSummariesRequest {
+    return GetProfileSummariesRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetProfileSummariesRequest>, I>>(object: I): GetProfileSummariesRequest {
+    const message = createBaseGetProfileSummariesRequest();
+    message.profileIds = object.profileIds?.map((e) => e) || [];
+    message.profileUuids = object.profileUuids?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseProfileSummary(): ProfileSummary {
+  return { id: "0", uuid: "", displayName: "", avatarUrl: "", bio: "", pictureUrl: "", bannerUrl: "" };
+}
+
+export const ProfileSummary: MessageFns<ProfileSummary> = {
+  encode(message: ProfileSummary, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== "0") {
+      writer.uint32(8).int64(message.id);
+    }
+    if (message.uuid !== "") {
+      writer.uint32(18).string(message.uuid);
+    }
+    if (message.displayName !== "") {
+      writer.uint32(26).string(message.displayName);
+    }
+    if (message.avatarUrl !== "") {
+      writer.uint32(34).string(message.avatarUrl);
+    }
+    if (message.bio !== "") {
+      writer.uint32(42).string(message.bio);
+    }
+    if (message.pictureUrl !== "") {
+      writer.uint32(50).string(message.pictureUrl);
+    }
+    if (message.bannerUrl !== "") {
+      writer.uint32(58).string(message.bannerUrl);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ProfileSummary {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseProfileSummary();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.id = reader.int64().toString();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.uuid = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.displayName = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.avatarUrl = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.bio = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.pictureUrl = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.bannerUrl = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ProfileSummary {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : "0",
+      uuid: isSet(object.uuid) ? globalThis.String(object.uuid) : "",
+      displayName: isSet(object.displayName)
+        ? globalThis.String(object.displayName)
+        : isSet(object.display_name)
+        ? globalThis.String(object.display_name)
+        : "",
+      avatarUrl: isSet(object.avatarUrl)
+        ? globalThis.String(object.avatarUrl)
+        : isSet(object.avatar_url)
+        ? globalThis.String(object.avatar_url)
+        : "",
+      bio: isSet(object.bio) ? globalThis.String(object.bio) : "",
+      pictureUrl: isSet(object.pictureUrl)
+        ? globalThis.String(object.pictureUrl)
+        : isSet(object.picture_url)
+        ? globalThis.String(object.picture_url)
+        : "",
+      bannerUrl: isSet(object.bannerUrl)
+        ? globalThis.String(object.bannerUrl)
+        : isSet(object.banner_url)
+        ? globalThis.String(object.banner_url)
+        : "",
+    };
+  },
+
+  toJSON(message: ProfileSummary): unknown {
+    const obj: any = {};
+    if (message.id !== "0") {
+      obj.id = message.id;
+    }
+    if (message.uuid !== "") {
+      obj.uuid = message.uuid;
+    }
+    if (message.displayName !== "") {
+      obj.displayName = message.displayName;
+    }
+    if (message.avatarUrl !== "") {
+      obj.avatarUrl = message.avatarUrl;
+    }
+    if (message.bio !== "") {
+      obj.bio = message.bio;
+    }
+    if (message.pictureUrl !== "") {
+      obj.pictureUrl = message.pictureUrl;
+    }
+    if (message.bannerUrl !== "") {
+      obj.bannerUrl = message.bannerUrl;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ProfileSummary>, I>>(base?: I): ProfileSummary {
+    return ProfileSummary.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ProfileSummary>, I>>(object: I): ProfileSummary {
+    const message = createBaseProfileSummary();
+    message.id = object.id ?? "0";
+    message.uuid = object.uuid ?? "";
+    message.displayName = object.displayName ?? "";
+    message.avatarUrl = object.avatarUrl ?? "";
+    message.bio = object.bio ?? "";
+    message.pictureUrl = object.pictureUrl ?? "";
+    message.bannerUrl = object.bannerUrl ?? "";
+    return message;
+  },
+};
+
+function createBaseGetProfileSummariesResponse(): GetProfileSummariesResponse {
+  return { profiles: [] };
+}
+
+export const GetProfileSummariesResponse: MessageFns<GetProfileSummariesResponse> = {
+  encode(message: GetProfileSummariesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.profiles) {
+      ProfileSummary.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetProfileSummariesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetProfileSummariesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.profiles.push(ProfileSummary.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetProfileSummariesResponse {
+    return {
+      profiles: globalThis.Array.isArray(object?.profiles)
+        ? object.profiles.map((e: any) => ProfileSummary.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: GetProfileSummariesResponse): unknown {
+    const obj: any = {};
+    if (message.profiles?.length) {
+      obj.profiles = message.profiles.map((e) => ProfileSummary.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetProfileSummariesResponse>, I>>(base?: I): GetProfileSummariesResponse {
+    return GetProfileSummariesResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetProfileSummariesResponse>, I>>(object: I): GetProfileSummariesResponse {
+    const message = createBaseGetProfileSummariesResponse();
+    message.profiles = object.profiles?.map((e) => ProfileSummary.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseUpdateProfileRequest(): UpdateProfileRequest {
   return {
     profileUuid: "",
@@ -4284,6 +4657,125 @@ export const ChangePasswordResponse: MessageFns<ChangePasswordResponse> = {
   },
   fromPartial<I extends Exact<DeepPartial<ChangePasswordResponse>, I>>(object: I): ChangePasswordResponse {
     const message = createBaseChangePasswordResponse();
+    message.success = object.success ?? false;
+    message.message = object.message ?? "";
+    return message;
+  },
+};
+
+function createBaseDeleteAccountRequest(): DeleteAccountRequest {
+  return {};
+}
+
+export const DeleteAccountRequest: MessageFns<DeleteAccountRequest> = {
+  encode(_: DeleteAccountRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): DeleteAccountRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeleteAccountRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): DeleteAccountRequest {
+    return {};
+  },
+
+  toJSON(_: DeleteAccountRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DeleteAccountRequest>, I>>(base?: I): DeleteAccountRequest {
+    return DeleteAccountRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DeleteAccountRequest>, I>>(_: I): DeleteAccountRequest {
+    const message = createBaseDeleteAccountRequest();
+    return message;
+  },
+};
+
+function createBaseDeleteAccountResponse(): DeleteAccountResponse {
+  return { success: false, message: "" };
+}
+
+export const DeleteAccountResponse: MessageFns<DeleteAccountResponse> = {
+  encode(message: DeleteAccountResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.success !== false) {
+      writer.uint32(8).bool(message.success);
+    }
+    if (message.message !== "") {
+      writer.uint32(18).string(message.message);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): DeleteAccountResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeleteAccountResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.success = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DeleteAccountResponse {
+    return {
+      success: isSet(object.success) ? globalThis.Boolean(object.success) : false,
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+    };
+  },
+
+  toJSON(message: DeleteAccountResponse): unknown {
+    const obj: any = {};
+    if (message.success !== false) {
+      obj.success = message.success;
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DeleteAccountResponse>, I>>(base?: I): DeleteAccountResponse {
+    return DeleteAccountResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<DeleteAccountResponse>, I>>(object: I): DeleteAccountResponse {
+    const message = createBaseDeleteAccountResponse();
     message.success = object.success ?? false;
     message.message = object.message ?? "";
     return message;

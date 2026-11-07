@@ -6,6 +6,7 @@ import type {
   CreatePermissionRequest,
   UpdatePermissionRequest,
   DeletePermissionResponse,
+  BulkCreatePermissionsResponse,
 } from '../apis/proto/openauth/v1/permissions'
 
 const BASE_URL = '/openauth/v1/permissions'
@@ -24,6 +25,12 @@ export const permissionService = {
 
   async create(data: CreatePermissionRequest): Promise<Permission> {
     const response = await httpClient.post<Permission>(BASE_URL, data)
+    return response.data
+  },
+
+  /** Creates many at once; existing names are skipped, failures listed per permission. */
+  async bulkCreate(permissions: CreatePermissionRequest[]): Promise<BulkCreatePermissionsResponse> {
+    const response = await httpClient.post<BulkCreatePermissionsResponse>(`${BASE_URL}/bulk`, { permissions })
     return response.data
   },
 

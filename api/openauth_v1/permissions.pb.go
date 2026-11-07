@@ -556,6 +556,167 @@ func (x *DeletePermissionResponse) GetMessage() string {
 	return ""
 }
 
+// BulkCreatePermissionsRequest creates many permissions at once, e.g. a service's whole set
+// pasted as JSON in the admin console. Each is checked like CreatePermission.
+type BulkCreatePermissionsRequest struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Permissions   []*CreatePermissionRequest `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BulkCreatePermissionsRequest) Reset() {
+	*x = BulkCreatePermissionsRequest{}
+	mi := &file_proto_openauth_v1_permissions_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BulkCreatePermissionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BulkCreatePermissionsRequest) ProtoMessage() {}
+
+func (x *BulkCreatePermissionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_permissions_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BulkCreatePermissionsRequest.ProtoReflect.Descriptor instead.
+func (*BulkCreatePermissionsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *BulkCreatePermissionsRequest) GetPermissions() []*CreatePermissionRequest {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+// BulkPermissionFailure is one permission that couldn't be created, and why.
+type BulkPermissionFailure struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BulkPermissionFailure) Reset() {
+	*x = BulkPermissionFailure{}
+	mi := &file_proto_openauth_v1_permissions_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BulkPermissionFailure) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BulkPermissionFailure) ProtoMessage() {}
+
+func (x *BulkPermissionFailure) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_permissions_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BulkPermissionFailure.ProtoReflect.Descriptor instead.
+func (*BulkPermissionFailure) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *BulkPermissionFailure) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *BulkPermissionFailure) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+// BulkCreatePermissionsResponse says what happened to each: created, skipped because one
+// with that name exists already, or failed.
+type BulkCreatePermissionsResponse struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Created       []*Permission            `protobuf:"bytes,1,rep,name=created,proto3" json:"created,omitempty"`
+	Skipped       []string                 `protobuf:"bytes,2,rep,name=skipped,proto3" json:"skipped,omitempty"`
+	Failed        []*BulkPermissionFailure `protobuf:"bytes,3,rep,name=failed,proto3" json:"failed,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BulkCreatePermissionsResponse) Reset() {
+	*x = BulkCreatePermissionsResponse{}
+	mi := &file_proto_openauth_v1_permissions_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BulkCreatePermissionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BulkCreatePermissionsResponse) ProtoMessage() {}
+
+func (x *BulkCreatePermissionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_openauth_v1_permissions_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BulkCreatePermissionsResponse.ProtoReflect.Descriptor instead.
+func (*BulkCreatePermissionsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_openauth_v1_permissions_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *BulkCreatePermissionsResponse) GetCreated() []*Permission {
+	if x != nil {
+		return x.Created
+	}
+	return nil
+}
+
+func (x *BulkCreatePermissionsResponse) GetSkipped() []string {
+	if x != nil {
+		return x.Skipped
+	}
+	return nil
+}
+
+func (x *BulkCreatePermissionsResponse) GetFailed() []*BulkPermissionFailure {
+	if x != nil {
+		return x.Failed
+	}
+	return nil
+}
+
 var File_proto_openauth_v1_permissions_proto protoreflect.FileDescriptor
 
 const file_proto_openauth_v1_permissions_proto_rawDesc = "" +
@@ -604,7 +765,16 @@ const file_proto_openauth_v1_permissions_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x02id\"N\n" +
 	"\x18DeletePermissionResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessageB\x0fZ\r./openauth_v1b\x06proto3"
+	"\amessage\x18\x02 \x01(\tR\amessage\"j\n" +
+	"\x1cBulkCreatePermissionsRequest\x12J\n" +
+	"\vpermissions\x18\x01 \x03(\v2\x1b.v1.CreatePermissionRequestB\v\xfaB\b\x92\x01\x05\b\x01\x10\xf4\x03R\vpermissions\"A\n" +
+	"\x15BulkPermissionFailure\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error\"\x96\x01\n" +
+	"\x1dBulkCreatePermissionsResponse\x12(\n" +
+	"\acreated\x18\x01 \x03(\v2\x0e.v1.PermissionR\acreated\x12\x18\n" +
+	"\askipped\x18\x02 \x03(\tR\askipped\x121\n" +
+	"\x06failed\x18\x03 \x03(\v2\x19.v1.BulkPermissionFailureR\x06failedB\x0fZ\r./openauth_v1b\x06proto3"
 
 var (
 	file_proto_openauth_v1_permissions_proto_rawDescOnce sync.Once
@@ -618,24 +788,30 @@ func file_proto_openauth_v1_permissions_proto_rawDescGZIP() []byte {
 	return file_proto_openauth_v1_permissions_proto_rawDescData
 }
 
-var file_proto_openauth_v1_permissions_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_openauth_v1_permissions_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_proto_openauth_v1_permissions_proto_goTypes = []any{
-	(*Permission)(nil),               // 0: v1.Permission
-	(*CreatePermissionRequest)(nil),  // 1: v1.CreatePermissionRequest
-	(*GetPermissionRequest)(nil),     // 2: v1.GetPermissionRequest
-	(*ListPermissionsRequest)(nil),   // 3: v1.ListPermissionsRequest
-	(*ListPermissionsResponse)(nil),  // 4: v1.ListPermissionsResponse
-	(*UpdatePermissionRequest)(nil),  // 5: v1.UpdatePermissionRequest
-	(*DeletePermissionRequest)(nil),  // 6: v1.DeletePermissionRequest
-	(*DeletePermissionResponse)(nil), // 7: v1.DeletePermissionResponse
+	(*Permission)(nil),                    // 0: v1.Permission
+	(*CreatePermissionRequest)(nil),       // 1: v1.CreatePermissionRequest
+	(*GetPermissionRequest)(nil),          // 2: v1.GetPermissionRequest
+	(*ListPermissionsRequest)(nil),        // 3: v1.ListPermissionsRequest
+	(*ListPermissionsResponse)(nil),       // 4: v1.ListPermissionsResponse
+	(*UpdatePermissionRequest)(nil),       // 5: v1.UpdatePermissionRequest
+	(*DeletePermissionRequest)(nil),       // 6: v1.DeletePermissionRequest
+	(*DeletePermissionResponse)(nil),      // 7: v1.DeletePermissionResponse
+	(*BulkCreatePermissionsRequest)(nil),  // 8: v1.BulkCreatePermissionsRequest
+	(*BulkPermissionFailure)(nil),         // 9: v1.BulkPermissionFailure
+	(*BulkCreatePermissionsResponse)(nil), // 10: v1.BulkCreatePermissionsResponse
 }
 var file_proto_openauth_v1_permissions_proto_depIdxs = []int32{
 	0, // 0: v1.ListPermissionsResponse.permissions:type_name -> v1.Permission
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 1: v1.BulkCreatePermissionsRequest.permissions:type_name -> v1.CreatePermissionRequest
+	0, // 2: v1.BulkCreatePermissionsResponse.created:type_name -> v1.Permission
+	9, // 3: v1.BulkCreatePermissionsResponse.failed:type_name -> v1.BulkPermissionFailure
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_proto_openauth_v1_permissions_proto_init() }
@@ -653,7 +829,7 @@ func file_proto_openauth_v1_permissions_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_openauth_v1_permissions_proto_rawDesc), len(file_proto_openauth_v1_permissions_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
